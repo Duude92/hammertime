@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Linq;
 using System.Threading.Tasks;
 using LogicAndTrick.Oy;
 using Sledge.Common.Logging;
@@ -18,6 +19,7 @@ namespace Sledge.Shell.Registers
     {
         [Import] private Forms.Shell _shell;
         [ImportMany] private IEnumerable<Lazy<IDialog>> _dialogs;
+        private static DialogRegister _instance;
 
         public async Task OnStartup()
         {
@@ -36,8 +38,10 @@ namespace Sledge.Shell.Registers
 
         public DialogRegister()
         {
+            _instance = this;
             _components = new List<IDialog>();
         }
+        public static bool IsAnyDialogOpened() => _instance._components.Where(x=>x.Visible).Any();
 
         private Task ContextChanged(IContext context)
         {

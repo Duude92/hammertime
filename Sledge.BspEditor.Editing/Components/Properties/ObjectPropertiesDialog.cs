@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Linq;
+using System.Runtime.Remoting.Channels;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Primitives.MapObjects;
+using Sledge.Common.Logging;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Hooks;
@@ -116,6 +118,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties
 		{
 			var changed = false;
 			tabPanel.SuspendLayout();
+			tabPanel.Enabled = false;
 
 			var currentlyVisibleTabs = tabPanel.TabPages.OfType<TabPage>().Select(x => _pages.FirstOrDefault(p => p.Value == x).Key).ToList();
 			var newVisibleTabs = _tabs.Where(x => x.Value.IsInContext(context, objects)).OrderBy(x => x.Value.OrderHint).Select(x => x.Value).ToList();
@@ -144,6 +147,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties
 			}
 
 			if (changed) tabPanel.SelectedIndex = tabPanel.TabCount > 0 ? 0 : -1;
+			tabPanel.Enabled = true;
 
 			tabPanel.ResumeLayout(changed);
 		}
@@ -159,7 +163,6 @@ namespace Sledge.BspEditor.Editing.Components.Properties
 
 		protected override void OnMouseEnter(EventArgs e)
 		{
-			Focus();
 			base.OnMouseEnter(e);
 		}
 
