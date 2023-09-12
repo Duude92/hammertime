@@ -121,8 +121,15 @@ namespace Sledge.BspEditor.Editing.Commands
                     }
                 };
                 ops.Add(new Attach(document.Map.Root.ID, existing));
-            }
-            else
+				var properties = defaultEntityClass.Properties.Select(x => (x.Name ?? "").ToLower());
+				foreach (var property in properties)
+				{
+					var newKey = defaultEntityClass.Properties.FirstOrDefault(x => (x.Name ?? "").ToLower() == property);
+
+					existing.EntityData.Properties.Add(property, newKey.DefaultValue);
+				}
+			}
+			else
             {
                 // If the entity is a descendant of the selection, it would cause havok
                 ops.Add(new Detatch(existing.Hierarchy.Parent.ID, existing));

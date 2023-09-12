@@ -281,6 +281,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 					angAngles.Enabled = true;
 					angAngles.AnglePropertyString = tv.Value;
 				}
+
 			}
 
 			lstKeyValues.EndUpdate();
@@ -562,7 +563,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 					// Get the (first) property for this key
 					var prop = OriginalClasses.SelectMany(x => x.Properties).FirstOrDefault(x => String.Equals(x.Name, key, StringComparison.InvariantCultureIgnoreCase))
 							   ?? new Property(key, VariableType.String);
-					var val = new TableValue(prop, key, datas.Select(x => x.Get<string>(key)));
+					var val = new TableValue(prop, key, datas.Select(x => x.Get<string>(key, prop.DefaultValue)));
 					Add(val);
 				}
 			}
@@ -597,14 +598,14 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 
 			public string GetDisplayValue()
 			{
-				//if (String.IsNullOrWhiteSpace(Value) || String.IsNullOrWhiteSpace(Value))
-				//{
-				//	return GameDataProperty?.DefaultValue;
-				//}
-				//else
-				//{
+				if (String.IsNullOrWhiteSpace(Value) && GameDataProperty?.VariableType != VariableType.Choices)
+				{
+					return GameDataProperty?.DefaultValue;
+				}
+				else
+				{
 					return GameDataProperty?.Options.FirstOrDefault(x => x.Key == Value)?.Description ?? Value;
-				//}
+				}
 			}
 
 			public Color Colour
