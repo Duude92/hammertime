@@ -13,6 +13,7 @@ namespace Sledge.BspEditor.Primitives.MapData
 
         public bool HideNullTextures { get; set; } = false;
         public bool HideDisplacementSolids { get; set; } = false;
+        public bool HideClipTextures { get; set; } = false;
 
         public DisplayFlags()
         {

@@ -109,6 +109,7 @@ namespace Sledge.BspEditor.Environment
         }
 
         public abstract bool IsNullTexture(string name);
+        public abstract bool IsClipTexture(string name);
         public abstract float GetOpacity(string name);
     }
 }

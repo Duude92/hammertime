@@ -44,6 +44,7 @@ namespace Sledge.BspEditor.Rendering.Converters
 
             var displayFlags = document.Map.Data.GetOne<DisplayFlags>();
             var hideNull = displayFlags?.HideNullTextures == true;
+            var hideClip = displayFlags?.HideClipTextures == true;
 
             // Pack the vertices like this [ f1v1 ... f1vn ] ... [ fnv1 ... fnvn ]
             var numVertices = (uint) faces.Sum(x => x.Vertices.Count);
@@ -174,7 +175,7 @@ namespace Sledge.BspEditor.Rendering.Converters
             {
                 var texInd = (uint)(f.Vertices.Count - 2) * 3;
 
-                if (hideNull && tc.IsNullTexture(f.Texture.Name))
+                if ((hideNull && tc.IsNullTexture(f.Texture.Name))||(hideClip&&tc.IsClipTexture(f.Texture.Name)))
                 {
                     texOffset += texInd;
                     continue;

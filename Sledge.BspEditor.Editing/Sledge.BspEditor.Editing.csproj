@@ -85,6 +85,7 @@
     <Compile Include="Commands\OpenObjectProperties.cs" />
     <Compile Include="Commands\OpenAboutWindow.cs" />
     <Compile Include="Commands\PasteSpecial.cs" />
+    <Compile Include="Commands\Toggles\ToggleHideClipTextures.cs" />
     <Compile Include="Commands\Toggles\ToggleHideNullTextures.cs" />
     <Compile Include="Commands\Toggles\ToggleTextureLock.cs" />
     <Compile Include="Commands\Toggles\ToggleTextureScalingLock.cs" />
@@ -434,6 +435,7 @@
     <Content Include="Resources\Menu_EntityReport.png" />
     <Content Include="Resources\Menu_GoToBrushID.png" />
     <Content Include="Resources\Menu_GoToCoordinates.png" />
+    <Content Include="Resources\Menu_HideClipTextures.png" />
     <Content Include="Resources\Menu_HideNullTextures.png" />
     <Content Include="Resources\Menu_HideSelected.png" />
     <Content Include="Resources\Menu_HideUnselected.png" />

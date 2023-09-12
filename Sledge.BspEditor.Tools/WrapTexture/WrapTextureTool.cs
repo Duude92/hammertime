@@ -20,7 +20,7 @@ namespace Sledge.BspEditor.Tools.WrapTexture
 {
 	[Export(typeof(ITool))]
 	[Export]
-	[OrderHint("W")]
+	[OrderHint("JJ")]
 	[AutoTranslate]
 	public class WrapTextureTool : BaseDraggableTool
 	{
