@@ -447,11 +447,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 				else if (newKey != null)
 				{
 					// Brand new key, mark it as added and add it to the list.
-					_tableValues.Add(new TableValue(newKey, key, new[] { GetDefaultOption(newKey)
-
-
-						})
-					{ IsAdded = true });
+					_tableValues.Add(new TableValue(newKey, key, new[] { GetDefaultOption(newKey) }) { IsAdded = true });
 				}
 			}
 
@@ -461,12 +457,10 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 		private string GetDefaultOption(Property key)
 		{
 			if ((string.IsNullOrEmpty(key.DefaultValue) || string.IsNullOrWhiteSpace(key.DefaultValue)))
-				if (key.Options.Any())
-					return key.Options.FirstOrDefault().Description;
-				else
-					return key.DefaultValue;
+				if (key.Options.Count > 0)
+					return key.Options.First().Key;
 
-			return "";
+			return key.DefaultValue;
 		}
 
 		/// <summary>
@@ -599,9 +593,19 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 
 			public string DisplayText => GameDataProperty?.DisplayText() ?? NewKey;
 
-			public string DisplayValue => String.IsNullOrWhiteSpace(Value)
-				? GameDataProperty?.DefaultValue
-				: GameDataProperty?.Options.FirstOrDefault(x => x.Key == Value)?.Description ?? Value;
+			public string DisplayValue => GetDisplayValue();
+
+			public string GetDisplayValue()
+			{
+				//if (String.IsNullOrWhiteSpace(Value) || String.IsNullOrWhiteSpace(Value))
+				//{
+				//	return GameDataProperty?.DefaultValue;
+				//}
+				//else
+				//{
+					return GameDataProperty?.Options.FirstOrDefault(x => x.Key == Value)?.Description ?? Value;
+				//}
+			}
 
 			public Color Colour
 			{
