@@ -1,6 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -9,8 +7,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Sledge.BspEditor.Tools</RootNamespace>
     <AssemblyName>Sledge.BspEditor.Tools</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFramework>net472</TargetFramework>
     <FileAlignment>512</FileAlignment>
+    <Platforms>AnyCPU;x86</Platforms>
+
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -41,6 +41,12 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+  <PropertyGroup>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GeneratedAssemblyInfoFile>assemblyinfo.cs</GeneratedAssemblyInfoFile>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
@@ -55,6 +61,7 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
   </ItemGroup>
+  <!--
   <ItemGroup>
     <Compile Include="ActiveToolOverlayRenderable.cs" />
     <Compile Include="BaseTool.cs" />
@@ -259,6 +266,7 @@
     <Compile Include="Widgets\Widget.cs" />
     <Compile Include="WrapTexture\WrapTextureTool.cs" />
   </ItemGroup>
+  -->
   <ItemGroup>
     <ProjectReference Include="..\Sledge.BspEditor.Editing\Sledge.BspEditor.Editing.csproj">
       <Project>{D33E1027-1956-44C4-B920-85281F703704}</Project>
@@ -311,6 +319,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <!--
   <ItemGroup>
     <EmbeddedResource Include="Brush\Brushes\Controls\BooleanControl.resx">
       <DependentUpon>BooleanControl.cs</DependentUpon>
@@ -368,6 +377,7 @@
       <DependentUpon>VertexSidebarPanel.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
+  -->
   <ItemGroup>
     <None Include="Resources\Tool_Test.png" />
   </ItemGroup>
@@ -404,5 +414,4 @@
       <Version>4.1.0</Version>
     </PackageReference>
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

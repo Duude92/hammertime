@@ -1,6 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -9,8 +7,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Sledge.BspEditor.Rendering</RootNamespace>
     <AssemblyName>Sledge.BspEditor.Rendering</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFramework>net472</TargetFramework>
     <FileAlignment>512</FileAlignment>
+    <Platforms>AnyCPU;x86</Platforms>
+
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -41,6 +41,12 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+  <PropertyGroup>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GeneratedAssemblyInfoFile>assemblyinfo.cs</GeneratedAssemblyInfoFile>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
@@ -51,6 +57,7 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
+  <!--
   <ItemGroup>
     <Compile Include="ChangeHandlers\EntityDecal.cs" />
     <Compile Include="ChangeHandlers\EntityModel.cs" />
@@ -114,6 +121,7 @@
     <Compile Include="Viewport\ViewportEvent.cs" />
     <Compile Include="Viewport\ViewportMapDocumentControl.cs" />
   </ItemGroup>
+  -->
   <ItemGroup>
     <ProjectReference Include="..\Sledge.BspEditor\Sledge.BspEditor.csproj">
       <Project>{37c3fe6b-16f4-431f-ab67-fba7c681ccee}</Project>
@@ -162,11 +170,13 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <!--
   <ItemGroup>
     <EmbeddedResource Include="Scene\SceneBufferAllocationSidebarPanel.resx">
       <DependentUpon>SceneBufferAllocationSidebarPanel.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
+  -->
   <ItemGroup>
     <PackageReference Include="LogicAndTrick.Oy">
       <Version>1.2.0</Version>
@@ -178,7 +188,6 @@
       <Version>4.4.0</Version>
     </PackageReference>
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
