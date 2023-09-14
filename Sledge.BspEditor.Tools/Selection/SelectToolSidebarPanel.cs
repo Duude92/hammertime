@@ -87,24 +87,18 @@ namespace Sledge.BspEditor.Tools.Selection
                 SetCheckState(RotateModeCheckbox, false);
                 SetCheckState(SkewModeCheckbox, false);
                 SetCheckState(TranslateModeCheckbox, true);
-				//RotateModeCheckbox.Checked = SkewModeCheckbox.Checked = false;
-    //            TranslateModeCheckbox.Checked = true;
             }
             else if (_selectedType == SelectionBoxDraggableState.TransformationMode.Rotate)
             {
 				SetCheckState(TranslateModeCheckbox, false);
 				SetCheckState(SkewModeCheckbox, false);
 				SetCheckState(RotateModeCheckbox, true);
-				//TranslateModeCheckbox.Checked = SkewModeCheckbox.Checked = false;
-    //            RotateModeCheckbox.Checked = true;
             }
             else if (_selectedType == SelectionBoxDraggableState.TransformationMode.Skew)
             {
 				SetCheckState(RotateModeCheckbox, false);
 				SetCheckState(TranslateModeCheckbox, false);
 				SetCheckState(SkewModeCheckbox, true);
-				//RotateModeCheckbox.Checked = TranslateModeCheckbox.Checked = false;
-    //            SkewModeCheckbox.Checked = true;
             }
         }
 
