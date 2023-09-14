@@ -539,7 +539,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
 
 
 			cklTexturePackages.Items.Clear();
-			foreach (var kv in state.OrderBy(x => x.Key, StringComparer.InvariantCultureIgnoreCase))
+			foreach (var kv in state.OrderBy(x => x.Value ? 0 : 1).ThenBy(x => x.Key, StringComparer.InvariantCultureIgnoreCase))
 			{
 				cklTexturePackages.Items.Add(kv.Key, kv.Value);
 				_initialObjectCollection.Add(kv.Key, kv.Value);
