@@ -66,23 +66,45 @@ namespace Sledge.BspEditor.Tools.Selection
             _selectedType = tt;
             SetCheckState();
         }
+        private delegate void SetCheckStateCallback(CheckBox checkBox, bool state);
+        private void SetCheckState(CheckBox checkBox, bool state)
+        {
+            if(checkBox.InvokeRequired)
+            {
+                SetCheckStateCallback callback = new SetCheckStateCallback(SetCheckState);
+                this.Invoke(callback, new object[] { checkBox, state });
+            }
+            else
+            {
+                checkBox.Checked = state;
+            }
+        }
 
         private void SetCheckState()
         {
             if (_selectedType == SelectionBoxDraggableState.TransformationMode.Resize)
             {
-                RotateModeCheckbox.Checked = SkewModeCheckbox.Checked = false;
-                TranslateModeCheckbox.Checked = true;
+                SetCheckState(RotateModeCheckbox, false);
+                SetCheckState(SkewModeCheckbox, false);
+                SetCheckState(TranslateModeCheckbox, true);
+				//RotateModeCheckbox.Checked = SkewModeCheckbox.Checked = false;
+    //            TranslateModeCheckbox.Checked = true;
             }
             else if (_selectedType == SelectionBoxDraggableState.TransformationMode.Rotate)
             {
-                TranslateModeCheckbox.Checked = SkewModeCheckbox.Checked = false;
-                RotateModeCheckbox.Checked = true;
+				SetCheckState(TranslateModeCheckbox, false);
+				SetCheckState(SkewModeCheckbox, false);
+				SetCheckState(RotateModeCheckbox, true);
+				//TranslateModeCheckbox.Checked = SkewModeCheckbox.Checked = false;
+    //            RotateModeCheckbox.Checked = true;
             }
             else if (_selectedType == SelectionBoxDraggableState.TransformationMode.Skew)
             {
-                RotateModeCheckbox.Checked = TranslateModeCheckbox.Checked = false;
-                SkewModeCheckbox.Checked = true;
+				SetCheckState(RotateModeCheckbox, false);
+				SetCheckState(TranslateModeCheckbox, false);
+				SetCheckState(SkewModeCheckbox, true);
+				//RotateModeCheckbox.Checked = TranslateModeCheckbox.Checked = false;
+    //            SkewModeCheckbox.Checked = true;
             }
         }
 
