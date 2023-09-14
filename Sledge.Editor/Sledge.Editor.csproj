@@ -12,6 +12,7 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile />
     <Platforms>AnyCPU;x86</Platforms>
+    <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
 
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -150,6 +151,7 @@
   <ItemGroup>
     <PackageReference Include="LogicAndTrick.Oy" Version="1.2.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="System.Resources.Extensions" Version="7.0.0" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\Sledge.ico" />
