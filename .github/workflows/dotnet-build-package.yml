@@ -23,7 +23,7 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --no-restore -c Release -p:Platform=x86 --output ./bin/
+      run: dotnet build -c Release -p:Platform=x86 --output ./bin/
     - name: Create Zip File
       uses: vimtor/action-zip@v1.1
       with:
