@@ -219,7 +219,7 @@ namespace Sledge.BspEditor.Primitives.MapObjects
 				.OrderBy(x => (x.Value - line.Start).Length())
 				.FirstOrDefault();
 			}
-			return null;
+			return obj.GetIntersectionPoint(line);
 
 		}
 		/// <summary>
