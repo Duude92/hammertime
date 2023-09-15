@@ -16,6 +16,7 @@ using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Draggable;
+using Sledge.Common;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Overlay;
@@ -81,20 +82,45 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
 
 				var deg = angle * (180 / Math.PI);
 				float rnd = (float)(Math.Round(deg / roundingDegrees) * roundingDegrees);
-				//			Vector3 vector = new Vector3(
-				//camera.ViewType == OrthographicCamera.OrthographicType.Side ? rnd : 0,
-				//camera.ViewType == OrthographicCamera.OrthographicType.Top ? rnd : 0,
-				//camera.ViewType == OrthographicCamera.OrthographicType.Front ? rnd : 0);
-				//			var mt = Matrix4x4.CreateFromYawPitchRoll(vector.X, vector.Y, vector.Z);
-				//			var transaction = new Transaction();
-				//			transaction.Add(new Transform(mt));
-				//			MapDocumentOperation.Perform(document,transaction);
+
+				var anglerad = (float)angle;
+
+				Vector3 axis = new Vector3(
+					camera.ViewType == OrthographicCamera.OrthographicType.Side ? 1 : 0,
+					camera.ViewType == OrthographicCamera.OrthographicType.Top ? 1 : 0,
+					camera.ViewType == OrthographicCamera.OrthographicType.Front ? 1 : 0);
+
+				Vector3 previousLocalRotationRadians = new Vector3(
+					MathHelper.DegreesToRadians(initial.X),
+					MathHelper.DegreesToRadians(initial.Y),
+					MathHelper.DegreesToRadians(initial.Z));
+
+				var mt = Matrix4x4.CreateFromAxisAngle(axis, anglerad);
+				var mtr = Matrix4x4.CreateFromYawPitchRoll(previousLocalRotationRadians.Y, previousLocalRotationRadians.X, previousLocalRotationRadians.Z);
+
+				// Apply the new rotation relative to the current local rotation
+				var newLocalRotationMatrix = mtr * mt;
+
+				Vector3 newLocalRotationDegrees = new Vector3(
+					MathHelper.RadiansToDegrees((float)Math.Asin(newLocalRotationMatrix.M23)),
+					MathHelper.RadiansToDegrees((float)Math.Atan2(-newLocalRotationMatrix.M13, newLocalRotationMatrix.M33)),
+					MathHelper.RadiansToDegrees((float)Math.Atan2(-newLocalRotationMatrix.M21, newLocalRotationMatrix.M22))
+				);
+
+				// Now, newLocalRotationDegrees contains the updated local rotation in degrees
+
+
+
+
+
+
+
 				var op = new EditEntityDataProperties(entity.ID, new Dictionary<string, string>() {
-					{"angles", GetRotationString(camera, (float)rnd, initial) }
+					{"angles", $"{Math.Round( -newLocalRotationDegrees.X)} {Math.Round(newLocalRotationDegrees.Y)} {Math.Round(newLocalRotationDegrees.Z)}" }
 
 				});
 				var tsn = new Transaction(op);
-				((Action)(async () => await MapDocumentOperation.Perform(document, tsn)))(); //FIXME:: should create new Operation class for rotating objects??
+				((Action)(async () => await MapDocumentOperation.Perform(document, tsn)))();
 			}
 			_rotateStart = _rotateEnd = null;
 			base.EndDrag(document, viewport, camera, e, position);
