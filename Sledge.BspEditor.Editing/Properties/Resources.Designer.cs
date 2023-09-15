@@ -213,6 +213,16 @@ namespace Sledge.BspEditor.Editing.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Menu_Interrupt {
+            get {
+                object obj = ResourceManager.GetObject("Menu_Interrupt", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Menu_LoadPointfile {
             get {
                 object obj = ResourceManager.GetObject("Menu_LoadPointfile", resourceCulture);

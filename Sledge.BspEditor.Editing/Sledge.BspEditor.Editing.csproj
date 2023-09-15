@@ -49,6 +49,9 @@
     <GeneratedAssemblyInfoFile>assemblyinfo.cs</GeneratedAssemblyInfoFile>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Resources\Menu_Interrupt.png" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
@@ -458,6 +461,7 @@
     <Content Include="Resources\Menu_PasteSpecial.png" />
     <Content Include="Resources\Menu_QuickLoadPointfile.png" />
     <Content Include="Resources\Menu_Redo.png" />
+    <Content Include="Resources\Menu_Interrupt.png" />
     <Content Include="Resources\Menu_Run.png" />
     <Content Include="Resources\Menu_ShowBrushID.png" />
     <Content Include="Resources\Menu_ShowHidden.png" />
@@ -487,5 +491,18 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\sledge_large.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>
