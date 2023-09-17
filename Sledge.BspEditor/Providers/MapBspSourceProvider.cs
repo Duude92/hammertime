@@ -400,6 +400,7 @@ namespace Sledge.BspEditor.Providers
 				//     // The value hasn't changed from the default, don't write if it's an empty value
 				//     if (emptyGd && emptyProp) continue;
 				// }
+				if (prop.Key == "gibmodel") Console.WriteLine(1);
 				WriteProperty(sw, prop.Key, String.IsNullOrEmpty(prop.Value) ? "0" : prop.Value);
 			}
 

@@ -395,6 +395,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 			tv.NewValue = value;
 			RefreshTable();
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasChanges)));
+			if (tv.GameDataProperty.VariableType == VariableType.Studio || tv.GameDataProperty.VariableType == VariableType.Sprite) tv.IsAdded = false;
 		}
 
 		/// <summary>
@@ -428,6 +429,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 			var keys = _tableValues.Select(x => x.NewKey.ToLower()).Union(newClass.Properties.Select(x => (x.Name ?? "").ToLower())).ToList();
 			foreach (var key in keys)
 			{
+				if (key == "gibmodel") Console.WriteLine(key);
 				// Never include spawnflags
 				if (key == "spawnflags") continue;
 
@@ -448,7 +450,8 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 				else if (newKey != null)
 				{
 					// Brand new key, mark it as added and add it to the list.
-					_tableValues.Add(new TableValue(newKey, key, new[] { GetDefaultOption(newKey) }) { IsAdded = true });
+					var value = GetDefaultOption(newKey);
+					_tableValues.Add(new TableValue(newKey, key, new[] { value }) { IsAdded = value != null ? true : false });
 				}
 			}
 
@@ -457,6 +460,8 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 		}
 		private string GetDefaultOption(Property key)
 		{
+			if (key.VariableType == VariableType.Studio || key.VariableType == VariableType.Sprite)
+				return null;
 			if ((string.IsNullOrEmpty(key.DefaultValue) || string.IsNullOrWhiteSpace(key.DefaultValue)))
 				if (key.Options.Count > 0)
 					return key.Options.First().Key;
