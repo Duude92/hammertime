@@ -40,13 +40,17 @@ namespace Sledge.BspEditor.Commands.Clipboard
 		{
 			_clipboard = clipboard;
 			_random = new Random();
-			Oy.Subscribe<string>("BspEditor:Edit:PasteFromView",async (arg) => await PasteClipboard(arg));
+			Oy.Subscribe<string>("BspEditor:Edit:PasteFromView", async (arg) => await PasteClipboard(arg));
 		}
 
 		protected override async Task Invoke(MapDocument document, CommandParameters parameters)
 		{
 			_document = document;
-			await Oy.Publish("BspEditor:Viewport:Paste");
+			var moveLock = parameters.Get<string>("AxisLock", null);
+			if (moveLock != null)
+				await PasteClipboard(moveLock);
+			else
+				await Oy.Publish("BspEditor:Viewport:Paste");
 		}
 		private async Task PasteClipboard(string arg)
 		{

@@ -67,7 +67,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
 
 				if (viewport.IsFocused) await Oy.Publish<string>("BspEditor:Edit:PasteFromView", (Viewport.Camera is OrthographicCamera camera) ?
 					camera.ViewType == OrthographicCamera.OrthographicType.Top ? "Z" :
-					camera.ViewType == OrthographicCamera.OrthographicType.Front ? "Y" : "X" : "3D");
+					camera.ViewType == OrthographicCamera.OrthographicType.Front ? "X" : "Y" : "3D");
 			});
 		}
 

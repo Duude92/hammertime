@@ -22,8 +22,8 @@ namespace Sledge.BspEditor.Rendering.Viewport
 			Items = new List<ToolStripItem>
 			{
 				new CommandItem("BspEditor:Edit:Paste", new {AxisLock = (viewport.Viewport.Camera is OrthographicCamera camera)?
-				camera.ViewType == OrthographicCamera.OrthographicType.Top?"Y":
-				camera.ViewType == OrthographicCamera.OrthographicType.Front?"Z":"X":"3D" }),
+				camera.ViewType == OrthographicCamera.OrthographicType.Top?"Z":
+				camera.ViewType == OrthographicCamera.OrthographicType.Front?"X":"Y":"3D" }),
 				new CommandItem("BspEditor:Edit:PasteSpecial"),
 				new ToolStripSeparator(),
 				new CommandItem("BspEditor:Edit:Undo"),
