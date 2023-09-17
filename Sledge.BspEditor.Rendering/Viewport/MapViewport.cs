@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using LogicAndTrick.Oy;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Engine;
 using Sledge.Rendering.Viewports;
@@ -61,6 +62,13 @@ namespace Sledge.BspEditor.Rendering.Viewport
 			viewport.Control.KeyDown += OnKeyDown;
 			viewport.Control.KeyUp += OnKeyUp;
 			viewport.OnUpdate += OnUpdate;
+			Oy.Subscribe("BspEditor:Viewport:Paste", async () =>
+			{
+
+				if (viewport.IsFocused) await Oy.Publish<string>("BspEditor:Edit:PasteFromView", (Viewport.Camera is OrthographicCamera camera) ?
+					camera.ViewType == OrthographicCamera.OrthographicType.Top ? "Z" :
+					camera.ViewType == OrthographicCamera.OrthographicType.Front ? "Y" : "X" : "3D");
+			});
 		}
 
 		#region Listeners
