@@ -84,6 +84,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 			this.btnPaste.TabIndex = 20;
 			this.btnPaste.Text = "Paste";
 			this.btnPaste.UseVisualStyleBackColor = true;
+			this.btnPaste.Click += BtnPaste_Click;
 			// 
 			// btnCopy
 			// 
@@ -93,6 +94,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 			this.btnCopy.TabIndex = 21;
 			this.btnCopy.Text = "Copy";
 			this.btnCopy.UseVisualStyleBackColor = true;
+			this.btnCopy.Click += BtnCopy_Click;
 			// 
 			// txtComments
 			// 
@@ -249,7 +251,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 
         }
 
-        private System.Windows.Forms.Button btnDelete;
+		private System.Windows.Forms.Button btnDelete;
         private System.Windows.Forms.Button btnAdd;
         private System.Windows.Forms.Panel pnlSmartEdit;
         private System.Windows.Forms.CheckBox btnSmartEdit;

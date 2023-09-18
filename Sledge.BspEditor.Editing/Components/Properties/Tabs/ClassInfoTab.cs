@@ -4,8 +4,10 @@ using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Sledge.BspEditor.Components;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations.Data;
@@ -39,6 +41,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 		private WeakReference<MapDocument> _document;
 		private GameData _gameData;
 		private IObjectPropertyEditor _currentEditor;
+		private readonly Lazy<ClipboardManager> _clipboard;
 
 		public string OrderHint => "D";
 		public Control Control => this;
@@ -136,9 +139,11 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 		[ImportingConstructor]
 		public ClassInfoTab(
 			[ImportMany] IEnumerable<Lazy<IObjectPropertyEditor>> smartEditControls,
-			[Import("Default")] Lazy<IObjectPropertyEditor> defaultControl
+			[Import("Default")] Lazy<IObjectPropertyEditor> defaultControl,
+			[Import] Lazy<ClipboardManager> clipboard
 		)
 		{
+			_clipboard = clipboard;
 			_smartEditControls = smartEditControls;
 			_defaultControl = defaultControl.Value;
 
@@ -148,7 +153,50 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 			_tableValues = new ClassValues();
 			_document = new WeakReference<MapDocument>(null);
 		}
+		private void BtnCopy_Click(object sender, EventArgs e)
+		{
+			StringBuilder sb = new StringBuilder();
+			sb.Append($"classname:{_tableValues.NewClass?.Name ?? _tableValues.OriginalClass}|");
 
+			foreach (var tv in _tableValues)
+			{
+				sb.Append($"{tv.NewKey ?? tv.OriginalKey}:{tv.NewValue ?? tv.OriginalValue}|");
+			}
+			_clipboard.Value.Push(sb.ToString());
+		}
+		private void BtnPaste_Click(object sender, EventArgs e)
+		{
+			_document.TryGetTarget(out var mapDocument);
+			var strings = _clipboard.Value.GetPastedText(mapDocument);
+			var content = strings.Split('|');
+			if(content.Length>0 && content[0].StartsWith("classname"))
+			{
+				var classname = content[0].Split(':')[1];
+				if (_tableValues.NewClass == null && string.Equals(classname, _tableValues.OriginalClass.ToLower(), StringComparison.InvariantCultureIgnoreCase)) return;
+
+				var newClass = _gameData.Classes.FirstOrDefault(x => x.ClassType != ClassType.Base && (x.Name ?? "").ToLower() == classname) ?? new GameDataObject(classname, "", ClassType.Any);
+				_tableValues.NewClass = newClass; string[] newContent = new string[content.Length-2];
+
+				var oldKeys = _tableValues.ToList();
+                foreach (var item in oldKeys)
+                {
+                    _tableValues.Remove(item);
+                }
+				cmbClass.Text = classname;
+                Array.Copy(content,1, newContent, 0, content.Length-2);
+                foreach (var kv in newContent)
+                {
+					var splitvalue = kv.Split(':');
+					var newKey = newClass.Properties.FirstOrDefault(x => (x.Name ?? "").ToLower() == splitvalue[0]);
+
+					// Brand new key, mark it as added and add it to the list.
+					var value = GetDefaultOption(newKey);
+					_tableValues.Add(new TableValue(newKey, splitvalue[0],new[] { splitvalue[1] ?? "" }) { IsAdded = value != null ? true : false });
+                }
+				UpdateTable();
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasChanges)));
+			}
+		}
 		public bool IsInContext(IContext context, List<IMapObject> objects)
 		{
 			return context.TryGet("ActiveDocument", out MapDocument _) &&
@@ -421,6 +469,10 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 		private void ClassChanged(object sender, EventArgs e)
 		{
 			var txt = (cmbClass.Text ?? "").ToLower();
+			ChangeClass(txt);
+		}
+		private void ChangeClass(string txt)
+		{ 
 			if (_tableValues.NewClass == null && string.Equals(txt, _tableValues.OriginalClass.ToLower(), StringComparison.InvariantCultureIgnoreCase)) return;
 
 			var newClass = _gameData.Classes.FirstOrDefault(x => x.ClassType != ClassType.Base && (x.Name ?? "").ToLower() == txt) ?? new GameDataObject(txt, "", ClassType.Any);
@@ -429,7 +481,6 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 			var keys = _tableValues.Select(x => x.NewKey.ToLower()).Union(newClass.Properties.Select(x => (x.Name ?? "").ToLower())).ToList();
 			foreach (var key in keys)
 			{
-				if (key == "gibmodel") Console.WriteLine(key);
 				// Never include spawnflags
 				if (key == "spawnflags") continue;
 
