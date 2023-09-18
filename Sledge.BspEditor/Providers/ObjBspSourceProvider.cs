@@ -7,6 +7,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Environment;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapObjectData;
@@ -52,7 +53,7 @@ namespace Sledge.BspEditor.Providers
             });
         }
 
-        public Task Save(Stream stream, Map map)
+        public Task Save(Stream stream, Map map, MapDocument document = null)
         {
             return Task.Run(() =>
             {

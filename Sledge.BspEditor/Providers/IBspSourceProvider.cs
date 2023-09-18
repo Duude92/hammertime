@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Environment;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapObjects;
@@ -40,6 +41,6 @@ namespace Sledge.BspEditor.Providers
         /// <param name="stream">The stream</param>
         /// <param name="map">The map to write</param>
         /// <returns>Completion task for the save</returns>
-        Task Save(Stream stream, Map map);
+        Task Save(Stream stream, Map map, MapDocument document = null);
     }
 }

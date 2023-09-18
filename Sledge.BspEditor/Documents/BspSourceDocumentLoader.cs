@@ -213,7 +213,7 @@ namespace Sledge.BspEditor.Documents
                 {
                     try
                     {
-                        await provider.Value.Save(stream, map.Map);
+                        await provider.Value.Save(stream, map.Map, document as MapDocument);
                         using (var fs = File.Open(location, FileMode.Create, FileAccess.Write, FileShare.Read))
                         {
                             stream.Seek(0, SeekOrigin.Begin);

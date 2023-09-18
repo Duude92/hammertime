@@ -4,6 +4,7 @@ using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Environment;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapData;
@@ -68,7 +69,7 @@ namespace Sledge.BspEditor.Providers
             });
         }
         
-        public Task Save(Stream stream, Map map)
+        public Task Save(Stream stream, Map map, MapDocument document = null)
         {
             return Task.Factory.StartNew(() =>
             {

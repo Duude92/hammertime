@@ -7,13 +7,16 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Environment;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common;
 using Sledge.Common.Shell.Documents;
+using Sledge.DataStructures.GameData;
 using Sledge.DataStructures.Geometric;
+using static System.Net.Mime.MediaTypeNames;
 using Plane = Sledge.DataStructures.Geometric.Plane;
 
 namespace Sledge.BspEditor.Providers
@@ -38,9 +41,11 @@ namespace Sledge.BspEditor.Providers
 		{
 			new FileExtensionInfo("Quake map formats", ".map", ".max"),
 		};
-
+		private MapDocument _document;
+		private static GameData _gameData;
 		public async Task<BspFileLoadResult> Load(Stream stream, IEnvironment environment)
 		{
+			_gameData = await environment.GetGameData();
 			return await Task.Factory.StartNew(() =>
 			{
 				using (var reader = new StreamReader(stream, Encoding.ASCII, true, 1024, false))
@@ -274,12 +279,28 @@ namespace Sledge.BspEditor.Providers
 			{
 				if (String.IsNullOrWhiteSpace(line)) continue;
 				if (line[0] == '"') ReadProperty(ent, line);
+
 				else if (line[0] == '{')
 				{
 					var s = ReadSolid(rdr, generator, result);
 					if (s != null) s.Hierarchy.Parent = ent;
 				}
 				else if (line[0] == '}') break;
+			}
+			//Check if entity contain values of type 'Choices' and replace it values '0' with ''
+			if (!string.IsNullOrEmpty(ent.EntityData.Name))
+			{
+				var classData = _gameData.Classes.FirstOrDefault(x => x.Name == ent.EntityData.Name);
+				foreach(var entVal in ent.EntityData.Properties.ToList())
+				{
+					var propData = classData.Properties.FirstOrDefault(x => x.Name == entVal.Key);
+					if(propData.VariableType == VariableType.Choices && entVal.Value == "0")
+					{
+						ent.EntityData.Properties.Remove(entVal.Key);
+						ent.EntityData.Properties.Add(entVal.Key, "");
+					}
+
+				}
 			}
 			ent.DescendantsChanged();
 			return ent;
@@ -300,8 +321,9 @@ namespace Sledge.BspEditor.Providers
 
 		#endregion
 
-		public Task Save(Stream stream, Map map)
+		public Task Save(Stream stream, Map map, MapDocument document = null)
 		{
+			_document = document;
 			return Task.Factory.StartNew(() =>
 			{
 				using (var writer = new StreamWriter(stream, Encoding.ASCII, 1024, true))
@@ -373,7 +395,7 @@ namespace Sledge.BspEditor.Providers
 			sw.WriteLine('"' + key + "\" \"" + value + '"');
 		}
 
-		private void WriteEntity(StreamWriter sw, Entity ent)
+		private async void WriteEntity(StreamWriter sw, Entity ent)
 		{
 			var solids = new List<Solid>();
 			CollectSolids(solids, ent);
@@ -386,6 +408,11 @@ namespace Sledge.BspEditor.Providers
 				// VHE doesn't write the spawnflags when they are zero
 				WriteProperty(sw, "spawnflags", ent.EntityData.Flags.ToString(CultureInfo.InvariantCulture));
 			}
+			//var newClass = new GameData().Classes.FirstOrDefault(x => x.ClassType != ClassType.Base && (x.Name ?? "").ToLower() == txt) ?? new GameDataObject(txt, "", ClassType.Any);
+			GameData gd;
+			gd = await _document.Environment.GetGameData();
+			var entityClass = gd.Classes.Where(x => x.Name == ent.EntityData.Name).FirstOrDefault();
+
 			foreach (var prop in ent.EntityData.Properties)
 			{
 				if (prop.Key == "classname" || prop.Key == "spawnflags" || prop.Key == "origin") continue;
@@ -400,8 +427,8 @@ namespace Sledge.BspEditor.Providers
 				//     // The value hasn't changed from the default, don't write if it's an empty value
 				//     if (emptyGd && emptyProp) continue;
 				// }
-				if (prop.Key == "gibmodel") Console.WriteLine(1);
-				WriteProperty(sw, prop.Key, String.IsNullOrEmpty(prop.Value) ? "0" : prop.Value);
+				var property = entityClass.Properties.First(x => x.Name == prop.Key);
+				WriteProperty(sw, prop.Key, property.VariableType == VariableType.Choices && String.IsNullOrEmpty(prop.Value) ? "0" : prop.Value);
 			}
 
 			if (solids.Any()) solids.ForEach(x => WriteSolid(sw, x)); // Brush entity
