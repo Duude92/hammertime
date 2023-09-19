@@ -382,12 +382,11 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
 			Log.Debug(this.Name, $"Selected vertex count: {selected.Count}");
 
 			// Must have two points selected
-			if (selected.Count != 4 && selected.Count != 2) return null;
+			if (selected.Count != 2) return null;
 
 			solid = selected[0].Solid;
 
 			// Selection must share a face
-			//var commonFace = selected.Select(x=>x.GetAdjacentFaces())
 			var commonFace = selected[0].GetAdjacentFaces().Intersect(selected[1].GetAdjacentFaces()).ToList();
 			if (commonFace.Count != 1) return null;
 
