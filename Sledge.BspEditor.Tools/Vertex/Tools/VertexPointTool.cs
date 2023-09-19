@@ -387,6 +387,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
 			solid = selected[0].Solid;
 
 			// Selection must share a face
+			//var commonFace = selected.Select(x=>x.GetAdjacentFaces())
 			var commonFace = selected[0].GetAdjacentFaces().Intersect(selected[1].GetAdjacentFaces()).ToList();
 			if (commonFace.Count != 1) return null;
 
@@ -529,8 +530,8 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
 
 		public bool SelectPointsInBox(Box box, bool toggle)
 		{
-			var inBox = GetVisiblePoints().Where(x => box.Vector3IsInside(x.Position)&&!x.IsMidpoint).ToList();
-			if(!inBox.Any()) inBox = GetVisiblePoints().Where(x => box.Vector3IsInside(x.Position)).ToList();
+			var inBox = GetVisiblePoints().Where(x => box.Vector3IsInside(x.Position) && !x.IsMidpoint).ToList();
+			if (!inBox.Any()) inBox = GetVisiblePoints().Where(x => box.Vector3IsInside(x.Position)).ToList();
 			Select(inBox, toggle);
 			return inBox.Any();
 		}
@@ -691,14 +692,15 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
 					var coord = (s + e) / 2;
 					var mpStart = Points.First(x => !x.IsMidpoint && x.Position == s);
 					var mpEnd = Points.First(x => !x.IsMidpoint && x.Position == e);
-					Points.Add(new VertexPoint(Tool, Solid)
-					{
-						Position = coord,
-						IsMidpoint = true,
-						MidpointStart = mpStart,
-						MidpointEnd = mpEnd,
-						IsSelected = selected.Any(x => x.IsMidpoint && x.MidpointStart.Position == mpStart.Position && x.MidpointEnd.Position == mpEnd.Position)
-					});
+					if (!Points.Where(x => (x.MidpointStart == mpStart || x.MidpointStart == mpEnd) && (x.MidpointEnd == mpEnd || x.MidpointEnd == mpStart)).Any())
+						Points.Add(new VertexPoint(Tool, Solid)
+						{
+							Position = coord,
+							IsMidpoint = true,
+							MidpointStart = mpStart,
+							MidpointEnd = mpEnd,
+							IsSelected = selected.Any(x => x.IsMidpoint && x.MidpointStart.Position == mpStart.Position && x.MidpointEnd.Position == mpEnd.Position)
+						});
 				}
 			}
 		}
