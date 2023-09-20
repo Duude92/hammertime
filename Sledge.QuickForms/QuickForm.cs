@@ -45,12 +45,12 @@ namespace Sledge.QuickForms
                 AutoSizeMode = AutoSizeMode.GrowOnly,
 	            FlowDirection = FlowDirection.TopDown,
 	            Location = new Point(5, 5),
-	            Size = new Size(ClientSize.Width - 10, 10)
+	            Size = new Size(ClientSize.Width, 10)
 	        };
 	        _layoutSizerPanel = new Panel
 	        {
                 AutoSize = false,
-                Height = 1,
+                Height = 2,
                 Width = ClientSize.Width - 12,
                 Margin = Padding.Empty,
                 Padding = Padding.Empty
@@ -294,7 +294,7 @@ namespace Sledge.QuickForms
 	    public string String(string name)
 		{
 			var c = GetItem(name);
-			if (c != null) return c.Text;
+			if (c != null) return c.Value as string;
 			throw new Exception("Control " + name + " not found!");
 		}
 
