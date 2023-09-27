@@ -10,6 +10,8 @@ using System.Windows.Forms;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Commands.Clipboard;
 using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Primitives.MapData;
+using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Draggable;
 using Sledge.BspEditor.Tools.Vertex.Controls;
@@ -86,6 +88,91 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
 			yield return Oy.Subscribe<object>("VertexPointTool:Split", _ => Split());
 			yield return Oy.Subscribe<object>("VertexPointTool:Merge", _ => Merge());
 			yield return Oy.Subscribe<object>("VertexTool:DeselectAll", _ => DeselectAll());
+			yield return Oy.Subscribe("VertexTool:Triangulate", async _ =>
+			{
+				foreach (var solid in _vertices.Keys)
+				{
+					var polygons = new List<Polygon>();
+					var obj = solid.Copy;
+					bool removed = false;
+					foreach (var face in obj.Faces)
+					{
+
+						if (!removed)
+						{
+							if (face.Vertices.Count > 3)
+							{
+								var tris = new List<MutableFace>();
+								for(int i = 0; i < face.Vertices.Count-2; i++)
+								{
+									Vector3[] faceVerts = new Vector3[]
+{
+									face.Vertices[0].Position,
+									face.Vertices[i+1].Position,
+									face.Vertices[i+2].Position,
+};
+									var newFace = new MutableFace(faceVerts, face.Texture);
+									//obj.Faces.Add(newFace);
+									tris.Add(newFace);
+								}
+
+								var newFaces = new List<MutableFace>();
+								newFaces.Add(tris.First());
+								for(int i = 1; i<tris.Count;i++)
+								{
+									if (tris[i-1].Plane.Normal == tris[i].Plane.Normal)
+									{
+										var lastFace = newFaces.Last();
+										var union = lastFace.GetVertices().Union(tris[i].GetVertices());
+										newFaces.Remove(lastFace);
+										newFaces.Add(new MutableFace(union, tris.First().Texture));
+									}
+									else
+									{
+										newFaces.Add(tris[i]);
+									}
+								}
+
+								foreach(var newface in newFaces)
+								{
+									obj.Faces.Add(newface);
+								}
+
+
+
+								//Vector3[] faceA = new Vector3[]
+								//{
+								//	face.Vertices[0].Position,
+								//	face.Vertices[1].Position,
+								//	face.Vertices[2].Position,
+								//};								
+								//Vector3[] faceB = new Vector3[]
+								//{
+								//	face.Vertices[0].Position,
+								//	face.Vertices[2].Position,
+								//	face.Vertices[3].Position,
+								//};
+								//012
+								//023
+								//234
+								//345
+								//var newFaceA = new MutableFace(faceA, face.Texture);
+								//var newFaceB = new MutableFace(faceB, face.Texture);
+								
+								//obj.Faces.Add(newFaceA);
+								//obj.Faces.Add(newFaceB);
+								obj.Faces.Remove(face);
+							}
+						}
+						//removed = true;
+
+						UpdateSolids(new List<VertexSolid>() { solid });
+
+
+					}
+				}
+			});
+
 			yield return Oy.Subscribe<RightClickMenuBuilder>("MapViewport:RightClick", b =>
 			{
 				b.Clear();
@@ -98,6 +185,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
 				b.AddCommand("BspEditor:VertexSplitEdge");
 				b.AddCommand("BspEditor:VertexMerge");
 				b.AddCommand("BspEditor:VertexDeselectAll");
+				b.AddCommand("BspEditor:VertexTriangulate");
 				b.AddSeparator();
 			});
 		}
