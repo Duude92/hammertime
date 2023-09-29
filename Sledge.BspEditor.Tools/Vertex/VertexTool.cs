@@ -112,6 +112,8 @@ namespace Sledge.BspEditor.Tools.Vertex
 
         public override async Task ToolDeselected()
         {
+            var ct = CurrentSubTool;
+            await ct?.PreToolDeselect();
             var document = GetDocument();
             if (document != null)
             {
@@ -119,7 +121,6 @@ namespace Sledge.BspEditor.Tools.Vertex
                 await _selection.Clear(document);
             }
 
-            var ct = CurrentSubTool;
             if (ct != null) await ct.ToolDeselected();
             await base.ToolDeselected();
         }

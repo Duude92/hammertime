@@ -171,6 +171,11 @@ namespace Sledge.BspEditor.Tools
             return Task.CompletedTask;
         }
 
+        public virtual Task PreToolDeselect()
+        {
+            return Task.CompletedTask;
+        }
+
         public virtual Task ToolDeselected()
         {
             _subscriptions?.ForEach(x => x.Dispose());

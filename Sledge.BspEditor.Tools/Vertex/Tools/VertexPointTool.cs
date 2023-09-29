@@ -8,18 +8,13 @@ using System.Numerics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
-using Sledge.BspEditor.Commands.Clipboard;
 using Sledge.BspEditor.Documents;
-using Sledge.BspEditor.Primitives.MapData;
-using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Draggable;
 using Sledge.BspEditor.Tools.Vertex.Controls;
 using Sledge.BspEditor.Tools.Vertex.Selection;
 using Sledge.Common;
 using Sledge.Common.Logging;
-using Sledge.Common.Shell.Commands;
-using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Threading;
 using Sledge.Common.Translations;
 using Sledge.DataStructures.Geometric;
@@ -103,7 +98,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
 							if (face.Vertices.Count > 3)
 							{
 								var tris = new List<MutableFace>();
-								for(int i = 0; i < face.Vertices.Count-2; i++)
+								for (int i = 0; i < face.Vertices.Count - 2; i++)
 								{
 									Vector3[] faceVerts = new Vector3[]
 {
@@ -118,9 +113,9 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
 
 								var newFaces = new List<MutableFace>();
 								newFaces.Add(tris.First());
-								for(int i = 1; i<tris.Count;i++)
+								for (int i = 1; i < tris.Count; i++)
 								{
-									if (tris[i-1].Plane.Normal == tris[i].Plane.Normal)
+									if (tris[i - 1].Plane.Normal == tris[i].Plane.Normal)
 									{
 										var lastFace = newFaces.Last();
 										var union = lastFace.GetVertices().Union(tris[i].GetVertices());
@@ -133,7 +128,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
 									}
 								}
 
-								foreach(var newface in newFaces)
+								foreach (var newface in newFaces)
 								{
 									obj.Faces.Add(newface);
 								}
@@ -158,7 +153,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
 								//345
 								//var newFaceA = new MutableFace(faceA, face.Texture);
 								//var newFaceB = new MutableFace(faceB, face.Texture);
-								
+
 								//obj.Faces.Add(newFaceA);
 								//obj.Faces.Add(newFaceB);
 								obj.Faces.Remove(face);
@@ -310,6 +305,37 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
 			await base.ToolSelected();
 
 			_control.SetVisiblePoints(_showPoints);
+		}
+
+		public override Task PreToolDeselect()
+		{
+			List<VertexSolid> objects = new List<VertexSolid>(_vertices.Keys);
+			List<MutableFace> facesToRemove = new List<MutableFace>();
+			foreach (var solid in objects)
+			{
+				var currentSolid = solid.Copy;
+				var poly = new Polyhedron(currentSolid.Faces.Select(x => x.Plane));
+
+				foreach (var face in currentSolid.Faces)
+				{
+					var pg = poly.Polygons.FirstOrDefault(x => x.Plane.Normal.EquivalentTo(face.Plane.Normal, 0.0075f)); // Magic number that seems to match VHE
+					if (pg != null)
+					{
+						face.Vertices.Clear();
+
+						foreach (var vertx in pg.Vertices)
+							face.Vertices.Add(new MutableVertex(vertx));
+					}
+					else
+					{
+						facesToRemove.Add(face);
+					}
+				}
+				foreach (var face in facesToRemove)
+					currentSolid.Faces.Remove(face);
+				UpdateSolids(new List<VertexSolid> { solid });
+			}
+			return Task.CompletedTask;
 		}
 
 		public override async Task ToolDeselected()

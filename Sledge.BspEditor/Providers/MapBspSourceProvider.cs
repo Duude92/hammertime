@@ -206,8 +206,9 @@ namespace Sledge.BspEditor.Providers
 						if (pg == null)
 						{
 							result.InvalidObjects.Add(poly);
-							return null;
+							//return null;
 						}
+						if(pg!=null)
 						face.Vertices.AddRange(pg.Vertices);
 					}
 					ret.Data.AddRange(faces);
@@ -294,7 +295,7 @@ namespace Sledge.BspEditor.Providers
 				foreach(var entVal in ent.EntityData.Properties.ToList())
 				{
 					var propData = classData.Properties.FirstOrDefault(x => x.Name == entVal.Key);
-					if(propData.VariableType == VariableType.Choices && entVal.Value == "0")
+					if(propData != null && propData.VariableType == VariableType.Choices && entVal.Value == "0")
 					{
 						ent.EntityData.Properties.Remove(entVal.Key);
 						ent.EntityData.Properties.Add(entVal.Key, "");
