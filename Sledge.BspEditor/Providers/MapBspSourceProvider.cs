@@ -291,16 +291,18 @@ namespace Sledge.BspEditor.Providers
 			//Check if entity contain values of type 'Choices' and replace it values '0' with ''
 			if (!string.IsNullOrEmpty(ent.EntityData.Name))
 			{
-				var classData = _gameData.Classes.FirstOrDefault(x => x.Name == ent.EntityData.Name);
-				foreach(var entVal in ent.EntityData.Properties.ToList())
+				var classData = _gameData.Classes?.FirstOrDefault(x => x.Name == ent.EntityData.Name);
+				if (classData != null)
 				{
-					var propData = classData.Properties.FirstOrDefault(x => x.Name == entVal.Key);
-					if(propData != null && propData.VariableType == VariableType.Choices && entVal.Value == "0")
+					foreach (var entVal in ent.EntityData.Properties.ToList())
 					{
-						ent.EntityData.Properties.Remove(entVal.Key);
-						ent.EntityData.Properties.Add(entVal.Key, "");
+						var propData = classData.Properties.FirstOrDefault(x => x.Name == entVal.Key);
+						if (propData != null && propData.VariableType == VariableType.Choices && entVal.Value == "0")
+						{
+							ent.EntityData.Properties.Remove(entVal.Key);
+							ent.EntityData.Properties.Add(entVal.Key, "");
+						}
 					}
-
 				}
 			}
 			ent.DescendantsChanged();
