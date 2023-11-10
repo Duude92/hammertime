@@ -3,14 +3,18 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
+using System.Runtime;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using LogicAndTrick.Oy;
 using Sledge.BspEditor.Environment;
 using Sledge.BspEditor.Environment.Controls;
 using Sledge.BspEditor.Environment.Empty;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Providers;
 using Sledge.BspEditor.Providers.Processors;
+using Sledge.Common.Shell.Commands;
+using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Documents;
 using Sledge.Common.Translations;
 using Sledge.Common.Transport;
@@ -128,6 +132,17 @@ namespace Sledge.BspEditor.Documents
         public async Task<IDocument> Load(string location)
         {
             var env = await GetEnvironment();
+            var gameData = await env.GetGameData();
+            if (!gameData.Classes.Any())
+            {
+                //TODO: Open anyway without collection of classes
+                var result = MessageBox.Show("No FGD file specified\nOpen settings?", "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+                if (result == DialogResult.OK)
+				{
+					await Oy.Publish("Command:Run", new CommandMessage("Tools:Settings"));
+                }
+                return null;
+            }
             if (env == null) return null;
 
             NotSupportedException ex = null;
