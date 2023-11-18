@@ -176,7 +176,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
-    <BaseOutputPath>\\192.168.109.135\HammerTime\</BaseOutputPath>
+    <BaseOutputPath>bin\</BaseOutputPath>
   </PropertyGroup>
   <!--
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
