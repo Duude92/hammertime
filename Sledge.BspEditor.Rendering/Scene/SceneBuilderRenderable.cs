@@ -35,7 +35,7 @@ namespace Sledge.BspEditor.Rendering.Scene
             {
                 for (var i = 0; i < buffer.NumBuffers; i++)
                 {
-                    var groups = buffer.IndirectBufferGroups[i].Where(x => x.Pipeline == pipeline.Type && !x.HasTransparency).Where(x => x.Camera == CameraType.Both || x.Camera == viewport.Camera.Type).ToList();
+                    var groups = buffer.IndirectBufferGroups[i].Where(x => x.Pipeline == pipeline.Type ).Where(x => x.Camera == CameraType.Both || x.Camera == viewport.Camera.Type).ToList();
                     if (!groups.Any()) continue;
 
                     cl.SetVertexBuffer(0, buffer.VertexBuffers[i]);
@@ -49,6 +49,20 @@ namespace Sledge.BspEditor.Rendering.Scene
             }
         }
 
+
+        public void Render(RenderContext context, IPipeline pipeline, IViewport viewport, CommandList cl, ILocation locationObject)
+        {
+            var groupLocation = (GroupLocation) locationObject;
+
+            var buffer = groupLocation.Builder;
+            var i = groupLocation.Index;
+            var bg = groupLocation.Group;
+
+            cl.SetVertexBuffer(0, buffer.VertexBuffers[i]);
+            cl.SetIndexBuffer(buffer.IndexBuffers[i], IndexFormat.UInt32);
+            pipeline.Bind(context, cl, bg.Binding);
+            buffer.IndirectBuffers[i].DrawIndexed(cl, bg.Offset * IndSize, bg.Count, 20);
+        }
         public IEnumerable<ILocation> GetLocationObjects(IPipeline pipeline, IViewport viewport)
         {
             foreach (var buffer in _sceneBuilder.BufferBuilders)
@@ -63,20 +77,6 @@ namespace Sledge.BspEditor.Rendering.Scene
                     }
                 }
             }
-        }
-
-        public void Render(RenderContext context, IPipeline pipeline, IViewport viewport, CommandList cl, ILocation locationObject)
-        {
-            var groupLocation = (GroupLocation) locationObject;
-
-            var buffer = groupLocation.Builder;
-            var i = groupLocation.Index;
-            var bg = groupLocation.Group;
-
-            cl.SetVertexBuffer(0, buffer.VertexBuffers[i]);
-            cl.SetIndexBuffer(buffer.IndexBuffers[i], IndexFormat.UInt32);
-            pipeline.Bind(context, cl, bg.Binding);
-            buffer.IndirectBuffers[i].DrawIndexed(cl, bg.Offset * IndSize, bg.Count, 20);
         }
 
         public void Dispose()

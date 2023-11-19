@@ -11,6 +11,7 @@ using Sledge.Rendering.Pipelines;
 using Sledge.Rendering.Renderables;
 using Sledge.Rendering.Viewports;
 using Veldrid;
+using Vulkan;
 
 namespace Sledge.Rendering.Engine
 {
@@ -265,12 +266,12 @@ namespace Sledge.Rendering.Engine
 			var transparentPipelines = _pipelines[PipelineGroup.Transparent];
 
 			// Get the location objects and sort them by distance from the camera
-			var locationObjects =
-				from t in transparentPipelines
-				from renderable in Scene.GetRenderables(t, renderTarget)
-				from location in renderable.GetLocationObjects(t, renderTarget)
-				orderby (cameraLocation - location.Location).LengthSquared() descending
-				select new { Pipeline = t, Renderable = renderable, Location = location };
+			//var locationObjects =
+			//	from t in transparentPipelines
+			//	from renderable in Scene.GetRenderables(t, renderTarget)
+			//	from location in renderable.GetLocationObjects(t, renderTarget)
+			//	orderby (cameraLocation - location.Location).LengthSquared() descending
+			//	select new { Pipeline = t, Renderable = renderable, Location = location };
 
 
 			foreach (var opaque in _pipelines[PipelineGroup.Opaque])
@@ -284,9 +285,30 @@ namespace Sledge.Rendering.Engine
 			{
 				transparent.SetupFrame(Context, renderTarget);
 			}
-			foreach (var lo in locationObjects)
+			//foreach (var lo in locationObjects)
+			//{
+			//	lo.Pipeline.Render(Context, renderTarget, _commandList, lo.Renderable, lo.Location);
+			//}
+		
+			foreach (var transparent in transparentPipelines)
 			{
-				lo.Pipeline.Render(Context, renderTarget, _commandList, lo.Renderable, lo.Location);
+				transparent.Render(Context, renderTarget, _commandList, Scene.GetRenderables(transparent, renderTarget));
+
+
+
+
+				//_commandList?.SetPipeline(transparent as Pipeline);
+				////_commandList.SetGraphicsResourceSet(0, _projectionResourceSet);
+
+				//var renderables = Scene.GetRenderables(transparent, renderTarget);
+				//foreach (var renderable in renderables)
+				//{
+				//	foreach (var lo in renderable.GetLocationObjects(transparent, renderTarget))
+				//	{
+				//		//transparent.Render(Context, renderTarget, _commandList, renderable, lo);
+				//		renderable.Render(Context,transparent, renderTarget, _commandList,  lo);
+				//	}
+				//}
 			}
 
 
