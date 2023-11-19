@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Numerics;
@@ -61,7 +62,7 @@ namespace Sledge.BspEditor.Tools.Texture
             {
                 fs = new FaceSelection();
                 document.Map.Data.Add(fs);
-            }
+			}
             return fs;
         }
 
@@ -280,8 +281,10 @@ namespace Sledge.BspEditor.Tools.Texture
         {
             base.Render(document, builder, resourceCollector);
 
-            var sel = GetSelection(document).ToList();
-            if (!sel.Any()) return;
+            //TODO: Selection could be changed during render process
+
+            var sel = GetSelection(document);
+            if (sel.IsEmpty) return;
 
             var verts = new List<VertexStandard>();
             var indices = new List<int>();
