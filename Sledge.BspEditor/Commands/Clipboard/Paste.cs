@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Numerics;
@@ -76,11 +77,53 @@ namespace Sledge.BspEditor.Commands.Clipboard
 
 				var content = _clipboard.Value.GetPastedContent(_document, (d, o) => CopyAndMove(d, o, translation)).ToList();
 
+				var itemNames = _document.Map.Root
+								.Find(x => x is Entity)
+								.OfType<Entity>()
+								.Select(x => x.EntityData.Properties
+								.ToDictionary(entry => entry.Key.ToLower(), entry => entry.Value))
+								.Where(x => x.ContainsKey("targetname"))
+								.Select(x => x["targetname"])
+								.ToArray();
+
+				var entities = content.Select(x => x as Entity);
+				var newnames = new List<string>();
+
+				foreach (var entity in entities)
+				{
+					if (!String.IsNullOrEmpty(entity.EntityData.Properties["targetname"]))
+					{
+						var originalName = entity.EntityData.Properties["targetname"];
+						var itemNamesFiltered = itemNames.Where(name => name.Contains(originalName));
+						string newName = originalName;
+						int i = 1;
+						while (itemNamesFiltered.Contains(newName + $"_{i}"))
+						{
+							i++;
+						}
+						newName = newName + $"_{i}";
+						newnames.Add(newName);
+						entity.EntityData.Properties["targetname"] = newName;
+					}
+				}
+				foreach (var entity in entities)
+				{
+					if (entity.EntityData.Properties.ContainsKey("target") && !String.IsNullOrEmpty(entity.EntityData.Properties["target"]))
+					{
+
+						var originalValue = entity.EntityData.Properties["target"];
+						var newvalue = newnames.FirstOrDefault(x => x.Contains(originalValue));
+						//We dont want to change target if there was no target copied
+						if (!String.IsNullOrEmpty(newvalue))
+							entity.EntityData.Properties["target"] = newvalue;
+					}
+				}
+
 				var transaction = new Transaction(
-					new Deselect(_document.Selection),
-					new Attach(_document.Map.Root.ID, content),
-					new Select(content)
-				);
+				new Deselect(_document.Selection),
+				new Attach(_document.Map.Root.ID, content),
+				new Select(content)
+			);
 
 				await MapDocumentOperation.Perform(_document, transaction);
 			}
