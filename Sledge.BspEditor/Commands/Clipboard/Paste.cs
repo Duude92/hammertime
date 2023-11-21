@@ -86,7 +86,7 @@ namespace Sledge.BspEditor.Commands.Clipboard
 								.Select(x => x["targetname"])
 								.ToArray();
 
-				var entities = content.Select(x => x as Entity).Where(x=>x!=null);
+				var entities = content.Select(x => x as Entity).Where(x => x != null);
 				var newnames = new List<string>();
 
 				foreach (var entity in entities)
@@ -94,7 +94,7 @@ namespace Sledge.BspEditor.Commands.Clipboard
 					if (!String.IsNullOrEmpty(entity.EntityData.Properties["targetname"]))
 					{
 						var originalName = entity.EntityData.Properties["targetname"];
-						var itemNamesFiltered = itemNames.Where(name => name.Contains(originalName));
+						var itemNamesFiltered = itemNames.Where(name => !String.IsNullOrEmpty(name) && name.Contains(originalName));
 						string newName = originalName;
 						int i = 1;
 						while (itemNamesFiltered.Contains(newName + $"_{i}"))
