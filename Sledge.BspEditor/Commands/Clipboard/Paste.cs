@@ -91,7 +91,7 @@ namespace Sledge.BspEditor.Commands.Clipboard
 
 				foreach (var entity in entities)
 				{
-					if (!String.IsNullOrEmpty(entity.EntityData.Properties["targetname"]))
+					if (entity.EntityData.Properties.ContainsKey("targetname") && !String.IsNullOrEmpty(entity.EntityData.Properties["targetname"]))
 					{
 						var originalName = entity.EntityData.Properties["targetname"];
 						var itemNamesFiltered = itemNames.Where(name => !String.IsNullOrEmpty(name) && name.Contains(originalName));
