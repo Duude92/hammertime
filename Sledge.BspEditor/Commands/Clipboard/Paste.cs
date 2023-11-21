@@ -77,6 +77,20 @@ namespace Sledge.BspEditor.Commands.Clipboard
 
 				var content = _clipboard.Value.GetPastedContent(_document, (d, o) => CopyAndMove(d, o, translation)).ToList();
 
+				var newcontent = new List<IMapObject>();
+
+				foreach ( var d in content )
+				{
+					if (d is Group group)
+					{
+						newcontent.AddRange(group.Hierarchy.ToList());
+					}
+					else
+					{
+						newcontent.Add(d);
+					}
+				}
+
 				var itemNames = _document.Map.Root
 								.Find(x => x is Entity)
 								.OfType<Entity>()
@@ -86,7 +100,7 @@ namespace Sledge.BspEditor.Commands.Clipboard
 								.Select(x => x["targetname"])
 								.ToArray();
 
-				var entities = content.Select(x => x as Entity).Where(x => x != null);
+				var entities = newcontent.Select(x => x as Entity).Where(x => x != null);
 				var newnames = new List<string>();
 
 				foreach (var entity in entities)
