@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using System.Web.UI.WebControls;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Components;
 using Sledge.BspEditor.Documents;
@@ -53,6 +55,24 @@ namespace Sledge.BspEditor.Commands.Clipboard
 			else
 				await Oy.Publish("BspEditor:Viewport:Paste");
 		}
+
+		private ICollection<IMapObject> RetriveNonGroupedObjectsRecursively(IEnumerable<IMapObject> objects)
+		{
+			var newObjects = new List<IMapObject>();
+
+			foreach (var d in objects)
+			{
+				if (d is Group group)
+				{
+					newObjects.AddRange(RetriveNonGroupedObjectsRecursively(group.Hierarchy));
+				}
+				else
+				{
+					newObjects.Add(d);
+				}
+			}
+			return newObjects;
+		}
 		private async Task PasteClipboard(string arg)
 		{
 			if (_clipboard.Value.CanPaste())
@@ -77,19 +97,7 @@ namespace Sledge.BspEditor.Commands.Clipboard
 
 				var content = _clipboard.Value.GetPastedContent(_document, (d, o) => CopyAndMove(d, o, translation)).ToList();
 
-				var newcontent = new List<IMapObject>();
-
-				foreach ( var d in content )
-				{
-					if (d is Group group)
-					{
-						newcontent.AddRange(group.Hierarchy.ToList());
-					}
-					else
-					{
-						newcontent.Add(d);
-					}
-				}
+				var newcontent = RetriveNonGroupedObjectsRecursively(content);
 
 				var itemNames = _document.Map.Root
 								.Find(x => x is Entity)
