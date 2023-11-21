@@ -86,7 +86,7 @@ namespace Sledge.BspEditor.Commands.Clipboard
 								.Select(x => x["targetname"])
 								.ToArray();
 
-				var entities = content.Select(x => x as Entity);
+				var entities = content.Select(x => x as Entity).Where(x=>x!=null);
 				var newnames = new List<string>();
 
 				foreach (var entity in entities)
