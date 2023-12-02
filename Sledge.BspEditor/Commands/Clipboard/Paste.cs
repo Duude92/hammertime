@@ -146,7 +146,7 @@ namespace Sledge.BspEditor.Commands.Clipboard
 				new Deselect(_document.Selection),
 				new Attach(_document.Map.Root.ID, content),
 				new Transform(translation, content),
-				new TransformTexturesUniform(translation, content),
+				new TransformTexturesUniform(translation, content.SelectMany(x=>x.FindAll())),
 				new Select(content)
 			);
 
