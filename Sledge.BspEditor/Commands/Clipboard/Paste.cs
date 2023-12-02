@@ -11,6 +11,7 @@ using LogicAndTrick.Oy;
 using Sledge.BspEditor.Components;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
+using Sledge.BspEditor.Modification.Operations.Mutation;
 using Sledge.BspEditor.Modification.Operations.Selection;
 using Sledge.BspEditor.Modification.Operations.Tree;
 using Sledge.BspEditor.Primitives.MapData;
@@ -95,7 +96,7 @@ namespace Sledge.BspEditor.Commands.Clipboard
 				var translation = Matrix4x4.CreateTranslation(_random.Next(-4, 5) * step.X * (moveLock == "X" ? 0 : 1), _random.Next(-4, 5) * step.Y * (moveLock == "Y" ? 0 : 1), 0);
 				//without random moving
 
-				var content = _clipboard.Value.GetPastedContent(_document, (d, o) => CopyAndMove(d, o, translation)).ToList();
+				var content = _clipboard.Value.GetPastedContent(_document, (d, o) => Copy(d, o)).ToList();
 
 				var newcontent = RetriveNonGroupedObjectsRecursively(content);
 
@@ -144,10 +145,14 @@ namespace Sledge.BspEditor.Commands.Clipboard
 				var transaction = new Transaction(
 				new Deselect(_document.Selection),
 				new Attach(_document.Map.Root.ID, content),
+				new Transform(translation, content),
+				new TransformTexturesUniform(translation, content),
 				new Select(content)
 			);
 
 				await MapDocumentOperation.Perform(_document, transaction);
+
+
 			}
 		}
 		private IMapObject Copy(MapDocument document, IMapObject o)
@@ -159,13 +164,15 @@ namespace Sledge.BspEditor.Commands.Clipboard
 		private IMapObject CopyAndMove(MapDocument document, IMapObject o, Vector3 step)
 		{
 			var copy = Copy(document, o);
-			copy.Transform(Matrix4x4.CreateTranslation(_random.Next(-4, 5) * step.X, _random.Next(-4, 5) * step.Y, _random.Next(-4, 5) * step.Z));
+			//copy.Transform(Matrix4x4.CreateTranslation(_random.Next(-4, 5) * step.X, _random.Next(-4, 5) * step.Y, _random.Next(-4, 5) * step.Z));
+
 			return copy;
 		}
 		private IMapObject CopyAndMove(MapDocument document, IMapObject o, Matrix4x4 translation)
 		{
 			var copy = Copy(document, o);
-			copy.Transform(translation);
+			//copy.Transform(translation);
+
 			return copy;
 		}
 	}
