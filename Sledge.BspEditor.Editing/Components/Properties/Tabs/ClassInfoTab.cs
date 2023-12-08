@@ -608,8 +608,8 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 				}
 
 				var keys = OriginalClasses.SelectMany(x => x.Properties)
-					.Select(x => (x.Name ?? "").ToLower())
-					.Union(datas.SelectMany(x => x.Properties.Keys).Select(x => x.ToLower()))
+					.Select(x => (x.Name ?? ""))
+					.Union(datas.SelectMany(x => x.Properties.Keys))
 					.ToList();
 				foreach (var key in keys)
 				{
