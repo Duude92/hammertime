@@ -208,8 +208,8 @@ namespace Sledge.BspEditor.Providers
 							result.InvalidObjects.Add(poly);
 							//return null;
 						}
-						if(pg!=null)
-						face.Vertices.AddRange(pg.Vertices);
+						if (pg != null)
+							face.Vertices.AddRange(pg.Vertices);
 					}
 					ret.Data.AddRange(faces);
 					ret.DescendantsChanged();
@@ -367,7 +367,9 @@ namespace Sledge.BspEditor.Providers
 		private void WriteFace(StreamWriter sw, Face face)
 		{
 			// ( -128 64 64 ) ( -64 64 64 ) ( -64 0 64 ) AAATRIGGER [ 1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
-			var strings = face.Vertices.Take(3).Select(x => "( " + FormatVector3(x) + " )").ToList();
+			var vertices = face.Vertices.Take(3);
+			if (vertices.Count() < 3) throw new Exception("Invalid face: " + face.ID);
+			var strings = vertices.Select(x => "( " + FormatVector3(x) + " )").ToList();
 			strings.Add(String.IsNullOrWhiteSpace(face.Texture.Name) ? "AAATRIGGER" : face.Texture.Name);
 			strings.Add("[");
 			strings.Add(FormatVector3(face.Texture.UAxis));
