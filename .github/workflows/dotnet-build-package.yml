@@ -24,6 +24,8 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build -c Release -p:Platform=x86 --output ./bin/
+    - name: copy prefabs
+      run: cp "./Resources/prefabs" "./bin"
     - name: Create Zip File
       uses: vimtor/action-zip@v1.1
       with:
