@@ -20,8 +20,8 @@ namespace HammerTime.Formats
 				XScale = face.XScale,
 				YScale = face.YScale,
 				XShift = face.YShift,
-				YShift = face.XShift,
-				Rotation = face.Rotation,
+				YShift = face.Rotation,
+				Rotation = face.XShift,
 				}
 			};
 			newFace.Plane = new Sledge.DataStructures.Geometric.Plane(face.Plane.Normal, face.Plane.D);
