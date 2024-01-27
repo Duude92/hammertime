@@ -1,0 +1,35 @@
+﻿using SledgeRegular = Sledge.BspEditor.Primitives.MapObjects;
+using SledgeFormats = Sledge.Formats.Map.Objects;
+using SledgeFace = Sledge.BspEditor.Primitives.MapObjectData.Face;
+using Sledge.BspEditor.Primitives;
+using System.Linq;
+using System.Numerics;
+
+
+namespace HammerTime.Formats
+{
+	internal class Face
+	{
+		public static SledgeFace FromFmt(SledgeFormats.Face face, UniqueNumberGenerator ung)
+		{
+			var newFace = new SledgeFace(ung.Next("Face"))
+			{
+				Texture = { Name = face.TextureName,
+				UAxis = face.UAxis,
+				VAxis = face.VAxis,
+				XScale = face.XScale,
+				YScale = face.YScale,
+				XShift = face.YShift,
+				YShift = face.XShift,
+				Rotation = face.Rotation,
+				}
+			};
+			newFace.Plane = new Sledge.DataStructures.Geometric.Plane(face.Plane.Normal, face.Plane.D);
+
+			newFace.Vertices.AddRange(face.Vertices.ToArray().Reverse());
+
+			return newFace;
+		}
+
+	}
+}

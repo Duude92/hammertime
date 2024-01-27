@@ -40,6 +40,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sledge.BspEditor.Tools", "S
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sledge.BspEditor.Editing", "Sledge.BspEditor.Editing\Sledge.BspEditor.Editing.csproj", "{D33E1027-1956-44C4-B920-85281F703704}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HammerTime.Formats", "HammerTime.Formats.Copy\HammerTime.Formats.csproj", "{AD870464-7A1B-4783-AAC5-1DB8ADD215CC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug (Extra)|Any CPU = Debug (Extra)|Any CPU
@@ -287,6 +289,24 @@ Global
 		{D33E1027-1956-44C4-B920-85281F703704}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{D33E1027-1956-44C4-B920-85281F703704}.Release|x86.ActiveCfg = Release|x86
 		{D33E1027-1956-44C4-B920-85281F703704}.Release|x86.Build.0 = Release|x86
+		{AD870464-7A1B-4783-AAC5-1DB8ADD215CC}.Debug (Extra)|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD870464-7A1B-4783-AAC5-1DB8ADD215CC}.Debug (Extra)|Any CPU.Build.0 = Debug|Any CPU
+		{AD870464-7A1B-4783-AAC5-1DB8ADD215CC}.Debug (Extra)|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{AD870464-7A1B-4783-AAC5-1DB8ADD215CC}.Debug (Extra)|Mixed Platforms.Build.0 = Debug|Any CPU
+		{AD870464-7A1B-4783-AAC5-1DB8ADD215CC}.Debug (Extra)|x86.ActiveCfg = Debug|Any CPU
+		{AD870464-7A1B-4783-AAC5-1DB8ADD215CC}.Debug (Extra)|x86.Build.0 = Debug|Any CPU
+		{AD870464-7A1B-4783-AAC5-1DB8ADD215CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD870464-7A1B-4783-AAC5-1DB8ADD215CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD870464-7A1B-4783-AAC5-1DB8ADD215CC}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{AD870464-7A1B-4783-AAC5-1DB8ADD215CC}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{AD870464-7A1B-4783-AAC5-1DB8ADD215CC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{AD870464-7A1B-4783-AAC5-1DB8ADD215CC}.Debug|x86.Build.0 = Debug|Any CPU
+		{AD870464-7A1B-4783-AAC5-1DB8ADD215CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD870464-7A1B-4783-AAC5-1DB8ADD215CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD870464-7A1B-4783-AAC5-1DB8ADD215CC}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{AD870464-7A1B-4783-AAC5-1DB8ADD215CC}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{AD870464-7A1B-4783-AAC5-1DB8ADD215CC}.Release|x86.ActiveCfg = Release|Any CPU
+		{AD870464-7A1B-4783-AAC5-1DB8ADD215CC}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
