@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
@@ -58,10 +59,10 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
 
 		public override void EndDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
 		{
-			if (document.Selection.First() is Sledge.BspEditor.Primitives.MapObjects.Entity entity && entity.EntityData.Properties.ContainsKey("angles"))
+			if (document.Selection.First() is Sledge.BspEditor.Primitives.MapObjects.Entity entity && entity.EntityData.Properties.TryGetValue("angles", out var angleString))
 			{
-				var initialAngles = entity.EntityData.Properties["angles"].Split(' ');
-				var initial = new Vector3(float.Parse(initialAngles[0]), float.Parse(initialAngles[1]), float.Parse(initialAngles[2]));
+				var initialAngles = angleString.Split(' ');
+				var initial = NumericsExtensions.Parse(initialAngles[0], initialAngles[1], initialAngles[2], System.Globalization.NumberStyles.Float, CultureInfo.InvariantCulture);
 
 				var origin = camera.ZeroUnusedCoordinate((_rotateStart.Value + _rotateEnd.Value) / 2);
 				if (_origin != null) origin = _origin.Position;
@@ -124,6 +125,14 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
 			}
 			_rotateStart = _rotateEnd = null;
 			base.EndDrag(document, viewport, camera, e, position);
+		}
+		private Vector3 ExtractEulerAngles(Matrix4x4 matrix)
+		{
+			float yaw = (float)Math.Atan2(matrix.M13, matrix.M33);
+			float pitch = (float)Math.Asin(-matrix.M23);
+			float roll = (float)Math.Atan2(matrix.M21, matrix.M22);
+
+			return new Vector3(pitch, yaw, roll);
 		}
 		private string GetRotationString(OrthographicCamera camera, float rotation, Vector3 initialRotation)
 		{
