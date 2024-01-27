@@ -3,6 +3,9 @@ using SledgeFormats = Sledge.Formats.Map.Objects;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using System.Collections.Generic;
+using System.Numerics;
+using Sledge.DataStructures.Geometric;
+using System.Globalization;
 
 
 namespace HammerTime.Formats
@@ -11,20 +14,26 @@ namespace HammerTime.Formats
 	{
 		public static SledgeRegular.Entity FromFmt(SledgeFormats.Entity Entity, UniqueNumberGenerator uniqueNumberGenerator)
 		{
+			var properties = new Dictionary<string, string>(Entity.Properties);
+			properties.Remove("origin");
 			var entity = new SledgeRegular.Entity(uniqueNumberGenerator.Next("MapObject"))
 			{
 				Data =
 				{
 					new EntityData
 					{
-						Properties = new Dictionary<string, string>( Entity.Properties),
+						Properties = properties,
 						Name = Entity.ClassName,
 						Flags = Entity.SpawnFlags,
 					},
 					new ObjectColor(Entity.Color)
 				}
 			};
-
+			if (Entity.Properties.TryGetValue("origin", out var origin))
+			{
+				string[] originValues = origin.Split(' ');
+				entity.Origin = NumericsExtensions.Parse(originValues[0], originValues[1], originValues[2], NumberStyles.Float, CultureInfo.InvariantCulture);
+			}
 
 			foreach (var children in Entity.Children)
 			{
