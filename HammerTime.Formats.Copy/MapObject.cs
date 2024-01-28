@@ -13,7 +13,7 @@ namespace HammerTime.Formats
 {
 	internal class MapObject
 	{
-		public static IMapObject GetMapObject(SledgeFormats.MapObject MapObject, UniqueNumberGenerator ung, IEnumerable<Sledge.BspEditor.Primitives.MapData.Visgroup> visgroups)
+		public static IMapObject GetMapObject(SledgeFormats.MapObject MapObject, UniqueNumberGenerator ung)
 		{
 			IMapObject result = null;
 			if (MapObject is SledgeFormats.Solid)
