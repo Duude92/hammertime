@@ -13,21 +13,34 @@ namespace HammerTime.Formats
 {
 	internal class MapObject
 	{
-		public static IMapObject GetMapObject(SledgeFormats.MapObject MapObject, UniqueNumberGenerator ung)
+		public static IMapObject GetMapObject(SledgeFormats.MapObject MapObject, UniqueNumberGenerator ung, IEnumerable<Sledge.BspEditor.Primitives.MapData.Visgroup> visgroups)
 		{
-			if(MapObject is SledgeFormats.Solid)
+			IMapObject result = null;
+			if (MapObject is SledgeFormats.Solid)
 			{
-				return Solid.FromFmt(MapObject as SledgeFormats.Solid, ung);
+				result = Solid.FromFmt(MapObject as SledgeFormats.Solid, ung);
 			}
-			else if(MapObject is SledgeFormats.Group)
+			else if (MapObject is SledgeFormats.Group)
 			{
-				return Group.FromFmt(MapObject as SledgeFormats.Group, ung);
+				result = Group.FromFmt(MapObject as SledgeFormats.Group, ung);
 			}
-			else if(MapObject is SledgeFormats.Entity)
+			else if (MapObject is SledgeFormats.Entity)
 			{
-				return Entity.FromFmt(MapObject as SledgeFormats.Entity, ung);
+				result = Entity.FromFmt(MapObject as SledgeFormats.Entity, ung);
 			}
-			throw new Exception($"Prefab type is: {MapObject.GetType()}");
+			else
+			{
+				throw new Exception($"Prefab type is: {MapObject.GetType()}");
+			}
+			foreach (var vg in MapObject.Visgroups) 
+			{
+				var vis = visgroups.FirstOrDefault(x => x.ID == vg);
+				if (vis != null)
+				{
+					vis.Objects.Add(result);
+				}
+			}
+			return result;
 		}
 	}
 }

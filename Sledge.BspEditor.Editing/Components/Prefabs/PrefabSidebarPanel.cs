@@ -107,8 +107,8 @@ namespace Sledge.BspEditor.Editing.Components.Prefabs
 		{
 			_activeDocument.TryGetTarget(out var mapDocument);
 			var ung = mapDocument.Map.NumberGenerator;
-
-			var contents = HammerTime.Formats.Prefab.GetPrefab(_activeWorldcraftPrefabLibrary.Prefabs[PrefabList.SelectedIndex].Map, ung);
+			
+			var contents = HammerTime.Formats.Prefab.GetPrefab(_activeWorldcraftPrefabLibrary.Prefabs[PrefabList.SelectedIndex].Map, ung, mapDocument.Map);
 
 			var transaction = new Transaction();
 			transaction.Add(new Attach(mapDocument.Map.Root.ID, contents));
