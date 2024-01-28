@@ -23,7 +23,7 @@ namespace HammerTime.Formats
 
 			foreach (var item in mapFile.Worldspawn.Children)
             {
-                content.Add(MapObject.GetMapObject(item, ung));
+                content.Add(MapObject.GetMapObject(item, ung, visgroups));
             }
 			map.Data.AddRange(visgroups);
             return content;

@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Sledge.Formats" Version="1.2.2" />
+    <PackageReference Include="Sledge.Formats" Version="1.2.3" />
     <PackageReference Include="Sledge.Formats.Map" Version="1.1.5" />
   </ItemGroup>
 
