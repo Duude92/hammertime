@@ -34,7 +34,7 @@ namespace HammerTime.Formats
 			}
 			foreach (var vg in MapObject.Visgroups) 
 			{
-				var vis = visgroups.FirstOrDefault(x => x.ID == vg);
+				var vis = Prefab.Visgroups.FirstOrDefault(x => x.ID == vg);
 				if (vis != null)
 				{
 					vis.Objects.Add(result);
