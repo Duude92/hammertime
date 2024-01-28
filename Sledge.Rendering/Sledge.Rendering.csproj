@@ -203,6 +203,8 @@
     <PackageReference Include="ImGui.NET">
       <Version>1.65.0-beta3</Version>
     </PackageReference>
+    <PackageReference Include="SharpDX" Version="4.2.0" />
+    <PackageReference Include="SharpDX.Direct3D11" Version="4.2.0" />
     <PackageReference Include="System.Diagnostics.DiagnosticSource">
       <Version>4.5.0</Version>
     </PackageReference>
@@ -211,7 +213,7 @@
     </PackageReference>
     <PackageReference Include="System.Resources.Extensions" Version="7.0.0" />
     <PackageReference Include="Veldrid">
-      <Version>4.4.0</Version>
+      <Version>4.9.0</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

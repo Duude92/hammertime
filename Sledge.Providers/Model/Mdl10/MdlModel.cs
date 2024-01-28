@@ -97,7 +97,7 @@ namespace Sledge.Providers.Model.Mdl10
 
 			var width = textures.Max(x => x.Width);
 			//var height = textures.Sum(x => x.Height);
-			var maxTextureHeight = textures.Max(x => x.Width);
+			var maxTextureHeight = textures.Max(x => x.Height);
 			var height = maxTextureHeight * textures.Count;
 
 			var rectangles = new List<Rectangle>();
