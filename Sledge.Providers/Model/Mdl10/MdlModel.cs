@@ -14,6 +14,8 @@ using Sledge.Rendering.Primitives;
 using Sledge.Rendering.Resources;
 using Sledge.Rendering.Viewports;
 using Veldrid;
+using Vortice.Direct3D11;
+using Vortice.DXGI;
 using Buffer = Sledge.Rendering.Resources.Buffer;
 using PixelFormat = System.Drawing.Imaging.PixelFormat;
 
@@ -21,6 +23,7 @@ namespace Sledge.Providers.Model.Mdl10
 {
 	public class MdlModel : IModel
 	{
+		private const int TEXTURE_MARGIN = 2;
 		public MdlFile Model { get; }
 
 		private readonly Guid _guid;
@@ -97,24 +100,33 @@ namespace Sledge.Providers.Model.Mdl10
 
 			var width = textures.Max(x => x.Width);
 			//var height = textures.Sum(x => x.Height);
-			var maxTextureHeight = textures.Max(x => x.Height);
-			var height = maxTextureHeight * textures.Count;
+			var textureHeight = textures.Aggregate(0, (acc, x) => acc + x.Height + TEXTURE_MARGIN);
 
 			var rectangles = new List<Rectangle>();
 			_originalRectangles = new List<Rectangle>(textures.Count);
 
-			var bmp = new Bitmap(width, height, PixelFormat.Format32bppArgb);
+
+			var maxTextureSize = SharpDX.Direct3D11.Texture2D.MaximumTexture2DSize;
+
+			if(textureHeight>maxTextureSize)
+			{
+				throw new Exception($"Texture size of {textureHeight} is higher than D3D11 feature size {maxTextureSize}");
+			}
+
+
+
+			var bmp = new Bitmap(width, textureHeight, PixelFormat.Format32bppArgb);
 			using (var g = Graphics.FromImage(bmp))
 			{
 				var y = 0;
 				foreach (var texture in textures)
 				{
 					_originalRectangles.Add(new Rectangle(0, 0, texture.Width, texture.Height));
-					rectangles.Add(new Rectangle(0, y, width, maxTextureHeight));
+					rectangles.Add(new Rectangle(0, y, texture.Width, texture.Height));
 					//g.DrawImageUnscaled(texture, 0, y);
-					g.DrawImage(texture, new Rectangle(0, y, width, maxTextureHeight));
+					g.DrawImage(texture, new Rectangle(0, y, texture.Width, texture.Height));
 
-					y += maxTextureHeight;
+					y += texture.Height + TEXTURE_MARGIN;
 				}
 			}
 
