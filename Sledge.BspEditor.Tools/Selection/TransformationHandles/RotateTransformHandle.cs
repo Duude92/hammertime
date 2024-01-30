@@ -71,55 +71,73 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
 
 				var origv = Vector3.Normalize(_rotateStart.Value - forigin);
 				var newv = Vector3.Normalize(_rotateEnd.Value - forigin);
-				var dot = origv.Dot(newv);
 
-				var angle = Math.Acos(Math.Max(-1, Math.Min(1, dot)));
-				if ((origv.Cross(newv).Z < 0)) angle *= -1;
+				if (false) //ignore that
+				{
+					var dot = origv.Dot(newv);
 
-				//angle *= dot > 0 ? 1 : -1;
+					var angle = Math.Acos(Math.Max(-1, Math.Min(1, dot)));
+					if ((origv.Cross(newv).Z < 0)) angle *= -1;
 
-				var roundingDegrees = 15f;
-				if (KeyboardState.Alt) roundingDegrees = 1;
+					//angle *= dot > 0 ? 1 : -1;
 
-				var deg = angle * (180 / Math.PI);
-				float rnd = (float)(Math.Round(deg / roundingDegrees) * roundingDegrees);
+					var roundingDegrees = 15f;
+					if (KeyboardState.Alt) roundingDegrees = 1;
 
-				var anglerad = (float)angle;
+					var deg = angle * (180 / Math.PI);
+					float rnd = (float)(Math.Round(deg / roundingDegrees) * roundingDegrees);
 
-				Vector3 axis = new Vector3(
-					camera.ViewType == OrthographicCamera.OrthographicType.Side ? 1 : 0,
-					camera.ViewType == OrthographicCamera.OrthographicType.Top ? 1 : 0,
-					camera.ViewType == OrthographicCamera.OrthographicType.Front ? 1 : 0);
+					var anglerad = (float)angle;
+
+					Vector3 axis = new Vector3(
+						camera.ViewType == OrthographicCamera.OrthographicType.Side ? 1 : 0,
+						camera.ViewType == OrthographicCamera.OrthographicType.Top ? 1 : 0,
+						camera.ViewType == OrthographicCamera.OrthographicType.Front ? 1 : 0);
+
+
+					var mt = Matrix4x4.CreateFromAxisAngle(axis, anglerad);
+
+					// Apply the new rotation relative to the current local rotation
+					//var newLocalRotationMatrix = mtr * mt;
+				}
 
 				Vector3 previousLocalRotationRadians = new Vector3(
 					MathHelper.DegreesToRadians(initial.X),
 					MathHelper.DegreesToRadians(initial.Y),
 					MathHelper.DegreesToRadians(initial.Z));
-
-				var mt = Matrix4x4.CreateFromAxisAngle(axis, anglerad);
-				var mtr = Matrix4x4.CreateFromYawPitchRoll(previousLocalRotationRadians.Y, previousLocalRotationRadians.X, previousLocalRotationRadians.Z);
-
-				// Apply the new rotation relative to the current local rotation
-				var newLocalRotationMatrix = mtr * mt;
-
-				Vector3 newLocalRotationDegrees = new Vector3(
-					MathHelper.RadiansToDegrees((float)Math.Asin(newLocalRotationMatrix.M23)),
-					MathHelper.RadiansToDegrees((float)Math.Atan2(-newLocalRotationMatrix.M13, newLocalRotationMatrix.M33)),
-					MathHelper.RadiansToDegrees((float)Math.Atan2(-newLocalRotationMatrix.M21, newLocalRotationMatrix.M22))
-				);
-
+				var mtr = Matrix4x4.CreateFromYawPitchRoll(previousLocalRotationRadians.X, previousLocalRotationRadians.Z, previousLocalRotationRadians.Y);
 				// Now, newLocalRotationDegrees contains the updated local rotation in degrees
 
+				var transformMatrix = GetTransformationMatrix(viewport, camera, new BoxState()
+				{
+					Action = BoxAction.Drawn,
+					Start = _rotateStart.Value,
+					End = _rotateEnd.Value,
+					Viewport = viewport,
+					OrigStart = origv,
+					OrigEnd = newv
+				}, document);
 
+				mtr *= transformMatrix.Value;
+
+				//Vector3 newLocalRotationDegrees = new Vector3(
+				//	MathHelper.RadiansToDegrees((float)Math.Asin(mtr.M23)),
+				//	MathHelper.RadiansToDegrees((float)Math.Atan2(-mtr.M13, mtr.M33)),
+				//	MathHelper.RadiansToDegrees((float)Math.Atan2(-mtr.M21, mtr.M22))
+				//);
+
+
+				var newLocalRotationDegrees = ExtractEulerAngles(mtr);
 
 
 
 
 
 				var op = new EditEntityDataProperties(entity.ID, new Dictionary<string, string>() {
-					{"angles", $"{Math.Round( -newLocalRotationDegrees.X)} {Math.Round(newLocalRotationDegrees.Y)} {Math.Round(newLocalRotationDegrees.Z)}" }
+					{"angles", $"{Math.Round( -MathHelper.RadiansToDegrees( newLocalRotationDegrees.Y))} {Math.Round( MathHelper.RadiansToDegrees( -newLocalRotationDegrees.Z))} {Math.Round(MathHelper.RadiansToDegrees(newLocalRotationDegrees.X))}" }
 
 				});
+
 				var tsn = new Transaction(op);
 				((Action)(async () => await MapDocumentOperation.Perform(document, tsn)))();
 			}
