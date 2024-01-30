@@ -59,86 +59,94 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
 
 		public override void EndDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
 		{
-			if (document.Selection.Any() && document.Selection.First() is Sledge.BspEditor.Primitives.MapObjects.Entity entity && entity.EntityData.Properties.TryGetValue("angles", out var angleString))
+			var selection = document.Selection.Where(x => x is Sledge.BspEditor.Primitives.MapObjects.Entity).OfType<Primitives.MapObjects.Entity>();
+			//if (document.Selection.Any() && document.Selection.First() is Sledge.BspEditor.Primitives.MapObjects.Entity entity && entity.EntityData.Properties.TryGetValue("angles", out var angleString))
 			{
-				var initialAngles = angleString.Split(' ');
-				var initial = NumericsExtensions.Parse(initialAngles[0], initialAngles[1], initialAngles[2], System.Globalization.NumberStyles.Float, CultureInfo.InvariantCulture);
+				var tsn = new Transaction();
 
-				var origin = camera.ZeroUnusedCoordinate((_rotateStart.Value + _rotateEnd.Value) / 2);
-				if (_origin != null) origin = _origin.Position;
-
-				var forigin = camera.Flatten(origin);
-
-				var origv = Vector3.Normalize(_rotateStart.Value - forigin);
-				var newv = Vector3.Normalize(_rotateEnd.Value - forigin);
-
-				if (false) //ignore that
+				foreach (var entity in selection)
 				{
-					var dot = origv.Dot(newv);
+					if (entity.EntityData.Properties.TryGetValue("angles", out var angleString))
+					{
 
-					var angle = Math.Acos(Math.Max(-1, Math.Min(1, dot)));
-					if ((origv.Cross(newv).Z < 0)) angle *= -1;
+						var initialAngles = angleString.Split(' ');
+						var initial = NumericsExtensions.Parse(initialAngles[0], initialAngles[1], initialAngles[2], System.Globalization.NumberStyles.Float, CultureInfo.InvariantCulture);
 
-					//angle *= dot > 0 ? 1 : -1;
+						var origin = camera.ZeroUnusedCoordinate((_rotateStart.Value + _rotateEnd.Value) / 2);
+						if (_origin != null) origin = _origin.Position;
 
-					var roundingDegrees = 15f;
-					if (KeyboardState.Alt) roundingDegrees = 1;
+						var forigin = camera.Flatten(origin);
 
-					var deg = angle * (180 / Math.PI);
-					float rnd = (float)(Math.Round(deg / roundingDegrees) * roundingDegrees);
+						var origv = Vector3.Normalize(_rotateStart.Value - forigin);
+						var newv = Vector3.Normalize(_rotateEnd.Value - forigin);
 
-					var anglerad = (float)angle;
+						if (false) //ignore that
+						{
+							var dot = origv.Dot(newv);
 
-					Vector3 axis = new Vector3(
-						camera.ViewType == OrthographicCamera.OrthographicType.Side ? 1 : 0,
-						camera.ViewType == OrthographicCamera.OrthographicType.Top ? 1 : 0,
-						camera.ViewType == OrthographicCamera.OrthographicType.Front ? 1 : 0);
+							var angle = Math.Acos(Math.Max(-1, Math.Min(1, dot)));
+							if ((origv.Cross(newv).Z < 0)) angle *= -1;
+
+							//angle *= dot > 0 ? 1 : -1;
+
+							var roundingDegrees = 15f;
+							if (KeyboardState.Alt) roundingDegrees = 1;
+
+							var deg = angle * (180 / Math.PI);
+							float rnd = (float)(Math.Round(deg / roundingDegrees) * roundingDegrees);
+
+							var anglerad = (float)angle;
+
+							Vector3 axis = new Vector3(
+								camera.ViewType == OrthographicCamera.OrthographicType.Side ? 1 : 0,
+								camera.ViewType == OrthographicCamera.OrthographicType.Top ? 1 : 0,
+								camera.ViewType == OrthographicCamera.OrthographicType.Front ? 1 : 0);
 
 
-					var mt = Matrix4x4.CreateFromAxisAngle(axis, anglerad);
+							var mt = Matrix4x4.CreateFromAxisAngle(axis, anglerad);
 
-					// Apply the new rotation relative to the current local rotation
-					//var newLocalRotationMatrix = mtr * mt;
+							// Apply the new rotation relative to the current local rotation
+							//var newLocalRotationMatrix = mtr * mt;
+						}
+
+						Vector3 previousLocalRotationRadians = new Vector3(
+							MathHelper.DegreesToRadians(initial.X),
+							MathHelper.DegreesToRadians(initial.Y),
+							MathHelper.DegreesToRadians(initial.Z));
+						var mtr = Matrix4x4.CreateFromYawPitchRoll(previousLocalRotationRadians.X, previousLocalRotationRadians.Z, previousLocalRotationRadians.Y);
+						// Now, newLocalRotationDegrees contains the updated local rotation in degrees
+
+						var transformMatrix = GetTransformationMatrix(viewport, camera, new BoxState()
+						{
+							Action = BoxAction.Drawn,
+							Start = _rotateStart.Value,
+							End = _rotateEnd.Value,
+							Viewport = viewport,
+							OrigStart = origv,
+							OrigEnd = newv
+						}, document);
+
+						mtr *= transformMatrix.Value;
+
+						//Vector3 newLocalRotationDegrees = new Vector3(
+						//	MathHelper.RadiansToDegrees((float)Math.Asin(mtr.M23)),
+						//	MathHelper.RadiansToDegrees((float)Math.Atan2(-mtr.M13, mtr.M33)),
+						//	MathHelper.RadiansToDegrees((float)Math.Atan2(-mtr.M21, mtr.M22))
+						//);
+
+
+						var newLocalRotationDegrees = ExtractEulerAngles(mtr);
+
+
+
+
+
+						var op = new EditEntityDataProperties(entity.ID, new Dictionary<string, string>() {
+						{"angles", $"{Math.Round( -MathHelper.RadiansToDegrees( newLocalRotationDegrees.Y))} {Math.Round( MathHelper.RadiansToDegrees( -newLocalRotationDegrees.Z))} {Math.Round(MathHelper.RadiansToDegrees(newLocalRotationDegrees.X))}" }});
+
+						tsn.Add(op);
+					}
 				}
-
-				Vector3 previousLocalRotationRadians = new Vector3(
-					MathHelper.DegreesToRadians(initial.X),
-					MathHelper.DegreesToRadians(initial.Y),
-					MathHelper.DegreesToRadians(initial.Z));
-				var mtr = Matrix4x4.CreateFromYawPitchRoll(previousLocalRotationRadians.X, previousLocalRotationRadians.Z, previousLocalRotationRadians.Y);
-				// Now, newLocalRotationDegrees contains the updated local rotation in degrees
-
-				var transformMatrix = GetTransformationMatrix(viewport, camera, new BoxState()
-				{
-					Action = BoxAction.Drawn,
-					Start = _rotateStart.Value,
-					End = _rotateEnd.Value,
-					Viewport = viewport,
-					OrigStart = origv,
-					OrigEnd = newv
-				}, document);
-
-				mtr *= transformMatrix.Value;
-
-				//Vector3 newLocalRotationDegrees = new Vector3(
-				//	MathHelper.RadiansToDegrees((float)Math.Asin(mtr.M23)),
-				//	MathHelper.RadiansToDegrees((float)Math.Atan2(-mtr.M13, mtr.M33)),
-				//	MathHelper.RadiansToDegrees((float)Math.Atan2(-mtr.M21, mtr.M22))
-				//);
-
-
-				var newLocalRotationDegrees = ExtractEulerAngles(mtr);
-
-
-
-
-
-				var op = new EditEntityDataProperties(entity.ID, new Dictionary<string, string>() {
-					{"angles", $"{Math.Round( -MathHelper.RadiansToDegrees( newLocalRotationDegrees.Y))} {Math.Round( MathHelper.RadiansToDegrees( -newLocalRotationDegrees.Z))} {Math.Round(MathHelper.RadiansToDegrees(newLocalRotationDegrees.X))}" }
-
-				});
-
-				var tsn = new Transaction(op);
 				((Action)(async () => await MapDocumentOperation.Perform(document, tsn)))();
 			}
 			_rotateStart = _rotateEnd = null;
