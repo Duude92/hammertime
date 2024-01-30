@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Commands;
 using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Editing.Components.Properties.Tabs;
 using Sledge.BspEditor.Editing.Properties;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations.Selection;
@@ -126,7 +127,9 @@ namespace Sledge.BspEditor.Editing.Commands
 				{
 					var newKey = defaultEntityClass.Properties.FirstOrDefault(x => (x.Name ?? "").ToLower() == property);
 
-					existing.EntityData.Properties.Add(property, newKey.DefaultValue);
+                    var value = ClassInfoTab.GetDefaultOption(newKey);
+
+					existing.EntityData.Properties.Add(property, value);
 				}
 			}
 			else

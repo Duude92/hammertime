@@ -510,12 +510,15 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 			UpdateTable();
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasChanges)));
 		}
-		private string GetDefaultOption(Property key)
+		public static string GetDefaultOption(Property key)
 		{
 			if (((string.IsNullOrEmpty(key.DefaultValue) || string.IsNullOrWhiteSpace(key.DefaultValue))) &&
 				!((key.VariableType == VariableType.Sprite || key.VariableType == VariableType.Studio)))
 				if (key.Options.Count > 0)
 					return key.Options.First().Key;
+			if((string.IsNullOrEmpty(key.DefaultValue) && key.VariableType == VariableType.Integer && key.Name == "renderamt")){
+				return "255";
+			}
 
 			return key.DefaultValue;
 		}
