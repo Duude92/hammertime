@@ -103,10 +103,9 @@ namespace Sledge.BspEditor.Commands.Clipboard
 				var itemNames = _document.Map.Root
 								.Find(x => x is Entity)
 								.OfType<Entity>()
-								.Select(x => x.EntityData.Properties
-								.ToDictionary(entry => entry.Key.ToLower(), entry => entry.Value))
-								.Where(x => x.ContainsKey("targetname"))
-								.Select(x => x["targetname"])
+								.Select(x => (x.EntityData.Properties.ContainsKey("targetname") ? x.EntityData.Properties["targetname"]:null))
+								.Where(x=>!String.IsNullOrEmpty(x))
+								.Distinct()
 								.ToArray();
 
 				var entities = newcontent.Select(x => x as Entity).Where(x => x != null);
