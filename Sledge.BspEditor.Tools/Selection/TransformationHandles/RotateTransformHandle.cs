@@ -59,7 +59,7 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
 
 		public override void EndDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
 		{
-			if (document.Selection.First() is Sledge.BspEditor.Primitives.MapObjects.Entity entity && entity.EntityData.Properties.TryGetValue("angles", out var angleString))
+			if (document.Selection.Any() && document.Selection.First() is Sledge.BspEditor.Primitives.MapObjects.Entity entity && entity.EntityData.Properties.TryGetValue("angles", out var angleString))
 			{
 				var initialAngles = angleString.Split(' ');
 				var initial = NumericsExtensions.Parse(initialAngles[0], initialAngles[1], initialAngles[2], System.Globalization.NumberStyles.Float, CultureInfo.InvariantCulture);
