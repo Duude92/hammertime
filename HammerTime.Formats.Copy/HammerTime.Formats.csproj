@@ -14,7 +14,7 @@
 
   <ItemGroup>
     <Reference Include="Sledge.Formats.Map">
-      <HintPath>..\..\sledge-formats\Sledge.Formats.Map\bin\Debug\netstandard2.0\Sledge.Formats.Map.dll</HintPath>
+      <HintPath>..\Resources\Sledge.Formats.Map.dll</HintPath>
     </Reference>
   </ItemGroup>
 
