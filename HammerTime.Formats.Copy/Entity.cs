@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using Sledge.DataStructures.Geometric;
 using System.Globalization;
+using System.Linq;
 
 
 namespace HammerTime.Formats
@@ -45,5 +46,23 @@ namespace HammerTime.Formats
 
 			return entity;
 		}
+		public static SledgeFormats.Entity WriteEntity(SledgeRegular.Entity entity)
+		{
+			var newEntity =  new SledgeFormats.Entity()
+			{
+				Color = entity.Color.Color,
+				ClassName = entity.EntityData.Name,
+				SpawnFlags = entity.EntityData.Flags,
+				Children = entity.Hierarchy.Select(x=>MapObject.WriteMapObject(x)).ToList(),
+				
+			};
+			newEntity.Properties.Add("origin", $"{entity.Origin.X} {entity.Origin.Y} {entity.Origin.Z}");
+            foreach (var property in entity.EntityData.Properties)
+            {
+				newEntity.Properties.Add(property);
+            }
+
+			return newEntity;
+        }
 	}
 }

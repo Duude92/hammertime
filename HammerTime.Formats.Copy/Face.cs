@@ -31,5 +31,23 @@ namespace HammerTime.Formats
 			return newFace;
 		}
 
+		public static SledgeFormats.Face WriteFace(SledgeFace face)
+		{
+			return new SledgeFormats.Face()
+			{
+				TextureName = face.Texture.Name,
+				Plane = new Plane(face.Plane.Normal, face.Plane.D),
+				Vertices = face.Vertices.Reverse().ToList(),
+				UAxis = face.Texture.UAxis,
+				VAxis = face.Texture.VAxis,
+				XScale = face.Texture.XScale,
+				YScale = face.Texture.YScale,
+				XShift = face.Texture.Rotation,
+				YShift = face.Texture.XShift,
+				Rotation = face.Texture.YShift,
+			};
+
+		}
+
 	}
 }

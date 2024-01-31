@@ -36,6 +36,8 @@ namespace Sledge.BspEditor.Editing.Components.Prefabs {
 			this.FileContainer = new System.Windows.Forms.ComboBox();
 			this.PrefabList = new System.Windows.Forms.ComboBox();
 			this.CreateButton = new System.Windows.Forms.Button();
+			this.NewPrefab = new System.Windows.Forms.Button();
+			this.NewPrefabName = new System.Windows.Forms.TextBox();
 			this.SuspendLayout();
 			// 
 			// FileContainer
@@ -65,18 +67,42 @@ namespace Sledge.BspEditor.Editing.Components.Prefabs {
 			this.CreateButton.UseVisualStyleBackColor = true;
 			this.CreateButton.Click += new System.EventHandler(this.CreateButton_Click);
 			// 
+			// NewPrefab
+			// 
+			this.NewPrefab.Location = new System.Drawing.Point(4, 170);
+			this.NewPrefab.Name = "NewPrefab";
+			this.NewPrefab.Size = new System.Drawing.Size(143, 23);
+			this.NewPrefab.TabIndex = 3;
+			this.NewPrefab.Text = "Save as new prefab";
+			this.NewPrefab.UseVisualStyleBackColor = true;
+			this.NewPrefab.Click += new System.EventHandler(this.NewPrefab_Click);
+			// 
+			// NewPrefabName
+			// 
+			this.NewPrefabName.Location = new System.Drawing.Point(4, 144);
+			this.NewPrefabName.Name = "NewPrefabName";
+			this.NewPrefabName.Size = new System.Drawing.Size(143, 20);
+			this.NewPrefabName.TabIndex = 4;
+			this.NewPrefabName.Text = "New name";
+			// 
 			// PrefabSidebarPanel
 			// 
+			this.Controls.Add(this.NewPrefabName);
+			this.Controls.Add(this.NewPrefab);
 			this.Controls.Add(this.CreateButton);
 			this.Controls.Add(this.PrefabList);
 			this.Controls.Add(this.FileContainer);
 			this.Name = "PrefabSidebarPanel";
+			this.Size = new System.Drawing.Size(150, 196);
 			this.ResumeLayout(false);
+			this.PerformLayout();
 
         }
 
 		private System.Windows.Forms.ComboBox PrefabList;
 		private System.Windows.Forms.Button CreateButton;
+		private System.Windows.Forms.Button NewPrefab;
+		private System.Windows.Forms.TextBox NewPrefabName;
 
 		/// <summary>
 		///   Returns the cached ResourceManager instance used by this class.

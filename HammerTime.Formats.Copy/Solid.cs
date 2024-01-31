@@ -28,5 +28,14 @@ namespace HammerTime.Formats
 
 			return newSolid;
 		}
+		public static SledgeFormats.Solid WriteSolid(SledgeRegular.Solid solid)
+		{
+			return new SledgeFormats.Solid()
+			{
+				Color = solid.Color.Color,
+				Faces = solid.Faces.Select(x=>Face.WriteFace(x)).ToList(),
+				Children = solid.Hierarchy.Select(x=>MapObject.WriteMapObject(x)).ToList(),
+			};
+		}
 	}
 }

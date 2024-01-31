@@ -6,11 +6,16 @@
 
   <ItemGroup>
     <PackageReference Include="Sledge.Formats" Version="1.2.3" />
-    <PackageReference Include="Sledge.Formats.Map" Version="1.1.5" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Sledge.BspEditor\Sledge.BspEditor.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Sledge.Formats.Map">
+      <HintPath>..\..\sledge-formats\Sledge.Formats.Map\bin\Debug\netstandard2.0\Sledge.Formats.Map.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

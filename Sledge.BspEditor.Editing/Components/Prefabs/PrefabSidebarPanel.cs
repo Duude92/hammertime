@@ -103,26 +103,43 @@ namespace Sledge.BspEditor.Editing.Components.Prefabs
 			});
 		}
 
-		private void CreateButton_Click(object sender, EventArgs e)
+		private async void CreateButton_Click(object sender, EventArgs e)
 		{
-			_activeDocument.TryGetTarget(out var mapDocument);
-			var ung = mapDocument.Map.NumberGenerator;
-			
-			var contents = HammerTime.Formats.Prefab.GetPrefab(_activeWorldcraftPrefabLibrary.Prefabs[PrefabList.SelectedIndex].Map, ung, mapDocument.Map);
+			if (_activeDocument.TryGetTarget(out var mapDocument))
+			{
+				var ung = mapDocument.Map.NumberGenerator;
 
-			var transaction = new Transaction();
-			transaction.Add(new Attach(mapDocument.Map.Root.ID, contents));
-			transaction.Add(new Deselect(mapDocument.Selection));
-			transaction.Add(new Select(contents));
+				var contents = HammerTime.Formats.Prefab.GetPrefab(_activeWorldcraftPrefabLibrary.Prefabs[PrefabList.SelectedIndex].Map, ung, mapDocument.Map);
+
+				var transaction = new Transaction();
+				transaction.Add(new Attach(mapDocument.Map.Root.ID, contents));
+				transaction.Add(new Deselect(mapDocument.Selection));
+				transaction.Add(new Select(contents));
 
 
-			MapDocumentOperation.Perform(mapDocument, transaction);
+				await MapDocumentOperation.Perform(mapDocument, transaction);
+			}
 
 		}
 
 		private void FileContainer_SelectionChangeCommitted(object sender, EventArgs e)
 		{
 			UpdatePrefabList(FileContainer.SelectedIndex);
+		}
+
+		private void NewPrefab_Click(object sender, EventArgs e)
+		{
+			if (_activeDocument.TryGetTarget(out var mapDocument))
+			{
+				var selection = mapDocument.Selection;
+				HammerTime.Formats.Prefab.WriteObjects(_activeWorldcraftPrefabLibrary, selection, NewPrefabName.Text);
+
+				_activeWorldcraftPrefabLibrary.Save(_files[FileContainer.SelectedIndex]);
+
+				UpdatePrefabList(FileContainer.SelectedIndex);
+
+
+			}
 		}
 	}
 }

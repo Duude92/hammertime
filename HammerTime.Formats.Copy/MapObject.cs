@@ -42,5 +42,22 @@ namespace HammerTime.Formats
 			}
 			return result;
 		}
+		public static SledgeFormats.MapObject WriteMapObject(SledgeRegular.IMapObject mapObject)
+		{
+			SledgeFormats.MapObject result = null;
+			if(mapObject is SledgeRegular.Solid solid)
+			{
+				result = Solid.WriteSolid(solid);
+			}
+			else if (mapObject is SledgeRegular.Group group)
+			{
+				result = Group.WriteGroup(group);
+			}
+			else if (mapObject is SledgeRegular.Entity entity)
+			{
+				result = Entity.WriteEntity(entity);
+			}
+			return result;
+		}
 	}
 }

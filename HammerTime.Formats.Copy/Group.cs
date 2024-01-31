@@ -2,6 +2,7 @@
 using SledgeFormats = Sledge.Formats.Map.Objects;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapObjectData;
+using System.Linq;
 
 
 namespace HammerTime.Formats
@@ -20,6 +21,13 @@ namespace HammerTime.Formats
 			
 			group.DescendantsChanged();
 			return group;
+		}
+		public static SledgeFormats.Group WriteGroup(SledgeRegular.Group Group)
+		{
+			return new SledgeFormats.Group()
+			{
+				Children = Group.Hierarchy.Select(x=>MapObject.WriteMapObject(x)).ToList(),
+			};
 		}
 	}
 }
