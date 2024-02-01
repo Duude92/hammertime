@@ -1,5 +1,9 @@
 ﻿using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Modification.Operations.Mutation;
+using Sledge.BspEditor.Modification.Operations.Selection;
+using Sledge.BspEditor.Modification.Operations.Tree;
+using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjectData;
@@ -28,6 +32,11 @@ using System.Text;
 using System.Threading.Tasks;
 using static Sledge.BspEditor.Primitives.MapObjects.MapObjectExtensions;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
+using Sledge.BspEditor.Tools.Brush;
+using Sledge.Common.Shell.Context;
+using Sledge.Formats.Map.Formats;
+using System.Windows.Forms;
+using System.Runtime.Remoting.Contexts;
 
 namespace Sledge.BspEditor.Tools.Prefab
 {
@@ -44,6 +53,10 @@ namespace Sledge.BspEditor.Tools.Prefab
 
 		private bool _updatePreview = false;
 
+		private string _activeLibraryPath = "";
+
+		private int _selectedPrefabIndex = 0;
+
 		public override Image GetIcon() => Resources.Tool_Prefab;
 
 		public override string GetName() => "PrefabTool";
@@ -58,13 +71,60 @@ namespace Sledge.BspEditor.Tools.Prefab
 			States.Add(_state);
 			Usage = ToolUsage.Both;
 
+			Oy.Subscribe<int>("PrefabTool:CreatePrefab", CreatePrefab);
+
+		}
+
+		private IEnumerable<IMapObject> GetPrefab(int prefabId, UniqueNumberGenerator ung, Map map)
+		{
+			return HammerTime.Formats.Prefab.GetPrefab(WorldcraftPrefabLibrary.FromFile(_activeLibraryPath).Prefabs[prefabId].Map, ung, map);
+		}
+		protected override void ContextChanged(IContext context)
+		{
+			var libPath = context.Get<string>("PrefabTool:ActiveLibrary");
+			_activeLibraryPath = String.IsNullOrEmpty(libPath) ? _activeLibraryPath : libPath;
+			_selectedPrefabIndex = context.Get<int>("PrefabTool:PrefabIndex");
+			_updatePreview = true;
+
+			base.ContextChanged(context);
+		}
+		private async void CreatePrefab(int index)
+		{
+			await CreatePrefab(index, default);
+		}
+		private async Task CreatePrefab(int index, Vector3 position)
+		{
+			if (GetDocument() is MapDocument mapDocument)
+			{
+				var ung = mapDocument.Map.NumberGenerator;
+
+
+				var contents = GetPrefab(index, ung, mapDocument.Map);
+
+				var transaction = new Transaction();
+
+				var contentCenter = contents.Select(x => x.BoundingBox.Center).Aggregate((acc, x) => (acc + x) / 2);
+				position -= contentCenter;
+				var translation = Matrix4x4.CreateTranslation(position);
+
+				transaction.Add(new Attach(mapDocument.Map.Root.ID, contents));
+				transaction.Add(new Transform(translation, contents));
+				transaction.Add(new TransformTexturesUniform(translation, contents));
+				transaction.Add(new Deselect(mapDocument.Selection));
+				transaction.Add(new Select(contents));
+
+
+				await MapDocumentOperation.Perform(mapDocument, transaction);
+			}
+			await Task.CompletedTask;
 		}
 		protected override IEnumerable<Subscription> Subscribe()
 		{
-			yield return Oy.Subscribe<RightClickMenuBuilder>("MapViewport:RightClick", b =>
-			{
-				b.AddCommand("PrefabTool:CreatePrefab");
-			});
+			yield return null;
+			//yield return Oy.Subscribe<RightClickMenuBuilder>("MapViewport:RightClick", b =>
+			//{
+			//	b.AddCommand("PrefabTool:CreatePrefab");
+			//});
 		}
 		private void BoxChanged(object sender, EventArgs e)
 		{
@@ -200,12 +260,13 @@ namespace Sledge.BspEditor.Tools.Prefab
 			var tf = document.Map.Data.GetOne<DisplayFlags>() ?? new DisplayFlags();
 			IgnoreOptions iopt = (tf.HideClipTextures ? IgnoreOptions.IgnoreClip : IgnoreOptions.None) | (tf.HideNullTextures ? IgnoreOptions.IgnoreNull : IgnoreOptions.None);
 
+			if (e.Button == MouseButtons.Right) return;
 
 			var (rayStart, rayEnd) = camera.CastRayFromScreen(new Vector3(e.X, e.Y, 0));
 			var ray = new Line(rayStart, rayEnd);
 
 			// Grab all the elements that intersect with the ray
-			var (_,intersectingPoint) = document.Map.Root.GetIntersectionPointOnSurface(ray);
+			var (_, intersectingPoint) = document.Map.Root.GetIntersectionPointOnSurface(ray);
 			Vector3 spawnPosition = rayStart;
 
 			if (intersectingPoint != null)
@@ -213,8 +274,8 @@ namespace Sledge.BspEditor.Tools.Prefab
 				spawnPosition = intersectingPoint.Value;
 			}
 
+			((Action)(async () => await CreatePrefab(_selectedPrefabIndex, spawnPosition)))();
 
-			Oy.Publish("PrefabTool:CreatePrefab", spawnPosition);
 
 			base.MouseDown(document, viewport, camera, e);
 		}

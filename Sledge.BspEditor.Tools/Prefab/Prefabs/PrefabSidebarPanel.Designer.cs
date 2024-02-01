@@ -47,6 +47,7 @@ namespace Sledge.BspEditor.Tools.Prefab {
 			this.FileContainer.Name = "FileContainer";
 			this.FileContainer.Size = new System.Drawing.Size(143, 21);
 			this.FileContainer.TabIndex = 0;
+			this.FileContainer.SelectedIndexChanged += new System.EventHandler(this.FileContainer_SelectedIndexChanged);
 			this.FileContainer.SelectionChangeCommitted += new System.EventHandler(this.FileContainer_SelectionChangeCommitted);
 			// 
 			// PrefabList
@@ -56,6 +57,7 @@ namespace Sledge.BspEditor.Tools.Prefab {
 			this.PrefabList.Name = "PrefabList";
 			this.PrefabList.Size = new System.Drawing.Size(143, 21);
 			this.PrefabList.TabIndex = 1;
+			this.PrefabList.SelectedValueChanged += new System.EventHandler(this.PrefabList_SelectedValueChanged);
 			// 
 			// CreateButton
 			// 

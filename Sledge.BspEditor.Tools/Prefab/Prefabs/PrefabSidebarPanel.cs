@@ -23,6 +23,10 @@ using System.Drawing;
 using System.Xml.Linq;
 using Sledge.BspEditor.Modification.Operations.Mutation;
 using System.Numerics;
+using Newtonsoft.Json.Linq;
+using Sledge.BspEditor.Primitives.MapObjects;
+using Sledge.BspEditor.Primitives;
+using System.Reflection;
 
 namespace Sledge.BspEditor.Tools.Prefab
 {
@@ -54,7 +58,11 @@ namespace Sledge.BspEditor.Tools.Prefab
 
 			UpdatePrefabList();
 
-			Oy.Subscribe<Vector3>("PrefabTool:CreatePrefab", CreatePrefab);
+			Task.Delay(3000).ContinueWith(t =>
+			{
+				Oy.Publish("Context:Add", new ContextInfo("PrefabTool:ActiveLibrary", _files[0])); //Should be delayed until PrefabTool is created
+			});
+
 
 		}
 
@@ -65,6 +73,8 @@ namespace Sledge.BspEditor.Tools.Prefab
 
 			PrefabList.Items.AddRange(_activeWorldcraftPrefabLibrary.Prefabs.Select(x => x.Name).ToArray());
 			PrefabList.SelectedIndex = 0;
+
+
 		}
 
 		public bool IsInContext(IContext context)
@@ -106,34 +116,10 @@ namespace Sledge.BspEditor.Tools.Prefab
 			});
 		}
 
-		private async void CreatePrefab(Vector3 position = default)
-		{
-			if (_activeDocument.TryGetTarget(out var mapDocument))
-			{
-				var ung = mapDocument.Map.NumberGenerator;
-
-				var contents = HammerTime.Formats.Prefab.GetPrefab(_activeWorldcraftPrefabLibrary.Prefabs[PrefabList.SelectedIndex].Map, ung, mapDocument.Map);
-
-				var transaction = new Transaction();
-
-				var contentCenter = contents.Select(x => x.BoundingBox.Center).Aggregate((acc, x) => (acc + x) / 2);
-				position -= contentCenter;
-				var translation = Matrix4x4.CreateTranslation(position);
-
-				transaction.Add(new Attach(mapDocument.Map.Root.ID, contents));
-				transaction.Add(new Transform(translation, contents));
-				transaction.Add(new TransformTexturesUniform(translation, contents));
-				transaction.Add(new Deselect(mapDocument.Selection));
-				transaction.Add(new Select(contents));
-
-
-				await MapDocumentOperation.Perform(mapDocument, transaction);
-			}
-		}
 
 		private async void CreateButton_Click(object sender, EventArgs e)
 		{
-			CreatePrefab();
+			await Oy.Publish("PrefabTool:CreatePrefab", PrefabList.SelectedIndex);
 		}
 
 		private void FileContainer_SelectionChangeCommitted(object sender, EventArgs e)
@@ -154,6 +140,16 @@ namespace Sledge.BspEditor.Tools.Prefab
 
 
 			}
+		}
+
+		private void PrefabList_SelectedValueChanged(object sender, EventArgs e)
+		{
+			Oy.Publish("Context:Add", new ContextInfo("PrefabTool:PrefabIndex", PrefabList.SelectedIndex));
+		}
+
+		private void FileContainer_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			Oy.Publish("Context:Add", new ContextInfo("PrefabTool:ActiveLibrary", _files[FileContainer.SelectedIndex]));
 		}
 	}
 }
