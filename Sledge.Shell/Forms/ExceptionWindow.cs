@@ -35,19 +35,18 @@ namespace Sledge.Shell.Forms
             try
             {
                 Info.UserEnteredInformation = InfoTextBox.Text;
-                using (var client = new WebClient())
-                {
-                    var values = new NameValueCollection();
-                    values["Message"] = Info.Message;
-                    values["Runtime"] = Info.RuntimeVersion;
-                    values["OS"] = Info.OperatingSystem;
-                    values["Version"] = Info.ApplicationVersion;
-                    values["StackTrace"] = Info.FullStackTrace;
-                    values["UserInfo"] = Info.UserEnteredInformation;
-                    values["Source"] = Info.Source;
-                    values["Date"] = Info.Date.ToUniversalTime().ToString("yyyy-MM-ddThh:mm:ssZ");
-                    client.UploadValues("http://bugs.sledge-editor.com/Bug/AutoSubmit", "POST", values);
-                }
+                //using (var client = new WebClient())
+                //{
+                //    var values = new NameValueCollection();
+                //    values["Message"] = Info.Message;
+                //    values["Runtime"] = Info.RuntimeVersion;
+                //    values["OS"] = Info.OperatingSystem;
+                //    values["Version"] = Info.ApplicationVersion;
+                //    values["StackTrace"] = Info.FullStackTrace;
+                //    values["UserInfo"] = Info.UserEnteredInformation;
+                //    values["Source"] = Info.Source;
+                //    values["Date"] = Info.Date.ToUniversalTime().ToString("yyyy-MM-ddThh:mm:ssZ");
+                //}
             }
             catch (Exception ex)
             {
