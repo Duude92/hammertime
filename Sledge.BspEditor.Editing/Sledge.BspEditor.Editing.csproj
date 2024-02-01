@@ -506,12 +506,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Update="Components\Prefabs\PrefabSidebarPanel.resx">
-      <Generator></Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Components\Prefabs\NewPrefabDialog.resx">
-      <Generator></Generator>
-    </EmbeddedResource>
     <EmbeddedResource Update="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

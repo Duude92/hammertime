@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Sledge.BspEditor.Editing.Components.Prefabs {
+namespace Sledge.BspEditor.Tools.Prefab {
     using System;
     
     

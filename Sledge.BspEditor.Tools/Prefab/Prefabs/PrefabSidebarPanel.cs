@@ -22,13 +22,14 @@ using Sledge.BspEditor.Modification.Operations.Tree;
 using System.Drawing;
 using System.Xml.Linq;
 using Sledge.BspEditor.Modification.Operations.Mutation;
+using System.Numerics;
 
-namespace Sledge.BspEditor.Editing.Components.Prefabs
+namespace Sledge.BspEditor.Tools.Prefab
 {
 	[AutoTranslate]
 	[Export(typeof(ISidebarComponent))]
 	[Export(typeof(IInitialiseHook))]
-	[OrderHint("H")]
+	[OrderHint("A")]
 
 
 	public partial class PrefabSidebarPanel : UserControl, ISidebarComponent, IInitialiseHook
@@ -53,6 +54,8 @@ namespace Sledge.BspEditor.Editing.Components.Prefabs
 
 			UpdatePrefabList();
 
+			Oy.Subscribe<Vector3>("PrefabTool:CreatePrefab", CreatePrefab);
+
 		}
 
 		private void UpdatePrefabList(int index = 0)
@@ -66,7 +69,7 @@ namespace Sledge.BspEditor.Editing.Components.Prefabs
 
 		public bool IsInContext(IContext context)
 		{
-			return context.TryGet("ActiveDocument", out MapDocument _);
+			return context.TryGet("ActiveTool", out PrefabTool _);
 		}
 
 		public Task OnInitialise()
@@ -103,7 +106,7 @@ namespace Sledge.BspEditor.Editing.Components.Prefabs
 			});
 		}
 
-		private async void CreateButton_Click(object sender, EventArgs e)
+		private async void CreatePrefab(Vector3 position = default)
 		{
 			if (_activeDocument.TryGetTarget(out var mapDocument))
 			{
@@ -112,14 +115,25 @@ namespace Sledge.BspEditor.Editing.Components.Prefabs
 				var contents = HammerTime.Formats.Prefab.GetPrefab(_activeWorldcraftPrefabLibrary.Prefabs[PrefabList.SelectedIndex].Map, ung, mapDocument.Map);
 
 				var transaction = new Transaction();
+
+				var contentCenter = contents.Select(x => x.BoundingBox.Center).Aggregate((acc, x) => (acc + x) / 2);
+				position -= contentCenter;
+				var translation = Matrix4x4.CreateTranslation(position);
+
 				transaction.Add(new Attach(mapDocument.Map.Root.ID, contents));
+				transaction.Add(new Transform(translation, contents));
+				transaction.Add(new TransformTexturesUniform(translation, contents));
 				transaction.Add(new Deselect(mapDocument.Selection));
 				transaction.Add(new Select(contents));
 
 
 				await MapDocumentOperation.Perform(mapDocument, transaction);
 			}
+		}
 
+		private async void CreateButton_Click(object sender, EventArgs e)
+		{
+			CreatePrefab();
 		}
 
 		private void FileContainer_SelectionChangeCommitted(object sender, EventArgs e)

@@ -80,9 +80,6 @@ namespace Sledge.BspEditor.Rendering.Converters
                 const int renderModeSolid = 4;
                 const int renderModeAdditive = 5;
 
-                //var rendermode = parentEntity.EntityData.Get("rendermode", 0);
-                //var renderamt = parentEntity.EntityData.Get("renderamt", 255f) / 255;
-
                 var rendermodevalue = parentEntity.EntityData.GetStringProperty("rendermode", "0");
                 var renderamtvalue = parentEntity.EntityData.GetStringProperty("renderamt", "255");
                 int rendermode;

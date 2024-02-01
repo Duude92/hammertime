@@ -236,6 +236,18 @@ namespace Sledge.BspEditor.Primitives.MapObjects
 				.OrderBy(x => (x.Value - line.Start).Length())
 				.FirstOrDefault();
 		}
+		public static (IMapObject, Vector3?) GetIntersectionPointOnSurface(this IMapObject obj, Line line)
+		{
+			Vector3? collidePoint = null;
+			var collideObject = obj.GetBoudingBoxIntersectionsForVisibleObjects(line).FirstOrDefault(x =>
+			{
+				collidePoint =
+				x.GetIntersectionPoint(line);
+				return collidePoint != null;
+			});
+			return (collideObject, collidePoint);
+
+		}
 
 		/// <summary>
 		/// Get all the child objects that intersect with a line and the points that they intersect at.
