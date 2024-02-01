@@ -423,7 +423,7 @@ namespace Sledge.BspEditor.Tools.Selection
 			var selected = objectsToSelect.ToList();
 
 			var transaction = new Transaction(new Select(selected), new Deselect(deselected));
-			MapDocumentOperation.Perform(document, transaction);
+			((Action)(async () => await MapDocumentOperation.Perform(document, transaction)))();
 		}
 
 		#endregion
@@ -464,6 +464,7 @@ namespace Sledge.BspEditor.Tools.Selection
 			// If Ctrl is down and the object is already selected, we should deselect it instead.
 			var list = new[] { ChosenItemFor3DSelection };
 			var desel = ChosenItemFor3DSelection != null && KeyboardState.Ctrl && ChosenItemFor3DSelection.IsSelected;
+
 			SetSelected(document, desel ? list : null, desel ? null : list, !KeyboardState.Ctrl, IgnoreGrouping());
 		}
 

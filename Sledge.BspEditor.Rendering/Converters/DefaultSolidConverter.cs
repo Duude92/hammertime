@@ -15,6 +15,7 @@ using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Pipelines;
 using Sledge.Rendering.Primitives;
 using Sledge.Rendering.Resources;
+using System;
 
 namespace Sledge.BspEditor.Rendering.Converters
 {
@@ -79,8 +80,33 @@ namespace Sledge.BspEditor.Rendering.Converters
                 const int renderModeSolid = 4;
                 const int renderModeAdditive = 5;
 
-                var rendermode = parentEntity.EntityData.Get("rendermode", 0);
-                var renderamt = parentEntity.EntityData.Get("renderamt", 255f) / 255;
+                //var rendermode = parentEntity.EntityData.Get("rendermode", 0);
+                //var renderamt = parentEntity.EntityData.Get("renderamt", 255f) / 255;
+
+                var rendermodevalue = parentEntity.EntityData.GetStringProperty("rendermode", "0");
+                var renderamtvalue = parentEntity.EntityData.GetStringProperty("renderamt", "255");
+                int rendermode;
+                float renderamt;
+                if (!String.IsNullOrEmpty(rendermodevalue))
+                {
+                    rendermode = int.Parse(rendermodevalue);
+                }
+                else
+                {
+                    rendermode = 0;
+                }
+				if (!String.IsNullOrEmpty(renderamtvalue))
+				{
+					renderamt = float.Parse(renderamtvalue) /255f;
+				}
+				else
+				{
+					renderamt = 1;
+				}
+
+                //var rendermode = renderModeSolid;
+                //var renderamt = 1;
+
                 entityHasTransparency = renderamt < 0.99;
 
                 switch (rendermode)

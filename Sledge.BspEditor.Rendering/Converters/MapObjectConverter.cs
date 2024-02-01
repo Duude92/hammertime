@@ -29,6 +29,7 @@ namespace Sledge.BspEditor.Rendering.Converters
         public async Task Convert(MapDocument document, SceneBuilder builder, IEnumerable<IMapObject> affected, ResourceCollector resourceCollector)
         {
             var objs = document.Map.Root.FindAll();
+
             if (affected != null)
             {
                 var groups = affected.Select(x => x.ID / 200).ToHashSet();
@@ -51,7 +52,7 @@ namespace Sledge.BspEditor.Rendering.Converters
 
                 foreach (var gc in groupConverters)
                 {
-                    gc.Convert(buffer, document, g, collector);
+                    await gc.Convert(buffer, document, g, collector);
                 }
 
                 foreach (var obj in g)
