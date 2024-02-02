@@ -38,6 +38,7 @@ using Sledge.Formats.Map.Formats;
 using System.Windows.Forms;
 using System.Runtime.Remoting.Contexts;
 using System.Data.Common;
+using Sledge.Shell.Registers;
 
 namespace Sledge.BspEditor.Tools.Prefab
 {
@@ -57,6 +58,8 @@ namespace Sledge.BspEditor.Tools.Prefab
 		private string _activeLibraryPath = "";
 
 		private int _selectedPrefabIndex = 0;
+
+		private MapDocument _previewDocument = null;
 
 		public override Image GetIcon() => Resources.Tool_Prefab;
 
@@ -93,21 +96,13 @@ namespace Sledge.BspEditor.Tools.Prefab
 		{
 			await CreatePrefab(index, default);
 		}
-		private IEnumerable<IMapObject> ReIndex(IEnumerable<IMapObject> objects, MapDocument document, Func<MapDocument, IMapObject, IMapObject> existingIdTransform)
+		private void DeletePreview()
 		{
-			var rand = new Random();
-			foreach (var o in objects)
-			{
-				if (document.Map.Root.Hierarchy.HasDescendant(o.ID))
-				{
-					// If this object already exists in the tree, transform it through the callback
-					yield return existingIdTransform(document, o);
-				}
-				else
-				{
-					yield return o;
-				}
-			}
+			if (_previewDocument != null)
+				_previewDocument.RequestClose();
+			//FIXME: need to research how Document is disposed
+			//MEMORY LEAK
+
 		}
 		private async Task CreatePrefab(int index, Vector3 position)
 		{
@@ -146,7 +141,7 @@ namespace Sledge.BspEditor.Tools.Prefab
 
 					await MapDocumentOperation.Perform(mapDocument, transaction);
 					_preview = null;
-
+					DeletePreview();
 				}
 			}
 			await Task.CompletedTask;
@@ -167,6 +162,9 @@ namespace Sledge.BspEditor.Tools.Prefab
 
 		private List<IMapObject> GetPreview(MapDocument document, Vector3 position)
 		{
+
+			DeletePreview();
+
 			if (_updatePreview)
 			{
 				lock (_lockObject)
