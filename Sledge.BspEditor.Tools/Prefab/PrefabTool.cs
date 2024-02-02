@@ -37,6 +37,7 @@ using Sledge.Common.Shell.Context;
 using Sledge.Formats.Map.Formats;
 using System.Windows.Forms;
 using System.Runtime.Remoting.Contexts;
+using System.Data.Common;
 
 namespace Sledge.BspEditor.Tools.Prefab
 {
@@ -75,7 +76,7 @@ namespace Sledge.BspEditor.Tools.Prefab
 
 		}
 
-		private IEnumerable<IMapObject> GetPrefab(int prefabId, UniqueNumberGenerator ung, Map map)
+		private List<IMapObject> GetPrefab(int prefabId, UniqueNumberGenerator ung, Map map)
 		{
 			return HammerTime.Formats.Prefab.GetPrefab(WorldcraftPrefabLibrary.FromFile(_activeLibraryPath).Prefabs[prefabId].Map, ung, map);
 		}
@@ -92,70 +93,125 @@ namespace Sledge.BspEditor.Tools.Prefab
 		{
 			await CreatePrefab(index, default);
 		}
+		private IEnumerable<IMapObject> ReIndex(IEnumerable<IMapObject> objects, MapDocument document, Func<MapDocument, IMapObject, IMapObject> existingIdTransform)
+		{
+			var rand = new Random();
+			foreach (var o in objects)
+			{
+				if (document.Map.Root.Hierarchy.HasDescendant(o.ID))
+				{
+					// If this object already exists in the tree, transform it through the callback
+					yield return existingIdTransform(document, o);
+				}
+				else
+				{
+					yield return o;
+				}
+			}
+		}
 		private async Task CreatePrefab(int index, Vector3 position)
 		{
 			if (GetDocument() is MapDocument mapDocument)
 			{
-				var ung = mapDocument.Map.NumberGenerator;
+				if (_preview == null)
+				{
+					var ung = mapDocument.Map.NumberGenerator;
 
 
-				var contents = GetPrefab(index, ung, mapDocument.Map);
+					var contents = GetPrefab(index, ung, mapDocument.Map);
 
-				var transaction = new Transaction();
+					var transaction = new Transaction();
 
-				var contentCenter = contents.Select(x => x.BoundingBox.Center).Aggregate((acc, x) => (acc + x) / 2);
-				position -= contentCenter;
-				var translation = Matrix4x4.CreateTranslation(position);
+					var contentCenter = contents.Select(x => x.BoundingBox.Center).Aggregate((acc, x) => (acc + x) / 2);
+					position -= contentCenter;
+					var translation = Matrix4x4.CreateTranslation(position);
 
-				transaction.Add(new Attach(mapDocument.Map.Root.ID, contents));
-				transaction.Add(new Transform(translation, contents));
-				transaction.Add(new TransformTexturesUniform(translation, contents));
-				transaction.Add(new Deselect(mapDocument.Selection));
-				transaction.Add(new Select(contents));
+					transaction.Add(new Attach(mapDocument.Map.Root.ID, contents));
+					transaction.Add(new Transform(translation, contents));
+					transaction.Add(new TransformTexturesUniform(translation, contents));
+					transaction.Add(new Deselect(mapDocument.Selection));
+					transaction.Add(new Select(contents));
 
 
-				await MapDocumentOperation.Perform(mapDocument, transaction);
+					await MapDocumentOperation.Perform(mapDocument, transaction);
+				}
+				else
+				{
+					//var items = ReIndex(_preview, mapDocument, (d, o) => (IMapObject)o.Copy(d.Map.NumberGenerator));
+					var items = _preview.Select(x => (IMapObject)x.Copy(mapDocument.Map.NumberGenerator));
+					var transaction = new Transaction();
+					transaction.Add(new Attach(mapDocument.Map.Root.ID, items));
+					transaction.Add(new Deselect(mapDocument.Selection));
+					transaction.Add(new Select(items));
+
+					await MapDocumentOperation.Perform(mapDocument, transaction);
+					_preview = null;
+
+				}
 			}
 			await Task.CompletedTask;
 		}
-		protected override IEnumerable<Subscription> Subscribe()
-		{
-			yield return null;
-			//yield return Oy.Subscribe<RightClickMenuBuilder>("MapViewport:RightClick", b =>
-			//{
-			//	b.AddCommand("PrefabTool:CreatePrefab");
-			//});
-		}
+		//protected override IEnumerable<Subscription> Subscribe()
+		//{
+		//	//yield return null;
+		//	//yield return Oy.Subscribe<RightClickMenuBuilder>("MapViewport:RightClick", b =>
+		//	//{
+		//	//	b.AddCommand("PrefabTool:CreatePrefab");
+		//	//});
+		//}
 		private void BoxChanged(object sender, EventArgs e)
 		{
 			_updatePreview = true;
 		}
+		private Object _lockObject = new Object();
 
-
-		private List<IMapObject> GetPreview(MapDocument document)
+		private List<IMapObject> GetPreview(MapDocument document, Vector3 position)
 		{
 			if (_updatePreview)
 			{
-				var bbox = new Box(_state.State.Start, _state.State.End);
-				//var brush = GetBrush(document, bbox, new UniqueNumberGenerator()).FindAll();
-				//_preview = brush;
+				lock (_lockObject)
+				{
+					var md = new MapDocument(new Map(), document.Environment);
+					md.Map.Root.Unclone(md.Map.Root);
+					//var bbox = new Box(_state.State.Start, _state.State.End);
+					_preview = GetPrefab(_selectedPrefabIndex, md.Map.NumberGenerator, md.Map);
+
+					//var brush = GetBrush(document, bbox, new UniqueNumberGenerator()).FindAll();
+					//_preview = brush;
+					var contentCenter = _preview.Select(x => x.BoundingBox.Center).Aggregate((acc, x) => (acc + x) / 2);
+					position -= contentCenter;
+					var transaction = new Transaction();
+					var translation = Matrix4x4.CreateTranslation(position);
+
+					transaction.Add(new Attach(md.Map.Root.ID, _preview));
+					transaction.Add(new Transform(translation, _preview));
+					transaction.Add(new TransformTexturesUniform(translation, _preview));
+
+
+					MapDocumentOperation.Perform(md, transaction);
+				}
 			}
 
 			_updatePreview = false;
 			return _preview ?? new List<IMapObject>();
 		}
+
 		protected override void Render(MapDocument document, BufferBuilder builder, ResourceCollector resourceCollector)
 		{
-			if (_state.State.Action != BoxAction.Idle)
+			//if (_state.State.Action != BoxAction.Idle)
+			if (_preview != null)
 			{
-				// Force this work to happen on a new thread so waiting on it won't block the context
-				Task.Run(async () =>
+				lock (_lockObject)
 				{
-					foreach (var obj in GetPreview(document).OfType<Solid>())
+					// Force this work to happen on a new thread so waiting on it won't block the context
+					Task.Run(async () =>
 					{
-						await Convert(builder, document, obj, resourceCollector);
-					}
-				}).Wait();
+						foreach (var obj in _preview.OfType<Solid>())
+						{
+							await Convert(builder, document, obj, resourceCollector);
+						}
+					}).Wait();
+				}
 			}
 
 			base.Render(document, builder, resourceCollector);
@@ -274,7 +330,11 @@ namespace Sledge.BspEditor.Tools.Prefab
 				spawnPosition = intersectingPoint.Value;
 			}
 
-			((Action)(async () => await CreatePrefab(_selectedPrefabIndex, spawnPosition)))();
+			_updatePreview = true;
+
+			_preview = GetPreview(document, spawnPosition);
+			//((Action)(async () => await CreatePrefab(_selectedPrefabIndex, spawnPosition)))();
+
 
 
 			base.MouseDown(document, viewport, camera, e);

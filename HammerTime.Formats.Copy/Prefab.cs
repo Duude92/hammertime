@@ -13,7 +13,7 @@ namespace HammerTime.Formats
 	public class Prefab
 	{
 		public static IEnumerable<Sledge.BspEditor.Primitives.MapData.Visgroup> Visgroups { get; private set; }
-		public static IEnumerable<IMapObject> GetPrefab(MapFile mapFile, UniqueNumberGenerator ung, Map map)
+		public static List<IMapObject> GetPrefab(MapFile mapFile, UniqueNumberGenerator ung, Map map)
 		{
 			List<IMapObject> content = new List<IMapObject>();
 			var Visgroups = mapFile.Visgroups.Select(x => new Sledge.BspEditor.Primitives.MapData.Visgroup() { 

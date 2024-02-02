@@ -239,7 +239,7 @@ namespace Sledge.BspEditor.Primitives.MapObjects
 		public static (IMapObject, Vector3?) GetIntersectionPointOnSurface(this IMapObject obj, Line line)
 		{
 			Vector3? collidePoint = null;
-			var collideObject = obj.GetBoudingBoxIntersectionsForVisibleObjects(line).FirstOrDefault(x =>
+			var collideObject = obj.GetBoudingBoxIntersectionsForVisibleObjects(line).LastOrDefault(x =>
 			{
 				collidePoint =
 				x.GetIntersectionPoint(line);
