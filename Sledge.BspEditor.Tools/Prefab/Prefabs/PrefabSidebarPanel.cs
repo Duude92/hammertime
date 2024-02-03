@@ -77,8 +77,11 @@ namespace Sledge.BspEditor.Tools.Prefab
 			PrefabList.Items.Clear();
 			_activeWorldcraftPrefabLibrary = WorldcraftPrefabLibrary.FromFile(_files[index]);
 
+			PrefabList.Text = null;
+
 			PrefabList.Items.AddRange(_activeWorldcraftPrefabLibrary.Prefabs.Select(x => x.Name).ToArray());
-			PrefabList.SelectedIndex = 0;
+			if (PrefabList.Items.Count > 0)
+				PrefabList.SelectedIndex = 0;
 
 
 		}

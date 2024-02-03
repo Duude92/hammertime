@@ -44,6 +44,8 @@ namespace Sledge.BspEditor.Tools.Prefab {
 			// 
 			// FileContainer
 			// 
+			this.FileContainer.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Append;
+			this.FileContainer.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
 			this.FileContainer.FormattingEnabled = true;
 			this.FileContainer.Location = new System.Drawing.Point(4, 4);
 			this.FileContainer.Name = "FileContainer";
@@ -54,6 +56,8 @@ namespace Sledge.BspEditor.Tools.Prefab {
 			// 
 			// PrefabList
 			// 
+			this.PrefabList.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Append;
+			this.PrefabList.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
 			this.PrefabList.FormattingEnabled = true;
 			this.PrefabList.Location = new System.Drawing.Point(4, 63);
 			this.PrefabList.Name = "PrefabList";

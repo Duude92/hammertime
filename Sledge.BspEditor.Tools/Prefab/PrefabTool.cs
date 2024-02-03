@@ -81,7 +81,10 @@ namespace Sledge.BspEditor.Tools.Prefab
 
 		private List<IMapObject> GetPrefab(int prefabId, UniqueNumberGenerator ung, Map map)
 		{
-			return HammerTime.Formats.Prefab.GetPrefab(WorldcraftPrefabLibrary.FromFile(_activeLibraryPath).Prefabs[prefabId].Map, ung, map);
+			var lib = WorldcraftPrefabLibrary.FromFile(_activeLibraryPath);
+			if (lib.Prefabs.Count > prefabId)
+				return HammerTime.Formats.Prefab.GetPrefab(lib.Prefabs[prefabId].Map, ung, map);
+			return null;
 		}
 		protected override void ContextChanged(IContext context)
 		{
@@ -114,6 +117,7 @@ namespace Sledge.BspEditor.Tools.Prefab
 
 
 					var contents = GetPrefab(index, ung, mapDocument.Map);
+					if (contents == null) return;
 
 					var transaction = new Transaction();
 
@@ -172,7 +176,7 @@ namespace Sledge.BspEditor.Tools.Prefab
 					md.Map.Root.Unclone(md.Map.Root);
 					//var bbox = new Box(_state.State.Start, _state.State.End);
 					_preview = GetPrefab(_selectedPrefabIndex, md.Map.NumberGenerator, md.Map);
-
+					if (_preview == null) return new List<IMapObject>();
 					//var brush = GetBrush(document, bbox, new UniqueNumberGenerator()).FindAll();
 					//_preview = brush;
 					var contentCenter = _preview.Select(x => x.BoundingBox.Center).Aggregate((acc, x) => (acc + x) / 2);
