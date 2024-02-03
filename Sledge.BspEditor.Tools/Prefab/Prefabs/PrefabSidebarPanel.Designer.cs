@@ -44,6 +44,8 @@ namespace Sledge.BspEditor.Tools.Prefab {
 			// 
 			// FileContainer
 			// 
+			this.FileContainer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.FileContainer.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Append;
 			this.FileContainer.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
 			this.FileContainer.FormattingEnabled = true;
@@ -56,6 +58,8 @@ namespace Sledge.BspEditor.Tools.Prefab {
 			// 
 			// PrefabList
 			// 
+			this.PrefabList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.PrefabList.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Append;
 			this.PrefabList.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
 			this.PrefabList.FormattingEnabled = true;
@@ -67,6 +71,8 @@ namespace Sledge.BspEditor.Tools.Prefab {
 			// 
 			// CreateButton
 			// 
+			this.CreateButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.CreateButton.Location = new System.Drawing.Point(4, 106);
 			this.CreateButton.Name = "CreateButton";
 			this.CreateButton.Size = new System.Drawing.Size(143, 23);
@@ -77,6 +83,8 @@ namespace Sledge.BspEditor.Tools.Prefab {
 			// 
 			// NewPrefab
 			// 
+			this.NewPrefab.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.NewPrefab.Location = new System.Drawing.Point(4, 170);
 			this.NewPrefab.Name = "NewPrefab";
 			this.NewPrefab.Size = new System.Drawing.Size(143, 23);
@@ -87,6 +95,8 @@ namespace Sledge.BspEditor.Tools.Prefab {
 			// 
 			// NewPrefabName
 			// 
+			this.NewPrefabName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.NewPrefabName.Location = new System.Drawing.Point(4, 144);
 			this.NewPrefabName.Name = "NewPrefabName";
 			this.NewPrefabName.Size = new System.Drawing.Size(143, 20);
@@ -95,6 +105,8 @@ namespace Sledge.BspEditor.Tools.Prefab {
 			// 
 			// NewLibName
 			// 
+			this.NewLibName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.NewLibName.Location = new System.Drawing.Point(4, 200);
 			this.NewLibName.Name = "NewLibName";
 			this.NewLibName.Size = new System.Drawing.Size(143, 20);
@@ -103,6 +115,8 @@ namespace Sledge.BspEditor.Tools.Prefab {
 			// 
 			// CreateLib
 			// 
+			this.CreateLib.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.CreateLib.Location = new System.Drawing.Point(4, 227);
 			this.CreateLib.Name = "CreateLib";
 			this.CreateLib.Size = new System.Drawing.Size(143, 23);
@@ -113,6 +127,9 @@ namespace Sledge.BspEditor.Tools.Prefab {
 			// 
 			// PrefabSidebarPanel
 			// 
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.AutoSize = true;
 			this.Controls.Add(this.CreateLib);
 			this.Controls.Add(this.NewLibName);
 			this.Controls.Add(this.NewPrefabName);
@@ -121,7 +138,7 @@ namespace Sledge.BspEditor.Tools.Prefab {
 			this.Controls.Add(this.PrefabList);
 			this.Controls.Add(this.FileContainer);
 			this.Name = "PrefabSidebarPanel";
-			this.Size = new System.Drawing.Size(150, 262);
+			this.Size = new System.Drawing.Size(152, 388);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
