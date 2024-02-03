@@ -38,6 +38,8 @@ namespace Sledge.BspEditor.Tools.Prefab {
 			this.CreateButton = new System.Windows.Forms.Button();
 			this.NewPrefab = new System.Windows.Forms.Button();
 			this.NewPrefabName = new System.Windows.Forms.TextBox();
+			this.NewLibName = new System.Windows.Forms.TextBox();
+			this.CreateLib = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
 			// FileContainer
@@ -85,17 +87,37 @@ namespace Sledge.BspEditor.Tools.Prefab {
 			this.NewPrefabName.Name = "NewPrefabName";
 			this.NewPrefabName.Size = new System.Drawing.Size(143, 20);
 			this.NewPrefabName.TabIndex = 4;
-			this.NewPrefabName.Text = "New name";
+			this.NewPrefabName.Text = "New prefab name";
+			// 
+			// NewLibName
+			// 
+			this.NewLibName.Location = new System.Drawing.Point(4, 200);
+			this.NewLibName.Name = "NewLibName";
+			this.NewLibName.Size = new System.Drawing.Size(143, 20);
+			this.NewLibName.TabIndex = 5;
+			this.NewLibName.Text = "New Library name";
+			// 
+			// CreateLib
+			// 
+			this.CreateLib.Location = new System.Drawing.Point(4, 227);
+			this.CreateLib.Name = "CreateLib";
+			this.CreateLib.Size = new System.Drawing.Size(143, 23);
+			this.CreateLib.TabIndex = 6;
+			this.CreateLib.Text = "Create library";
+			this.CreateLib.UseVisualStyleBackColor = true;
+			this.CreateLib.Click += new System.EventHandler(this.CreateLib_Click);
 			// 
 			// PrefabSidebarPanel
 			// 
+			this.Controls.Add(this.CreateLib);
+			this.Controls.Add(this.NewLibName);
 			this.Controls.Add(this.NewPrefabName);
 			this.Controls.Add(this.NewPrefab);
 			this.Controls.Add(this.CreateButton);
 			this.Controls.Add(this.PrefabList);
 			this.Controls.Add(this.FileContainer);
 			this.Name = "PrefabSidebarPanel";
-			this.Size = new System.Drawing.Size(150, 196);
+			this.Size = new System.Drawing.Size(150, 262);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -105,6 +127,8 @@ namespace Sledge.BspEditor.Tools.Prefab {
 		private System.Windows.Forms.Button CreateButton;
 		private System.Windows.Forms.Button NewPrefab;
 		private System.Windows.Forms.TextBox NewPrefabName;
+		private System.Windows.Forms.TextBox NewLibName;
+		private System.Windows.Forms.Button CreateLib;
 
 		/// <summary>
 		///   Returns the cached ResourceManager instance used by this class.

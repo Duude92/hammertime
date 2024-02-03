@@ -51,7 +51,15 @@ namespace Sledge.BspEditor.Tools.Prefab
 			InitializeComponent();
 			CreateHandle();
 
+			InitPrefabLibraries();
+
+		}
+
+		private void InitPrefabLibraries()
+		{
 			_files = Directory.GetFiles("./prefabs/");
+
+			FileContainer.Items.Clear();
 
 			FileContainer.Items.AddRange(_files.Select(x => Path.GetFileNameWithoutExtension(x)).ToArray());
 			FileContainer.SelectedIndex = 0;
@@ -62,8 +70,6 @@ namespace Sledge.BspEditor.Tools.Prefab
 			{
 				Oy.Publish("Context:Add", new ContextInfo("PrefabTool:ActiveLibrary", _files[0])); //Should be delayed until PrefabTool is created
 			});
-
-
 		}
 
 		private void UpdatePrefabList(int index = 0)
@@ -129,10 +135,12 @@ namespace Sledge.BspEditor.Tools.Prefab
 
 		private void NewPrefab_Click(object sender, EventArgs e)
 		{
+			var name = NewPrefabName.Text.Trim();
+			if (String.IsNullOrEmpty(name)) throw new Exception($"Prefab name cannot be empty.\r\nPrefab name: {name}");
 			if (_activeDocument.TryGetTarget(out var mapDocument))
 			{
 				var selection = mapDocument.Selection;
-				HammerTime.Formats.Prefab.WriteObjects(_activeWorldcraftPrefabLibrary, selection, NewPrefabName.Text);
+				HammerTime.Formats.Prefab.WriteObjects(_activeWorldcraftPrefabLibrary, selection, name);
 
 				_activeWorldcraftPrefabLibrary.WriteToFile(_files[FileContainer.SelectedIndex]);
 
@@ -150,6 +158,15 @@ namespace Sledge.BspEditor.Tools.Prefab
 		private void FileContainer_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			Oy.Publish("Context:Add", new ContextInfo("PrefabTool:ActiveLibrary", _files[FileContainer.SelectedIndex]));
+		}
+
+		private void CreateLib_Click(object sender, EventArgs e)
+		{
+			var name = NewLibName.Text.Trim();
+			if (String.IsNullOrEmpty(name)) throw new Exception($"Prefab name cannot be empty.\r\nPrefab name: {name}");
+			var lib = new WorldcraftPrefabLibrary() { Description = name };
+			lib.WriteToFile($"./prefabs/{name}.ol");
+			InitPrefabLibraries();
 		}
 	}
 }

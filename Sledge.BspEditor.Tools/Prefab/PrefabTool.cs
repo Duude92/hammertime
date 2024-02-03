@@ -132,7 +132,6 @@ namespace Sledge.BspEditor.Tools.Prefab
 				}
 				else
 				{
-					//var items = ReIndex(_preview, mapDocument, (d, o) => (IMapObject)o.Copy(d.Map.NumberGenerator));
 					var items = _preview.Select(x => (IMapObject)x.Copy(mapDocument.Map.NumberGenerator));
 					var transaction = new Transaction();
 					transaction.Add(new Attach(mapDocument.Map.Root.ID, items));
