@@ -134,7 +134,7 @@ namespace Sledge.BspEditor.Tools.Prefab
 				var selection = mapDocument.Selection;
 				HammerTime.Formats.Prefab.WriteObjects(_activeWorldcraftPrefabLibrary, selection, NewPrefabName.Text);
 
-				_activeWorldcraftPrefabLibrary.Save(_files[FileContainer.SelectedIndex]);
+				_activeWorldcraftPrefabLibrary.WriteToFile(_files[FileContainer.SelectedIndex]);
 
 				UpdatePrefabList(FileContainer.SelectedIndex);
 
