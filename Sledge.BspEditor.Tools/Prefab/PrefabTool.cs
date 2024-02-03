@@ -204,7 +204,7 @@ namespace Sledge.BspEditor.Tools.Prefab
 					// Force this work to happen on a new thread so waiting on it won't block the context
 					Task.Run(async () =>
 					{
-						foreach (var obj in _preview.OfType<Solid>())
+						foreach (var obj in _preview)
 						{
 							await Convert(builder, document, obj, resourceCollector);
 						}
@@ -216,98 +216,104 @@ namespace Sledge.BspEditor.Tools.Prefab
 		}
 		private async Task Convert(BufferBuilder builder, MapDocument document, IMapObject obj, ResourceCollector resourceCollector)
 		{
-			var solid = (Solid)obj;
-			var faces = solid.Faces.Where(x => x.Vertices.Count > 2).ToList();
-
-			// Pack the vertices like this [ f1v1 ... f1vn ] ... [ fnv1 ... fnvn ]
-			var numVertices = (uint)faces.Sum(x => x.Vertices.Count);
-
-			// Pack the indices like this [ solid1 ... solidn ] [ wireframe1 ... wireframe n ]
-			var numSolidIndices = (uint)faces.Sum(x => (x.Vertices.Count - 2) * 3);
-			var numWireframeIndices = numVertices * 2;
-
-			var points = new VertexStandard[numVertices];
-			var indices = new uint[numSolidIndices + numWireframeIndices];
-
-			var c = Color.Turquoise;
-			var colour = new Vector4(c.R, c.G, c.B, c.A) / 255f;
-
-			c = Color.FromArgb(192, Color.Turquoise);
-			var tint = new Vector4(c.R, c.G, c.B, c.A) / 255f;
-
-			var tc = await document.Environment.GetTextureCollection();
-
-			var vi = 0u;
-			var si = 0u;
-			var wi = numSolidIndices;
-			foreach (var face in faces)
+			if (obj is Solid solid)
 			{
-				var t = await tc.GetTextureItem(face.Texture.Name);
-				var w = t?.Width ?? 0;
-				var h = t?.Height ?? 0;
+				var faces = solid.Faces.Where(x => x.Vertices.Count > 2).ToList();
 
-				var offs = vi;
-				var numFaceVerts = (uint)face.Vertices.Count;
+				// Pack the vertices like this [ f1v1 ... f1vn ] ... [ fnv1 ... fnvn ]
+				var numVertices = (uint)faces.Sum(x => x.Vertices.Count);
 
-				var textureCoords = face.GetTextureCoordinates(w, h).ToList();
+				// Pack the indices like this [ solid1 ... solidn ] [ wireframe1 ... wireframe n ]
+				var numSolidIndices = (uint)faces.Sum(x => (x.Vertices.Count - 2) * 3);
+				var numWireframeIndices = numVertices * 2;
 
-				var normal = face.Plane.Normal;
-				for (var i = 0; i < face.Vertices.Count; i++)
+				var points = new VertexStandard[numVertices];
+				var indices = new uint[numSolidIndices + numWireframeIndices];
+
+				var c = Color.Turquoise;
+				var colour = new Vector4(c.R, c.G, c.B, c.A) / 255f;
+
+				c = Color.FromArgb(192, Color.Turquoise);
+				var tint = new Vector4(c.R, c.G, c.B, c.A) / 255f;
+
+				var tc = await document.Environment.GetTextureCollection();
+
+				var vi = 0u;
+				var si = 0u;
+				var wi = numSolidIndices;
+				foreach (var face in faces)
 				{
-					var v = face.Vertices[i];
-					points[vi++] = new VertexStandard
+					var t = await tc.GetTextureItem(face.Texture.Name);
+					var w = t?.Width ?? 0;
+					var h = t?.Height ?? 0;
+
+					var offs = vi;
+					var numFaceVerts = (uint)face.Vertices.Count;
+
+					var textureCoords = face.GetTextureCoordinates(w, h).ToList();
+
+					var normal = face.Plane.Normal;
+					for (var i = 0; i < face.Vertices.Count; i++)
 					{
-						Position = v,
-						Colour = colour,
-						Normal = normal,
-						Texture = new Vector2(textureCoords[i].Item2, textureCoords[i].Item3),
-						Tint = tint,
-						Flags = t == null ? VertexFlags.FlatColour : VertexFlags.None
-					};
+						var v = face.Vertices[i];
+						points[vi++] = new VertexStandard
+						{
+							Position = v,
+							Colour = colour,
+							Normal = normal,
+							Texture = new Vector2(textureCoords[i].Item2, textureCoords[i].Item3),
+							Tint = tint,
+							Flags = t == null ? VertexFlags.FlatColour : VertexFlags.None
+						};
+					}
+
+					// Triangles - [0 1 2]  ... [0 n-1 n]
+					for (uint i = 2; i < numFaceVerts; i++)
+					{
+						indices[si++] = offs;
+						indices[si++] = offs + i - 1;
+						indices[si++] = offs + i;
+					}
+
+					// Lines - [0 1] ... [n-1 n] [n 0]
+					for (uint i = 0; i < numFaceVerts; i++)
+					{
+						indices[wi++] = offs + i;
+						indices[wi++] = offs + (i == numFaceVerts - 1 ? 0 : i + 1);
+					}
 				}
 
-				// Triangles - [0 1 2]  ... [0 n-1 n]
-				for (uint i = 2; i < numFaceVerts; i++)
+				var groups = new List<BufferGroup>();
+
+				uint texOffset = 0;
+				foreach (var f in faces)
 				{
-					indices[si++] = offs;
-					indices[si++] = offs + i - 1;
-					indices[si++] = offs + i;
+					var texInd = (uint)(f.Vertices.Count - 2) * 3;
+
+					var opacity = tc.GetOpacity(f.Texture.Name);
+					var t = await tc.GetTextureItem(f.Texture.Name);
+					var transparent = opacity < 0.95f || t?.Flags.HasFlag(TextureFlags.Transparent) == true;
+
+					var texture = t == null ? string.Empty : $"{document.Environment.ID}::{f.Texture.Name}";
+
+					groups.Add(transparent
+						? new BufferGroup(PipelineType.TexturedAlpha, CameraType.Perspective, f.Origin, texture, texOffset, texInd)
+						: new BufferGroup(PipelineType.TexturedOpaque, CameraType.Perspective, texture, texOffset, texInd)
+					);
+
+					texOffset += texInd;
+
+					if (t != null) resourceCollector.RequireTexture(t.Name);
 				}
 
-				// Lines - [0 1] ... [n-1 n] [n 0]
-				for (uint i = 0; i < numFaceVerts; i++)
-				{
-					indices[wi++] = offs + i;
-					indices[wi++] = offs + (i == numFaceVerts - 1 ? 0 : i + 1);
-				}
+				groups.Add(new BufferGroup(PipelineType.Wireframe, solid.IsSelected ? CameraType.Both : CameraType.Orthographic, numSolidIndices, numWireframeIndices));
+
+				builder.Append(points, indices, groups);
 			}
-
-			var groups = new List<BufferGroup>();
-
-			uint texOffset = 0;
-			foreach (var f in faces)
+			foreach (var child in obj.Hierarchy)
 			{
-				var texInd = (uint)(f.Vertices.Count - 2) * 3;
-
-				var opacity = tc.GetOpacity(f.Texture.Name);
-				var t = await tc.GetTextureItem(f.Texture.Name);
-				var transparent = opacity < 0.95f || t?.Flags.HasFlag(TextureFlags.Transparent) == true;
-
-				var texture = t == null ? string.Empty : $"{document.Environment.ID}::{f.Texture.Name}";
-
-				groups.Add(transparent
-					? new BufferGroup(PipelineType.TexturedAlpha, CameraType.Perspective, f.Origin, texture, texOffset, texInd)
-					: new BufferGroup(PipelineType.TexturedOpaque, CameraType.Perspective, texture, texOffset, texInd)
-				);
-
-				texOffset += texInd;
-
-				if (t != null) resourceCollector.RequireTexture(t.Name);
+				await Convert(builder, document, child, resourceCollector);
 			}
-
-			groups.Add(new BufferGroup(PipelineType.Wireframe, solid.IsSelected ? CameraType.Both : CameraType.Orthographic, numSolidIndices, numWireframeIndices));
-
-			builder.Append(points, indices, groups);
 		}
 		protected override void MouseDown(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
 		{
