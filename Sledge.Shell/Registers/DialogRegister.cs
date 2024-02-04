@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -12,37 +13,63 @@ using Sledge.Common.Shell.Hooks;
 
 namespace Sledge.Shell.Registers
 {
-    /// <summary>
-    /// The dialog register controls dialogs
-    /// </summary>
-    [Export(typeof(IStartupHook))]
-    public class DialogRegister : IStartupHook
-    {
-        [Import] private Forms.Shell _shell;
-        [ImportMany] private IEnumerable<Lazy<IDialog>> _dialogs;
-        private static DialogRegister _instance;
+	/// <summary>
+	/// The dialog register controls dialogs
+	/// </summary>
+	[Export(typeof(IStartupHook))]
+	public class DialogRegister : IStartupHook
+	{
+		[Import] private Forms.Shell _shell;
+		[ImportMany] private IEnumerable<Lazy<IDialog>> _dialogs;
+		private static DialogRegister _instance;
 
-        public async Task OnStartup()
-        {
-            // Register the exported dialogs
-            foreach (var export in _dialogs)
-            {
-                Log.Debug(nameof(DialogRegister), "Loaded: " + export.Value.GetType().FullName);
-                _components.Add(export.Value);
-            }
+		public async Task OnStartup()
+		{
+			// Register the exported dialogs
+			foreach (var export in _dialogs)
+			{
+				Log.Debug(nameof(DialogRegister), "Loaded: " + export.Value.GetType().FullName);
+				_components.Add(export.Value);
 
-            // Subscribe to context changes
-            Oy.Subscribe<IContext>("Context:Changed", ContextChanged);
-        }
+				ColorControlsRecursively((ContainerControl)export.Value);
 
-        private readonly List<IDialog> _components;
+			}
 
-        public DialogRegister()
-        {
-            _instance = this;
-            _components = new List<IDialog>();
-        }
-        public static bool IsAnyDialogFocused() => _instance._components.Where(x=>x.Visible).OfType<Form>().Where(f=>f.ContainsFocus).Any();
+			ColorControlsRecursively(_shell);
+
+			// Subscribe to context changes
+			Oy.Subscribe<IContext>("Context:Changed", ContextChanged);
+		}
+		private void ColorControlsRecursively(ContainerControl control)
+		{
+			foreach (Control childControl in control.Controls)
+			{
+				if (childControl is ContainerControl childControlContainer)
+				{
+
+					ColorControlsRecursively(childControlContainer);
+				}
+				else
+				{
+					childControl.BackColor = Color.DimGray;
+					childControl.ForeColor = Color.White;
+				}
+
+			}
+			//if(control is Form form) 
+			//	form.
+			control.BackColor = Color.DimGray;
+			control.ForeColor = Color.White;
+		}
+
+		private readonly List<IDialog> _components;
+
+		public DialogRegister()
+		{
+			_instance = this;
+			_components = new List<IDialog>();
+		}
+		public static bool IsAnyDialogOpened() => _instance._components.Where(x => x.Visible).Any();
 
 		private Task ContextChanged(IContext context)
         {
