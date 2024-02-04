@@ -29,8 +29,15 @@ namespace Sledge.Rendering.Pipelines
             {
                 BlendState = BlendStateDescription.SingleDisabled,
                 DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
-                RasterizerState = RasterizerStateDescription.Default,
-                PrimitiveTopology = PrimitiveTopology.TriangleList,
+				//RasterizerState = RasterizerStateDescription.Default,
+				RasterizerState = new RasterizerStateDescription()
+				{
+
+					CullMode = FaceCullMode.None, // This disables face culling
+					FillMode = PolygonFillMode.Solid
+
+				},
+				PrimitiveTopology = PrimitiveTopology.TriangleList,
                 ResourceLayouts = new[] { context.ResourceLoader.ProjectionLayout, context.ResourceLoader.TextureLayout },
                 ShaderSet = new ShaderSetDescription(new[] { context.ResourceLoader.VertexStandardLayoutDescription }, new[] { _vertex, _fragment }),
                 Outputs = new OutputDescription

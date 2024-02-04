@@ -346,6 +346,10 @@ namespace Sledge.Rendering.Engine
 				return control;
 			}
 		}
+		internal IViewport CreateViewportOnly()
+		{
+			return new Viewports.Viewport(Device, _options);
+		}
 
 		private void DestroyViewport(object viewport, EventArgs e)
 		{
