@@ -109,18 +109,20 @@ namespace Sledge.BspEditor.Rendering.Converters
 
 					relationPoints[i] = new VertexStandard
 					{
-						Colour = colour,
+						Colour = relationColour,
 						Position = entity.BoundingBox.Center,
 						Texture = Vector2.Zero,
 						Tint = Vector4.One,
+						Flags = VertexFlags.FlatColour,
 
 					};
 					relationPoints[i + 1] = new VertexStandard
 					{
-						Colour = colour,
+						Colour = relationColour,
 						Position = relatedEntity.Entity.BoundingBox.Center,
 						Texture = Vector2.Zero,
 						Tint = Vector4.One,
+						Flags = VertexFlags.FlatColour,
 
 					};
 					relationIndices[i] = i;
