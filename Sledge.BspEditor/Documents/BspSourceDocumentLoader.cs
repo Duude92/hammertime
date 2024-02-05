@@ -11,6 +11,7 @@ using Sledge.BspEditor.Environment;
 using Sledge.BspEditor.Environment.Controls;
 using Sledge.BspEditor.Environment.Empty;
 using Sledge.BspEditor.Primitives;
+using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Providers;
 using Sledge.BspEditor.Providers.Processors;
 using Sledge.Common.Shell.Commands;
@@ -161,6 +162,9 @@ namespace Sledge.BspEditor.Documents
 							continue;
 						}
 
+						CollectEntitiesRecursively(result.Map.Root);
+						SearchForRelatives();
+
 						var md = new MapDocument(result.Map, env) { FileName = location };
 						await ProcessAfterLoad(env, md, result);
 						return md;
@@ -180,6 +184,34 @@ namespace Sledge.BspEditor.Documents
 				return null;
 			}
 			throw new NotSupportedException(FileTypeNotSupported);
+		}
+
+		private List<Entity> _entities = new List<Entity>();
+		private void CollectEntitiesRecursively(IMapObject mapObject)
+		{
+			if (mapObject is Entity entity) _entities.Add(entity);
+			foreach (var child in mapObject.Hierarchy)
+			{
+				CollectEntitiesRecursively(child);
+			}
+		}
+		private void SearchForRelatives()
+		{
+			foreach (var entity in _entities)
+			{
+				if (entity.EntityData.Properties.TryGetValue("target", out var targetname) && !String.IsNullOrEmpty(targetname))
+				{
+					foreach (var childEntity in _entities)
+					{
+						if (childEntity.EntityData.Properties.TryGetValue("targetname", out var childTargetname) && !String.IsNullOrEmpty(childTargetname) && childTargetname == targetname)
+						{
+							entity.Relations.Add(new Entity.EntityRelative { Entity = childEntity, Relation = Entity.EntityRelative.RelationType.TargetedByMain });
+							childEntity.Relations.Add(new Entity.EntityRelative { Entity = entity, Relation = Entity.EntityRelative.RelationType.TargetsMain });
+						}
+					}
+				}
+			}
+			_entities.Clear();
 		}
 
 		/// <summary>
@@ -297,6 +329,8 @@ namespace Sledge.BspEditor.Documents
 							stream.Seek(0, SeekOrigin.Begin);
 							continue;
 						}
+						CollectEntitiesRecursively(result.Map.Root);
+						SearchForRelatives();
 
 						var md = new MapDocument(result.Map, env) { FileName = fileName };
 						await ProcessAfterLoad(env, md, result);
