@@ -30,14 +30,58 @@ namespace Sledge.BspEditor.Rendering.Converters
 
 		public bool Supports(IMapObject obj)
 		{
-			return obj is Entity && !obj.Hierarchy.HasChildren;
+			//return obj is Entity && !obj.Hierarchy.HasChildren;
+			return obj is Entity;
 		}
 
 		public Task Convert(BufferBuilder builder, MapDocument document, IMapObject obj, ResourceCollector resourceCollector)
 		{
-			return ConvertBox(builder, obj, obj.BoundingBox);
+			if (!obj.Hierarchy.HasChildren)
+				return ConvertBox(builder, obj, obj.BoundingBox);
+			else
+				return ConvertRelations(builder, obj as Entity);
 		}
+		internal static Task ConvertRelations(BufferBuilder builder, Entity entity)
+		{
+			if (entity.IsSelected && entity.Relations.Any())
+			{
+				VertexStandard[] relationPoints = new VertexStandard[entity.Relations.Count * 2];
+				var relationIndices = new uint[entity.Relations.Count * 2];
+				uint i = 0;
+				foreach (var relatedEntity in entity.Relations)
+				{
+					var relationC = relatedEntity.Relation == Entity.EntityRelative.RelationType.TargetsMain ? Color.Yellow : Color.Blue;
+					var relationColour = new Vector4(relationC.R, relationC.G, relationC.B, relationC.A) / 255f;
 
+					relationPoints[i] = new VertexStandard
+					{
+						Colour = relationColour,
+						Position = entity.BoundingBox.Center,
+						Texture = Vector2.Zero,
+						Tint = Vector4.One,
+						Flags = VertexFlags.FlatColour,
+
+					};
+					relationPoints[i + 1] = new VertexStandard
+					{
+						Colour = relationColour,
+						Position = relatedEntity.Entity.BoundingBox.Center,
+						Texture = Vector2.Zero,
+						Tint = Vector4.One,
+						Flags = VertexFlags.FlatColour,
+
+					};
+					relationIndices[i] = i;
+					relationIndices[i + 1] = i + 1;
+					i += 2;
+
+
+				}
+				//groups.Add();
+				builder.Append(relationPoints, relationIndices, new[] { new BufferGroup(PipelineType.Wireframe, CameraType.Perspective, 0, (uint)entity.Relations.Count * 2) });
+			}
+			return Task.CompletedTask;
+		}
 		internal static Task ConvertBox(BufferBuilder builder, IMapObject obj, Box box)
 		{
 			// It's always a box, these numbers are known
@@ -96,44 +140,7 @@ namespace Sledge.BspEditor.Rendering.Converters
 
 			var groups = new List<BufferGroup>();
 
-			Entity entity = obj as Entity;
-			if (obj.IsSelected && entity.Relations.Any())
-			{
-				VertexStandard[] relationPoints = new VertexStandard[entity.Relations.Count * 2];
-				var relationIndices = new uint[entity.Relations.Count * 2];
-				uint i = 0;
-				foreach (var relatedEntity in entity.Relations)
-				{
-					var relationC = relatedEntity.Relation == Entity.EntityRelative.RelationType.TargetsMain ? Color.Yellow : Color.Blue;
-					var relationColour = new Vector4(relationC.R, relationC.G, relationC.B, relationC.A) / 255f;
-
-					relationPoints[i] = new VertexStandard
-					{
-						Colour = relationColour,
-						Position = entity.BoundingBox.Center,
-						Texture = Vector2.Zero,
-						Tint = Vector4.One,
-						Flags = VertexFlags.FlatColour,
-
-					};
-					relationPoints[i + 1] = new VertexStandard
-					{
-						Colour = relationColour,
-						Position = relatedEntity.Entity.BoundingBox.Center,
-						Texture = Vector2.Zero,
-						Tint = Vector4.One,
-						Flags = VertexFlags.FlatColour,
-
-					};
-					relationIndices[i] = i;
-					relationIndices[i + 1] = i + 1;
-					i += 2;
-
-
-				}
-				//groups.Add();
-				builder.Append(relationPoints, relationIndices, new[] { new BufferGroup(PipelineType.Wireframe, CameraType.Perspective, 0, (uint)entity.Relations.Count * 2) });
-			}
+			ConvertRelations(builder, obj as Entity);
 
 
 
