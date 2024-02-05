@@ -15,5 +15,7 @@ namespace Sledge.Common.Shell.Components
         /// <param name="context">The shell context</param>
         /// <param name="visible">The visibility state to set</param>
         void SetVisible(IContext context, bool visible);
+
+        void UseDarkTheme(bool dark);
     }
 }

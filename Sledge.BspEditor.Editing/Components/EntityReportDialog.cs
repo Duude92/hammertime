@@ -61,32 +61,32 @@ namespace Sledge.BspEditor.Editing.Components
 			EntityList.ListViewItemSorter = _sorter;
 		}
 
-		public void Translate(ITranslationStringProvider strings)
-		{
-			CreateHandle();
+        public void Translate(ITranslationStringProvider strings)
+        {
+			if (Handle == null) CreateHandle();
 			var prefix = GetType().FullName;
-			this.InvokeLater(() =>
-			{
-				Text = strings.GetString(prefix, "Title");
-				ClassNameHeader.Text = strings.GetString(prefix, "ClassHeader");
-				EntityNameHeader.Text = strings.GetString(prefix, "NameHeader");
-				GoToButton.Text = strings.GetString(prefix, "GoTo");
-				DeleteButton.Text = strings.GetString(prefix, "Delete");
-				PropertiesButton.Text = strings.GetString(prefix, "Properties");
-				FollowSelection.Text = strings.GetString(prefix, "FollowSelection");
-				FilterGroup.Text = strings.GetString(prefix, "Filter");
-				TypeAll.Text = strings.GetString(prefix, "ShowAll");
-				TypePoint.Text = strings.GetString(prefix, "ShowPoint");
-				TypeBrush.Text = strings.GetString(prefix, "ShowBrush");
-				IncludeHidden.Text = strings.GetString(prefix, "IncludeHidden");
-				FilterByKeyValueLabel.Text = strings.GetString(prefix, "FilterByKeyValue");
-				FilterByClassLabel.Text = strings.GetString(prefix, "FilterByClass");
-				FilterClassExact.Text = strings.GetString(prefix, "Exact");
-				FilterKeyValueExact.Text = strings.GetString(prefix, "Exact");
-				ResetFiltersButton.Text = strings.GetString(prefix, "ResetFilters");
-				CloseButton.Text = strings.GetString(prefix, "Close");
-			});
-		}
+            this.InvokeLater(() =>
+            {
+                Text = strings.GetString(prefix, "Title");
+                ClassNameHeader.Text = strings.GetString(prefix, "ClassHeader");
+                EntityNameHeader.Text = strings.GetString(prefix, "NameHeader");
+                GoToButton.Text = strings.GetString(prefix, "GoTo");
+                DeleteButton.Text = strings.GetString(prefix, "Delete");
+                PropertiesButton.Text = strings.GetString(prefix, "Properties");
+                FollowSelection.Text = strings.GetString(prefix, "FollowSelection");
+                FilterGroup.Text = strings.GetString(prefix, "Filter");
+                TypeAll.Text = strings.GetString(prefix, "ShowAll");
+                TypePoint.Text = strings.GetString(prefix, "ShowPoint");
+                TypeBrush.Text = strings.GetString(prefix, "ShowBrush");
+                IncludeHidden.Text = strings.GetString(prefix, "IncludeHidden");
+                FilterByKeyValueLabel.Text = strings.GetString(prefix, "FilterByKeyValue");
+                FilterByClassLabel.Text = strings.GetString(prefix, "FilterByClass");
+                FilterClassExact.Text = strings.GetString(prefix, "Exact");
+                FilterKeyValueExact.Text = strings.GetString(prefix, "Exact");
+                ResetFiltersButton.Text = strings.GetString(prefix, "ResetFilters");
+                CloseButton.Text = strings.GetString(prefix, "Close");
+            });
+        }
 
 		protected override void OnClosing(CancelEventArgs e)
 		{
@@ -338,11 +338,15 @@ namespace Sledge.BspEditor.Editing.Components
 			SelectEntity(selected).ContinueWith(_ => Oy.Publish("Command:Run", new CommandMessage("BspEditor:Map:Properties")));
 		}
 
-		private void CloseButtonClicked(object sender, EventArgs e)
+        private void CloseButtonClicked(object sender, EventArgs e)
+        {
+            Close();
+        }
+		public void UseDarkTheme(bool dark)
 		{
-			Close();
+			return;
+			throw new NotImplementedException();
 		}
-
 		private void EntityList_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			selectedEntityCount.Text = $"{EntityList.SelectedItems.Count}";

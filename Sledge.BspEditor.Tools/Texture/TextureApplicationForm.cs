@@ -108,7 +108,7 @@ namespace Sledge.BspEditor.Tools.Texture
 
 		public void Translate(ITranslationStringProvider strings)
 		{
-			CreateHandle();
+			if(Handle == null) CreateHandle();
 			var prefix = GetType().FullName;
 			this.InvokeLater(() =>
 			{
@@ -869,6 +869,12 @@ namespace Sledge.BspEditor.Tools.Texture
 		private void RLeftButton_Click(object sender, EventArgs e)
 		{
 			RotateFaceTexture(-90);
+		}
+
+		public void UseDarkTheme(bool dark)
+		{
+			return;
+			throw new NotImplementedException();
 		}
 	}
 }

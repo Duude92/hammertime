@@ -176,5 +176,11 @@ namespace Sledge.BspEditor.Editing.Components
 			TextureMemoryValue.Text = CalculatingTextureMemoryUsage;
 			// ...
 		}
+
+		public void UseDarkTheme(bool dark)
+		{
+			return;
+			throw new NotImplementedException();
+		}
 	}
 }

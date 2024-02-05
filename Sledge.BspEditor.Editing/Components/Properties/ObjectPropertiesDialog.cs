@@ -16,6 +16,7 @@ using Sledge.Common.Shell.Hooks;
 using Sledge.Common.Translations;
 using Sledge.Shell;
 using Sledge.Shell.Forms;
+using Sledge.Shell.Registers;
 
 namespace Sledge.BspEditor.Editing.Components.Properties
 {
@@ -59,6 +60,26 @@ namespace Sledge.BspEditor.Editing.Components.Properties
 
 			Oy.Subscribe<List<IMapObject>>("BspEditor:ObjectProperties:OpenWithSelection", OpenWithSelection);
 			return Task.CompletedTask;
+		}
+		public void UseDarkTheme(bool dark)
+		{
+			//Action<Control> colorControls;
+			//colorControls = new Action<Control>((Control control) =>
+			//{
+			//	control.BackColor = System.Drawing.Color.DimGray;
+			//	control.ForeColor = System.Drawing.Color.White;
+			//	foreach (var item in control.Controls)
+			//	{
+			//		colorControls();
+			//	}
+			//});
+
+			foreach (var tab in _pages)
+			{
+				DialogRegister.ColorControlsRecursively(tab.Value, dark);
+			}
+
+
 		}
 
 		public string Title
@@ -311,5 +332,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties
 		private void ApplyClicked(object sender, EventArgs e) => Save().ContinueWith(Reset);
 		private void CancelClicked(object sender, EventArgs e) => Close();
 		private void ResetClicked(object sender, EventArgs e) => Reset();
+
+
 	}
 }

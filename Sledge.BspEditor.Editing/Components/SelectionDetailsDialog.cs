@@ -62,7 +62,7 @@ namespace Sledge.BspEditor.Editing.Components
 
         public void Translate(ITranslationStringProvider strings)
         {
-            CreateHandle();
+            if(Handle == null) CreateHandle();
             var prefix = GetType().FullName;
             this.InvokeLater(() =>
             {
@@ -152,5 +152,11 @@ namespace Sledge.BspEditor.Editing.Components
 
             return text;
         }
-    }
+
+		public void UseDarkTheme(bool dark)
+		{
+            return;
+			throw new NotImplementedException();
+		}
+	}
 }

@@ -66,15 +66,15 @@ namespace Sledge.BspEditor.Editing.Components
 			});
 		}
 
-		public void Translate(ITranslationStringProvider strings)
-		{
-			CreateHandle();
+        public void Translate(ITranslationStringProvider strings)
+        {
+			if (Handle == null) CreateHandle();
 			var prefix = GetType().FullName;
-			this.InvokeLater(() =>
-			{
-				Text = strings.GetString(prefix, "Title");
-			});
-		}
+            this.InvokeLater(() =>
+            {
+                Text = strings.GetString(prefix, "Title");
+            });
+        }
 
 		private void Subscribe()
 		{
@@ -295,6 +295,11 @@ namespace Sledge.BspEditor.Editing.Components
 				return list;
 			}
 			return list;
+		}
+		public void UseDarkTheme(bool dark)
+		{
+			return;
+			throw new NotImplementedException();
 		}
 	}
 }

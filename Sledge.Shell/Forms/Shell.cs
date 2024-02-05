@@ -54,55 +54,19 @@ namespace Sledge.Shell.Forms
 			_documentRegister = documentRegister;
 			_translation = translation;
 
-            InitializeComponent();
+			InitializeComponent();
 			InitializeShell();
 
-
-			var attribute = DWMWA_USE_IMMERSIVE_DARK_MODE;
-
-			int useImmersiveDarkMode = 1;
-
-
-			DwmSetWindowAttribute(this.Handle, (int)attribute, ref useImmersiveDarkMode, sizeof(int));
-
-
 		}
-		[DllImport("User32.dll", CharSet = CharSet.Auto)]
-		public static extern int ReleaseDC(IntPtr hWnd, IntPtr hDC);
 
-		[DllImport("User32.dll")]
-		private static extern IntPtr GetWindowDC(IntPtr hWnd);
-
-		[DllImport("dwmapi.dll")]
-		private static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, ref int attrValue, int attrSize);
-		private const int DWMWA_USE_IMMERSIVE_DARK_MODE_BEFORE_20H1 = 19;
-		private const int DWMWA_USE_IMMERSIVE_DARK_MODE = 20;
-        private const int DWMWA_BORDER_COLOR = 22;
-		protected override void WndProc(ref System.Windows.Forms.Message m)
-		{
-			base.WndProc(ref m);
-			const int WM_NCPAINT = 0x85;
-			if (m.Msg == WM_NCPAINT)
-			{
-				IntPtr hdc = GetWindowDC(m.HWnd);
-				if ((int)hdc != 0)
-				{
-					Graphics g = Graphics.FromHdc(hdc);
-					g.FillRectangle(Brushes.Green, new Rectangle(0, 0, 4800, 23));
-					g.Flush();
-					ReleaseDC(m.HWnd, hdc);
-				}
-			}
-
-		}
 		/// <summary>
 		/// Setup the shell pre-startup
 		/// </summary>
 		private void InitializeShell()
-        {
-            DocumentTabs.TabPages.Clear();
-            
-            Oy.Subscribe<List<string>>("Shell:InstanceOpened", async a => await this.InvokeAsync(() => InstanceOpened(a)));
+		{
+			DocumentTabs.TabPages.Clear();
+
+			Oy.Subscribe<List<string>>("Shell:InstanceOpened", async a => await this.InvokeAsync(() => InstanceOpened(a)));
 
 			Oy.Subscribe<IDocument>("Document:Opened", async d => await this.InvokeAsync(() => OpenDocument(d)));
 			Oy.Subscribe<IDocument>("Document:Closed", async d => await this.InvokeLaterAsync(() => CloseDocument(d)));

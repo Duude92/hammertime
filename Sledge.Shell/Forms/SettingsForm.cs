@@ -17,7 +17,7 @@ namespace Sledge.Shell.Forms
 {
     [Export(typeof(IDialog))]
     [AutoTranslate]
-    public partial class SettingsForm : Form, IDialog
+	public partial class SettingsForm : Form, IDialog
     {
         private readonly IEnumerable<Lazy<ISettingEditorFactory>> _editorFactories;
         private readonly IEnumerable<Lazy<ISettingsContainer>> _settingsContainers;
@@ -255,7 +255,13 @@ namespace Sledge.Shell.Forms
             Close();
         }
 
-        private class GroupHolder
+		public void UseDarkTheme(bool dark)
+		{
+            return;
+			throw new NotImplementedException();
+		}
+
+		private class GroupHolder
         {
             public string Key { get; set; }
             public string Label { get; set; }
