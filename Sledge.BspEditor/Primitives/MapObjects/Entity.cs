@@ -13,6 +13,7 @@ namespace Sledge.BspEditor.Primitives.MapObjects
     {
         public EntityData EntityData => Data.GetOne<EntityData>();
         public ObjectColor Color => Data.GetOne<ObjectColor>();
+        public List<EntityRelative> Relations = new List<EntityRelative>();
 
         public Vector3 Origin
         {
@@ -73,6 +74,23 @@ namespace Sledge.BspEditor.Primitives.MapObjects
         public override IEnumerable<IMapObject> Decompose(IEnumerable<Type> allowedTypes)
         {
             yield return this;
+        }
+
+        public class EntityRelative
+        {
+            public enum RelationType
+            {
+                /// <summary>
+                /// Related entity targets main entity
+                /// </summary>
+                TargetsMain,
+                /// <summary>
+                /// Related entity targeted by main entity
+                /// </summary>
+                TargetedByMain,
+            }
+            public Entity Entity { get; set; }
+            public RelationType Relation { get; set; }
         }
     }
 }
