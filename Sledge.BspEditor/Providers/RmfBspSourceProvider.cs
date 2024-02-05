@@ -88,40 +88,11 @@ namespace Sledge.BspEditor.Providers
 
 						ReadCameras(map, br);
 					}
-					CollectEntitiesRecursively(map.Root);
-					SearchForRelatives();
 					result.Map = map;
 					return result;
 				}
 			});
 		}
-
-		private List<Entity> _entities = new List<Entity>();
-		private void CollectEntitiesRecursively(IMapObject mapObject)
-		{
-			if(mapObject is Entity entity) _entities.Add(entity);
-			foreach (var child in mapObject.Hierarchy)
-			{
-				CollectEntitiesRecursively(child);
-			}
-		}
-		private void SearchForRelatives()
-		{
-            foreach (var entity in _entities)
-            {
-                if (entity.EntityData.Properties.TryGetValue("target", out var targetname)&&!String.IsNullOrEmpty(targetname))
-                {
-                    foreach (var childEntity in _entities)
-                    {
-                        if(childEntity.EntityData.Properties.TryGetValue("targetname", out var childTargetname) && !String.IsNullOrEmpty(childTargetname)&&childTargetname == targetname)
-						{
-							entity.Relations.Add(new Entity.EntityRelative { Entity = childEntity, Relation = Entity.EntityRelative.RelationType.TargetedByMain });
-							childEntity.Relations.Add(new Entity.EntityRelative { Entity = entity, Relation = Entity.EntityRelative.RelationType.TargetsMain });
-						}
-                    }
-                }
-            }
-        }
 
 		#region Reading
 
