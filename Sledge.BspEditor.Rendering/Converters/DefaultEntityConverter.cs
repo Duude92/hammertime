@@ -37,9 +37,10 @@ namespace Sledge.BspEditor.Rendering.Converters
 		public Task Convert(BufferBuilder builder, MapDocument document, IMapObject obj, ResourceCollector resourceCollector)
 		{
 			if (!obj.Hierarchy.HasChildren)
-				return ConvertBox(builder, obj, obj.BoundingBox);
-			else
-				return ConvertRelations(builder, obj as Entity);
+			{
+				ConvertBox(builder, obj, obj.BoundingBox);
+			}
+			return ConvertRelations(builder, obj as Entity);
 		}
 		internal static Task ConvertRelations(BufferBuilder builder, Entity entity)
 		{
@@ -140,7 +141,7 @@ namespace Sledge.BspEditor.Rendering.Converters
 
 			var groups = new List<BufferGroup>();
 
-			ConvertRelations(builder, obj as Entity);
+			//ConvertRelations(builder, obj as Entity);
 
 
 
