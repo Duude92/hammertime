@@ -17,6 +17,8 @@ namespace Sledge.BspEditor.Editing.Components.Properties.SmartEdit
         public SmartEditTargetDestination()
         {
             _comboBox = new ComboBox { Width = 250 };
+            _comboBox.AutoCompleteMode = AutoCompleteMode.Append;
+            _comboBox.AutoCompleteSource = AutoCompleteSource.ListItems;
             _comboBox.TextChanged += (sender, e) => OnValueChanged();
             Controls.Add(_comboBox);
         }
