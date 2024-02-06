@@ -42,6 +42,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 		private GameData _gameData;
 		private IObjectPropertyEditor _currentEditor;
 		private readonly Lazy<ClipboardManager> _clipboard;
+		private string _newTarget = null;
 
 		public string OrderHint => "D";
 		public Control Control => this;
@@ -251,6 +252,42 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 
 		private void UpdateObjects(List<IMapObject> objects)
 		{
+			if (!String.IsNullOrEmpty(_newTarget))
+			{
+				List<Entity> cachedEntities = new List<Entity>();
+				if (_document.TryGetTarget(out var document))
+				{
+					Func<IMapObject, List<Entity>> GetObjects;
+					GetObjects = delegate (IMapObject parent)
+					{
+						List<Entity> retEntities = new List<Entity>();
+						if (parent is Entity entity) retEntities.Add(entity);
+                        foreach (var item in parent.Hierarchy.OfType<Entity>())
+                        {
+							retEntities.Add(item);
+                        }
+
+                        return retEntities;
+					};
+					cachedEntities = GetObjects(document.Map.Root).Distinct().ToList();
+				}
+				cachedEntities = cachedEntities.Where(x => x.EntityData.Properties.TryGetValue("targetname", out var targetName) && targetName == _newTarget).ToList();
+				//document.Map.Root.
+				foreach (Entity obj in objects)
+				{
+					foreach (var rel in obj.Relations.ToList())
+					{
+						if ((rel.Relation == Entity.EntityRelative.RelationType.TargetedByMain))
+						{
+							obj.Relations.Remove(rel);
+						}
+						//&& rel.Entity.EntityData.Properties.TryGetValue("targetname", out var relativeTargetName) && relativeTargetName == obj.en)
+					}
+					obj.Relations.AddRange(cachedEntities.Select(x=>new Entity.EntityRelative { Entity = x, Relation = Entity.EntityRelative.RelationType.TargetedByMain }));
+
+				}
+				_newTarget = null;
+			}
 			SuspendLayout();
 
 			pnlSmartEdit.Controls.Clear();
@@ -430,7 +467,6 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 			RefreshTable();
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasChanges)));
 		}
-
 		/// <summary>
 		/// User has changed the value of the selected property
 		/// </summary>
@@ -438,6 +474,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 		{
 			var sel = lstKeyValues.SelectedItems.OfType<ListViewItem>().FirstOrDefault();
 			var tv = sel?.Tag as TableValue;
+			if (tv.Key == "target") _newTarget = value;
 			if (tv == null) return;
 
 			tv.NewValue = value;
@@ -516,7 +553,8 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 				!((key.VariableType == VariableType.Sprite || key.VariableType == VariableType.Studio)))
 				if (key.Options.Count > 0)
 					return key.Options.First().Key;
-			if((string.IsNullOrEmpty(key.DefaultValue) && key.VariableType == VariableType.Integer && key.Name == "renderamt")){
+			if ((string.IsNullOrEmpty(key.DefaultValue) && key.VariableType == VariableType.Integer && key.Name == "renderamt"))
+			{
 				return "255";
 			}
 
