@@ -43,7 +43,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 		private IObjectPropertyEditor _currentEditor;
 		private readonly Lazy<ClipboardManager> _clipboard;
 		private string _newTarget = null;
-
+		private bool _targetChanged = false;
 		public string OrderHint => "D";
 		public Control Control => this;
 
@@ -252,7 +252,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 
 		private void UpdateObjects(List<IMapObject> objects)
 		{
-			if (!String.IsNullOrEmpty(_newTarget))
+			if (_targetChanged)
 			{
 				List<Entity> cachedEntities = new List<Entity>();
 				if (_document.TryGetTarget(out var document))
@@ -262,17 +262,16 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 					{
 						List<Entity> retEntities = new List<Entity>();
 						if (parent is Entity entity) retEntities.Add(entity);
-                        foreach (var item in parent.Hierarchy.OfType<Entity>())
-                        {
+						foreach (var item in parent.Hierarchy.OfType<Entity>())
+						{
 							retEntities.Add(item);
-                        }
+						}
 
-                        return retEntities;
+						return retEntities;
 					};
 					cachedEntities = GetObjects(document.Map.Root).Distinct().ToList();
 				}
 				cachedEntities = cachedEntities.Where(x => x.EntityData.Properties.TryGetValue("targetname", out var targetName) && targetName == _newTarget).ToList();
-				//document.Map.Root.
 				foreach (Entity obj in objects)
 				{
 					foreach (var rel in obj.Relations.ToList())
@@ -283,10 +282,12 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 						}
 						//&& rel.Entity.EntityData.Properties.TryGetValue("targetname", out var relativeTargetName) && relativeTargetName == obj.en)
 					}
-					obj.Relations.AddRange(cachedEntities.Select(x=>new Entity.EntityRelative { Entity = x, Relation = Entity.EntityRelative.RelationType.TargetedByMain }));
+					if (!String.IsNullOrEmpty(_newTarget))
+						obj.Relations.AddRange(cachedEntities.Select(x => new Entity.EntityRelative { Entity = x, Relation = Entity.EntityRelative.RelationType.TargetedByMain }));
 
 				}
 				_newTarget = null;
+				_targetChanged = false;
 			}
 			SuspendLayout();
 
@@ -474,7 +475,11 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 		{
 			var sel = lstKeyValues.SelectedItems.OfType<ListViewItem>().FirstOrDefault();
 			var tv = sel?.Tag as TableValue;
-			if (tv.Key == "target") _newTarget = value;
+			if (tv.Key == "target")
+			{
+				_newTarget = value;
+				_targetChanged = true;
+			}
 			if (tv == null) return;
 
 			tv.NewValue = value;
