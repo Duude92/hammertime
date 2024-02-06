@@ -6,15 +6,12 @@ using Sledge.BspEditor.Modification.Operations.Tree;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapData;
-using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.Resources;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Draggable;
 using Sledge.BspEditor.Tools.Properties;
 using Sledge.Common.Shell.Components;
-using Sledge.Common.Shell.Hotkeys;
-using Sledge.Common.Shell.Settings;
 using Sledge.Common.Translations;
 using Sledge.DataStructures.Geometric;
 using Sledge.Providers.Texture;
@@ -28,17 +25,11 @@ using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
 using System.Numerics;
-using System.Text;
 using System.Threading.Tasks;
 using static Sledge.BspEditor.Primitives.MapObjects.MapObjectExtensions;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
-using Sledge.BspEditor.Tools.Brush;
 using Sledge.Common.Shell.Context;
 using Sledge.Formats.Map.Formats;
 using System.Windows.Forms;
-using System.Runtime.Remoting.Contexts;
-using System.Data.Common;
-using Sledge.Shell.Registers;
 
 namespace Sledge.BspEditor.Tools.Prefab
 {
@@ -126,8 +117,8 @@ namespace Sledge.BspEditor.Tools.Prefab
 					var translation = Matrix4x4.CreateTranslation(position);
 
 					transaction.Add(new Attach(mapDocument.Map.Root.ID, contents));
-					transaction.Add(new Transform(translation, contents));
-					transaction.Add(new TransformTexturesUniform(translation, contents));
+					//transaction.Add(new Transform(translation, contents));
+					//transaction.Add(new TransformTexturesUniform(translation, contents.SelectMany(x => x.FindAll())));
 					transaction.Add(new Deselect(mapDocument.Selection));
 					transaction.Add(new Select(contents));
 
@@ -186,7 +177,7 @@ namespace Sledge.BspEditor.Tools.Prefab
 
 					transaction.Add(new Attach(md.Map.Root.ID, _preview));
 					transaction.Add(new Transform(translation, _preview));
-					transaction.Add(new TransformTexturesUniform(translation, _preview));
+					transaction.Add(new TransformTexturesUniform(translation, _preview.SelectMany(x => x.FindAll())));
 
 
 					MapDocumentOperation.Perform(md, transaction);
