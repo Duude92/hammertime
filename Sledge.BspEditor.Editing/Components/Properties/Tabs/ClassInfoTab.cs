@@ -271,7 +271,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 					};
 					cachedEntities = GetObjects(document.Map.Root).Distinct().ToList();
 				}
-				cachedEntities = cachedEntities.Where(x => x.EntityData.Properties.TryGetValue("targetname", out var targetName) && targetName == _newTarget).ToList();
+				var newCachedEntities = cachedEntities.Where(x => x.EntityData.Properties.TryGetValue("targetname", out var targetName) && targetName == _newTarget).ToList();
 				foreach (Entity obj in objects)
 				{
 					foreach (var rel in obj.Relations.ToList())
@@ -280,12 +280,30 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 						{
 							obj.Relations.Remove(rel);
 						}
+						var relatedEntity = rel.Entity.Relations.Find(x => x.Entity == obj);
+						if(relatedEntity!=null)
+						{
+							rel.Entity.Relations.Remove(relatedEntity);
+						}
 						//&& rel.Entity.EntityData.Properties.TryGetValue("targetname", out var relativeTargetName) && relativeTargetName == obj.en)
 					}
 					if (!String.IsNullOrEmpty(_newTarget))
-						obj.Relations.AddRange(cachedEntities.Select(x => new Entity.EntityRelative { Entity = x, Relation = Entity.EntityRelative.RelationType.TargetedByMain }));
+						obj.Relations.AddRange(newCachedEntities.Select(x => new Entity.EntityRelative { Entity = x, Relation = Entity.EntityRelative.RelationType.TargetedByMain }));
+
+
+					//cachedEntities.ForEach(entity =>
+					//{
+					//	if (entity.EntityData.Properties.TryGetValue("target", out var target) && obj.EntityData.Properties.TryGetValue("targetname", out var targetname) && target == targetname)
+					//	{
+					//		entity.Relations.Add(new Entity.EntityRelative { Entity = obj, Relation = Entity.EntityRelative.RelationType.TargetsMain });
+					//	}
+					//});
+
 
 				}
+				newCachedEntities = cachedEntities.Where(x => x.EntityData.Properties.TryGetValue("targetname", out var targetName) && targetName == _newTarget).ToList();
+				newCachedEntities.ForEach(x=>x.Relations.AddRange(objects.OfType<Entity>().Select(entit=>new Entity.EntityRelative { Entity = entit, Relation = Entity.EntityRelative.RelationType.TargetsMain})));
+
 				_newTarget = null;
 				_targetChanged = false;
 			}
