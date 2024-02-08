@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Sledge.FileSystem</RootNamespace>
     <AssemblyName>Sledge.FileSystem</AssemblyName>
-    <TargetFramework>net472</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <Platforms>AnyCPU;x86</Platforms>

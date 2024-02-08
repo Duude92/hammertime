@@ -9,7 +9,8 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Sledge.QuickForms</RootNamespace>
     <AssemblyName>Sledge.QuickForms</AssemblyName>
-    <TargetFramework>net472</TargetFramework>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <Platforms>AnyCPU;x86</Platforms>

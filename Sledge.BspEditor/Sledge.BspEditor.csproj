@@ -8,7 +8,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Sledge.BspEditor</RootNamespace>
     <AssemblyName>Sledge.BspEditor</AssemblyName>
-    <TargetFramework>net472</TargetFramework>
+    <TargetFramework>net8.0-windows</TargetFramework>
     <FileAlignment>512</FileAlignment>
     <Platforms>AnyCPU;x86</Platforms>
     <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
@@ -289,6 +289,7 @@
     <ProjectReference Include="..\Sledge.Shell\Sledge.Shell.csproj">
       <Project>{1E0BEB41-CF2E-4F48-838E-452C1DCF575F}</Project>
       <Name>Sledge.Shell</Name>
+      <Private>True</Private>
     </ProjectReference>
   </ItemGroup>
   <!--
