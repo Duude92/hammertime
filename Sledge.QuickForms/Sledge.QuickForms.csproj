@@ -60,49 +60,4 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
-  <!--
-  <ItemGroup>
-    <Compile Include="Items\QuickFormBrowse.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Items\QuickFormButtonSet.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Items\QuickFormCheckBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Items\QuickFormComboBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Items\QuickFormItem.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Items\QuickFormLabel.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Items\QuickFormNumericUpDown.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Items\QuickFormTextBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="QuickForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-  </ItemGroup>
-  
-  <ItemGroup>
-    <EmbeddedResource Include="QuickForm.resx">
-      <DependentUpon>QuickForm.cs</DependentUpon>
-    </EmbeddedResource>
-  </ItemGroup>
-  -->
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

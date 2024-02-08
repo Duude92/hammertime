@@ -64,39 +64,6 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Numerics" />
   </ItemGroup>
-<!--
-  <ItemGroup>
-    <Compile Include="BinaryExtensions.cs" />
-    <Compile Include="GameData\AutoVisgroup.cs" />
-    <Compile Include="GameData\AutoVisgroupSection.cs" />
-    <Compile Include="Geometric\Box.cs" />
-    <Compile Include="Geometric\Vector3TypeConverter.cs" />
-    <Compile Include="Geometric\Cloud.cs" />
-    <Compile Include="Geometric\CsgNode.cs" />
-    <Compile Include="Geometric\CsgSolid.cs" />
-    <Compile Include="Geometric\Precision\Polyhedron.cs" />
-    <Compile Include="Geometric\Precision\Vector3.cs" />
-    <Compile Include="Geometric\Polygon.cs" />
-    <Compile Include="Geometric\Plane.cs" />
-    <Compile Include="Geometric\Polyhedron.cs" />
-    <Compile Include="GameData\Behaviour.cs" />
-    <Compile Include="GameData\ClassType.cs" />
-    <Compile Include="GameData\GameData.cs" />
-    <Compile Include="GameData\GameDataObject.cs" />
-    <Compile Include="GameData\IO.cs" />
-    <Compile Include="GameData\IOType.cs" />
-    <Compile Include="GameData\Option.cs" />
-    <Compile Include="GameData\Property.cs" />
-    <Compile Include="GameData\VariableType.cs" />
-    <Compile Include="Geometric\Line.cs" />
-    <Compile Include="Geometric\NumericsExtensions.cs" />
-    <Compile Include="Geometric\PlaneClassification.cs" />
-    <Compile Include="Geometric\Precision\Plane.cs" />
-    <Compile Include="Geometric\Precision\Polygon.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  -->
-
   <ItemGroup>
     <ProjectReference Include="..\Sledge.Common\Sledge.Common.csproj">
       <Project>{5D414AC8-8B93-489F-9960-877923400FED}</Project>
@@ -109,11 +76,4 @@
     </PackageReference>
     <PackageReference Include="System.Resources.Extensions" Version="7.0.0" />
   </ItemGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>
