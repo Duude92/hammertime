@@ -7,7 +7,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Sledge.Rendering</RootNamespace>
     <AssemblyName>Sledge.Rendering</AssemblyName>
-    <TargetFramework>net8.0-windows</TargetFramework>
+    <TargetFramework>net6.0-windows7.0</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
