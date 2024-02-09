@@ -40,4 +40,4 @@ jobs:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         prerelease: false
         files: ./HammerTime.zip
-        automatic_release_tag: latest-${{BRANCH_NAME}}
+        automatic_release_tag: latest-${{env.BRANCH_NAME}}
