@@ -39,8 +39,16 @@ namespace Sledge.Shell
 				using (StreamWriter outputFile = new StreamWriter("./startup.log"))
 				{
 					outputFile.WriteLine(DateTime.Now);
+					var path = Path.GetFullPath("./");
 					outputFile.WriteLine($"Directory: {Path.GetFullPath("./")}");
-					outputFile.Write(e.Message);
+					outputFile.WriteLine("Present files:");
+                    foreach (var file in Directory.GetFiles(path))
+                    {
+						outputFile.WriteLine(new FileInfo(file).Length);
+						outputFile.WriteLine(Path.GetFileName(file));
+						outputFile.WriteLine("----");
+                    }
+                    outputFile.WriteLine(e.Message);
 					outputFile.WriteLine(e.ToString());
 				}
 			}
