@@ -31,6 +31,7 @@ namespace Sledge.Shell
 				BuildCatalog?.Invoke(null, catalog);
 
 				var container = new CompositionContainer(catalog, CompositionOptions.DisableSilentRejection);
+				throw new Exception();
 
 				Run(container);
 			}
@@ -39,6 +40,8 @@ namespace Sledge.Shell
 				using (StreamWriter outputFile = new StreamWriter("./startup.log"))
 				{
 					outputFile.WriteLine(DateTime.Now);
+					outputFile.WriteLine(".Net Version: {0}", Environment.Version.ToString());
+
 					var path = Path.GetFullPath("./");
 					outputFile.WriteLine($"Directory: {Path.GetFullPath("./")}");
 					outputFile.WriteLine("Present files:");
