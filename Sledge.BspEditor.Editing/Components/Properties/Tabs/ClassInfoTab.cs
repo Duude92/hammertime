@@ -13,9 +13,11 @@ using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations.Data;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
+using Sledge.BspEditor.Rendering.ChangeHandlers;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Translations;
 using Sledge.DataStructures.GameData;
+using Sledge.Providers.Model.Mdl10;
 using Sledge.Shell;
 
 namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
@@ -281,7 +283,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 							obj.Relations.Remove(rel);
 						}
 						var relatedEntity = rel.Entity.Relations.Find(x => x.Entity == obj);
-						if(relatedEntity!=null)
+						if (relatedEntity != null)
 						{
 							rel.Entity.Relations.Remove(relatedEntity);
 						}
@@ -302,10 +304,27 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 
 				}
 				newCachedEntities = cachedEntities.Where(x => x.EntityData.Properties.TryGetValue("targetname", out var targetName) && targetName == _newTarget).ToList();
-				newCachedEntities.ForEach(x=>x.Relations.AddRange(objects.OfType<Entity>().Select(entit=>new Entity.EntityRelative { Entity = entit, Relation = Entity.EntityRelative.RelationType.TargetsMain})));
+				newCachedEntities.ForEach(x => x.Relations.AddRange(objects.OfType<Entity>().Select(entit => new Entity.EntityRelative { Entity = entit, Relation = Entity.EntityRelative.RelationType.TargetsMain })));
 
 				_newTarget = null;
 				_targetChanged = false;
+			}
+			foreach (var obj in objects)
+			{
+				var skinId = 0;
+				var bodyPart = 0;
+				if (obj is Entity entity)
+				{
+
+					if (entity.EntityData.Properties.TryGetValue("skin", out var skinString) && !String.IsNullOrEmpty(skinString))
+						skinId = int.Parse(skinString);
+					if (entity.EntityData.Properties.TryGetValue("body", out var body) && !String.IsNullOrEmpty(body)) 
+						bodyPart = int.Parse(body);
+					var em = obj.Data.GetOne<EntityModel>();
+					((em.Renderable as Sledge.Providers.Model.Mdl10.MdlModelRenderable).Model as MdlModel).ReInitResources(skinId, bodyPart);
+				}
+
+
 			}
 			SuspendLayout();
 
