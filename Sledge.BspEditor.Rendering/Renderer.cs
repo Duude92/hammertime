@@ -27,17 +27,20 @@ namespace Sledge.BspEditor.Rendering
         [Setting] public static Color SecondaryGridLineColour { get; set; } = Color.FromArgb(100, 46, 0);
         [Setting] public static Color AxisGridLineColour { get; set; } = Color.FromArgb(0, 100, 100);
         [Setting] public static Color BoundaryGridLineColour { get; set; } = Color.Red;
+        [Setting("UnfocusedViewportTargetFps")] private int _targetFps { get; set; } = 10;
 
-        // Settings container
+		// Settings container
 
-        public string Name => "Sledge.BspEditor.Rendering.Renderer";
+		public string Name => "Sledge.BspEditor.Rendering.Renderer";
 
         public IEnumerable<SettingKey> GetKeys()
         {
             yield return new SettingKey("Rendering", "PerspectiveBackgroundColour", typeof(Color));
             yield return new SettingKey("Rendering", "OrthographicBackgroundColour", typeof(Color));
+			yield return new SettingKey("Rendering", "UnfocusedViewportTargetFps", typeof(int));
 
-            yield return new SettingKey("Rendering/Grid", "FractionalGridLineColour", typeof(Color));
+
+			yield return new SettingKey("Rendering/Grid", "FractionalGridLineColour", typeof(Color));
             yield return new SettingKey("Rendering/Grid", "StandardGridLineColour", typeof(Color));
             yield return new SettingKey("Rendering/Grid", "PrimaryGridLineColour", typeof(Color));
             yield return new SettingKey("Rendering/Grid", "SecondaryGridLineColour", typeof(Color));
@@ -50,6 +53,7 @@ namespace Sledge.BspEditor.Rendering
             store.LoadInstance(this);
             _engine.Value.SetClearColour(CameraType.Perspective, PerspectiveBackgroundColour);
             _engine.Value.SetClearColour(CameraType.Orthographic, OrthographicBackgroundColour);
+            _engine.Value.InactiveTargetFps = Math.Max(_targetFps, 1);
         }
 
         public void StoreValues(ISettingsStore store)

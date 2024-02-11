@@ -36,6 +36,8 @@ namespace Sledge.Rendering.Engine
 
 		private RgbaFloat _clearColourPerspective;
 		private RgbaFloat _clearColourOrthographic;
+		internal int InactiveTargetFps { get; set; } = 10;
+		private long _previousFrameTime = DateTime.Now.Ticks;
 
 		private Engine()
 		{
@@ -214,15 +216,22 @@ namespace Sledge.Rendering.Engine
 				Scene.Update(frame);
 				var overlays = Scene.GetOverlayRenderables().ToList();
 
+				long currentTime = DateTime.Now.Ticks;
+				long elapsedTime = currentTime - _previousFrameTime;
+				double millisecondsPerFrame = 1000.0 / InactiveTargetFps;
+				bool shouldRender = (elapsedTime >= millisecondsPerFrame * TimeSpan.TicksPerMillisecond);
+
 				foreach (var rt in _renderTargets)
 				{
 					rt.Update(frame);
 					rt.Overlay.Build(overlays);
-					if (rt.ShouldRender(frame))
+					if (rt.IsFocused || (!rt.IsFocused && shouldRender))
 					{
 						Render(rt);
 					}
 				}
+				if (shouldRender)
+					_previousFrameTime = currentTime;
 			}
 		}
 
@@ -289,7 +298,7 @@ namespace Sledge.Rendering.Engine
 			//{
 			//	lo.Pipeline.Render(Context, renderTarget, _commandList, lo.Renderable, lo.Location);
 			//}
-		
+
 			foreach (var transparent in transparentPipelines)
 			{
 				transparent.Render(Context, renderTarget, _commandList, Scene.GetRenderables(transparent, renderTarget));
