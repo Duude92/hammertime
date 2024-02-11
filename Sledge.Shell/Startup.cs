@@ -38,8 +38,10 @@ namespace Sledge.Shell
 			{
 				using (StreamWriter outputFile = new StreamWriter("./startup.log"))
 				{
-					outputFile.WriteLine(e.ToString());
+					outputFile.WriteLine(DateTime.Now);
+					outputFile.WriteLine($"Directory: {Path.GetFullPath("./")}");
 					outputFile.Write(e.Message);
+					outputFile.WriteLine(e.ToString());
 				}
 			}
 		}
