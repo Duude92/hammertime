@@ -31,7 +31,6 @@ namespace Sledge.Shell
 				BuildCatalog?.Invoke(null, catalog);
 
 				var container = new CompositionContainer(catalog, CompositionOptions.DisableSilentRejection);
-				throw new Exception();
 
 				Run(container);
 			}
