@@ -127,9 +127,9 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
             if (studio.Values.Count == 1 && !String.IsNullOrWhiteSpace(studio.Values[0]))
             {
                 details.Name = studio.Values[0].Trim();
-            }
-            else
-            {
+            //}
+            //else
+            //{
                 // Find the first property that is a studio type, or has a name of "model"...
                 var prop = cls.Properties.FirstOrDefault(x => x.VariableType == VariableType.Studio) ??
                            cls.Properties.FirstOrDefault(x => String.Equals(x.Name, "model", StringComparison.InvariantCultureIgnoreCase));
