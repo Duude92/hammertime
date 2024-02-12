@@ -318,10 +318,11 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 
 					if (entity.EntityData.Properties.TryGetValue("skin", out var skinString) && !String.IsNullOrEmpty(skinString))
 						skinId = int.Parse(skinString);
-					if (entity.EntityData.Properties.TryGetValue("body", out var body) && !String.IsNullOrEmpty(body)) 
+					if (entity.EntityData.Properties.TryGetValue("body", out var body) && !String.IsNullOrEmpty(body))
 						bodyPart = int.Parse(body);
 					var em = obj.Data.GetOne<EntityModel>();
-					((em.Renderable as Sledge.Providers.Model.Mdl10.MdlModelRenderable).Model as MdlModel).ReInitResources(skinId, bodyPart);
+					if (em != null)
+						((em.Renderable as Sledge.Providers.Model.Mdl10.MdlModelRenderable).Model as MdlModel).ReInitResources(skinId, bodyPart);
 				}
 
 
