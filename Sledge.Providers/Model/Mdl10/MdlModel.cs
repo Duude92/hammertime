@@ -108,7 +108,7 @@ namespace Sledge.Providers.Model.Mdl10
 
 			var maxTextureSize = SharpDX.Direct3D11.Texture2D.MaximumTexture2DSize;
 
-			if(textureHeight>maxTextureSize)
+			if (textureHeight > maxTextureSize)
 			{
 				throw new Exception($"Texture size of {textureHeight} is higher than D3D11 feature size {maxTextureSize}");
 			}
@@ -159,7 +159,7 @@ namespace Sledge.Providers.Model.Mdl10
 
 		}
 		public void ReInitResources(int skinId = 0, int bodyPartId = 0)
-		{ 
+		{
 			var texHeight = _rectangles.Max(x => x.Bottom);
 			var texWidth = _rectangles.Max(x => x.Right);
 			var vertices = new List<VertexModel3>();
@@ -180,8 +180,8 @@ namespace Sledge.Providers.Model.Mdl10
 				var part = Model.BodyParts[bpi];
 				_bodyPartIndices1[bpi] = new uint[part.Models.Length];
 
-				// Only render the first submodel
-				var body = Math.Max(0, Math.Min(bodyPartId, part.Models.Length - 1));
+				var body = bodyPartId % part.Models.Length;
+				bodyPartId /= part.Models.Length;
 				var model = part.Models[body];
 				_bodyPartIndices1[bpi][0] = (uint)model.Meshes.Sum(x => x.Vertices.Length);
 
@@ -200,7 +200,6 @@ namespace Sledge.Providers.Model.Mdl10
 						{
 							Position = x.Vertex,
 							Normal = x.Normal,
-							//Texture = (x.Texture + new Vector2(rec.X, rec.Y)) / new Vector2(texWidth, texHeight),
 							Texture = (texCoord + new Vector2(rec.X, rec.Y)) / new Vector2(texWidth, texHeight),
 							Bone = (uint)x.VertexBone
 						});
