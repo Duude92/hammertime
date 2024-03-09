@@ -43,6 +43,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sledge.BspEditor.Editing", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HammerTime.Formats", "HammerTime.Formats.Copy\HammerTime.Formats.csproj", "{AD870464-7A1B-4783-AAC5-1DB8ADD215CC}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HalfLife.UnifiedSdk.MapDecompiler", "HalfLife.UnifiedSdk.MapDecompiler\HalfLife.UnifiedSdk.MapDecompiler\HalfLife.UnifiedSdk.MapDecompiler.csproj", "{496F89C5-5CC9-4979-947A-6081C431E776}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug (Extra)|Any CPU = Debug (Extra)|Any CPU
@@ -308,6 +310,24 @@ Global
 		{AD870464-7A1B-4783-AAC5-1DB8ADD215CC}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{AD870464-7A1B-4783-AAC5-1DB8ADD215CC}.Release|x86.ActiveCfg = Release|Any CPU
 		{AD870464-7A1B-4783-AAC5-1DB8ADD215CC}.Release|x86.Build.0 = Release|Any CPU
+		{496F89C5-5CC9-4979-947A-6081C431E776}.Debug (Extra)|Any CPU.ActiveCfg = Debug|Any CPU
+		{496F89C5-5CC9-4979-947A-6081C431E776}.Debug (Extra)|Any CPU.Build.0 = Debug|Any CPU
+		{496F89C5-5CC9-4979-947A-6081C431E776}.Debug (Extra)|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{496F89C5-5CC9-4979-947A-6081C431E776}.Debug (Extra)|Mixed Platforms.Build.0 = Debug|Any CPU
+		{496F89C5-5CC9-4979-947A-6081C431E776}.Debug (Extra)|x86.ActiveCfg = Debug|Any CPU
+		{496F89C5-5CC9-4979-947A-6081C431E776}.Debug (Extra)|x86.Build.0 = Debug|Any CPU
+		{496F89C5-5CC9-4979-947A-6081C431E776}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{496F89C5-5CC9-4979-947A-6081C431E776}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{496F89C5-5CC9-4979-947A-6081C431E776}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{496F89C5-5CC9-4979-947A-6081C431E776}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{496F89C5-5CC9-4979-947A-6081C431E776}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{496F89C5-5CC9-4979-947A-6081C431E776}.Debug|x86.Build.0 = Debug|Any CPU
+		{496F89C5-5CC9-4979-947A-6081C431E776}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{496F89C5-5CC9-4979-947A-6081C431E776}.Release|Any CPU.Build.0 = Release|Any CPU
+		{496F89C5-5CC9-4979-947A-6081C431E776}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{496F89C5-5CC9-4979-947A-6081C431E776}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{496F89C5-5CC9-4979-947A-6081C431E776}.Release|x86.ActiveCfg = Release|Any CPU
+		{496F89C5-5CC9-4979-947A-6081C431E776}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
