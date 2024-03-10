@@ -108,7 +108,7 @@ namespace Sledge.Providers.Model.Mdl10
 
 			var maxTextureSize = SharpDX.Direct3D11.Texture2D.MaximumTexture2DSize;
 
-			if(textureHeight>maxTextureSize)
+			if (textureHeight > maxTextureSize)
 			{
 				throw new Exception($"Texture size of {textureHeight} is higher than D3D11 feature size {maxTextureSize}");
 			}
@@ -144,41 +144,51 @@ namespace Sledge.Providers.Model.Mdl10
 
 			return rectangles;
 		}
-
+		private List<Rectangle> _rectangles;
 		public void CreateResources(EngineInterface engine, RenderContext context)
 		{
 			// textures = model textures 0 - count
 			// vertex buffer = all vertices
 			// index buffer = indices grouped by texture, in texture order
 			// indices per texture - number of indices per texture, in texture order
+			_rectangles = CreateTexuture(engine, context);
+			_buffer = engine.CreateBuffer();
 
+
+			ReInitResources();
+
+		}
+		public void ReInitResources(int skinId = 0, int bodyPartId = 0)
+		{
+			var texHeight = _rectangles.Max(x => x.Bottom);
+			var texWidth = _rectangles.Max(x => x.Right);
 			var vertices = new List<VertexModel3>();
 			var indices = new Dictionary<short, List<uint>>();
 			for (short i = 0; i < Model.Textures.Count; i++) indices[i] = new List<uint>();
 
 			var wireframeIndices = new List<uint>();
 
-			var rectangles = CreateTexuture(engine, context);
-			var texHeight = rectangles.Max(x => x.Bottom);
-			var texWidth = rectangles.Max(x => x.Right);
 
-			_bodyPartIndices = new uint[Model.BodyParts.Count][];
+			var _bodyPartIndices1 = new uint[Model.BodyParts.Count][];
 
 			uint vi = 0;
-			var skin = Model.Skins[0].Textures;
+			var skinMax = Math.Max(0, Math.Min(skinId, Model.Skins.Count - 1));
+
+			var skin = Model.Skins[skinMax].Textures;
 			for (var bpi = 0; bpi < Model.BodyParts.Count; bpi++)
 			{
 				var part = Model.BodyParts[bpi];
-				_bodyPartIndices[bpi] = new uint[part.Models.Length];
+				_bodyPartIndices1[bpi] = new uint[part.Models.Length];
 
-				// Only render the first submodel
-				var model = part.Models[0];
-				_bodyPartIndices[bpi][0] = (uint)model.Meshes.Sum(x => x.Vertices.Length);
+				var body = bodyPartId % part.Models.Length;
+				bodyPartId /= part.Models.Length;
+				var model = part.Models[body];
+				_bodyPartIndices1[bpi][0] = (uint)model.Meshes.Sum(x => x.Vertices.Length);
 
 				foreach (var mesh in model.Meshes)
 				{
 					var texId = skin[mesh.SkinRef];
-					var rec = rectangles.Count > texId ? rectangles[texId] : Rectangle.Empty;
+					var rec = _rectangles.Count > texId ? _rectangles[texId] : Rectangle.Empty;
 					for (var i = 0; i < mesh.Vertices.Length; i++)
 					{
 						var x = mesh.Vertices[i];
@@ -190,7 +200,6 @@ namespace Sledge.Providers.Model.Mdl10
 						{
 							Position = x.Vertex,
 							Normal = x.Normal,
-							//Texture = (x.Texture + new Vector2(rec.X, rec.Y)) / new Vector2(texWidth, texHeight),
 							Texture = (texCoord + new Vector2(rec.X, rec.Y)) / new Vector2(texWidth, texHeight),
 							Bone = (uint)x.VertexBone
 						});
@@ -201,6 +210,7 @@ namespace Sledge.Providers.Model.Mdl10
 					}
 				}
 			}
+			_bodyPartIndices = _bodyPartIndices1;
 
 			var flatIndices = new uint[vi + wireframeIndices.Count];
 			var currentIndexCount = 0;
@@ -212,7 +222,6 @@ namespace Sledge.Providers.Model.Mdl10
 			}
 			Array.Copy(wireframeIndices.ToArray(), 0, flatIndices, currentIndexCount, wireframeIndices.Count);
 
-			_buffer = engine.CreateBuffer();
 			_buffer.Update(vertices, flatIndices);
 
 			_numTexturedIndices = (uint)(flatIndices.Length - wireframeIndices.Count);

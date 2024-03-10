@@ -247,7 +247,12 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
 					midpoint.DraggingPosition = midpoint.Position = (p1 + p2) / 2;
 				}
 
-				Invalidate();
+
+				// Merge points if required
+				if (AutomaticallyMerge()) CheckMergedVertices();
+				else if (CanMerge() && ConfirmMerge()) CheckMergedVertices();
+
+				UpdateSolids(selected.Select(x => x.Solid).Distinct().ToList());
 			}
 		}
 

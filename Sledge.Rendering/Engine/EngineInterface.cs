@@ -43,20 +43,21 @@ namespace Sledge.Rendering.Engine
         {
             return new BufferBuilder(Engine.Instance.Device, size);
         }
+		public int InactiveTargetFps { get => Engine.Instance.InactiveTargetFps; set => Engine.Instance.InactiveTargetFps = value; }
 
-        /// <summary>
-        /// Upload a texture to the engine.
-        /// A texture is a resource that is internally managed by the engine.
-        /// Call <see cref="DestroyResource"/> to destroy a texture.
-        /// If the texture already exists it will not be created a second time.
-        /// </summary>
-        /// <param name="name">The texture name</param>
-        /// <param name="width">The texture width</param>
-        /// <param name="height">The texture height</param>
-        /// <param name="data">The texture data, row first, in RGBA format.</param>
-        /// <param name="sampleType">The sample type for this texture</param>
-        /// <returns>The created texture resource</returns>
-        public Texture UploadTexture(string name, int width, int height, byte[] data, TextureSampleType sampleType)
+		/// <summary>
+		/// Upload a texture to the engine.
+		/// A texture is a resource that is internally managed by the engine.
+		/// Call <see cref="DestroyResource"/> to destroy a texture.
+		/// If the texture already exists it will not be created a second time.
+		/// </summary>
+		/// <param name="name">The texture name</param>
+		/// <param name="width">The texture width</param>
+		/// <param name="height">The texture height</param>
+		/// <param name="data">The texture data, row first, in RGBA format.</param>
+		/// <param name="sampleType">The sample type for this texture</param>
+		/// <returns>The created texture resource</returns>
+		public Texture UploadTexture(string name, int width, int height, byte[] data, TextureSampleType sampleType)
         {
             return Engine.Instance.Context.ResourceLoader.UploadTexture(name, width, height, data, sampleType);
         }
