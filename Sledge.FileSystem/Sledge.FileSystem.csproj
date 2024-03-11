@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Sledge.FileSystem</RootNamespace>
     <AssemblyName>Sledge.FileSystem</AssemblyName>
-    <TargetFramework>net472</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <Platforms>AnyCPU;x86</Platforms>
@@ -57,32 +57,10 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
   </ItemGroup>
-  <!--
-  <ItemGroup>
-    <Compile Include="CompositeFile.cs" />
-    <Compile Include="FileExtensions.cs" />
-    <Compile Include="InlinePackageFile.cs" />
-    <Compile Include="FileSource.cs" />
-    <Compile Include="FileSystemFactory.cs" />
-    <Compile Include="FileSystemType.cs" />
-    <Compile Include="IFile.cs" />
-    <Compile Include="NativeFile.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RootFile.cs" />
-    <Compile Include="VirtualFile.cs" />
-  </ItemGroup>
-  -->
   <ItemGroup>
     <ProjectReference Include="..\Sledge.Packages\Sledge.Packages.csproj">
       <Project>{BB1AF818-8CCA-4BC8-A4A8-B7A0627B68DD}</Project>
       <Name>Sledge.Packages</Name>
     </ProjectReference>
   </ItemGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>
