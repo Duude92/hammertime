@@ -445,6 +445,7 @@ namespace Sledge.BspEditor.Tools.Selection
 		/// <param name="e">The click event</param>
 		protected override void MouseDown(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
 		{
+			if (e.Button != MouseButtons.Left) return;
 			var tf = document.Map.Data.GetOne<DisplayFlags>() ?? new DisplayFlags();
 			IgnoreOptions iopt = (tf.HideClipTextures ? IgnoreOptions.IgnoreClip : IgnoreOptions.None) | (tf.HideNullTextures ? IgnoreOptions.IgnoreNull : IgnoreOptions.None);
 
