@@ -14,9 +14,11 @@ namespace HammerTime.Formats.Map
 {
     public class Prefab
     {
+        internal static bool IsRmf = true;
         public static IEnumerable<Sledge.BspEditor.Primitives.MapData.Visgroup> Visgroups { get; private set; }
-        public static List<IMapObject> GetPrefab(MapFile mapFile, UniqueNumberGenerator ung, SledgePrimitives.Map map)
+        public static List<IMapObject> GetPrefab(MapFile mapFile, UniqueNumberGenerator ung, SledgePrimitives.Map map, bool isRmf = true)
         {
+            IsRmf = isRmf;
             List<IMapObject> content = new List<IMapObject>();
             var Visgroups = mapFile.Visgroups.Select(x => new Sledge.BspEditor.Primitives.MapData.Visgroup()
             {
