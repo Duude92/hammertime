@@ -33,7 +33,7 @@ using System.Windows.Forms;
 
 namespace Sledge.BspEditor.Tools.Prefab
 {
-	[Export(typeof(ITool))]
+    [Export(typeof(ITool))]
 	[OrderHint("I")]
 	[AutoTranslate]
 	internal class PrefabTool : BaseDraggableTool
@@ -74,7 +74,7 @@ namespace Sledge.BspEditor.Tools.Prefab
 		{
 			var lib = WorldcraftPrefabLibrary.FromFile(_activeLibraryPath);
 			if (lib.Prefabs.Count > prefabId)
-				return HammerTime.Formats.Prefab.GetPrefab(lib.Prefabs[prefabId].Map, ung, map);
+				return HammerTime.Formats.Map.Prefab.GetPrefab(lib.Prefabs[prefabId].Map, ung, map);
 			return null;
 		}
 		protected override void ContextChanged(IContext context)

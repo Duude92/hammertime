@@ -6,7 +6,7 @@ using System.Linq;
 using System.Numerics;
 
 
-namespace HammerTime.Formats
+namespace HammerTime.Formats.Map
 {
 	internal class Face
 	{
