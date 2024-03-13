@@ -30,7 +30,7 @@ using System.Reflection;
 
 namespace Sledge.BspEditor.Tools.Prefab
 {
-	[AutoTranslate]
+    [AutoTranslate]
 	[Export(typeof(ISidebarComponent))]
 	[Export(typeof(IInitialiseHook))]
 	[OrderHint("A")]
@@ -150,7 +150,7 @@ namespace Sledge.BspEditor.Tools.Prefab
 			if (_activeDocument.TryGetTarget(out var mapDocument))
 			{
 				var selection = mapDocument.Selection;
-				HammerTime.Formats.Prefab.WriteObjects(_activeWorldcraftPrefabLibrary, selection, name);
+				HammerTime.Formats.Map.Prefab.WriteObjects(_activeWorldcraftPrefabLibrary, selection, name);
 
 				_activeWorldcraftPrefabLibrary.WriteToFile(_files[FileContainer.SelectedIndex]);
 
