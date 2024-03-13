@@ -41,6 +41,7 @@ namespace HammerTime.Formats.Map
 				}
 				catch (Exception ex)
 				{
+					//TODO: fix polyhedron creation, some polys have only 2 vertices
 					Console.WriteLine(ex.ToString());
 				}
 

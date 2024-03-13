@@ -62,7 +62,7 @@ namespace HammerTime.Formats.Providers
 
 				map.Root.Data.Replace(MapFormats.Entity.FromFmt(mapFile.Worldspawn, map.NumberGenerator).EntityData);
 
-				var objects = MapFormats.Prefab.GetPrefab(mapFile, map.NumberGenerator, map);
+				var objects = MapFormats.Prefab.GetPrefab(mapFile, map.NumberGenerator, map, false);
 
 
 				foreach (var obj in objects)
