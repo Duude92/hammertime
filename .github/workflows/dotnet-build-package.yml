@@ -16,7 +16,7 @@ jobs:
 
     steps:
     - name: Installing dependencies
-      run: sudo apt install nsis nsis-doc nsis-pluginapi -y
+      run: apt update && apt install nsis nsis-doc nsis-pluginapi -y #do i need sudo with github actions?
     - uses: actions/checkout@v3
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
