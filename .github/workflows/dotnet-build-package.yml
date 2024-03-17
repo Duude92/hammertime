@@ -15,6 +15,8 @@ jobs:
     runs-on: windows-latest
 
     steps:
+    - name: Installing dependencies
+      run: sudo apt install nsis nsis-doc nsis-pluginapi -y
     - uses: actions/checkout@v3
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
@@ -26,6 +28,12 @@ jobs:
       run: dotnet build -c Release -p:Platform=x86 --output ./bin/
     - name: copy prefabs
       run: cp "./Resources/prefabs" "./bin" -r
+    - name: Cleaning output
+      run: rm ./bin/*.pdb
+    - name: Build installer
+      run: |
+          sed -i -e "s/{version}/latest/g" ./Build/Sledge.Editor.Linux.Installer.nsi && 
+          makensis -V4 ./Build/Sledge.Editor.Linux.Installer.nsi
     - name: Create Zip File
       uses: vimtor/action-zip@v1.1
       with:
@@ -36,5 +44,7 @@ jobs:
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         prerelease: false
-        files: ./HammerTime.zip
+        files: |
+            ./HammerTime.zip
+
         automatic_release_tag: latest
