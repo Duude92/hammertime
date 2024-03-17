@@ -6,7 +6,7 @@
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Sledge.Editor</RootNamespace>
-    <AssemblyName>Sledge.Editor</AssemblyName>
+    <AssemblyName>Hammertime.Editor</AssemblyName>
     <TargetFramework>net472</TargetFramework>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

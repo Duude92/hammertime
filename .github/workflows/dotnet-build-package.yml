@@ -28,11 +28,12 @@ jobs:
       run: dotnet build -c Release -p:Platform=x86 --output ./bin/
     - name: copy prefabs
       run: cp "./Resources/prefabs" "./bin" -r
-    - name: Cleaning output
+    - name: Cleaning output symbols
       run: rm ./bin/*.pdb
+# 2.0.7.2 for now, would change after some rebranding
     - name: Build installer
       run: |
-          sed -i -e "s/{version}/latest/g" ./Build/Sledge.Editor.Linux.Installer.nsi && 
+          sed -i -e "s/{version}/2.0.7.2/g" ./Build/Sledge.Editor.Linux.Installer.nsi && 
           makensis -V4 ./Build/Sledge.Editor.Linux.Installer.nsi
     - name: Create Zip File
       uses: vimtor/action-zip@v1.1
