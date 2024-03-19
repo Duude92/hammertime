@@ -57,6 +57,7 @@ namespace Sledge.BspEditor.Tools.Prefab
 
 		private void InitPrefabLibraries()
 		{
+			if (!Directory.Exists("./prefabs/")) return;
 			_files = Directory.GetFiles("./prefabs/");
 
 			FileContainer.Items.Clear();
@@ -165,6 +166,7 @@ namespace Sledge.BspEditor.Tools.Prefab
 
 		private void CreateLib_Click(object sender, EventArgs e)
 		{
+			if(!Directory.Exists("./prefabs/")) Directory.CreateDirectory("./prefabs/");
 			var name = NewLibName.Text.Trim();
 			if (String.IsNullOrEmpty(name)) throw new Exception($"Prefab name cannot be empty.\r\nPrefab name: {name}");
 			var lib = new WorldcraftPrefabLibrary() { Description = name };
