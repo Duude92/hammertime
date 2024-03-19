@@ -32,7 +32,7 @@ namespace Sledge.Shell.Forms
         private readonly Lazy<DocumentRegister> _documentRegister;
         private readonly Lazy<ITranslationStringProvider> _translation;
 
-        public string Title { get; set; } = "Sledge Shell";
+        public string Title { get; set; } = "Hammertime Shell";
 
         public string UnsavedChanges { get; set; } = "Unsaved changes in file";
         public string SaveChangesToFile { get; set; } = "Save changes to {0}?";
@@ -407,7 +407,7 @@ namespace Sledge.Shell.Forms
         // Settings
         private List<LoadedDocument> _openDocuments;
 
-        string ISettingsContainer.Name => "Sledge.Shell";
+        string ISettingsContainer.Name => "Hammertime.Shell";
 
         public IEnumerable<SettingKey> GetKeys()
         {
