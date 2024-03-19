@@ -425,7 +425,7 @@ namespace Sledge.BspEditor.Editing.Properties {
         /// </summary>
         internal static System.Drawing.Bitmap Sledge_Large {
             get {
-                object obj = ResourceManager.GetObject("Sledge_Large", resourceCulture);
+                object obj = ResourceManager.GetObject("sledge_large", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
