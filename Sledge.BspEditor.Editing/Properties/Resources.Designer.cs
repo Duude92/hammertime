@@ -423,7 +423,7 @@ namespace Sledge.BspEditor.Editing.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Sledge_Large {
+        internal static System.Drawing.Bitmap sledge_large {
             get {
                 object obj = ResourceManager.GetObject("sledge_large", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
