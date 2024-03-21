@@ -45,7 +45,11 @@ namespace Sledge.BspEditor.Tools.Prefab
 		public object Control => this;
 		private string[] _files = null;
 		private WorldcraftPrefabLibrary _activeWorldcraftPrefabLibrary;
-
+		#region Translations
+		public string CreatePrefabButton { set => this.InvokeLater(() => this.CreateButton.Text = value); }
+		public string NewPrefabButton { set=>this.InvokeLater(()=>this.NewPrefab.Text = value); }
+		public string CreateLibButton { set=>this.InvokeLater(()=>this.CreateLib.Text = value); }
+		#endregion
 		public PrefabSidebarPanel()
 		{
 			InitializeComponent();
