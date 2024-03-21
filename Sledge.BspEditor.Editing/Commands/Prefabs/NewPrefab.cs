@@ -11,10 +11,10 @@ using System.Threading.Tasks;
 
 namespace Sledge.BspEditor.Editing.Commands.Prefabs
 {
-	[Export(typeof(ICommand))]
-	[CommandID("Tools:NewPrefab")]
-	[MenuItem("Tools", "", "Create new prefab", "B")]
-	[AutoTranslate]
+	//[Export(typeof(ICommand))]
+	//[CommandID("Tools:NewPrefab")]
+	//[MenuItem("Tools", "", "Create new prefab", "B")]
+	//[AutoTranslate]
 	public class NewPrefab : ICommand
 	{
 		public string Name => "New prefab";
