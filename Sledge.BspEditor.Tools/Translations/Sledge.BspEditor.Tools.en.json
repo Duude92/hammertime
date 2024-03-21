@@ -320,7 +320,9 @@
     "PrefabSidebarPanel": {
       "CreatePrefabButton": "Create Prefab",
       "NewPrefabButton": "Save as new prefab",
-      "CreateLibButton": "Create library"
+      "CreateLibButton": "Create library",
+      "NewPrefabPlaceholder": "New prefab name",
+      "NewLibPlaceholder": "New Library name"
     },
   }
 

@@ -49,6 +49,8 @@ namespace Sledge.BspEditor.Tools.Prefab
 		public string CreatePrefabButton { set => this.InvokeLater(() => this.CreateButton.Text = value); }
 		public string NewPrefabButton { set=>this.InvokeLater(()=>this.NewPrefab.Text = value); }
 		public string CreateLibButton { set=>this.InvokeLater(()=>this.CreateLib.Text = value); }
+		public string NewPrefabPlaceholder { set => this.InvokeLater(() => this.NewPrefabName.Text = value); }
+		public string NewLibPlaceholder { set=> this.InvokeLater(()=>this.NewLibName.Text = value); }
 		#endregion
 		public PrefabSidebarPanel()
 		{
