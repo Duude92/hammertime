@@ -173,6 +173,7 @@ namespace Sledge.Providers.Model.Mdl10
 
 			uint vi = 0;
 			var skinMax = Math.Max(0, Math.Min(skinId, Model.Skins.Count - 1));
+			bodyPartId = Math.Max(0, bodyPartId);
 
 			var skin = Model.Skins[skinMax].Textures;
 			for (var bpi = 0; bpi < Model.BodyParts.Count; bpi++)
