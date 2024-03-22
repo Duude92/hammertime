@@ -87,7 +87,7 @@ namespace Sledge.Editor.Update
             Oy.Publish("Command:Run", new CommandMessage("Sledge:Editor:CheckForUpdates", new {Silent = true}));
         }
 
-        public string Name => "Sledge.Editor.UpdateChecker";
+        public string Name => "Hammertime.Editor.UpdateChecker";
 
         public IEnumerable<SettingKey> GetKeys()
         {

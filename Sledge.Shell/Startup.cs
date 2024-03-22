@@ -75,6 +75,7 @@ namespace Sledge.Shell
 
 			var shell = container.GetExport<Forms.Shell>().Value;
 			var si = new SingleInstance(shell);
+			
 
 			si.UnhandledException += (s, e) =>
 			{

@@ -23,6 +23,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Performance1.psess = Performance1.psess
 		Performance2.psess = Performance2.psess
 		TestSettings.testsettings = TestSettings.testsettings
+		Build\Sledge.Editor.New.Installer.nsi = Build\Sledge.Editor.New.Installer.nsi
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sledge.Packages", "Sledge.Packages\Sledge.Packages.csproj", "{BB1AF818-8CCA-4BC8-A4A8-B7A0627B68DD}"

@@ -30,6 +30,7 @@ using static Sledge.BspEditor.Primitives.MapObjects.MapObjectExtensions;
 using Sledge.Common.Shell.Context;
 using Sledge.Formats.Map.Formats;
 using System.Windows.Forms;
+using System.IO;
 
 namespace Sledge.BspEditor.Tools.Prefab
 {
@@ -72,7 +73,15 @@ namespace Sledge.BspEditor.Tools.Prefab
 
 		private List<IMapObject> GetPrefab(int prefabId, UniqueNumberGenerator ung, Map map)
 		{
-			var lib = WorldcraftPrefabLibrary.FromFile(_activeLibraryPath);
+			if (String.IsNullOrEmpty(_activeLibraryPath)) return null;
+			WorldcraftPrefabLibrary lib;
+			try
+			{
+				lib = WorldcraftPrefabLibrary.FromFile(_activeLibraryPath);
+			}
+			catch { 
+				lib = new WorldcraftPrefabLibrary();
+			}
 			if (lib.Prefabs.Count > prefabId)
 				return HammerTime.Formats.Map.Prefab.GetPrefab(lib.Prefabs[prefabId].Map, ung, map);
 			return null;

@@ -24,8 +24,17 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build -c Release -p:Platform=x86 --output ./bin/
-    - name: copy prefabs
+    - name: Copy prefabs
       run: cp "./Resources/prefabs" "./bin" -r
+    - name: Cleaning output symbols
+      run: del ./bin/*.pdb
+# 2.0.7.2 for now, would change after some rebranding
+    - name: Set app version
+      run:  Set-Content -Path ./Build/Sledge.Editor.New.Installer.nsi -Value ((Get-Content './Build/Sledge.Editor.New.Installer.nsi' -Raw) -replace "{version}", "2.0.7.2")
+    - name: Build installer
+      uses: joncloud/makensis-action@v4.1
+      with:
+        script-file: ./Build/Sledge.Editor.New.Installer.nsi
     - name: Create Zip File
       uses: vimtor/action-zip@v1.1
       with:
@@ -36,5 +45,7 @@ jobs:
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         prerelease: false
-        files: ./HammerTime.zip
+        files: |
+            ./HammerTime.zip
+            ./Hammertime.Editor.2.0.7.2.exe
         automatic_release_tag: latest
