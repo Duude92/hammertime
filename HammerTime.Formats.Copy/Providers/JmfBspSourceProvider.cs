@@ -1,23 +1,17 @@
 ﻿using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Environment;
-using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Providers;
 using Sledge.Common.Shell.Documents;
 using Sledge.DataStructures.GameData;
-using Sledge.Formats.Map.Formats;
 using Sledge.Formats.Map.Objects;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using SledgePrimitives = Sledge.BspEditor.Primitives;
-using MapFormats = HammerTime.Formats;
-using System.Xml.Linq;
-using Sledge.BspEditor.Primitives.MapObjects;
+using MapFormats = HammerTime.Formats.Map;
 
 
 namespace HammerTime.Formats.Providers
@@ -28,8 +22,8 @@ namespace HammerTime.Formats.Providers
 		private static readonly IEnumerable<Type> SupportedTypes = new List<Type>
 		{
             // Map Object types
-            typeof(Solid),
-			typeof(Entity),
+            typeof(SledgePrimitives.MapObjects.Solid),
+			typeof(SledgePrimitives.MapObjects.Entity),
 
             // Map Object Data types
             typeof(VisgroupID),
@@ -57,7 +51,7 @@ namespace HammerTime.Formats.Providers
 
 
 				map.Root.Data.Replace(MapFormats.Entity.FromFmt(mapFile.Worldspawn, map.NumberGenerator).EntityData);
-				var objects = MapFormats.Prefab.GetPrefab(mapFile, map.NumberGenerator, map);
+				var objects = MapFormats.Prefab.GetPrefab(mapFile, map.NumberGenerator, map, false);
 
 
 				foreach (var obj in objects)
@@ -73,7 +67,7 @@ namespace HammerTime.Formats.Providers
 			});
 		}
 
-		public Task Save(Stream stream, Map map, MapDocument document = null)
+		public Task Save(Stream stream,SledgePrimitives.Map map, MapDocument document = null)
 		{
 			throw new NotImplementedException();
 
@@ -88,7 +82,7 @@ namespace HammerTime.Formats.Providers
 
 				foreach (var item in map.Root.Hierarchy)
 				{
-					content.Add(MapObject.WriteMapObject(item));
+					//content.Add(MapObject.WriteMapObject(item));
 				}
 
 				mapFile.Worldspawn.Children.AddRange(content);
