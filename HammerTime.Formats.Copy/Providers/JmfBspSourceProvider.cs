@@ -16,6 +16,8 @@ using System.Text;
 using System.Threading.Tasks;
 using SledgePrimitives = Sledge.BspEditor.Primitives;
 using MapFormats = HammerTime.Formats;
+using System.Xml.Linq;
+using Sledge.BspEditor.Primitives.MapObjects;
 
 
 namespace HammerTime.Formats.Providers
@@ -74,6 +76,25 @@ namespace HammerTime.Formats.Providers
 		public Task Save(Stream stream, Map map, MapDocument document = null)
 		{
 			throw new NotImplementedException();
+
+			return Task.Factory.StartNew(() =>
+			{
+
+				var jmf = new Sledge.Formats.Map.Formats.JackhammerJmfFormat();
+				MapFile mapFile = new MapFile();
+
+				List<Sledge.Formats.Map.Objects.MapObject> content = new List<Sledge.Formats.Map.Objects.MapObject>();
+
+
+				foreach (var item in map.Root.Hierarchy)
+				{
+					content.Add(MapObject.WriteMapObject(item));
+				}
+
+				mapFile.Worldspawn.Children.AddRange(content);
+				jmf.Write(stream, mapFile, "");
+			});
+
 		}
 	}
 }
