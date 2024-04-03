@@ -148,6 +148,7 @@ namespace Sledge.BspEditor.Documents
 		public async Task<IDocument> Load(string location)
 		{
 			var env = await GetEnvironment();
+			if(env == null) return null;
 			var gameData = await env.GetGameData();
 			if (!gameData.Classes.Any())
 			{
