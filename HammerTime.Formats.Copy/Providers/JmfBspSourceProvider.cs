@@ -36,6 +36,8 @@ namespace HammerTime.Formats.Providers
 			new FileExtensionInfo("J.A.C.K. map formats", ".jmf", ".jmx"),
 		};
 
+		public bool CanSave => false;
+
 		private static GameData _gameData;
 
 		public async Task<BspFileLoadResult> Load(Stream stream, IEnvironment environment)

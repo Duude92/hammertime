@@ -26,6 +26,7 @@ namespace Sledge.BspEditor.Providers
         /// A list of file extensions supported by this loader.
         /// </summary>
         IEnumerable<FileExtensionInfo> SupportedFileExtensions { get; }
+        bool CanSave { get; }
         
         /// <summary>
         /// Load a map from a stream

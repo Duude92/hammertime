@@ -55,7 +55,9 @@ namespace Sledge.BspEditor.Providers
             new FileExtensionInfo("Valve map format", ".vmf", ".vmx"), 
         };
 
-        public async Task<BspFileLoadResult> Load(Stream stream, IEnvironment environment)
+		public bool CanSave => true;
+
+		public async Task<BspFileLoadResult> Load(Stream stream, IEnvironment environment)
         {
             var task = await Task.Factory.StartNew(async () =>
             {

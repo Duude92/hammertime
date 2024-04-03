@@ -49,6 +49,8 @@ namespace Sledge.BspEditor.Providers
 			new FileExtensionInfo("Worldcraft map formats", ".rmf", ".rmx"),
 		};
 
+		public bool CanSave => true;
+
 		public async Task<BspFileLoadResult> Load(Stream stream, IEnvironment environment)
 		{
 			return await Task.Factory.StartNew(() =>
