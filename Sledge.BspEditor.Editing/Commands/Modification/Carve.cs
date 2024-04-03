@@ -136,7 +136,7 @@ namespace Sledge.BspEditor.Editing.Commands.Modification
                 }
                 split = true;
 
-                if (front != null)
+                if (front != null && front.IsValid())
                 {
                     // Retain the front solid
                     if (solid.IsSelected) front.IsSelected = true;
