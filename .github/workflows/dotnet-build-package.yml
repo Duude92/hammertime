@@ -24,6 +24,8 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build -c Release -p:Platform=x86 --output ./bin/
+    - name: Write build time
+      run: date +"%Y-%m-%d %H:%M" > ./bin/build
     - name: Copy prefabs
       run: cp "./Resources/prefabs" "./bin" -r
     - name: Cleaning output symbols
