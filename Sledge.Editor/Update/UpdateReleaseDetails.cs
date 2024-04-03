@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Globalization;
+using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -11,6 +13,7 @@ namespace Sledge.Editor.Update
         public string Changelog { get; }
         public string FileName { get; }
         public string DownloadUrl { get; }
+        public DateTime PublishDate { get; }
 
         public bool Exists => Tag != null;
 
@@ -31,6 +34,9 @@ namespace Sledge.Editor.Update
             Changelog = rel.GetValue("body").ToString();
             FileName = exeAsset.GetValue("name").ToString();
             DownloadUrl = exeAsset.GetValue("url").ToString();
-        }
+            var dateRaw = exeAsset.GetValue("created_at").ToString();
+            if (!DateTime.TryParseExact(dateRaw, "dd.MM.yyyy HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out var publishDate)) PublishDate = DateTime.Now;
+            PublishDate = publishDate;
+		}
     }
 }

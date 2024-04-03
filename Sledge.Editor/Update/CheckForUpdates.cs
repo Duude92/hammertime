@@ -1,6 +1,9 @@
 ﻿using System;
 using System.ComponentModel.Composition;
+using System.IO;
 using System.Net;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sledge.Common.Shell.Commands;
@@ -29,7 +32,7 @@ namespace Sledge.Editor.Update
         public string UpdateErrorTitle { get; set; } = "Update error";
         public string UpdateErrorMessage { get; set; } = "Error downloading the update details.";
 
-        private const string GithubReleasesApiUrl = "https://api.github.com/repos/LogicAndTrick/sledge/releases?page=1&per_page=1";
+        private const string GithubReleasesApiUrl = "https://api.github.com/repos/Duude92/hammertime/releases?page=1";
         private const string SledgeWebsiteUpdateSource = "http://sledge-editor.com/version.txt";
 
         [ImportingConstructor]
@@ -52,23 +55,9 @@ namespace Sledge.Editor.Update
         {
             var silent = parameters.Get("Silent", false);
 
-            var result = await GetUpdateCheckResult(SledgeWebsiteUpdateSource);
-            if (result == null) return;
-
-            var version = GetCurrentVersion();
-            if (result.Version <= version)
-            {
-                if (!silent)
-                {
-                    _shell.InvokeLater(() =>
-                    {
-                        MessageBox.Show(NoUpdatesMessage, NoUpdatesTitle, MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    });
-                }
-                return;
-            }
-
             var details = await GetLatestReleaseDetails();
+            var currentBuildTime = GetBuildTime();
+
             if (!details.Exists)
             {
                 if (!silent)
@@ -80,6 +69,17 @@ namespace Sledge.Editor.Update
                 }
                 return;
             }
+            if(details.PublishDate < (currentBuildTime.AddMinutes(15)))
+            {
+				if (!silent)
+				{
+					_shell.InvokeLater(() =>
+					{
+						MessageBox.Show("Your application is up to date.", "Update is not required", MessageBoxButtons.OK, MessageBoxIcon.Information);
+					});
+				}
+				return;
+			}
 
             _shell.InvokeLater(() =>
             {
@@ -87,36 +87,22 @@ namespace Sledge.Editor.Update
                 form.Show(_shell);
             });
         }
+		private DateTime GetBuildTime()
+        {
+            var path = "./build";
+            string datetimeStr = null;
+            using (TextReader reader = new StreamReader(path))
+            {
+                datetimeStr = reader.ReadLine();
+            }
+
+			DateTime datetime = DateTime.ParseExact(datetimeStr, "yyyy-MM-dd HH:mm", null);
+            return datetime;
+		}
 
         private Version GetCurrentVersion()
         {
             return typeof(Program).Assembly.GetName().Version;
-        }
-
-        private async Task<UpdateCheckResult> GetUpdateCheckResult(string url)
-        {
-            try
-            {
-                using (var downloader = new WebClient())
-                {
-                    var str = (await downloader.DownloadStringTaskAsync(url)).Split('\n', '\r');
-
-                    if (str.Length < 2 || String.IsNullOrWhiteSpace(str[0]))
-                    {
-                        return null;
-                    }
-
-                    return new UpdateCheckResult
-                    {
-                        Version = new Version(str[0]),
-                        Date = DateTime.Parse(str[1])
-                    };
-                }
-            }
-            catch
-            {
-                return null;
-            }
         }
 
         private async Task<UpdateReleaseDetails> GetLatestReleaseDetails()
