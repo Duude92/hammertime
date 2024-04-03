@@ -70,15 +70,23 @@ namespace Sledge.QuickForms
         {
             if (UseShortcutKeys)
             {
+                Func<Button, bool> searchFunc = null;
                 if (e.KeyCode == Keys.Enter)
                 {
-                    var ok = Controls.OfType<Button>().FirstOrDefault(x => x.DialogResult == DialogResult.OK || x.DialogResult == DialogResult.Yes);
-                    ok?.PerformClick();
+                    searchFunc = value => value.DialogResult == DialogResult.OK || value.DialogResult == DialogResult.Yes;
                 }
                 else if (e.KeyCode == Keys.Escape)
                 {
-                    var cancel = Controls.OfType<Button>().FirstOrDefault(x => x.DialogResult == DialogResult.Cancel || x.DialogResult == DialogResult.No);
-                    cancel?.PerformClick();
+					searchFunc = value => value.DialogResult == DialogResult.Cancel || value.DialogResult == DialogResult.No;
+				}
+                if (searchFunc != null)
+                {
+                    var btn = Controls.OfType<Button>().FirstOrDefault(searchFunc);
+                    if (btn == null)
+                    {
+                        btn = _flpLayout.Controls.OfType<QuickFormButtonSet>().FirstOrDefault()?.Controls.OfType<Button>().FirstOrDefault(searchFunc);
+                    }
+                    btn?.PerformClick();
                 }
             }
             base.OnKeyDown(e);
