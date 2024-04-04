@@ -90,6 +90,7 @@ namespace Sledge.Editor.Update
 		private DateTime GetBuildTime()
         {
             var path = "./build";
+            if (!File.Exists(path)) return new DateTime();
             string datetimeStr = null;
             using (TextReader reader = new StreamReader(path))
             {
