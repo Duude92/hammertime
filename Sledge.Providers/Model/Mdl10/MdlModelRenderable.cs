@@ -50,7 +50,12 @@ namespace Sledge.Providers.Model.Mdl10
 
         public Matrix4x4 GetModelTransformation()
         {
-            return Matrix4x4.CreateFromYawPitchRoll(Angles.X, Angles.Z, Angles.Y) * Matrix4x4.CreateTranslation(Origin);
+			Matrix4x4 yawMatrix = Matrix4x4.CreateRotationY(-Angles.X);
+			Matrix4x4 pitchMatrix = Matrix4x4.CreateRotationX(Angles.Z);
+			Matrix4x4 rollMatrix = Matrix4x4.CreateRotationZ(Angles.Y);
+
+			Matrix4x4 rotationMatrix = pitchMatrix * yawMatrix *  rollMatrix ;
+            return rotationMatrix * Matrix4x4.CreateTranslation(Origin);
         }
 
         public (Vector3, Vector3) GetBoundingBox()
