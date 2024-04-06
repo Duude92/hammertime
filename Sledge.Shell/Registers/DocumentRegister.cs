@@ -54,7 +54,7 @@ namespace Sledge.Shell.Registers
 
         public IEnumerable<FileExtensionInfo> GetSupportedFileExtensions(IDocument document)
         {
-            return _loaders.Where(x => x.CanSave(document)).SelectMany(x => x.SupportedFileExtensions);
+            return _loaders.Where(x => x.CanSave(document)).SelectMany(x => x.SupportedFileExtensionsForSave);
         }
 
         public DocumentPointer GetDocumentPointer(IDocument document)

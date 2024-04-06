@@ -68,7 +68,10 @@ namespace Sledge.Editor.Update
 
         private Task OnUpdateDownloaded(string file)
         {
-            _shell.InvokeLater(() =>
+            UpdateDownloadedTitle = "Update is ready to apply";
+            UpdateDownloadedMessage = "New version is downloaded succesfully.\nDo you want to restart and update now?";
+
+			_shell.InvokeLater(() =>
             {
                 if (!File.Exists(file)) return;
 

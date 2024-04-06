@@ -13,17 +13,18 @@ namespace Sledge.Common.Shell.Documents
         /// </summary>
         string FileTypeDescription { get; }
 
-        /// <summary>
-        /// All file extensions supported by this document loader
-        /// </summary>
-        IEnumerable<FileExtensionInfo> SupportedFileExtensions { get; }
+		/// <summary>
+		/// All file extensions supported by this document loader
+		/// </summary>
+		IEnumerable<FileExtensionInfo> SupportedFileExtensions { get; }
+		IEnumerable<FileExtensionInfo> SupportedFileExtensionsForSave { get; }
 
-        /// <summary>
-        /// Determine if a path can be loaded by this class. The file may not physically exist.
-        /// </summary>
-        /// <param name="location">The path to a file. The file may not exist on disk.</param>
-        /// <returns>True if the path could be loaded by this class</returns>
-        bool CanLoad(string location);
+		/// <summary>
+		/// Determine if a path can be loaded by this class. The file may not physically exist.
+		/// </summary>
+		/// <param name="location">The path to a file. The file may not exist on disk.</param>
+		/// <returns>True if the path could be loaded by this class</returns>
+		bool CanLoad(string location);
 
         /// <summary>
         /// Create a blank document

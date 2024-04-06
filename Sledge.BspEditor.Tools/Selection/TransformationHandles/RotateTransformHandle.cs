@@ -80,14 +80,26 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
 						var origv = Vector3.Normalize(_rotateStart.Value - forigin);
 						var newv = Vector3.Normalize(_rotateEnd.Value - forigin);
 
-						if (false) //ignore that
+						Vector3 previousLocalRotationRadians = new Vector3(
+							MathHelper.DegreesToRadians(initial.X),
+							MathHelper.DegreesToRadians(initial.Y),
+							MathHelper.DegreesToRadians(initial.Z));
+						Matrix4x4 yawMatrix = Matrix4x4.CreateRotationY(-previousLocalRotationRadians.X);
+						Matrix4x4 pitchMatrix = Matrix4x4.CreateRotationX(previousLocalRotationRadians.Z);
+						Matrix4x4 rollMatrix = Matrix4x4.CreateRotationZ(previousLocalRotationRadians.Y);
+
+						Matrix4x4 rotationMatrix = pitchMatrix * yawMatrix * rollMatrix;
+
+						// Now, newLocalRotationDegrees contains the updated local rotation in degrees
+
+						Matrix4x4 viewRotation = Matrix4x4.Identity;
+						if (camera is OrthographicCamera orthographic)
 						{
+
 							var dot = origv.Dot(newv);
 
 							var angle = Math.Acos(Math.Max(-1, Math.Min(1, dot)));
 							if ((origv.Cross(newv).Z < 0)) angle *= -1;
-
-							//angle *= dot > 0 ? 1 : -1;
 
 							var roundingDegrees = 15f;
 							if (KeyboardState.Alt) roundingDegrees = 1;
@@ -95,56 +107,32 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
 							var deg = angle * (180 / Math.PI);
 							float rnd = (float)(Math.Round(deg / roundingDegrees) * roundingDegrees);
 
-							var anglerad = (float)angle;
+							var anglerad = (float)(rnd * (Math.PI / 180));
+							switch (orthographic.ViewType)
+							{
+								case OrthographicCamera.OrthographicType.Top:
+									viewRotation = Matrix4x4.CreateRotationZ(anglerad);
+									break;
+								case OrthographicCamera.OrthographicType.Front:
+									viewRotation = Matrix4x4.CreateRotationX(anglerad);
+									break;
+								case OrthographicCamera.OrthographicType.Side:
+									viewRotation = Matrix4x4.CreateRotationY(-anglerad);
+									break;
+								default:
+									break;
+							}
 
-							Vector3 axis = new Vector3(
-								camera.ViewType == OrthographicCamera.OrthographicType.Side ? 1 : 0,
-								camera.ViewType == OrthographicCamera.OrthographicType.Top ? 1 : 0,
-								camera.ViewType == OrthographicCamera.OrthographicType.Front ? 1 : 0);
+							rotationMatrix *= viewRotation;
 
 
-							var mt = Matrix4x4.CreateFromAxisAngle(axis, anglerad);
+							var newLocalRotationDegrees = ExtractEulerAngles(rotationMatrix);
 
-							// Apply the new rotation relative to the current local rotation
-							//var newLocalRotationMatrix = mtr * mt;
+							var op = new EditEntityDataProperties(entity.ID, new Dictionary<string, string>() {
+						{"angles", $"{Math.Round( MathHelper.RadiansToDegrees( newLocalRotationDegrees.Y))} {Math.Round( MathHelper.RadiansToDegrees( -newLocalRotationDegrees.Z))} {Math.Round(MathHelper.RadiansToDegrees(-newLocalRotationDegrees.X))}" }});
+
+							tsn.Add(op);
 						}
-
-						Vector3 previousLocalRotationRadians = new Vector3(
-							MathHelper.DegreesToRadians(initial.X),
-							MathHelper.DegreesToRadians(initial.Y),
-							MathHelper.DegreesToRadians(initial.Z));
-						var mtr = Matrix4x4.CreateFromYawPitchRoll(previousLocalRotationRadians.X, previousLocalRotationRadians.Z, previousLocalRotationRadians.Y);
-						// Now, newLocalRotationDegrees contains the updated local rotation in degrees
-
-						var transformMatrix = GetTransformationMatrix(viewport, camera, new BoxState()
-						{
-							Action = BoxAction.Drawn,
-							Start = _rotateStart.Value,
-							End = _rotateEnd.Value,
-							Viewport = viewport,
-							OrigStart = origv,
-							OrigEnd = newv
-						}, document);
-
-						mtr *= transformMatrix.Value;
-
-						//Vector3 newLocalRotationDegrees = new Vector3(
-						//	MathHelper.RadiansToDegrees((float)Math.Asin(mtr.M23)),
-						//	MathHelper.RadiansToDegrees((float)Math.Atan2(-mtr.M13, mtr.M33)),
-						//	MathHelper.RadiansToDegrees((float)Math.Atan2(-mtr.M21, mtr.M22))
-						//);
-
-
-						var newLocalRotationDegrees = ExtractEulerAngles(mtr);
-
-
-
-
-
-						var op = new EditEntityDataProperties(entity.ID, new Dictionary<string, string>() {
-						{"angles", $"{Math.Round( -MathHelper.RadiansToDegrees( newLocalRotationDegrees.Y))} {Math.Round( MathHelper.RadiansToDegrees( -newLocalRotationDegrees.Z))} {Math.Round(MathHelper.RadiansToDegrees(newLocalRotationDegrees.X))}" }});
-
-						tsn.Add(op);
 					}
 				}
 				((Action)(async () => await MapDocumentOperation.Perform(document, tsn)))();
@@ -152,25 +140,31 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
 			_rotateStart = _rotateEnd = null;
 			base.EndDrag(document, viewport, camera, e, position);
 		}
+
+
 		private Vector3 ExtractEulerAngles(Matrix4x4 matrix)
 		{
-			float yaw = (float)Math.Atan2(matrix.M13, matrix.M33);
-			float pitch = (float)Math.Asin(-matrix.M23);
-			float roll = (float)Math.Atan2(matrix.M21, matrix.M22);
+			float x, y, z;
 
-			return new Vector3(pitch, yaw, roll);
+			// Extract rotation around Y axis
+			y = (float)Math.Asin(matrix.M13);
+
+			// Handle special cases for pitch near +-90 degrees
+			if ((float)Math.Abs(matrix.M13) < 0.99999)
+			{
+				// Extract rotation around X and Z axes
+				x = (float)Math.Atan2(-matrix.M23, matrix.M33);
+				z = (float)Math.Atan2(-matrix.M12, matrix.M11);
+			}
+			else
+			{
+				// Gimbal lock case: rotation around X axis is set to 0, and extract rotation around Z axis
+				x = 0;
+				z = (float)Math.Atan2(matrix.M21, matrix.M22);
+			}
+
+			return new Vector3(x, y, z);
 		}
-		private string GetRotationString(OrthographicCamera camera, float rotation, Vector3 initialRotation)
-		{
-
-			Vector3 vector = new Vector3(
-				camera.ViewType == OrthographicCamera.OrthographicType.Side ? rotation : 0,
-				camera.ViewType == OrthographicCamera.OrthographicType.Top ? rotation : 0,
-				camera.ViewType == OrthographicCamera.OrthographicType.Front ? rotation : 0);
-			vector += initialRotation;
-			return $"{vector.X} {vector.Y} {vector.Z}";
-		}
-
 		public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, I2DRenderer im)
 		{
 			var (wpos, soff) = GetWorldPositionAndScreenOffset(camera);

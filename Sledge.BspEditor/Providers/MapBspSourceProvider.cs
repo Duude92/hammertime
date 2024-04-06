@@ -41,6 +41,9 @@ namespace Sledge.BspEditor.Providers
 		{
 			new FileExtensionInfo("Quake map formats", ".map", ".max"),
 		};
+
+		public bool CanSave => true;
+
 		private MapDocument _document;
 		private static GameData _gameData;
 		public async Task<BspFileLoadResult> Load(Stream stream, IEnvironment environment)

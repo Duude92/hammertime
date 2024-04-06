@@ -66,6 +66,11 @@ namespace Sledge.BspEditor.Documents
 			get { return _providers.SelectMany(x => x.Value.SupportedFileExtensions); }
 		}
 
+		public IEnumerable<FileExtensionInfo> SupportedFileExtensionsForSave
+		{
+			get { return _providers.Where(x=>x.Value.CanSave).SelectMany(x => x.Value.SupportedFileExtensions); }
+		}
+
 		/// <inheritdoc />
 		public bool CanLoad(string location)
 		{
@@ -80,6 +85,16 @@ namespace Sledge.BspEditor.Documents
 		private bool CanLoad(IBspSourceProvider provider, string location)
 		{
 			return location == null || provider.SupportedFileExtensions.Any(x => x.Matches(location));
+		}
+
+		/// <summary>
+		/// See if a given provider can load a file from a given location.
+		/// </summary>
+		/// <param name="provider">The provider to test</param>
+		/// <param name="location">The location of the file</param>
+		private bool CanSave(IBspSourceProvider provider, string location)
+		{
+			return location == null || (provider.CanSave && provider.SupportedFileExtensions.Any(x => x.Matches(location)));
 		}
 
 		/// <summary>
@@ -133,6 +148,7 @@ namespace Sledge.BspEditor.Documents
 		public async Task<IDocument> Load(string location)
 		{
 			var env = await GetEnvironment();
+			if(env == null) return null;
 			var gameData = await env.GetGameData();
 			if (!gameData.Classes.Any())
 			{
@@ -258,7 +274,7 @@ namespace Sledge.BspEditor.Documents
 
 			using (var stream = new MemoryStream())
 			{
-				foreach (var provider in _providers.Where(x => CanLoad(x.Value, location)))
+				foreach (var provider in _providers.Where(x => CanSave(x.Value, location)))
 				{
 					try
 					{
