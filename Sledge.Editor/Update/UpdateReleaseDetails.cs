@@ -22,7 +22,8 @@ namespace Sledge.Editor.Update
             var obj = JsonConvert.DeserializeObject(jsonString) as JArray;
             if (obj == null || obj.Count < 1) return;
 
-            var rel = obj[0] as JObject;
+			var rel = obj.Select(x => x as JObject).Where(x => x.GetValue("tag_name").ToString().Equals("latest")).FirstOrDefault(); //find the "latest" tagged asset
+
             var assets = rel?.GetValue("assets") as JArray;
             if (assets == null || assets.Count < 1) return;
 
