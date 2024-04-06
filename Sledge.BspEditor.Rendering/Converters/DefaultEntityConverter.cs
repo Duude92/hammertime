@@ -14,6 +14,7 @@ using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Pipelines;
 using Sledge.Rendering.Primitives;
 using Sledge.Rendering.Resources;
+using static Sledge.BspEditor.Primitives.MapObjects.Entity;
 using Plane = Sledge.DataStructures.Geometric.Plane;
 
 namespace Sledge.BspEditor.Rendering.Converters
@@ -46,11 +47,18 @@ namespace Sledge.BspEditor.Rendering.Converters
 		{
 			if (entity.IsSelected && entity.Relations.Any())
 			{
+				var entitiesToRemove = new List<EntityRelative>();
 				VertexStandard[] relationPoints = new VertexStandard[entity.Relations.Count * 2];
 				var relationIndices = new uint[entity.Relations.Count * 2];
 				uint i = 0;
+				
 				foreach (var relatedEntity in entity.Relations)
 				{
+					if (relatedEntity.Entity.Hierarchy.Parent == null) //if entity is detached
+					{
+						entitiesToRemove.Add(relatedEntity);
+						continue;
+					}
 					var relationC = relatedEntity.Relation == Entity.EntityRelative.RelationType.TargetsMain ? Color.Yellow : Color.Blue;
 					var relationColour = new Vector4(relationC.R, relationC.G, relationC.B, relationC.A) / 255f;
 
@@ -78,8 +86,13 @@ namespace Sledge.BspEditor.Rendering.Converters
 
 
 				}
-				//groups.Add();
-				builder.Append(relationPoints, relationIndices, new[] { new BufferGroup(PipelineType.Wireframe, CameraType.Perspective, 0, (uint)entity.Relations.Count * 2) });
+                foreach (var removeEntitye in entitiesToRemove)
+                {
+					entity.Relations.Remove(removeEntitye);
+                }
+				entitiesToRemove.Clear();
+                //groups.Add();
+                builder.Append(relationPoints, relationIndices, new[] { new BufferGroup(PipelineType.Wireframe, CameraType.Perspective, 0, (uint)entity.Relations.Count * 2) });
 			}
 			return Task.CompletedTask;
 		}
