@@ -89,8 +89,18 @@ namespace Sledge.BspEditor.Editing.Components.Properties.SmartEdit
 			if (!_root.TryGetTarget(out var rt)) return;
 			var path = rt;
 			var basePath = _textBox.Text;
-			if (Property.VariableType == VariableType.Sound)
-				path = rt.TraversePath("sound");
+			switch (Property.VariableType)
+			{
+				case VariableType.Sound:
+					path = rt.TraversePath("sound");
+					break;
+				case VariableType.Sprite:
+					path = rt.TraversePath("sprites");
+					break;
+				case VariableType.Studio:
+					path = rt.TraversePath("models");
+					break;
+			}
 			if (!String.IsNullOrEmpty(basePath))
 			{
 				var file = path.TraversePath(basePath);
