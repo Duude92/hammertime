@@ -175,7 +175,6 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 			if (content.Length > 0 && content[0].StartsWith("classname"))
 			{
 				var classname = content[0].Split(':')[1];
-				if (_tableValues.NewClass == null && string.Equals(classname, _tableValues.OriginalClass.ToLower(), StringComparison.InvariantCultureIgnoreCase)) return;
 
 				var newClass = _gameData.Classes.FirstOrDefault(x => x.ClassType != ClassType.Base && (x.Name ?? "").ToLower() == classname) ?? new GameDataObject(classname, "", ClassType.Any);
 				_tableValues.NewClass = newClass; string[] newContent = new string[content.Length - 2];
