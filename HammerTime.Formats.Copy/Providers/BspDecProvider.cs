@@ -37,6 +37,9 @@ namespace HammerTime.Formats.Providers
 		public IEnumerable<Type> SupportedDataTypes => SupportedTypes;
 
 		public IEnumerable<FileExtensionInfo> SupportedFileExtensions => new[] { new FileExtensionInfo("BSP v29 & v30 files", ".bsp") };
+
+		public bool CanSave => false;
+
 		private static GameData _gameData;
 
 		public async Task<BspFileLoadResult> Load(Stream stream, IEnvironment environment)
