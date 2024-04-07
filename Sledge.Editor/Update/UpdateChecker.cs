@@ -15,96 +15,98 @@ using Sledge.Shell;
 
 namespace Sledge.Editor.Update
 {
-    [Export(typeof(IInitialiseHook))]
-    [Export(typeof(ISettingsContainer))]
-    [AutoTranslate]
-    public class UpdateChecker : IInitialiseHook, ISettingsContainer
-    {
-        private readonly Form _shell;
+	[Export(typeof(IInitialiseHook))]
+	[Export(typeof(ISettingsContainer))]
+	[AutoTranslate]
+	public class UpdateChecker : IInitialiseHook, ISettingsContainer
+	{
+		private readonly Form _shell;
 
-        private string _updateFileToInstall;
+		private string _updateFileToInstall;
 
-        [Setting("CheckForUpdates")] private bool _checkForUpdates = true;
+		[Setting("CheckForUpdates")] private bool _checkForUpdates = true;
 
-        public string UpdateDownloadedTitle { get; set; }
-        public string UpdateDownloadedMessage { get; set; }
+		public string UpdateDownloadedTitle { get; set; }
+		public string UpdateDownloadedMessage { get; set; }
 
-        [ImportingConstructor]
-        public UpdateChecker([Import("Shell")] Form shell)
-        {
-            _shell = shell;
-        }
+		[ImportingConstructor]
+		public UpdateChecker([Import("Shell")] Form shell)
+		{
+			_shell = shell;
+		}
 
-        public Task OnInitialise()
-        {
+		public Task OnInitialise()
+		{
 #if DEBUG
-            _checkForUpdates = false;
+			_checkForUpdates = false;
 #endif
-            if (_checkForUpdates)
-            {
-                Scheduler.Schedule(this, CheckForUpdates, TimeSpan.FromSeconds(5));
-            }
+			if (_checkForUpdates)
+			{
+				Scheduler.Schedule(this, CheckForUpdates, TimeSpan.FromSeconds(5));
+			}
 
-            Oy.Subscribe<string>("Sledge:Editor:UpdateDownloaded", OnUpdateDownloaded);
+			Oy.Subscribe<string>("Sledge:Editor:UpdateDownloaded", OnUpdateDownloaded);
 
-            Application.ApplicationExit += OnApplicationExit;
+			Application.ApplicationExit += OnApplicationExit;
 
-            return Task.CompletedTask;
-        }
+			return Task.CompletedTask;
+		}
 
-        private void OnApplicationExit(object sender, EventArgs e)
-        {
-            Application.ApplicationExit -= OnApplicationExit;
+		private void OnApplicationExit(object sender, EventArgs e)
+		{
+			Application.ApplicationExit -= OnApplicationExit;
 
-            if (_updateFileToInstall == null || !File.Exists(_updateFileToInstall)) return;
+			if (_updateFileToInstall == null || !File.Exists(_updateFileToInstall)) return;
 
-            var loc = Path.GetDirectoryName(typeof(Program).Assembly.Location);
-            var arguments = "/S" + (loc != null ? " /D=" + loc : "");
+			var loc = Path.GetDirectoryName(typeof(Program).Assembly.Location);
+			var arguments = "/S" + (loc != null ? " /D=" + loc : "");
 #if DEBUG
-            arguments = "";
+			arguments = "";
 #endif
-            Process.Start(_updateFileToInstall, arguments);
-        }
+			Process.Start(_updateFileToInstall, arguments);
+		}
 
-        private Task OnUpdateDownloaded(string file)
-        {
-            UpdateDownloadedTitle = "Update is ready to apply";
-            UpdateDownloadedMessage = "New version is downloaded succesfully.\nDo you want to restart and update now?";
+		private Task OnUpdateDownloaded(string file)
+		{
+			UpdateDownloadedTitle = "Update is ready to apply";
+			UpdateDownloadedMessage = "New version is downloaded succesfully.\nDo you want to restart and update now?";
 
 			_shell.InvokeLater(() =>
-            {
-                if (!File.Exists(file)) return;
+			{
+				if (!File.Exists(file)) return;
 
-                var res = MessageBox.Show(UpdateDownloadedMessage, UpdateDownloadedTitle, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
-                if (res == DialogResult.Cancel) return;
+				var res = MessageBox.Show(UpdateDownloadedMessage, UpdateDownloadedTitle, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
+				if (res == DialogResult.Cancel) return;
 
-                _updateFileToInstall = file;
+				_updateFileToInstall = file;
 
-                if (res == DialogResult.Yes) Oy.Publish("Command:Run", new CommandMessage("File:Exit"));
-            });
-            return Task.CompletedTask;
-        }
+				if (res == DialogResult.Yes) Oy.Publish("Command:Run", new CommandMessage("File:Exit"));
+			});
+			return Task.CompletedTask;
+		}
 
-        private void CheckForUpdates()
-        {
-            Oy.Publish("Command:Run", new CommandMessage("Sledge:Editor:CheckForUpdates", new {Silent = true}));
-        }
+		private void CheckForUpdates()
+		{
+			Oy.Publish("Command:Run", new CommandMessage("Sledge:Editor:CheckForUpdates", new { Silent = true }));
+		}
 
-        public string Name => "Hammertime.Editor.UpdateChecker";
+		public string Name => "Hammertime.Editor.UpdateChecker";
+		public bool ValuesLoaded { get; private set; } = false;
 
-        public IEnumerable<SettingKey> GetKeys()
-        {
-            yield return new SettingKey("Interface", "CheckForUpdates", typeof(bool));
-        }
+		public IEnumerable<SettingKey> GetKeys()
+		{
+			yield return new SettingKey("Interface", "CheckForUpdates", typeof(bool));
+		}
 
-        public void LoadValues(ISettingsStore store)
-        {
-            store.LoadInstance(this);
-        }
+		public void LoadValues(ISettingsStore store)
+		{
+			store.LoadInstance(this);
+			ValuesLoaded = true;
+		}
 
-        public void StoreValues(ISettingsStore store)
-        {
-            store.StoreInstance(this);
-        }
-    }
+		public void StoreValues(ISettingsStore store)
+		{
+			store.StoreInstance(this);
+		}
+	}
 }
