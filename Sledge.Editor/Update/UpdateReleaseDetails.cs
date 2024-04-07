@@ -35,11 +35,7 @@ namespace Sledge.Editor.Update
             Changelog = rel.GetValue("body").ToString();
             FileName = exeAsset.GetValue("name").ToString();
             DownloadUrl = exeAsset.GetValue("url").ToString();
-            var dateRaw = exeAsset.GetValue("created_at").ToString();
-            if (!DateTime.TryParseExact(dateRaw, "dd.MM.yyyy HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out var publishDate))
-				if (!DateTime.TryParseExact(dateRaw, "dd.MM.yyyy H:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out publishDate))
-					publishDate = DateTime.Now;
-            PublishDate = publishDate;
+			PublishDate = exeAsset.GetValue("created_at").Value<DateTime>();
 		}
     }
 }
