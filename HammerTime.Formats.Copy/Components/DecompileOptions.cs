@@ -98,7 +98,14 @@ namespace HammerTime.Formats.Components
 
 				Oy.Publish("Command:Run", new CommandMessage("Tool:DecompileTool", new
 				{
-					Path = ofd.FileName
+					Path = ofd.FileName,
+					Optimization = brushOptimizationBox.SelectedIndex,
+					Strategy = strategyComboBox.SelectedIndex,
+					GenerateOrigin = originBoxCheckBox.Checked,
+					MergeBrushes = mergeBrushesCheckBox.Checked,
+					ApplyNull = applyNullCheckBox.Checked,
+					IncludeLiquids = includeLiquidsCheckBox.Checked,
+					TriggerEntityWildcards = textBox1.Text,
 				}));
 			}
 		}

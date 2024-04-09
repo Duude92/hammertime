@@ -50,10 +50,22 @@ namespace HammerTime.Formats.Providers
 		public override string Details { get; set; } = "Decompiler tool";
 
 		private static GameData _gameData;
+		private DecompilerOptions _decompilerOptions;
+		private DecompilerStrategy _strategy;
 		protected override async Task Invoke(MapDocument document, CommandParameters parameters)
 		{
 			var path = parameters.Get<string>("Path");
-			await Oy.Publish<IBspSourceProvider>("Internal:RegisterDocumentLoader", this );
+			_strategy = DecompilerStrategies.Strategies[parameters.Get<int>("Strategy")];
+			_decompilerOptions = new DecompilerOptions
+			{
+				AlwaysGenerateOriginBrushes = parameters.Get<bool>("GenerateOrigin"),
+				ApplyNullToGeneratedFaces = parameters.Get<bool>("ApplyNull"),
+				BrushOptimization = (BrushOptimization)parameters.Get<int>("Optimization"),
+				IncludeLiquids = parameters.Get<bool>("IncludeLiquids"),
+				MergeBrushes = parameters.Get<bool>("MergeBrushes"),
+				TriggerEntityWildcards = System.Collections.Immutable.ImmutableList.Create(parameters.Get<string>("TriggerEntityWildcards").Split('\n')),
+			};
+			await Oy.Publish<IBspSourceProvider>("Internal:RegisterDocumentLoader", this);
 
 			await Oy.Publish("Command:Run", new CommandMessage("Internal:OpenDocument", new
 			{
