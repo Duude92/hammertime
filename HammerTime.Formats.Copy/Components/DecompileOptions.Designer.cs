@@ -49,6 +49,7 @@
 			brushOptimizationBox.Name = "brushOptimizationBox";
 			brushOptimizationBox.Size = new System.Drawing.Size(179, 23);
 			brushOptimizationBox.TabIndex = 0;
+			brushOptimizationBox.Text = "Best texture match";
 			// 
 			// originBoxCheckBox
 			// 
@@ -98,6 +99,7 @@
 			strategyComboBox.Name = "strategyComboBox";
 			strategyComboBox.Size = new System.Drawing.Size(184, 23);
 			strategyComboBox.TabIndex = 5;
+			strategyComboBox.Text = "Tree decompiler strategy";
 			// 
 			// textBox1
 			// 
