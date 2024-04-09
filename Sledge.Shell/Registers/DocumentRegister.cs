@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using LogicAndTrick.Oy;
 using Microsoft.Win32;
+using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Documents;
 using Sledge.Common.Shell.Hooks;
@@ -166,6 +167,8 @@ namespace Sledge.Shell.Registers
 
             if (loader == null)
             {
+                await Oy.Publish("Command:Run", new CommandMessage("File:SaveAs"));
+
                 return false;
             }
 
