@@ -17,12 +17,18 @@ using HalfLife.UnifiedSdk.MapDecompiler;
 using Serilog;
 using System.Threading;
 using MapFormats = HammerTime.Formats.Map;
+using Sledge.Common.Shell.Commands;
+using Sledge.BspEditor.Commands;
+using Sledge.BspEditor.Environment.Goldsource;
+using LogicAndTrick.Oy;
+using System.Security.Cryptography;
 
 
 namespace HammerTime.Formats.Providers
 {
-	[Export(typeof(IBspSourceProvider))]
-	internal class BspDecProvider : IBspSourceProvider
+	[Export(typeof(ICommand))]
+	[CommandID("Tool:DecompileTool")]
+	internal class BspDecProvider : BaseCommand, IBspSourceProvider
 	{
 		private static readonly IEnumerable<Type> SupportedTypes = new List<Type>
 		{
@@ -40,8 +46,24 @@ namespace HammerTime.Formats.Providers
 
 		public bool CanSave => false;
 
-		private static GameData _gameData;
+		public override string Name { get; set; } = "Decompiler";
+		public override string Details { get; set; } = "Decompiler tool";
 
+		private static GameData _gameData;
+		protected override async Task Invoke(MapDocument document, CommandParameters parameters)
+		{
+			var path = parameters.Get<string>("Path");
+			await Oy.Publish<IBspSourceProvider>("Internal:RegisterDocumentLoader", this );
+
+			await Oy.Publish("Command:Run", new CommandMessage("Internal:OpenDocument", new
+			{
+				Path = path
+			}));
+
+			await Oy.Publish<IBspSourceProvider>("Internal:RemoveDocumentLoader", this);
+
+
+		}
 		public async Task<BspFileLoadResult> Load(Stream stream, IEnvironment environment)
 		{
 			_gameData = await environment.GetGameData();
@@ -54,7 +76,7 @@ namespace HammerTime.Formats.Providers
 				var result = new BspFileLoadResult();
 				var map = new SledgePrimitives.Map();
 				var (bspFile, _) = HalfLife.UnifiedSdk.MapDecompiler.Serialization.BspSerialization.Deserialize(stream);
-				var strategy = DecompilerStrategies.TreeDecompilerStrategy;
+				var strategy = DecompilerStrategies.FaceToBrushDecompilerStrategy;
 				var mapFile = strategy.Decompile(logger, bspFile, new DecompilerOptions
 				{
 					BrushOptimization = BrushOptimization.FewestBrushes,
@@ -85,5 +107,7 @@ namespace HammerTime.Formats.Providers
 		{
 			throw new NotImplementedException();
 		}
+
+
 	}
 }

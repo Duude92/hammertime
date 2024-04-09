@@ -164,7 +164,10 @@ namespace Sledge.Shell.Registers
             if (!String.IsNullOrWhiteSpace(loaderHint)) loader = _loaders.FirstOrDefault(x => x.GetType().Name == loaderHint);
             if (loader == null) loader = _loaders.FirstOrDefault(x => x.CanSave(document) && x.CanLoad(fileName));
 
-            if (loader == null) return false;
+            if (loader == null)
+            {
+                return false;
+            }
 
             await Oy.Publish("Document:BeforeSave", document);
 
