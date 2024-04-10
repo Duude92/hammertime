@@ -22,7 +22,7 @@
             "OnlySaveIfChanged": "Only autosave if the document has unsaved changes",
             "SaveDocumentOnAutosave": "Also save the document's main file when autosaving (automatic Ctrl+S)"
         },
-        "OpenLastFiles": "Open latest documents on startup5"
+        "OpenLastFiles": "Open latest documents on startup"
     },
     "Commands": {
         "NewFile": {
