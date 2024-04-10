@@ -14,6 +14,7 @@ using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
+using Sledge.Common.Shell.Settings;
 using Sledge.Common.Translations;
 using Sledge.Formats.Bsp.Objects;
 using Sledge.Shell;
@@ -21,8 +22,9 @@ using Sledge.Shell;
 namespace HammerTime.Formats.Components
 {
 	[Export(typeof(IDialog))]
+	[Export(typeof(ISettingsContainer))]
 	[AutoTranslate]
-	public partial class DecompileOptions : Form, IDialog
+	public partial class DecompileOptions : Form, IDialog, ISettingsContainer
 	{
 		[Import("Shell", typeof(Form))] private Lazy<Form> _parent;
 		[Import] private IContext _context;
@@ -116,6 +118,42 @@ namespace HammerTime.Formats.Components
 					TriggerEntityWildcards = textBox1.Text,
 				}));
 			}
+		}
+		[Setting] public int BrushOptimizationSetting { get; set; } = 0;
+		[Setting] public int StrategySetting { get; set; }
+		[Setting] public bool GenerateOriginSetting { get; set; }
+		[Setting] public bool MergeBrushesSetting { get; set; }
+		[Setting] public bool ApplyNullSetting { get; set; }
+		[Setting] public bool IncludeLiquidsSetting { get; set; }
+		[Setting] public string TriggerEntityWildcardsSetting {  get; set; }
+
+		public IEnumerable<SettingKey> GetKeys()
+		{
+			yield break;
+		}
+
+		public void LoadValues(ISettingsStore store)
+		{
+			store.LoadInstance(this);
+			brushOptimizationBox.SelectedIndex = BrushOptimizationSetting;
+			strategyComboBox.SelectedIndex = StrategySetting;
+			originBoxCheckBox.Checked = GenerateOriginSetting;
+			mergeBrushesCheckBox.Checked = MergeBrushesSetting;
+			applyNullCheckBox.Checked = ApplyNullSetting;
+			includeLiquidsCheckBox.Checked = IncludeLiquidsSetting;
+			textBox1.Text = TriggerEntityWildcardsSetting;
+		}
+
+		public void StoreValues(ISettingsStore store)
+		{
+			BrushOptimizationSetting				= brushOptimizationBox.SelectedIndex;
+			StrategySetting							= strategyComboBox.SelectedIndex	;
+			GenerateOriginSetting					= originBoxCheckBox.Checked			;
+			MergeBrushesSetting						= mergeBrushesCheckBox.Checked		;
+			ApplyNullSetting						= applyNullCheckBox.Checked			;
+			IncludeLiquidsSetting					= includeLiquidsCheckBox.Checked	;
+			TriggerEntityWildcardsSetting			= textBox1.Text						;
+			store.StoreInstance(this);
 		}
 	}
 }
