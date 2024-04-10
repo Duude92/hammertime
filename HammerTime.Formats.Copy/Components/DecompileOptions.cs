@@ -127,6 +127,8 @@ namespace HammerTime.Formats.Components
 		[Setting] public bool IncludeLiquidsSetting { get; set; }
 		[Setting] public string TriggerEntityWildcardsSetting {  get; set; }
 
+		public bool ValuesLoaded { get; private set; }
+
 		public IEnumerable<SettingKey> GetKeys()
 		{
 			yield break;
@@ -142,6 +144,7 @@ namespace HammerTime.Formats.Components
 			applyNullCheckBox.Checked = ApplyNullSetting;
 			includeLiquidsCheckBox.Checked = IncludeLiquidsSetting;
 			textBox1.Text = TriggerEntityWildcardsSetting;
+			ValuesLoaded = true;
 		}
 
 		public void StoreValues(ISettingsStore store)
