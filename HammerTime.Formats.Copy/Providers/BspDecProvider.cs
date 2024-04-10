@@ -88,14 +88,7 @@ namespace HammerTime.Formats.Providers
 				var result = new BspFileLoadResult();
 				var map = new SledgePrimitives.Map();
 				var (bspFile, _) = HalfLife.UnifiedSdk.MapDecompiler.Serialization.BspSerialization.Deserialize(stream);
-				var strategy = DecompilerStrategies.FaceToBrushDecompilerStrategy;
-				var mapFile = strategy.Decompile(logger, bspFile, new DecompilerOptions
-				{
-					BrushOptimization = BrushOptimization.FewestBrushes,
-					AlwaysGenerateOriginBrushes = true,
-					MergeBrushes = true,
-					ApplyNullToGeneratedFaces = true,
-				}, CancellationToken.None);
+				var mapFile = _strategy.Decompile(logger, bspFile, _decompilerOptions, CancellationToken.None);
 
 				map.Root.Data.Replace(MapFormats.Entity.FromFmt(mapFile.Worldspawn, map.NumberGenerator).EntityData);
 
