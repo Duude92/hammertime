@@ -14,6 +14,7 @@ namespace Sledge.BspEditor.Environment
     {
         private readonly IEnumerable<Lazy<IEnvironmentFactory>> _factories;
         private EnvironmentCollection _environments = new EnvironmentCollection();
+        public bool ValuesLoaded { get; private set; } = false;
 
         [ImportingConstructor]
         public EnvironmentRegister([ImportMany] IEnumerable<Lazy<IEnvironmentFactory>> factories)
@@ -65,6 +66,7 @@ namespace Sledge.BspEditor.Environment
             if (store.Contains("Environments"))
             {
                 _environments = (EnvironmentCollection) store.Get(typeof(EnvironmentCollection), "Environments") ?? new EnvironmentCollection();
+                ValuesLoaded = true;
             }
         }
 

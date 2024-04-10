@@ -14,63 +14,63 @@ using Sledge.Shell;
 
 namespace Sledge.Editor.Update
 {
-    [AutoTranslate]
-    [Export(typeof(ICommand))]
-    [MenuItem("Help", "", "Update", "B")]
-    [CommandID("Sledge:Editor:CheckForUpdates")]
-    public class CheckForUpdates : ICommand
-    {
-        private readonly Form _shell;
-        private readonly ITranslationStringProvider _translation;
+	[AutoTranslate]
+	[Export(typeof(ICommand))]
+	[MenuItem("Help", "", "Update", "B")]
+	[CommandID("Sledge:Editor:CheckForUpdates")]
+	public class CheckForUpdates : ICommand
+	{
+		private readonly Form _shell;
+		private readonly ITranslationStringProvider _translation;
 
-        public string Name { get; set; } = "Check for updates";
-        public string Details { get; set; } = "Check online for updates";
+		public string Name { get; set; } = "Check for updates";
+		public string Details { get; set; } = "Check online for updates";
 
-        public string NoUpdatesTitle { get; set; } = "No updates found";
-        public string NoUpdatesMessage { get; set; } = "This version of Sledge is currently up-to-date.";
+		public string NoUpdatesTitle { get; set; } = "No updates found";
+		public string NoUpdatesMessage { get; set; } = "This version of Sledge is currently up-to-date.";
 
-        public string UpdateErrorTitle { get; set; } = "Update error";
-        public string UpdateErrorMessage { get; set; } = "Error downloading the update details.";
+		public string UpdateErrorTitle { get; set; } = "Update error";
+		public string UpdateErrorMessage { get; set; } = "Error downloading the update details.";
 
-        private const string GithubReleasesApiUrl = "https://api.github.com/repos/Duude92/hammertime/releases?page=1";
-        private const string SledgeWebsiteUpdateSource = "http://sledge-editor.com/version.txt";
+		private const string GithubReleasesApiUrl = "https://api.github.com/repos/Duude92/hammertime/releases?page=1";
+		private const string SledgeWebsiteUpdateSource = "http://sledge-editor.com/version.txt";
 
-        [ImportingConstructor]
-        public CheckForUpdates(
-            [Import("Shell")] Form shell,
-            [Import] ITranslationStringProvider translation
-        )
-        {
-            _shell = shell;
-            _translation = translation;
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-        }
+		[ImportingConstructor]
+		public CheckForUpdates(
+			[Import("Shell")] Form shell,
+			[Import] ITranslationStringProvider translation
+		)
+		{
+			_shell = shell;
+			_translation = translation;
+			ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+		}
 
-        public bool IsInContext(IContext context)
-        {
-            return true;
-        }
+		public bool IsInContext(IContext context)
+		{
+			return true;
+		}
 
-        public async Task Invoke(IContext context, CommandParameters parameters)
-        {
-            var silent = parameters.Get("Silent", false);
+		public async Task Invoke(IContext context, CommandParameters parameters)
+		{
+			var silent = parameters.Get("Silent", false);
 
-            var details = await GetLatestReleaseDetails();
-            var currentBuildTime = GetBuildTime();
+			var details = await GetLatestReleaseDetails();
+			var currentBuildTime = GetBuildTime();
 
-            if (!details.Exists)
-            {
-                if (!silent)
-                {
-                    _shell.InvokeLater(() =>
-                    {
-                        MessageBox.Show(UpdateErrorMessage, UpdateErrorTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    });
-                }
-                return;
-            }
-            if(details.PublishDate < (currentBuildTime.AddMinutes(15)))
-            {
+			if (!details.Exists)
+			{
+				if (!silent)
+				{
+					_shell.InvokeLater(() =>
+					{
+						MessageBox.Show(UpdateErrorMessage, UpdateErrorTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
+					});
+				}
+				return;
+			}
+			if (details.PublishDate < (currentBuildTime.AddMinutes(15)))
+			{
 				if (!silent)
 				{
 					_shell.InvokeLater(() =>
@@ -81,45 +81,57 @@ namespace Sledge.Editor.Update
 				return;
 			}
 
-            _shell.InvokeLater(() =>
-            {
-                var form = new UpdaterForm(details, _translation);
-                form.Show(_shell);
-            });
-        }
+			_shell.InvokeLater(() =>
+			{
+				var form = new UpdaterForm(details, _translation);
+				form.Show(_shell);
+			});
+		}
 		private DateTime GetBuildTime()
-        {
-            var path = "./build";
-            if (!File.Exists(path)) return new DateTime();
-            string datetimeStr = null;
-            using (TextReader reader = new StreamReader(path))
-            {
-                datetimeStr = reader.ReadLine();
-            }
+		{
+			var path = "./build";
+			if (!File.Exists(path)) return new DateTime();
+			string datetimeStr = null;
+			using (TextReader reader = new StreamReader(path))
+			{
+				datetimeStr = reader.ReadLine();
+			}
 
 			DateTime datetime = DateTime.ParseExact(datetimeStr, "yyyy-MM-dd HH:mm", null);
-            return datetime;
+			return datetime;
 		}
 
-        private Version GetCurrentVersion()
-        {
-            return typeof(Program).Assembly.GetName().Version;
-        }
+		private Version GetCurrentVersion()
+		{
+			return typeof(Program).Assembly.GetName().Version;
+		}
 
-        private async Task<UpdateReleaseDetails> GetLatestReleaseDetails()
-        {
-            using (var wc = new WebClient())
-            {
-                wc.Headers.Add(HttpRequestHeader.UserAgent, "LogicAndTrick/Sledge-Editor");
-                var str = await wc.DownloadStringTaskAsync(GithubReleasesApiUrl);
-                return new UpdateReleaseDetails(str);
-            }
-        }
+		private async Task<UpdateReleaseDetails> GetLatestReleaseDetails()
+		{
+			using (var wc = new WebClient())
+			{
+				try
+				{
+					wc.Headers.Add(HttpRequestHeader.UserAgent, "LogicAndTrick/Sledge-Editor");
+					var str = await wc.DownloadStringTaskAsync(GithubReleasesApiUrl);
+					return new UpdateReleaseDetails(str);
+				}
+				catch (WebException ex)
+				{
+					if (ex.Status == WebExceptionStatus.ProtocolError)
+					{
+						MessageBox.Show("Github WebApi is unavailable.\nYou can try to check for updates later, or download manually from GitHub.");
+					}
+					MessageBox.Show(ex.Message);
+					return null;
+				}
+			}
+		}
 
-        private class UpdateCheckResult
-        {
-            public Version Version { get; set; }
-            public DateTime Date { get; set; }
-        }
-    }
+		private class UpdateCheckResult
+		{
+			public Version Version { get; set; }
+			public DateTime Date { get; set; }
+		}
+	}
 }

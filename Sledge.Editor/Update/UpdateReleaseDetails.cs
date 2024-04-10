@@ -22,7 +22,8 @@ namespace Sledge.Editor.Update
             var obj = JsonConvert.DeserializeObject(jsonString) as JArray;
             if (obj == null || obj.Count < 1) return;
 
-            var rel = obj[0] as JObject;
+			var rel = obj.Select(x => x as JObject).Where(x => x.GetValue("tag_name").ToString().Equals("latest")).FirstOrDefault(); //find the "latest" tagged asset
+
             var assets = rel?.GetValue("assets") as JArray;
             if (assets == null || assets.Count < 1) return;
 
@@ -34,11 +35,7 @@ namespace Sledge.Editor.Update
             Changelog = rel.GetValue("body").ToString();
             FileName = exeAsset.GetValue("name").ToString();
             DownloadUrl = exeAsset.GetValue("url").ToString();
-            var dateRaw = exeAsset.GetValue("created_at").ToString();
-            if (!DateTime.TryParseExact(dateRaw, "dd.MM.yyyy HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out var publishDate))
-				if (!DateTime.TryParseExact(dateRaw, "dd.MM.yyyy H:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out publishDate))
-					publishDate = DateTime.Now;
-            PublishDate = publishDate;
+			PublishDate = exeAsset.GetValue("created_at").Value<DateTime>();
 		}
     }
 }
