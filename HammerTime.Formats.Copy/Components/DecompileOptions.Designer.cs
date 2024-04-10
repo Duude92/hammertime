@@ -35,10 +35,11 @@
 			includeLiquidsCheckBox = new System.Windows.Forms.CheckBox();
 			strategyComboBox = new System.Windows.Forms.ComboBox();
 			textBox1 = new System.Windows.Forms.TextBox();
-			label1 = new System.Windows.Forms.Label();
-			label2 = new System.Windows.Forms.Label();
+			BrushOptimizationLabel = new System.Windows.Forms.Label();
+			DecompileStrategyLabel = new System.Windows.Forms.Label();
 			cancelButton = new System.Windows.Forms.Button();
 			openBsp = new System.Windows.Forms.Button();
+			WildcardLabel = new System.Windows.Forms.Label();
 			SuspendLayout();
 			// 
 			// brushOptimizationBox
@@ -103,31 +104,31 @@
 			// 
 			// textBox1
 			// 
-			textBox1.Location = new System.Drawing.Point(240, 70);
+			textBox1.Location = new System.Drawing.Point(240, 90);
 			textBox1.Multiline = true;
 			textBox1.Name = "textBox1";
-			textBox1.Size = new System.Drawing.Size(184, 95);
+			textBox1.Size = new System.Drawing.Size(184, 75);
 			textBox1.TabIndex = 6;
 			// 
-			// label1
+			// BrushOptimizationLabel
 			// 
-			label1.AutoSize = true;
-			label1.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			label1.Location = new System.Drawing.Point(12, 9);
-			label1.Name = "label1";
-			label1.Size = new System.Drawing.Size(144, 21);
-			label1.TabIndex = 7;
-			label1.Text = "Brush optimization:";
+			BrushOptimizationLabel.AutoSize = true;
+			BrushOptimizationLabel.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			BrushOptimizationLabel.Location = new System.Drawing.Point(12, 9);
+			BrushOptimizationLabel.Name = "BrushOptimizationLabel";
+			BrushOptimizationLabel.Size = new System.Drawing.Size(144, 21);
+			BrushOptimizationLabel.TabIndex = 7;
+			BrushOptimizationLabel.Text = "Brush optimization:";
 			// 
-			// label2
+			// DecompileStrategyLabel
 			// 
-			label2.AutoSize = true;
-			label2.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			label2.Location = new System.Drawing.Point(240, 14);
-			label2.Name = "label2";
-			label2.Size = new System.Drawing.Size(174, 21);
-			label2.TabIndex = 8;
-			label2.Text = "Decompilation strategy:";
+			DecompileStrategyLabel.AutoSize = true;
+			DecompileStrategyLabel.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			DecompileStrategyLabel.Location = new System.Drawing.Point(240, 14);
+			DecompileStrategyLabel.Name = "DecompileStrategyLabel";
+			DecompileStrategyLabel.Size = new System.Drawing.Size(174, 21);
+			DecompileStrategyLabel.TabIndex = 8;
+			DecompileStrategyLabel.Text = "Decompilation strategy:";
 			// 
 			// cancelButton
 			// 
@@ -149,15 +150,25 @@
 			openBsp.UseVisualStyleBackColor = true;
 			openBsp.Click += openBsp_Click;
 			// 
+			// WildcardLabel
+			// 
+			WildcardLabel.AutoSize = true;
+			WildcardLabel.Location = new System.Drawing.Point(240, 72);
+			WildcardLabel.Name = "WildcardLabel";
+			WildcardLabel.Size = new System.Drawing.Size(127, 15);
+			WildcardLabel.TabIndex = 11;
+			WildcardLabel.Text = "Trigger Entity wildcard:";
+			// 
 			// DecompileOptions
 			// 
 			AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			ClientSize = new System.Drawing.Size(450, 215);
+			Controls.Add(WildcardLabel);
 			Controls.Add(openBsp);
 			Controls.Add(cancelButton);
-			Controls.Add(label2);
-			Controls.Add(label1);
+			Controls.Add(DecompileStrategyLabel);
+			Controls.Add(BrushOptimizationLabel);
 			Controls.Add(textBox1);
 			Controls.Add(strategyComboBox);
 			Controls.Add(includeLiquidsCheckBox);
@@ -186,9 +197,10 @@
 		private System.Windows.Forms.CheckBox includeLiquidsCheckBox;
 		private System.Windows.Forms.ComboBox strategyComboBox;
 		private System.Windows.Forms.TextBox textBox1;
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.Label label2;
+		private System.Windows.Forms.Label BrushOptimizationLabel;
+		private System.Windows.Forms.Label DecompileStrategyLabel;
 		private System.Windows.Forms.Button cancelButton;
 		private System.Windows.Forms.Button openBsp;
+		private System.Windows.Forms.Label WildcardLabel;
 	}
 }

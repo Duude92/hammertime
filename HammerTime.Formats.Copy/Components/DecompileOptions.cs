@@ -22,12 +22,22 @@ namespace HammerTime.Formats.Components
 {
 	[Export(typeof(IDialog))]
 	[AutoTranslate]
-	public partial class DecompileOptions : Form, IDialog, IManualTranslate
+	public partial class DecompileOptions : Form, IDialog
 	{
 		[Import("Shell", typeof(Form))] private Lazy<Form> _parent;
 		[Import] private IContext _context;
 
 		private List<Subscription> _subscriptions;
+
+		public string OpenButton { get => openBsp.Text; set => openBsp.Text = value; }
+		public string BrushOptimizationText { get => BrushOptimizationLabel.Text; set => BrushOptimizationLabel.Text = value; }
+		public string DecompileStrategyText { get => DecompileStrategyLabel.Text; set => DecompileStrategyLabel.Text = value; }
+		public string GenerateOriginBrush { get => originBoxCheckBox.Text; set => originBoxCheckBox.Text = value; }
+		public string MergeBrushes { get => mergeBrushesCheckBox.Text; set => mergeBrushesCheckBox.Text = value; }
+		public string ApplyNull { get => applyNullCheckBox.Text; set => applyNullCheckBox.Text = value; }
+		public string IncludeLiquids { get => includeLiquidsCheckBox.Text; set => includeLiquidsCheckBox.Text = value; }
+		public string WildcardTex { get => WildcardLabel.Text; set=> WildcardLabel.Text = value; }
+		public new string CancelButton { get => cancelButton.Text; set => cancelButton.Text = value; }
 
 		public DecompileOptions()
 		{
@@ -66,17 +76,15 @@ namespace HammerTime.Formats.Components
 
 		public void SetVisible(IContext context, bool visible)
 		{
-			this.InvokeLater(() =>
+			if (visible)
 			{
-				if (visible)
-				{
-					if (!Visible) Show(_parent.Value);
-				}
-				else
-				{
-					Hide();
-				}
-			});
+				if (!Visible) Show(_parent.Value);
+			}
+			else
+			{
+				Hide();
+			}
+
 		}
 		protected override void OnClosing(CancelEventArgs e)
 		{
@@ -94,7 +102,7 @@ namespace HammerTime.Formats.Components
 			{
 				if (ofd.ShowDialog() != DialogResult.OK) return;
 
-	
+
 
 				Oy.Publish("Command:Run", new CommandMessage("Tool:DecompileTool", new
 				{

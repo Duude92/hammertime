@@ -9,7 +9,7 @@ using System;
 using System.ComponentModel.Composition;
 using System.Threading.Tasks;
 
-namespace HammerTime.Formats.Command
+namespace HammerTime.Formats.Commands
 {
 	[AutoTranslate]
 	[Export(typeof(ICommand))]
