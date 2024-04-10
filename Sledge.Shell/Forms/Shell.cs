@@ -139,7 +139,7 @@ namespace Sledge.Shell.Forms
 
 		private async Task PostLoad()
 		{
-			if (_openDocuments != null)
+			if (_openDocuments != null && _openLastFiles)
 			{
 				foreach (var dp in _openDocuments)
 				{
@@ -410,23 +410,26 @@ namespace Sledge.Shell.Forms
 
 		// Settings
 		private List<LoadedDocument> _openDocuments;
+		[Setting("OpenLastFiles")] public bool _openLastFiles = true;
 
-		string ISettingsContainer.Name => "Hammertime.Shell";
+		string ISettingsContainer.Name => "Sledge.Shell";
 
 		public IEnumerable<SettingKey> GetKeys()
 		{
-			yield break;
+			yield return new SettingKey("Autosaving", "OpenLastFiles", typeof(bool));
 		}
 
 		public void LoadValues(ISettingsStore store)
 		{
 			_openDocuments = store.Get<LoadedDocument[]>("OpenDocuments")?.ToList();
+			_openLastFiles = store.Get<bool>("OpenLastFiles");
 			ValuesLoaded = true;
 		}
 
 		public void StoreValues(ISettingsStore store)
 		{
 			store.Set("OpenDocuments", _openDocuments?.ToArray());
+			store.Set("OpenLastFiles", _openLastFiles);
 		}
 
 		private class LoadedDocument
