@@ -40,10 +40,7 @@ namespace Sledge.Editor.Update
 #if DEBUG
 			_checkForUpdates = false;
 #endif
-			if (_checkForUpdates)
-			{
-				Scheduler.Schedule(this, CheckForUpdates, TimeSpan.FromSeconds(5));
-			}
+			Scheduler.Schedule(this, CheckForUpdates, TimeSpan.FromSeconds(5));
 
 			Oy.Subscribe<string>("Sledge:Editor:UpdateDownloaded", OnUpdateDownloaded);
 
@@ -87,10 +84,11 @@ namespace Sledge.Editor.Update
 
 		private void CheckForUpdates()
 		{
-			Oy.Publish("Command:Run", new CommandMessage("Sledge:Editor:CheckForUpdates", new { Silent = true }));
+			if (_checkForUpdates)
+				Oy.Publish("Command:Run", new CommandMessage("Sledge:Editor:CheckForUpdates", new { Silent = true }));
 		}
 
-		public string Name => "Hammertime.Editor.UpdateChecker";
+		public string Name => "Sledge.Editor.UpdateChecker";
 		public bool ValuesLoaded { get; private set; } = false;
 
 		public IEnumerable<SettingKey> GetKeys()

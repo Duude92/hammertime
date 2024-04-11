@@ -55,6 +55,12 @@
     <GeneratedAssemblyInfoFile>assemblyinfo.cs</GeneratedAssemblyInfoFile>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Translations\Sledge.Editor.en.json" />
+    <None Remove="Translations\Sledge.Editor.fr.json" />
+    <None Remove="Translations\Sledge.Editor.it.json" />
+    <None Remove="Translations\Sledge.Editor.jp.json" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
@@ -108,6 +114,18 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\Sledge.ico" />
+    <Content Include="Translations\Sledge.Editor.en.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Translations\Sledge.Editor.fr.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Translations\Sledge.Editor.it.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Translations\Sledge.Editor.jp.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Properties\Settings.Designer.cs">
