@@ -1,48 +1,73 @@
-﻿using System.ComponentModel.Composition;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Threading.Tasks;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
 using Sledge.Common.Shell.Hooks;
+using Sledge.Common.Shell.Settings;
 
 namespace Sledge.BspEditor.Editing.History
 {
-    /// <summary>
-    /// Deals with storing history and undo/redo on map documents
-    /// </summary>
-    [Export(typeof(IInitialiseHook))]
-    public class HistoryHandler : IInitialiseHook
-    {
-        private int MaximumSize { get; set; } = 50;
+	/// <summary>
+	/// Deals with storing history and undo/redo on map documents
+	/// </summary>
+	[Export(typeof(IInitialiseHook))]
+	[Export(typeof(ISettingsContainer))]
+	public class HistoryHandler : IInitialiseHook, ISettingsContainer
+	{
+		public string Name => "Sledge.BspEditor.Editing.History";
 
-        public async Task OnInitialise()
-        {
-            Oy.Subscribe<MapDocument>("Document:Opened", Opened);
-            Oy.Subscribe<MapDocumentOperation>("MapDocument:Perform", Performed);
-            Oy.Subscribe<MapDocumentOperation>("MapDocument:Reverse", Reversed);
-        }
+		public bool ValuesLoaded { get; set; } = false;
 
-        private async Task Opened(MapDocument doc)
-        {
-            doc.Map.Data.Replace(new HistoryStack(MaximumSize));
-        }
+		[Setting] private int MaximumSize { get; set; } = 50;
 
-        private async Task Performed(MapDocumentOperation operation)
-        {
-            if (operation.Operation.Trivial) return;
+		public IEnumerable<SettingKey> GetKeys()
+		{
+			yield return new SettingKey("History", "MaximumSize", typeof(int));
+		}
 
-            var stack = operation.Document.Map.Data.GetOne<HistoryStack>();
-            stack?.Add(operation.Operation);
+		public void LoadValues(ISettingsStore store)
+		{
+			store.LoadInstance(this);
+		}
 
-            Oy.Publish("MapDocument:HistoryChanged", operation.Document);
-        }
+		public async Task OnInitialise()
+		{
+			Oy.Subscribe<MapDocument>("Document:Opened", Opened);
+			Oy.Subscribe<MapDocumentOperation>("MapDocument:Perform", Performed);
+			Oy.Subscribe<MapDocumentOperation>("MapDocument:Reverse", Reversed);
+		}
 
-        private async Task Reversed(MapDocumentOperation operation)
-        {
-            var stack = operation.Document.Map.Data.GetOne<HistoryStack>();
-            stack?.Remove(operation.Operation);
+		public void StoreValues(ISettingsStore store)
+		{
+			MaximumSize = Math.Max(1, MaximumSize);
+			store.StoreInstance(this);
+			ValuesLoaded = true;
+		}
 
-            Oy.Publish("MapDocument:HistoryChanged", operation.Document);
-        }
-    }
+		private async Task Opened(MapDocument doc)
+		{
+			doc.Map.Data.Replace(new HistoryStack(MaximumSize));
+		}
+
+		private async Task Performed(MapDocumentOperation operation)
+		{
+			if (operation.Operation.Trivial) return;
+
+			var stack = operation.Document.Map.Data.GetOne<HistoryStack>();
+			stack?.Add(operation.Operation);
+
+			Oy.Publish("MapDocument:HistoryChanged", operation.Document);
+		}
+
+		private async Task Reversed(MapDocumentOperation operation)
+		{
+			var stack = operation.Document.Map.Data.GetOne<HistoryStack>();
+			stack?.Remove(operation.Operation);
+
+			Oy.Publish("MapDocument:HistoryChanged", operation.Document);
+		}
+	}
 }
