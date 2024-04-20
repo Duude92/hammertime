@@ -7,7 +7,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Sledge.BspEditor</RootNamespace>
     <AssemblyName>Sledge.BspEditor</AssemblyName>
-    <TargetFramework>net472</TargetFramework>
+    <TargetFramework>net6.0-windows7.0</TargetFramework>
     <FileAlignment>512</FileAlignment>
     <Platforms>AnyCPU;x86</Platforms>
     <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
@@ -64,6 +64,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\HalfLife.UnifiedSdk.MapDecompiler\HalfLife.UnifiedSdk.MapDecompiler\HalfLife.UnifiedSdk.MapDecompiler.csproj" />
     <ProjectReference Include="..\Sledge.Common\Sledge.Common.csproj">
       <Project>{5d414ac8-8b93-489f-9960-877923400fed}</Project>
       <Name>Sledge.Common</Name>
@@ -83,6 +84,7 @@
     <ProjectReference Include="..\Sledge.Shell\Sledge.Shell.csproj">
       <Project>{1E0BEB41-CF2E-4F48-838E-452C1DCF575F}</Project>
       <Name>Sledge.Shell</Name>
+      <Private>True</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -7,7 +7,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Sledge.BspEditor.Tools</RootNamespace>
     <AssemblyName>Sledge.BspEditor.Tools</AssemblyName>
-    <TargetFramework>net472</TargetFramework>
+    <TargetFramework>net6.0-windows7.0</TargetFramework>
     <FileAlignment>512</FileAlignment>
     <Platforms>AnyCPU;x86</Platforms>
     <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
@@ -72,6 +72,7 @@
     <ProjectReference Include="..\Sledge.BspEditor.Editing\Sledge.BspEditor.Editing.csproj">
       <Project>{D33E1027-1956-44C4-B920-85281F703704}</Project>
       <Name>Sledge.BspEditor.Editing</Name>
+      <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\Sledge.BspEditor.Rendering\Sledge.BspEditor.Rendering.csproj">
       <Project>{D27BB6A7-FE81-45B5-9B68-B23E4169F16D}</Project>
@@ -159,11 +160,7 @@
     <PackageReference Include="System.Resources.Extensions" Version="7.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="Prefab\Prefabs\NewPrefabDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Prefab\Prefabs\PrefabSidebarPanel.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Prefab\Prefabs\NewPrefabDialog.cs" />
+    <Compile Update="Prefab\Prefabs\PrefabSidebarPanel.cs" />
   </ItemGroup>
 </Project>

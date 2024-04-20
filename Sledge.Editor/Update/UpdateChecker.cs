@@ -37,9 +37,9 @@ namespace Sledge.Editor.Update
 
 		public Task OnInitialise()
 		{
-//#if DEBUG
-//			_checkForUpdates = false;
-//#endif
+#if DEBUG
+			_checkForUpdates = false;
+#endif
 			Scheduler.Schedule(this, CheckForUpdates, TimeSpan.FromSeconds(5));
 
 			Oy.Subscribe<string>("Sledge:Editor:UpdateDownloaded", OnUpdateDownloaded);

@@ -7,7 +7,8 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Sledge.Rendering</RootNamespace>
     <AssemblyName>Sledge.Rendering</AssemblyName>
-    <TargetFramework>net472</TargetFramework>
+    <TargetFramework>net6.0-windows7.0</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <Platforms>AnyCPU;x86</Platforms>
@@ -107,6 +108,7 @@
     </PackageReference>
     <PackageReference Include="SharpDX" Version="4.2.0" />
     <PackageReference Include="SharpDX.Direct3D11" Version="4.2.0" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
     <PackageReference Include="System.Diagnostics.DiagnosticSource">
       <Version>4.5.0</Version>
     </PackageReference>
@@ -170,5 +172,10 @@
   <ItemGroup>
     <EmbeddedResource Include="Shaders\imgui.frag.hlsl" />
     <EmbeddedResource Include="Shaders\imgui.vert.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="cimgui.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 </Project>
