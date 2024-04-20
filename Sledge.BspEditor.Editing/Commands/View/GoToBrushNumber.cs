@@ -26,6 +26,8 @@ namespace Sledge.BspEditor.Editing.Commands.View
 	[MenuImage(typeof(Resources), nameof(Resources.Menu_GoToBrushEntityID))]
 	public class GoToBrushNumber : BaseCommand
 	{
+		const int ENTITY_LIMIT = 16384;
+		const int SOLID_BRUSH_LIMIT = 16384;
 		public override string Name { get; set; } = "Go to brush ID";
 		public override string Details { get; set; } = "Select and center views on a specific object ID.";
 
@@ -37,58 +39,61 @@ namespace Sledge.BspEditor.Editing.Commands.View
 
 		protected override async Task Invoke(MapDocument document, CommandParameters parameters)
 		{
-			using (var qf = new QuickForm(Title) { UseShortcutKeys = true }.TextBox("EntityID", EntityID).TextBox("BrushID", BrushID).OkCancel(OK, Cancel))
+			using (var qf = new QuickForm(Title) { UseShortcutKeys = true }.NumericUpDown("EntityID", "EntityID", 0, ENTITY_LIMIT, 0).NumericUpDown("BrushID", "BrushID", 0, SOLID_BRUSH_LIMIT, 0).OkCancel(OK, Cancel))
 			{
 				qf.ClientSize = new Size(230, qf.ClientSize.Height);
 
 				if (await qf.ShowDialogAsync() != DialogResult.OK) return;
 
-				IMapObject obja = null;
+				IMapObject targetObject = null;
+				IMapObject parentObject = document.Map.Root;
 
-				if (int.TryParse(qf.String("EntityID"), out var entityId))
+				int entityId = (int)qf.Decimal("EntityID") - 1;
+				if (entityId > 0)
 				{
 					var entityObjs = new List<Entity>();
-					CollectEntities(entityObjs, document.Map.Root);
-					void CollectEntities(List<Entity> entities, IMapObject parent)
+					CollectObjects<Entity>(entityObjs, document.Map.Root);
+					if (entityId >= entityObjs.Count)
 					{
-						foreach (var obj1 in parent.Hierarchy)
-						{
-							if (obj1 is Entity e) entities.Add(e);
-							else if (obj1 is Group) CollectEntities(entities, obj1);
-						}
+						MessageBox.Show($"Entity ID {entityId + 1} not found!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+						return;
 					}
-					if (entityId < entityObjs.Count) obja = entityObjs[entityId];
+					parentObject = entityObjs[entityId];
+
 				}
-				if (int.TryParse(qf.String("BrushID"), out var brushId))
+				var brushId = (int)qf.Decimal("BrushID");
+				var solidObjs = new List<Solid>();
+
+				CollectObjects<Solid>(solidObjs, parentObject);
+
+				if (brushId >= solidObjs.Count)
 				{
-					var solidObjs = new List<Solid>();
-
-					CollectSolids(solidObjs, document.Map.Root);
-
-					void CollectSolids(List<Solid> solids, IMapObject parent)
-					{
-						foreach (var obj1 in parent.Hierarchy)
-						{
-							if (obj1 is Solid s) solids.Add(s);
-							else if (obj1 is Group) CollectSolids(solids, obj1);
-						}
-					}
-					if (brushId < solidObjs.Count) obja = solidObjs[brushId];
+					MessageBox.Show($"Brush ID {brushId} not found!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+					return;
 				}
-				if (obja == null) return;
+				targetObject = solidObjs[brushId];
+				if (targetObject == null) return;
 				var tran = new Transaction(
 					new Deselect(document.Selection),
-					new Select(obja)
+					new Select(targetObject)
 				);
 
 				await MapDocumentOperation.Perform(document, tran);
 
-				var box = obja.BoundingBox;
+				var box = targetObject.BoundingBox;
 
 				await Task.WhenAll(
 					Oy.Publish("MapDocument:Viewport:Focus3D", box),
 					Oy.Publish("MapDocument:Viewport:Focus2D", box)
 				);
+				void CollectObjects<T>(List<T> objects, IMapObject parent) where T: IMapObject
+				{
+					foreach (var obj1 in parent.Hierarchy)
+					{
+						if (obj1 is T e) objects.Add(e);
+						else if (obj1 is Group) CollectObjects<T>(objects, obj1);
+					}
+				}
 			}
 		}
 	}

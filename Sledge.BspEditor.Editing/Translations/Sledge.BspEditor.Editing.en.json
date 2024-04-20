@@ -5,9 +5,11 @@
     "LanguageDescription": "English",
     "Inherit": ""
   },
-  "@Settings": {
-
-  },
+    "@Settings": {
+        "History": {
+            "MaximumSize": "History steps maximum count"
+        }
+    },
   "Commands": {
     "InterruptCompiling": {
       "Name": "Interrupt compilation",
