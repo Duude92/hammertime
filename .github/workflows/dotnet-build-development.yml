@@ -49,5 +49,7 @@ jobs:
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         prerelease: false
-        files: ./HammerTime.zip
+        files: |
+            ./HammerTime.zip
+            ./Hammertime.Editor.2.0.7.2.exe
         automatic_release_tag: latest-${{env.BRANCH_NAME}}
