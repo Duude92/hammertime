@@ -30,7 +30,7 @@ using System.Reflection;
 
 namespace Sledge.BspEditor.Tools.Prefab
 {
-	[AutoTranslate]
+    [AutoTranslate]
 	[Export(typeof(ISidebarComponent))]
 	[Export(typeof(IInitialiseHook))]
 	[OrderHint("A")]
@@ -45,7 +45,13 @@ namespace Sledge.BspEditor.Tools.Prefab
 		public object Control => this;
 		private string[] _files = null;
 		private WorldcraftPrefabLibrary _activeWorldcraftPrefabLibrary;
-
+		#region Translations
+		public string CreatePrefabButton { set => this.InvokeLater(() => this.CreateButton.Text = value); }
+		public string NewPrefabButton { set=>this.InvokeLater(()=>this.NewPrefab.Text = value); }
+		public string CreateLibButton { set=>this.InvokeLater(()=>this.CreateLib.Text = value); }
+		public string NewPrefabPlaceholder { set => this.InvokeLater(() => this.NewPrefabName.Text = value); }
+		public string NewLibPlaceholder { set=> this.InvokeLater(()=>this.NewLibName.Text = value); }
+		#endregion
 		public PrefabSidebarPanel()
 		{
 			InitializeComponent();
@@ -57,6 +63,7 @@ namespace Sledge.BspEditor.Tools.Prefab
 
 		private void InitPrefabLibraries()
 		{
+			if (!Directory.Exists("./prefabs/")) return;
 			_files = Directory.GetFiles("./prefabs/");
 
 			FileContainer.Items.Clear();
@@ -143,7 +150,7 @@ namespace Sledge.BspEditor.Tools.Prefab
 			if (_activeDocument.TryGetTarget(out var mapDocument))
 			{
 				var selection = mapDocument.Selection;
-				HammerTime.Formats.Prefab.WriteObjects(_activeWorldcraftPrefabLibrary, selection, name);
+				HammerTime.Formats.Map.Prefab.WriteObjects(_activeWorldcraftPrefabLibrary, selection, name);
 
 				_activeWorldcraftPrefabLibrary.WriteToFile(_files[FileContainer.SelectedIndex]);
 
@@ -165,6 +172,7 @@ namespace Sledge.BspEditor.Tools.Prefab
 
 		private void CreateLib_Click(object sender, EventArgs e)
 		{
+			if(!Directory.Exists("./prefabs/")) Directory.CreateDirectory("./prefabs/");
 			var name = NewLibName.Text.Trim();
 			if (String.IsNullOrEmpty(name)) throw new Exception($"Prefab name cannot be empty.\r\nPrefab name: {name}");
 			var lib = new WorldcraftPrefabLibrary() { Description = name };

@@ -20,7 +20,7 @@ using Plane = Sledge.DataStructures.Geometric.Plane;
 namespace Sledge.BspEditor.Providers
 {
     [Export(typeof(IBspSourceProvider))]
-    public class ObjBspSourceProvider : IBspSourceProvider
+	public class ObjBspSourceProvider : IBspSourceProvider
     {
         private static readonly IEnumerable<Type> SupportedTypes = new List<Type>
         {
@@ -35,7 +35,9 @@ namespace Sledge.BspEditor.Providers
             new FileExtensionInfo("Wavefront model format", ".obj")
         };
 
-        public Task<BspFileLoadResult> Load(Stream stream, IEnvironment environment)
+		public bool CanSave => true;
+
+		public Task<BspFileLoadResult> Load(Stream stream, IEnvironment environment)
         {
             return Task.Run(() =>
             {

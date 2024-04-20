@@ -6,7 +6,7 @@ using System.Linq;
 using System.Numerics;
 
 
-namespace HammerTime.Formats
+namespace HammerTime.Formats.Map
 {
 	internal class Face
 	{
@@ -19,9 +19,9 @@ namespace HammerTime.Formats
 				VAxis = face.VAxis,
 				XScale = face.XScale,
 				YScale = face.YScale,
-				XShift = face.YShift,
-				YShift = face.Rotation,
-				Rotation = face.XShift,
+				XShift = Prefab.IsRmf?face.YShift : face.XShift,
+				YShift = Prefab.IsRmf?face.Rotation : face.YShift,
+				Rotation = Prefab.IsRmf?face.XShift : face.Rotation,
 				}
 			};
 			newFace.Plane = new Sledge.DataStructures.Geometric.Plane(face.Plane.Normal, face.Plane.D);

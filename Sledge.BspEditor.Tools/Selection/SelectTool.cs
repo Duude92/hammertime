@@ -66,6 +66,7 @@ namespace Sledge.BspEditor.Tools.Selection
 		[Setting] public bool KeepVisgroupsWhenCloning { get; set; } = true;
 
 		string ISettingsContainer.Name => "Sledge.BspEditor.Tools.SelectTool";
+		public bool ValuesLoaded { get; private set; } = false;
 
 		IEnumerable<SettingKey> ISettingsContainer.GetKeys()
 		{
@@ -83,6 +84,7 @@ namespace Sledge.BspEditor.Tools.Selection
 		{
 			store.LoadInstance(this);
 			Oy.Publish("SelectTool:SetShow3DWidgets", Show3DWidgets ? "1" : "0");
+			ValuesLoaded = true;
 		}
 
 		void ISettingsContainer.StoreValues(ISettingsStore store)
@@ -445,6 +447,7 @@ namespace Sledge.BspEditor.Tools.Selection
 		/// <param name="e">The click event</param>
 		protected override void MouseDown(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
 		{
+			if (e.Button != MouseButtons.Left) return;
 			var tf = document.Map.Data.GetOne<DisplayFlags>() ?? new DisplayFlags();
 			IgnoreOptions iopt = (tf.HideClipTextures ? IgnoreOptions.IgnoreClip : IgnoreOptions.None) | (tf.HideNullTextures ? IgnoreOptions.IgnoreNull : IgnoreOptions.None);
 

@@ -30,7 +30,7 @@ namespace Sledge.BspEditor.Documents
 	[Export(typeof(IDocumentLoader))]
 	public class BspSourceDocumentLoader : IDocumentLoader
 	{
-		private readonly IEnumerable<Lazy<IBspSourceProvider>> _providers;
+		private IEnumerable<Lazy<IBspSourceProvider>> _providers;
 		private readonly IEnumerable<Lazy<IBspSourceProcessor>> _processors;
 		private readonly Lazy<EnvironmentRegister> _environments;
 		private readonly Lazy<Form> _shell;
@@ -58,12 +58,19 @@ namespace Sledge.BspEditor.Documents
 			_processors = processors;
 			_environments = environments;
 			_shell = shell;
+			Oy.Subscribe<IBspSourceProvider>("Internal:RegisterDocumentLoader", p => _providers = _providers.Concat(new[] { new Lazy<IBspSourceProvider>(() => p) }));
+			Oy.Subscribe<IBspSourceProvider>("Internal:RemoveDocumentLoader", p => _providers = _providers.Where(x => x.Value != p));
 		}
 
 		/// <inheritdoc />
 		public IEnumerable<FileExtensionInfo> SupportedFileExtensions
 		{
 			get { return _providers.SelectMany(x => x.Value.SupportedFileExtensions); }
+		}
+
+		public IEnumerable<FileExtensionInfo> SupportedFileExtensionsForSave
+		{
+			get { return _providers.Where(x => x.Value.CanSave).SelectMany(x => x.Value.SupportedFileExtensions); }
 		}
 
 		/// <inheritdoc />
@@ -80,6 +87,16 @@ namespace Sledge.BspEditor.Documents
 		private bool CanLoad(IBspSourceProvider provider, string location)
 		{
 			return location == null || provider.SupportedFileExtensions.Any(x => x.Matches(location));
+		}
+
+		/// <summary>
+		/// See if a given provider can load a file from a given location.
+		/// </summary>
+		/// <param name="provider">The provider to test</param>
+		/// <param name="location">The location of the file</param>
+		private bool CanSave(IBspSourceProvider provider, string location)
+		{
+			return location == null || (provider.CanSave && provider.SupportedFileExtensions.Any(x => x.Matches(location)));
 		}
 
 		/// <summary>
@@ -133,6 +150,7 @@ namespace Sledge.BspEditor.Documents
 		public async Task<IDocument> Load(string location)
 		{
 			var env = await GetEnvironment();
+			if (env == null) return null;
 			var gameData = await env.GetGameData();
 			if (!gameData.Classes.Any())
 			{
@@ -258,7 +276,7 @@ namespace Sledge.BspEditor.Documents
 
 			using (var stream = new MemoryStream())
 			{
-				foreach (var provider in _providers.Where(x => CanLoad(x.Value, location)))
+				foreach (var provider in _providers.Where(x => CanSave(x.Value, location)))
 				{
 					try
 					{

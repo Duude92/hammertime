@@ -30,10 +30,11 @@ using static Sledge.BspEditor.Primitives.MapObjects.MapObjectExtensions;
 using Sledge.Common.Shell.Context;
 using Sledge.Formats.Map.Formats;
 using System.Windows.Forms;
+using System.IO;
 
 namespace Sledge.BspEditor.Tools.Prefab
 {
-	[Export(typeof(ITool))]
+    [Export(typeof(ITool))]
 	[OrderHint("I")]
 	[AutoTranslate]
 	internal class PrefabTool : BaseDraggableTool
@@ -72,9 +73,17 @@ namespace Sledge.BspEditor.Tools.Prefab
 
 		private List<IMapObject> GetPrefab(int prefabId, UniqueNumberGenerator ung, Map map)
 		{
-			var lib = WorldcraftPrefabLibrary.FromFile(_activeLibraryPath);
+			if (String.IsNullOrEmpty(_activeLibraryPath)) return null;
+			WorldcraftPrefabLibrary lib;
+			try
+			{
+				lib = WorldcraftPrefabLibrary.FromFile(_activeLibraryPath);
+			}
+			catch { 
+				lib = new WorldcraftPrefabLibrary();
+			}
 			if (lib.Prefabs.Count > prefabId)
-				return HammerTime.Formats.Prefab.GetPrefab(lib.Prefabs[prefabId].Map, ung, map);
+				return HammerTime.Formats.Map.Prefab.GetPrefab(lib.Prefabs[prefabId].Map, ung, map);
 			return null;
 		}
 		protected override void ContextChanged(IContext context)

@@ -8,16 +8,17 @@ using System.Windows.Forms;
 using LogicAndTrick.Oy;
 using Sledge.Common.Translations;
 using Sledge.Editor.Properties;
+using Sledge.Shell.Forms;
 
 namespace Sledge.Editor.Update
 {
-    public partial class UpdaterForm : Form
+	public partial class UpdaterForm : BaseForm
     {
         private readonly UpdateReleaseDetails _details;
         private readonly string _filename;
         private readonly string _downloadingLabel;
 
-        public UpdaterForm(UpdateReleaseDetails details, ITranslationStringProvider translations)
+		public UpdaterForm(UpdateReleaseDetails details, ITranslationStringProvider translations)
         {
             _details = details;
             _filename = Path.Combine(Path.GetTempPath(), details.FileName);
@@ -82,9 +83,9 @@ namespace Sledge.Editor.Update
             Close();
         }
 
-        private void ReleaseNotesLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		private void ReleaseNotesLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Process.Start("https://github.com/LogicAndTrick/sledge/releases");
+            Process.Start("https://github.com/Duude92/hammertime/pull/1");
         }
-    }
+	}
 }

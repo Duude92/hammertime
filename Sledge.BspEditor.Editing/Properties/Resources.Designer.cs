@@ -143,6 +143,16 @@ namespace Sledge.BspEditor.Editing.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Menu_GoToBrushEntityID {
+            get {
+                object obj = ResourceManager.GetObject("Menu_GoToBrushEntityID", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Menu_GoToBrushID {
             get {
                 object obj = ResourceManager.GetObject("Menu_GoToBrushID", resourceCulture);
@@ -423,9 +433,9 @@ namespace Sledge.BspEditor.Editing.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Sledge_Large {
+        internal static System.Drawing.Bitmap sledge_large {
             get {
-                object obj = ResourceManager.GetObject("Sledge_Large", resourceCulture);
+                object obj = ResourceManager.GetObject("sledge_large", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

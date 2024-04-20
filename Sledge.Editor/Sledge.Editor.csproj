@@ -6,8 +6,8 @@
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Sledge.Editor</RootNamespace>
-    <AssemblyName>Sledge.Editor</AssemblyName>
     <TargetFramework>net6.0-windows7.0</TargetFramework>
+    <AssemblyName>Hammertime.Editor</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile />
@@ -54,6 +54,12 @@
   <PropertyGroup>
     <GeneratedAssemblyInfoFile>assemblyinfo.cs</GeneratedAssemblyInfoFile>
   </PropertyGroup>
+  <ItemGroup>
+    <None Remove="Translations\Sledge.Editor.en.json" />
+    <None Remove="Translations\Sledge.Editor.fr.json" />
+    <None Remove="Translations\Sledge.Editor.it.json" />
+    <None Remove="Translations\Sledge.Editor.jp.json" />
+  </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
@@ -105,9 +111,23 @@
     <PackageReference Include="LogicAndTrick.Oy" Version="1.2.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="System.Resources.Extensions" Version="7.0.0" />
+    <PackageReference Include="Vortice.D3DCompiler" Version="3.2.0" />
+    <PackageReference Include="Vortice.DXGI" Version="3.2.0" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\Sledge.ico" />
+    <Content Include="Translations\Sledge.Editor.en.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Translations\Sledge.Editor.fr.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Translations\Sledge.Editor.it.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Translations\Sledge.Editor.jp.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Properties\Settings.Designer.cs">
@@ -123,7 +143,6 @@
     </None>
   </ItemGroup>
   <PropertyGroup>
-    <!--<PostBuildEvent>"$(SolutionDir)Build\InsertIcons.exe" "$(TargetPath)" "$(SolutionDir)Resources\embedded_icons.txt"</PostBuildEvent>-->
     <StartupObject>Sledge.Editor.Program</StartupObject>
     <ApplicationIcon>Resources\Sledge.ico</ApplicationIcon>
   </PropertyGroup>
@@ -144,16 +163,4 @@
       <Link>cimgui.dll</Link>
     </Content>
   </ItemGroup>
-
-  <!--
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="$(SolutionDir)Build\InsertIcons.exe $(TargetPath) $(SolutionDir)Resources\embedded_icons.txt" />
-  </Target>-->
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

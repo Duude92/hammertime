@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using LogicAndTrick.Oy;
 using Microsoft.Win32;
+using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Documents;
 using Sledge.Common.Shell.Hooks;
@@ -30,8 +31,9 @@ namespace Sledge.Shell.Registers
 
         private readonly string _programId;
         private readonly string _programIdVer = "1";
+		public bool ValuesLoaded { get; private set; } = false;
 
-        [ImportingConstructor]
+		[ImportingConstructor]
         public DocumentRegister(
             [ImportMany] IEnumerable<Lazy<IDocumentLoader>> documentLoaders
         )
@@ -54,7 +56,7 @@ namespace Sledge.Shell.Registers
 
         public IEnumerable<FileExtensionInfo> GetSupportedFileExtensions(IDocument document)
         {
-            return _loaders.Where(x => x.CanSave(document)).SelectMany(x => x.SupportedFileExtensions);
+            return _loaders.Where(x => x.CanSave(document)).SelectMany(x => x.SupportedFileExtensionsForSave);
         }
 
         public DocumentPointer GetDocumentPointer(IDocument document)
@@ -164,7 +166,12 @@ namespace Sledge.Shell.Registers
             if (!String.IsNullOrWhiteSpace(loaderHint)) loader = _loaders.FirstOrDefault(x => x.GetType().Name == loaderHint);
             if (loader == null) loader = _loaders.FirstOrDefault(x => x.CanSave(document) && x.CanLoad(fileName));
 
-            if (loader == null) return false;
+            if (loader == null)
+            {
+                await Oy.Publish("Command:Run", new CommandMessage("File:SaveAs"));
+
+                return false;
+            }
 
             await Oy.Publish("Document:BeforeSave", document);
 
@@ -219,7 +226,7 @@ namespace Sledge.Shell.Registers
 
         public string Name => "Sledge.Shell.Documents";
 
-        public IEnumerable<SettingKey> GetKeys()
+		public IEnumerable<SettingKey> GetKeys()
         {
             yield return new SettingKey("FileAssociations", "Associations", typeof(FileAssociations));
         }
@@ -230,9 +237,10 @@ namespace Sledge.Shell.Registers
 
             var associations = store.Get("Associations", new FileAssociations());
             AssociateExtensionHandlers(associations.Where(x => x.Value).Select(x => x.Key));
-        }
+			ValuesLoaded = true;
+		}
 
-        public void StoreValues(ISettingsStore store)
+		public void StoreValues(ISettingsStore store)
         {
             var associations = new FileAssociations();
             var reg = GetRegisteredExtensionAssociations().ToList();

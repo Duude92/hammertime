@@ -37,7 +37,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
             get
             {
                 var list = GetDraggables().ToList();
-                return list.Aggregate(Vector3.Zero, (a, b) => a + b.ZIndex) / list.Count();
+                return list.Aggregate(Vector3.Zero, (a, b) => a + (b is not null? b.ZIndex:Vector3.Zero)) / list.Count();
             }
         }
 
