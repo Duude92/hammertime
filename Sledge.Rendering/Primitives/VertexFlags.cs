@@ -28,5 +28,6 @@ namespace Sledge.Rendering.Primitives
         /// Semi-transparent texture samples are rounded to 0 or 1
         /// </summary>
         AlphaTested = 1 << 2,
+        Wireframed = 1 << 4,
     }
 }
