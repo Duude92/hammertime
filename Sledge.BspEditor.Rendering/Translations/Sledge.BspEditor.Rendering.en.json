@@ -52,6 +52,8 @@
     "Viewport": {
         "MapViewportControlFactory": {
             "Perspective": "3D View",
+            "PerspectiveWf": "3D Wireframe",
+            "": "---",
             "OrthographicTop": "2D Top",
             "OrthographicFront": "2D Front",
             "OrthographicSide": "2D Side"

@@ -19,8 +19,9 @@ namespace Sledge.BspEditor.Rendering.Viewport
         public string OrthographicTop { get; set; }
         public string OrthographicFront { get; set; }
         public string OrthographicSide { get; set; }
+		public string PerspectiveWf { get; set; }
 
-        public string Type => "MapViewport";
+		public string Type => "MapViewport";
 
         [ImportingConstructor]
         public MapViewportControlFactory(
@@ -46,8 +47,10 @@ namespace Sledge.BspEditor.Rendering.Viewport
         {
             return new Dictionary<string, string>
             {
-                {"PerspectiveCamera/", Perspective},
-                {"OrthographicCamera/Top", OrthographicTop},
+
+				{"PerspectiveCamera/View", Perspective},
+				{"PerspectiveCamera/Wireframe", PerspectiveWf},
+				{"OrthographicCamera/Top", OrthographicTop},
                 {"OrthographicCamera/Front", OrthographicFront},
                 {"OrthographicCamera/Side", OrthographicSide}
             };

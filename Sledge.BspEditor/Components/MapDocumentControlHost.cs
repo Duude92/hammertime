@@ -4,8 +4,10 @@ using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using LogicAndTrick.Oy;
 using Sledge.BspEditor.Controls;
 using Sledge.BspEditor.Controls.Layout;
+using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Hooks;
 using Sledge.Common.Shell.Settings;
 using Sledge.Shell;
@@ -360,6 +362,15 @@ namespace Sledge.BspEditor.Components
 		private void SetContextControl(object sender, ToolStripItemClickedEventArgs e)
 		{
 			if (_contextControl == null || !(e.ClickedItem is ContextMenuItem mi)) return;
+
+			var tags = mi.Style.Split('/');
+			if (tags[0] == "PerspectiveCamera" && tags[1] == "Wireframe")
+			{
+				Oy.Publish("Command:Run", new CommandMessage("BspEditor:Map:ToggleWireframe"));
+				Oy.Publish("SettingsChanged", new object());
+				return;
+			}
+
 
 			var container = GetContainer(_contextControl.WindowID);
 			if (container == null) return;
