@@ -14,10 +14,15 @@ namespace Sledge.Rendering.Resources
 {
 	public class CubeMap : Texture
 	{
-		private readonly SixLabors.ImageSharp.Image<Rgba32> _right, _left, _top, _bottom, _back, _front;
+		private readonly SixLabors.ImageSharp.Image<Rgba32>[] _images = new SixLabors.ImageSharp.Image<Rgba32>[6];
+
+		public CubeMap(RenderContext context, string name, TextureSampleType sampleType)
+		{
+
+		}
 
 
-		public CubeMap(RenderContext context, int width, int height, byte[] data, TextureSampleType sampleType) : base()
+        public CubeMap(RenderContext context,  TextureSampleType sampleType) : base()
 		{
 			//_right = SixLabors.ImageSharp.Image.Load<Rgba32>("d:/steam/steamapps/common/Half-Life/cstrike/gfx/env/de_stormrt.bmp");
 			//_left = SixLabors.ImageSharp.Image.Load<Rgba32>("d:/steam/steamapps/common/Half-Life/cstrike/gfx/env/de_stormlf.bmp");

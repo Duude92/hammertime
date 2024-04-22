@@ -77,6 +77,10 @@ namespace Sledge.Rendering.Engine
         {
             return _textures.GetOrAdd(name, texture);
         }
+        internal Texture UploadCubemap(string name, TextureSampleType sampleType)
+        {
+            return _textures.GetOrAdd(name, n=>new CubeMap(_context, name, sampleType));
+        }
 
         internal void DestroyTexture(Texture texture)
         {

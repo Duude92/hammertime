@@ -8,8 +8,6 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using Veldrid;
-using Veldrid.ImageSharp;
-using Texture = Sledge.Rendering.Resources.Texture;
 
 namespace Sledge.Rendering.Pipelines
 {
@@ -45,7 +43,7 @@ namespace Sledge.Rendering.Pipelines
 		{
 			var factory = context.Device.ResourceFactory;
 
-			CubeMap tx = new CubeMap(context, 256, 256, null, TextureSampleType.Point);
+			CubeMap tx = new CubeMap(context, null, TextureSampleType.Point);
 			context.ResourceLoader.UploadTexture("sky", tx, TextureSampleType.Standard);
 
 
