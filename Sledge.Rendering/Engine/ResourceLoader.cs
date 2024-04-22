@@ -71,8 +71,6 @@ namespace Sledge.Rendering.Engine
 
         internal Texture UploadTexture(string name, int width, int height, byte[] data, TextureSampleType sampleType)
         {
-            if(name.Contains("sky")) return _textures.GetOrAdd(name, n => new CubeMap(_context, 256, 256, null, sampleType));
-
 			return _textures.GetOrAdd(name, n => new Texture(_context, width, height, data, sampleType));
         }
         internal Texture UploadTexture(string name, Texture texture, TextureSampleType sampleType)
