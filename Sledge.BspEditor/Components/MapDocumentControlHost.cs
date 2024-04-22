@@ -364,12 +364,26 @@ namespace Sledge.BspEditor.Components
 			if (_contextControl == null || !(e.ClickedItem is ContextMenuItem mi)) return;
 
 			var tags = mi.Style.Split('/');
-			if (tags[0] == "PerspectiveCamera" && tags[1] == "Wireframe")
+			if (tags[0] == "PerspectiveCamera")
 			{
-				Oy.Publish("Command:Run", new CommandMessage("BspEditor:Map:ToggleWireframe"));
-				Oy.Publish("SettingsChanged", new object());
-				return;
+				switch (tags[1])
+				{
+					case "Wireframe":
+						{
+							Oy.Publish("Command:Run", new CommandMessage("BspEditor:Map:ToggleWireframe"));
+							Oy.Publish("SettingsChanged", new object());
+							return;
+						}
+					case "Skybox":
+						{
+							Oy.Publish("Command:Run", new CommandMessage("BspEditor:Map:ToggleSkybox"));
+							Oy.Publish("SettingsChanged", new object());
+
+							return;
+						}
+				}
 			}
+
 
 
 			var container = GetContainer(_contextControl.WindowID);

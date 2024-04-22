@@ -19,18 +19,19 @@ namespace Sledge.Rendering.Engine
 
         public ResourceLayout ProjectionLayout { get; }
         public ResourceLayout TextureLayout { get; }
-        public Sampler TextureSampler { get; }
+		public Sampler TextureSampler { get; }
         public Sampler OverlaySampler { get; }
 
         public VertexLayoutDescription VertexStandardLayoutDescription { get; }
         public VertexLayoutDescription VertexModel3LayoutDescription { get; }
+        public VertexLayoutDescription vertexSkyboxLayoutDescription { get; }
 
         private Lazy<Texture> MissingTexture { get; }
 
         public ResourceLoader(RenderContext context)
         {
             _context = context;
-            
+
             ProjectionLayout = context.Device.ResourceFactory.CreateResourceLayout(
                 new ResourceLayoutDescription(
                     new ResourceLayoutElementDescription("Projection", ResourceKind.UniformBuffer, ShaderStages.Vertex | ShaderStages.Fragment | ShaderStages.Geometry)
@@ -43,7 +44,7 @@ namespace Sledge.Rendering.Engine
                 )
             );
 
-            VertexStandardLayoutDescription = new VertexLayoutDescription(
+			VertexStandardLayoutDescription = new VertexLayoutDescription(
                 new VertexElementDescription("Position", VertexElementSemantic.Position, VertexElementFormat.Float3),
                 new VertexElementDescription("Normal", VertexElementSemantic.Normal, VertexElementFormat.Float3),
                 new VertexElementDescription("Colour", VertexElementSemantic.Color, VertexElementFormat.Float4),
@@ -70,7 +71,13 @@ namespace Sledge.Rendering.Engine
 
         internal Texture UploadTexture(string name, int width, int height, byte[] data, TextureSampleType sampleType)
         {
-            return _textures.GetOrAdd(name, n => new Texture(_context, width, height, data, sampleType));
+            if(name.Contains("sky")) return _textures.GetOrAdd(name, n => new CubeMap(_context, 256, 256, null, sampleType));
+
+			return _textures.GetOrAdd(name, n => new Texture(_context, width, height, data, sampleType));
+        }
+        internal Texture UploadTexture(string name, Texture texture, TextureSampleType sampleType)
+        {
+            return _textures.GetOrAdd(name, texture);
         }
 
         internal void DestroyTexture(Texture texture)

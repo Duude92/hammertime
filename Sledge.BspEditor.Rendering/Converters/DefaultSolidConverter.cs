@@ -47,6 +47,7 @@ namespace Sledge.BspEditor.Rendering.Converters
 			var hideNull = displayFlags?.HideNullTextures == true;
 			var hideClip = displayFlags?.HideClipTextures == true;
 			var wireframe = displayFlags?.Wireframe == true;
+			var skybox = displayFlags?.ToggleSkybox == true;
 			// Pack the vertices like this [ f1v1 ... f1vn ] ... [ fnv1 ... fnvn ]
 			var numVertices = (uint)faces.Sum(x => x.Vertices.Count);
 
@@ -208,13 +209,23 @@ namespace Sledge.BspEditor.Rendering.Converters
 				var t = await tc.GetTextureItem(f.Texture.Name);
 				var transparent = entityHasTransparency || opacity < 0.95f || t?.Flags.HasFlag(TextureFlags.Transparent) == true;
 
-				var texture = t == null ? string.Empty : $"{document.Environment.ID}::{f.Texture.Name}";
-
-				var group = new BufferGroup(
-					pipeline == PipelineType.TexturedOpaque && transparent ? PipelineType.TexturedAlpha : pipeline,
-					CameraType.Perspective, transparent, f.Origin, texture, texOffset, texInd
-				);
-				groups.Add(group);
+                var texture = t == null ? string.Empty : $"{document.Environment.ID}::{f.Texture.Name}";
+                BufferGroup group;
+                if (skybox && f.Texture.Name.ToLower()  == "sky")
+                {
+					 group = new BufferGroup(
+						PipelineType.Skybox,
+						CameraType.Perspective, transparent, f.Origin, texture, texOffset, texInd
+					);
+				}
+                else
+                {
+                     group = new BufferGroup(
+                        pipeline == PipelineType.TexturedOpaque && transparent ? PipelineType.TexturedAlpha : pipeline,
+                        CameraType.Perspective, transparent, f.Origin, texture, texOffset, texInd
+                    );
+                }
+                groups.Add(group);
 
 				texOffset += texInd;
 
