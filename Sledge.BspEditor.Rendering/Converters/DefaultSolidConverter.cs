@@ -49,6 +49,7 @@ namespace Sledge.BspEditor.Rendering.Converters
 			var hideClip = displayFlags?.HideClipTextures == true;
 			var wireframe = displayFlags?.Wireframe == true;
 			var skybox = displayFlags?.ToggleSkybox == true;
+
 			// Pack the vertices like this [ f1v1 ... f1vn ] ... [ fnv1 ... fnvn ]
 			var numVertices = (uint)faces.Sum(x => x.Vertices.Count);
 
@@ -227,6 +228,7 @@ namespace Sledge.BspEditor.Rendering.Converters
                     );
                 }
                 groups.Add(group);
+
 
 				texOffset += texInd;
 

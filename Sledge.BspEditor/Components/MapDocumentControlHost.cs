@@ -384,8 +384,6 @@ namespace Sledge.BspEditor.Components
 				}
 			}
 
-
-
 			var container = GetContainer(_contextControl.WindowID);
 			if (container == null) return;
 
