@@ -7,11 +7,12 @@ namespace Sledge.Rendering.Resources
 {
     public class Texture : IResource
     {
-        private readonly Veldrid.Texture _texture;
-        private readonly TextureView _view;
-        private readonly ResourceSet _set;
+        protected Veldrid.Texture _texture;
+        protected TextureView _view;
+        protected ResourceSet _set;
 
-        private bool _mipsGenerated;
+        protected bool _mipsGenerated;
+        public Texture() { }
         public Texture(RenderContext context, Veldrid.Texture texture, TextureSampleType sampleType, ResourceSet resourceSet)
         {
             _texture = texture;
@@ -61,7 +62,6 @@ namespace Sledge.Rendering.Resources
         {
             // The resources are created in the constructor
         }
-        public void MipGenerated() => _mipsGenerated = true;
         public void BindTo(CommandList cl, uint slot)
         {
             if (!_mipsGenerated)
