@@ -44,6 +44,7 @@ namespace Sledge.BspEditor.Rendering.Converters
 			faces = faces.Where(x => x.Vertices.Count > 2).ToList();
 
 			var displayFlags = document.Map.Data.GetOne<DisplayFlags>();
+			var displayData = document.Map.Data.GetOne<DisplayData>() ?? new DisplayData();
 			var hideNull = displayFlags?.HideNullTextures == true;
 			var hideClip = displayFlags?.HideClipTextures == true;
 			var wireframe = displayFlags?.Wireframe == true;
@@ -215,7 +216,7 @@ namespace Sledge.BspEditor.Rendering.Converters
                 {
 					 group = new BufferGroup(
 						PipelineType.Skybox,
-						CameraType.Perspective, transparent, f.Origin, texture, texOffset, texInd
+						CameraType.Perspective, transparent, f.Origin, displayData.SkyboxName, texOffset, texInd
 					);
 				}
                 else

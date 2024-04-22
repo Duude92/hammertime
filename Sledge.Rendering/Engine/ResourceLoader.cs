@@ -4,12 +4,15 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp;
 using Sledge.Common.Logging;
 using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.Resources;
 using Sledge.Rendering.Shaders;
 using Veldrid;
 using Texture = Sledge.Rendering.Resources.Texture;
+using System.Collections.Generic;
 
 namespace Sledge.Rendering.Engine
 {
@@ -77,9 +80,9 @@ namespace Sledge.Rendering.Engine
         {
             return _textures.GetOrAdd(name, texture);
         }
-        internal Texture UploadCubemap(string name, TextureSampleType sampleType)
+        internal Texture UploadCubemap(string name, IEnumerable<SixLabors.ImageSharp.Image<Rgba32>> images, TextureSampleType sampleType)
         {
-            return _textures.GetOrAdd(name, n=>new CubeMap(_context, name, sampleType));
+            return _textures.GetOrAdd(name, n=>new CubeMap(_context, images, sampleType));
         }
 
         internal void DestroyTexture(Texture texture)

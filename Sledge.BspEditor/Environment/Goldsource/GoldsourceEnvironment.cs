@@ -31,11 +31,12 @@ namespace Sledge.BspEditor.Environment.Goldsource
         private readonly ITexturePackageProvider _wadProvider;
         private readonly ITexturePackageProvider _spriteProvider;
         private readonly ITexturePackageProvider _envProvider;
-        private readonly IGameDataProvider _fgdProvider;
+		private readonly IGameDataProvider _fgdProvider;
         private readonly Lazy<Task<TextureCollection>> _textureCollection;
         private readonly List<IEnvironmentData> _data;
         private readonly Lazy<Task<GameData>> _gameData;
 
+        private IEnumerable<TexturePackageReference> _skyTextures;
         public string Engine => "Goldsource";
         public string ID { get; set; }
         public string Name { get; set; }
@@ -157,13 +158,14 @@ namespace Sledge.BspEditor.Environment.Goldsource
             var wadRefs = _wadProvider.GetPackagesInFile(Root).Where(x => !ExcludedWads.Contains(x.Name, StringComparer.InvariantCultureIgnoreCase));
             var extraWads = AdditionalTextureFiles.SelectMany(x => _wadProvider.GetPackagesInFile(new NativeFile(x)));
             var wads = await _wadProvider.GetTexturePackages(wadRefs.Union(extraWads));
-            var skyboxes = _envProvider.GetPackagesInFile(Root);
+            _skyTextures = _envProvider.GetPackagesInFile(Root);
 
             var spriteRefs = _spriteProvider.GetPackagesInFile(Root);
             var sprites = await _spriteProvider.GetTexturePackages(spriteRefs);
 
             return new GoldsourceTextureCollection(wads.Union(sprites));
         }
+        public IEnumerable<TexturePackageReference> GetSkyboxes() => _skyTextures;
 
         private Task<GameData> MakeGameDataAsync()
         {

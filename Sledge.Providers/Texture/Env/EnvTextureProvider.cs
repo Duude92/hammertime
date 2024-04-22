@@ -1,4 +1,6 @@
-﻿using Sledge.FileSystem;
+﻿using Sledge.Common.Logging;
+using Sledge.FileSystem;
+using Sledge.Providers.Texture.Wad;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
@@ -13,15 +15,19 @@ namespace Sledge.Providers.Texture.Env
 	{
 		public IEnumerable<TexturePackageReference> GetPackagesInFile(IFile file)
 		{
-			var envRoot = file.GetChild("/gfx/env");
+			var envRoot = file.GetChild("gfx");
+			envRoot = envRoot.GetChild("env");
 
 
 
 
 			if (envRoot==null || !envRoot.Exists) return new TexturePackageReference[0];
 
-			if (!file.IsContainer) return file.Extension == "wad" ? new[] { new TexturePackageReference(file.Name, file) } : new TexturePackageReference[0];
-			return file.GetFilesWithExtension("wad").Select(x => new TexturePackageReference(x.Name, x));
+			var files = envRoot.GetFiles();
+			var groups = files.GroupBy(x => x.NameWithoutExtension.Substring(0, x.NameWithoutExtension.Length - 2));
+
+			return groups.Select(x => new TexturePackageReference(x.Key, new CompositeFile(envRoot, x.Select(y=>((CompositeFile)y).FirstFile))));
+
 		}
 
 		public Task<TexturePackage> GetTexturePackage(TexturePackageReference reference)
@@ -29,9 +35,9 @@ namespace Sledge.Providers.Texture.Env
 			throw new NotImplementedException();
 		}
 
-		public Task<IEnumerable<TexturePackage>> GetTexturePackages(IEnumerable<TexturePackageReference> references)
+		public async Task<IEnumerable<TexturePackage>> GetTexturePackages(IEnumerable<TexturePackageReference> references)
 		{
-			throw new NotImplementedException();
+			return null;
 		}
 	}
 }
