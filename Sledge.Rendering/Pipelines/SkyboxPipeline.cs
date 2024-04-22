@@ -45,8 +45,8 @@ namespace Sledge.Rendering.Pipelines
 		{
 			var factory = context.Device.ResourceFactory;
 
-			//CubeMap tx = new CubeMap(context, 256, 256, null, TextureSampleType.Point);
-			//context.ResourceLoader.UploadTexture("sky", tx, TextureSampleType.Standard);
+			CubeMap tx = new CubeMap(context, 256, 256, null, TextureSampleType.Point);
+			context.ResourceLoader.UploadTexture("sky", tx, TextureSampleType.Standard);
 
 
 			//_right = SixLabors.ImageSharp.Image.Load<Rgba32>	("d:/env/officert.tga");
@@ -63,15 +63,15 @@ namespace Sledge.Rendering.Pipelines
 
 
 
-			ImageSharpCubemapTexture imageSharpCubemapTexture = new ImageSharpCubemapTexture("d:/env/officert.tga", "d:/env/officelf.tga", "d:/env/officeup.tga", "d:/env/officedn.tga", "d:/env/officebk.tga", "d:/env/officeft.tga");
+			//ImageSharpCubemapTexture imageSharpCubemapTexture = new ImageSharpCubemapTexture("d:/env/officert.tga", "d:/env/officelf.tga", "d:/env/officeup.tga", "d:/env/officedn.tga", "d:/env/officebk.tga", "d:/env/officeft.tga");
 
 
 
 
-			_texture = imageSharpCubemapTexture.CreateDeviceTexture(context.Device, factory);
-			_texture.Name = "SkyTexture";
+			//_texture = imageSharpCubemapTexture.CreateDeviceTexture(context.Device, factory);
+			//_texture.Name = "SkyTexture";
 
-			TextureView textureView = factory.CreateTextureView(new TextureViewDescription(_texture));
+			//TextureView textureView = factory.CreateTextureView(new TextureViewDescription(_texture));
 
 			(_vertex, _fragment) = context.ResourceLoader.LoadShaders(Type.ToString());
 
@@ -102,16 +102,16 @@ namespace Sledge.Rendering.Pipelines
 				new ResourceSetDescription(context.ResourceLoader.ProjectionLayout, _projectionBuffer)
 			);
 
-			_view = context.Device.ResourceFactory.CreateTextureView(_texture);
+			//_view = context.Device.ResourceFactory.CreateTextureView(_texture);
 
-			var sampler = context.ResourceLoader.TextureSampler;
+			//var sampler = context.ResourceLoader.TextureSampler;
 
-			var textureResourceSet = context.Device.ResourceFactory.CreateResourceSet(
-				new ResourceSetDescription(context.ResourceLoader.TextureLayout, textureView, sampler)
-				);
-			var tx = new Texture(context, _texture, TextureSampleType.Standard, textureResourceSet);
-			tx.MipGenerated();
-			context.ResourceLoader.UploadTexture("sky", tx, TextureSampleType.Standard);
+			//var textureResourceSet = context.Device.ResourceFactory.CreateResourceSet(
+			//	new ResourceSetDescription(context.ResourceLoader.TextureLayout, textureView, sampler)
+			//	);
+			//var tx = new Texture(context, _texture, TextureSampleType.Standard, textureResourceSet);
+			//tx.MipGenerated();
+			//context.ResourceLoader.UploadTexture("sky", tx, TextureSampleType.Standard);
 
 		}
 		public void SetupFrame(RenderContext context, IViewport target)
