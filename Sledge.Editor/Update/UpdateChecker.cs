@@ -60,7 +60,14 @@ namespace Sledge.Editor.Update
 #if DEBUG
 			arguments = "";
 #endif
-			Process.Start(_updateFileToInstall, arguments);
+			ProcessStartInfo startInfo = new ProcessStartInfo
+			{
+				FileName = _updateFileToInstall,
+				Arguments = arguments,
+				Verb = "runas",
+				UseShellExecute = true,
+			};
+			Process.Start(startInfo);
 		}
 
 		private Task OnUpdateDownloaded(string file)
