@@ -30,6 +30,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
     {
         private readonly ITexturePackageProvider _wadProvider;
         private readonly ITexturePackageProvider _spriteProvider;
+        private readonly ITexturePackageProvider _envProvider;
         private readonly IGameDataProvider _fgdProvider;
         private readonly Lazy<Task<TextureCollection>> _textureCollection;
         private readonly List<IEnvironmentData> _data;
@@ -139,6 +140,8 @@ namespace Sledge.BspEditor.Environment.Goldsource
             _wadProvider = Container.Get<ITexturePackageProvider>("Wad3");
             _spriteProvider = Container.Get<ITexturePackageProvider>("Spr");
             _fgdProvider = Container.Get<IGameDataProvider>("Fgd");
+            _envProvider = Container.Get<ITexturePackageProvider>("Env");
+
 
             _textureCollection = new Lazy<Task<TextureCollection>>(MakeTextureCollectionAsync);
             _gameData = new Lazy<Task<GameData>>(MakeGameDataAsync);
@@ -154,6 +157,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
             var wadRefs = _wadProvider.GetPackagesInFile(Root).Where(x => !ExcludedWads.Contains(x.Name, StringComparer.InvariantCultureIgnoreCase));
             var extraWads = AdditionalTextureFiles.SelectMany(x => _wadProvider.GetPackagesInFile(new NativeFile(x)));
             var wads = await _wadProvider.GetTexturePackages(wadRefs.Union(extraWads));
+            var skyboxes = _envProvider.GetPackagesInFile(Root);
 
             var spriteRefs = _spriteProvider.GetPackagesInFile(Root);
             var sprites = await _spriteProvider.GetTexturePackages(spriteRefs);
