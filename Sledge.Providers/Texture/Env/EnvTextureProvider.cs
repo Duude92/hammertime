@@ -18,24 +18,18 @@ namespace Sledge.Providers.Texture.Env
 			var envRoot = file.GetChild("gfx");
 			envRoot = envRoot.GetChild("env");
 
-
-
-
-			if (envRoot==null || !envRoot.Exists) return new TexturePackageReference[0];
+			if (envRoot == null || !envRoot.Exists) return new TexturePackageReference[0];
 
 			var files = envRoot.GetFiles();
 			var groupsInitial = files.GroupBy(x => x.Extension);
 			IEnumerable<IGrouping<string, IFile>> targetGroups = null;
-            foreach (var group in groupsInitial)
-            {
+			foreach (var group in groupsInitial)
+			{
 				if (targetGroups == null) targetGroups = group.GroupBy(x => x.NameWithoutExtension.Substring(0, x.NameWithoutExtension.Length - 2));
 				else targetGroups = targetGroups.Union(group.GroupBy(x => x.NameWithoutExtension.Substring(0, x.NameWithoutExtension.Length - 2)));
-            }
-
-
-
-			return targetGroups.Select(x => new TexturePackageReference(x.Key, new CompositeFile(envRoot, x.Select(y=>((CompositeFile)y).FirstFile))));
-
+			}
+			targetGroups = targetGroups.DistinctBy(x => x.Key);
+			return targetGroups.Select(x => new TexturePackageReference(x.Key, new CompositeFile(envRoot, x.Select(y => ((CompositeFile)y).FirstFile))));
 		}
 
 		public Task<TexturePackage> GetTexturePackage(TexturePackageReference reference)

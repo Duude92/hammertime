@@ -166,16 +166,15 @@ namespace Sledge.BspEditor.Rendering.Resources
 				return _engine.Value.UploadTexture($"{environment.ID}::{item.Name}", bitmap.Width, bitmap.Height, data, TextureSampleType.Standard);
 			}
 		}
-		public Task UploadCubemap(CompositeFile file)
+		public async Task<Texture> UploadCubemap(CompositeFile file)
 		{
 			try
 			{
 				var cubeFiles = file.GetCompositeFiles().Select(x => SixLabors.ImageSharp.Image.Load<Rgba32>(x.FullPathName)).ToList();
-				_engine.Value.UploadCubemap(file.NameWithoutExtension.Substring(0, file.NameWithoutExtension.Length - 2), cubeFiles);
-				return Task.CompletedTask;
+				return _engine.Value.UploadCubemap(file.NameWithoutExtension.Substring(0, file.NameWithoutExtension.Length - 2), cubeFiles);
 			}
 			catch {
-				return Task.CompletedTask;
+				return null;
 			}
 		}
 
