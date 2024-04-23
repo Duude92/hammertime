@@ -8,6 +8,8 @@ using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Environment;
 using Sledge.BspEditor.Environment.Goldsource;
 using Sledge.BspEditor.Modification;
+using Sledge.BspEditor.Primitives.MapData;
+using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.Converters;
 using Sledge.BspEditor.Rendering.Resources;
@@ -62,6 +64,7 @@ namespace Sledge.BspEditor.Rendering.Scene
 			Oy.Subscribe<IDocument>("Document:Activated", DocumentActivated);
 			Oy.Subscribe<IDocument>("Document:Closed", DocumentClosed);
 			Oy.Subscribe<Change>("MapDocument:Changed", DocumentChanged);
+			Oy.Subscribe<Change>("MapDocument:Changed:Early", DocumentChangedEarly);
 
 			return Task.FromResult(0);
 		}
@@ -72,7 +75,8 @@ namespace Sledge.BspEditor.Rendering.Scene
 		}
 
 		// Document events
-
+		private async Task DocumentChangedEarly(Change change) =>await LoadSkybox();
+		
 		private async Task DocumentChanged(Change change)
 		{
 			if (_activeDocument.TryGetTarget(out var md) && change.Document == md)
@@ -99,6 +103,30 @@ namespace Sledge.BspEditor.Rendering.Scene
 			var md = doc as MapDocument;
 			_activeDocument = new WeakReference<MapDocument>(md);
 			await UpdateScene(md, null);
+			await LoadSkybox();
+		}
+		private async Task LoadSkybox()
+		{
+			if (_activeDocument.TryGetTarget(out var md) && md?.Environment is GoldsourceEnvironment environment1)
+			{
+				var data = md.Map.Root.Data.Get<EntityData>().First();
+				var dd = md.Map.Data.GetOne<DisplayData>() ?? new DisplayData();
+
+				var skyname = data?.Get<string>("skyname", null);
+				if (dd.SkyboxName == skyname) return;
+
+				dd.SkyboxName = skyname;
+
+				md.Map.Data.Replace(dd);
+
+				var sky = environment1.GetSkyboxes().FirstOrDefault(x => x.Name == skyname);
+				if (sky == null) return;
+
+				UpdateScene(md, null);
+
+				await _resourceCollection.UploadCubemap(sky.File as CompositeFile);
+
+			}
 		}
 
 		private async Task DocumentClosed(IDocument doc)
@@ -161,10 +189,6 @@ namespace Sledge.BspEditor.Rendering.Scene
 			foreach (var r in rem) _engine.Value.Remove(r);
 
 
-			if (environment is GoldsourceEnvironment environment1)
-			{
-				foreach (var sky in environment1.GetSkyboxes()) _resourceCollection.UploadCubemap(sky.File as CompositeFile);
-			}
 
 			await _resourceCollection.Upload(environment, resources);
 		}
