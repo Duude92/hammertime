@@ -54,7 +54,6 @@
             "Perspective": "3D View",
             "PerspectiveWf": "3D Wireframe",
             "PerspectiveSky":  "Skybox",
-            "": "---",
             "OrthographicTop": "2D Top",
             "OrthographicFront": "2D Front",
             "OrthographicSide": "2D Side"
