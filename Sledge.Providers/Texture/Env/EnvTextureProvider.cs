@@ -24,9 +24,17 @@ namespace Sledge.Providers.Texture.Env
 			if (envRoot==null || !envRoot.Exists) return new TexturePackageReference[0];
 
 			var files = envRoot.GetFiles();
-			var groups = files.GroupBy(x => x.NameWithoutExtension.Substring(0, x.NameWithoutExtension.Length - 2));
+			var groupsInitial = files.GroupBy(x => x.Extension);
+			IEnumerable<IGrouping<string, IFile>> targetGroups = null;
+            foreach (var group in groupsInitial)
+            {
+				if (targetGroups == null) targetGroups = group.GroupBy(x => x.NameWithoutExtension.Substring(0, x.NameWithoutExtension.Length - 2));
+				else targetGroups = targetGroups.Union(group.GroupBy(x => x.NameWithoutExtension.Substring(0, x.NameWithoutExtension.Length - 2)));
+            }
 
-			return groups.Select(x => new TexturePackageReference(x.Key, new CompositeFile(envRoot, x.Select(y=>((CompositeFile)y).FirstFile))));
+
+
+			return targetGroups.Select(x => new TexturePackageReference(x.Key, new CompositeFile(envRoot, x.Select(y=>((CompositeFile)y).FirstFile))));
 
 		}
 
