@@ -146,6 +146,7 @@ namespace Sledge.Rendering.Engine
 		{
 			_timer.Start();
 			RenderThread.Start(_token.Token);
+			RenderThread.Name = "Render Thread";
 		}
 
 		private void Stop()
