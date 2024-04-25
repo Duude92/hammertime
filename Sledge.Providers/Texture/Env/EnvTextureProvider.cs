@@ -15,9 +15,16 @@ namespace Sledge.Providers.Texture.Env
 	{
 		public IEnumerable<TexturePackageReference> GetPackagesInFile(IFile file)
 		{
-			var envRoot = file.GetChild("gfx");
-			envRoot = envRoot.GetChild("env");
-
+			IFile envRoot = null;
+			try
+			{
+				envRoot = file.GetChild("gfx");
+				envRoot = envRoot.GetChild("env");
+			}
+			catch
+			{
+				return new TexturePackageReference[0];
+			}
 			if (envRoot == null || !envRoot.Exists) return new TexturePackageReference[0];
 
 			var files = envRoot.GetFiles();
