@@ -38,6 +38,45 @@ namespace Sledge.BspEditor.Rendering.Converters
 		{
 			return ConvertFaces(builder, document, obj, obj.Data.Get<Face>().ToList(), resourceCollector);
 		}
+		private static VertexStandard[] _skyVertices = new VertexStandard[]
+		{
+	   new VertexStandard{ Position =new Vector3(-1, -1,  0.5f) }, //0
+       new VertexStandard{ Position =new Vector3( 1, -1,  0.5f) }, //1
+       new VertexStandard{ Position =new Vector3(-1,  1,  0.5f) }, //2
+       new VertexStandard{ Position =new Vector3( 1,  1,  0.5f) }, //3
+       new VertexStandard{ Position =new Vector3(-1, -1, -0.5f) }, //4
+       new VertexStandard{ Position =new Vector3( 1, -1, -0.5f) }, //5
+       new VertexStandard{ Position =new Vector3(-1,  1, -0.5f) }, //6
+       new VertexStandard{ Position =new Vector3( 1,  1, -0.5f)  }  //7
+
+		};
+		private static uint[] _skyIndices = new uint[]
+		{
+        //Top
+        2, 6, 7,
+		2, 3, 7,
+
+        //Bottom
+        0, 4, 5,
+		0, 1, 5,
+
+        //Left
+        0, 2, 6,
+		0, 4, 6,
+
+        //Right
+        1, 3, 7,
+		1, 5, 7,
+
+        //Front
+        0, 2, 3,
+		0, 1, 3,
+
+        //Back
+        4, 6, 7,
+		4, 5, 7
+
+	};
 
 		internal static async Task ConvertFaces(BufferBuilder builder, MapDocument document, IMapObject obj, List<Face> faces, ResourceCollector resourceCollector)
 		{
@@ -211,23 +250,36 @@ namespace Sledge.BspEditor.Rendering.Converters
 				var t = await tc.GetTextureItem(f.Texture.Name);
 				var transparent = entityHasTransparency || opacity < 0.95f || t?.Flags.HasFlag(TextureFlags.Transparent) == true;
 
-                var texture = t == null ? string.Empty : $"{document.Environment.ID}::{f.Texture.Name}";
-                BufferGroup group;
-                if (skybox && f.Texture.Name.ToLower()  == "sky")
-                {
-					 group = new BufferGroup(
+				var texture = t == null ? string.Empty : $"{document.Environment.ID}::{f.Texture.Name}";
+				BufferGroup group;
+				if (skybox)// && f.Texture.Name.ToLower()  == "sky")
+				{
+					builder.Append(_skyVertices, _skyIndices, new[] {new BufferGroup(
 						PipelineType.Skybox,
-						CameraType.Perspective, transparent, f.Origin, displayData.SkyboxName, texOffset, texInd
-					);
+						CameraType.Perspective, transparent, f.Origin, displayData.SkyboxName, texOffset, texInd)
+					});
+					// group = new BufferGroup(
+					//	PipelineType.Skybox,
+					//	CameraType.Perspective, transparent, f.Origin, displayData.SkyboxName, texOffset, texInd
+					//);
 				}
-                else
-                {
-                     group = new BufferGroup(
-                        pipeline == PipelineType.TexturedOpaque && transparent ? PipelineType.TexturedAlpha : pipeline,
-                        CameraType.Perspective, transparent, f.Origin, texture, texOffset, texInd
-                    );
-                }
-                groups.Add(group);
+				if(skybox && f.Texture.Name.ToLower() == "sky")
+				{
+					group = new BufferGroup(
+    PipelineType.TexturedAlpha,
+   CameraType.Perspective, true, f.Origin, texture, texOffset, texInd
+);
+					flags |= VertexFlags.FlatColour;
+					points = points.Select(x => { x.Tint = new Vector4(1,1,1, 0.5f); return x; }).ToArray();
+				}
+				//else
+				{
+					group = new BufferGroup(
+					   pipeline == PipelineType.TexturedOpaque && transparent ? PipelineType.TexturedAlpha : pipeline,
+					   CameraType.Perspective, transparent, f.Origin, texture, texOffset, texInd
+				   );
+				}
+				groups.Add(group);
 
 
 				texOffset += texInd;
