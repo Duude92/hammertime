@@ -722,6 +722,7 @@ namespace Sledge.BspEditor.Tools.Texture
 				e.Cancel = true;
 				Oy.Publish("ActivateTool", "SelectTool");
 			}
+			this.Owner.Focus();
 		}
 
 		private void FocusTextInControl(object sender, EventArgs e)

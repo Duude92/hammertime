@@ -158,6 +158,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties
 		{
 			e.Cancel = true;
 			Save().ContinueWith(Close);
+			this.Owner.Focus();
 		}
 
 		protected override void OnMouseEnter(EventArgs e)

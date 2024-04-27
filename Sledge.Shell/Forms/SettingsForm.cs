@@ -88,7 +88,8 @@ namespace Sledge.Shell.Forms
         {
             e.Cancel = true;
             Oy.Publish("Context:Remove", new ContextInfo("SettingsForm"));
-        }
+            this.Owner.Focus();
+		}
 
         private void LoadGroupList()
         {
