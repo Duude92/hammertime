@@ -243,7 +243,7 @@ namespace Sledge.Shell.Forms
             {
                 kv.Key.LoadValues(kv.Value);
             }
-
+            Oy.Publish("SettingPreChanged");
             Oy.Publish("Settings:Save");
             Oy.Publish("SettingsChanged", new object());
             Close();
