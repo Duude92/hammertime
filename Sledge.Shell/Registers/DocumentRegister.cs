@@ -44,9 +44,19 @@ namespace Sledge.Shell.Registers
             _programId = assembly.Replace(".", "");
 
             _openDocuments = new ThreadSafeList<IDocument>();
-        }
+			Oy.Subscribe<object>("SettingsChanged", SettingsChanged);
 
-        public Task OnStartup()
+		}
+
+		private void SettingsChanged(object obj)
+		{
+            foreach (var document in _openDocuments)
+            {
+                _loaders.First().UpdateEnvironment(document);
+            }
+		}
+
+		public Task OnStartup()
         {
             RegisterExtensionHandlers();
             return Task.FromResult(0);

@@ -67,5 +67,12 @@ namespace Sledge.Common.Shell.Documents
         /// <param name="documentPointer"></param>
         /// <returns></returns>
         Task<IDocument> Load(DocumentPointer documentPointer);
+
+        /// <summary>
+        /// Updates environment for target document
+        /// </summary>
+        /// <param name="document"></param>
+        /// <returns></returns>
+        IDocument UpdateEnvironment(IDocument document);
     }
 }

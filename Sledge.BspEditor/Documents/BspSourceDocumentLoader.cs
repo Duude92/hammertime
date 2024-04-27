@@ -363,5 +363,12 @@ namespace Sledge.BspEditor.Documents
 
 			return null;
 		}
+
+		public IDocument UpdateEnvironment(IDocument document)
+		{
+			if (document is not MapDocument md) return null;
+			md.Environment = _environments.Value.GetEnvironment(md.Environment.ID);
+			return md;
+		}
 	}
 }
