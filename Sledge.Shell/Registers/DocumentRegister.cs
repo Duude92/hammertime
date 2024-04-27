@@ -52,7 +52,7 @@ namespace Sledge.Shell.Registers
 		{
             foreach (var document in _openDocuments)
             {
-                _loaders.First().UpdateEnvironment(document);
+                _loaders.First(x => x.CanLoad(document.FileName)).UpdateEnvironment(document);
             }
 		}
 
