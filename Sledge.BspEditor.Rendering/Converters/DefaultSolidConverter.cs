@@ -38,7 +38,6 @@ namespace Sledge.BspEditor.Rendering.Converters
 		{
 			return ConvertFaces(builder, document, obj, obj.Data.Get<Face>().ToList(), resourceCollector);
 		}
-
 		internal static async Task ConvertFaces(BufferBuilder builder, MapDocument document, IMapObject obj, List<Face> faces, ResourceCollector resourceCollector)
 		{
 			faces = faces.Where(x => x.Vertices.Count > 2).ToList();
@@ -201,7 +200,7 @@ namespace Sledge.BspEditor.Rendering.Converters
 			{
 				var texInd = (uint)(f.Vertices.Count - 2) * 3;
 
-				if ((hideNull && tc.IsNullTexture(f.Texture.Name)) || (hideClip && tc.IsClipTexture(f.Texture.Name)))
+				if ((hideNull && tc.IsNullTexture(f.Texture.Name)) || (hideClip && tc.IsClipTexture(f.Texture.Name) || (skybox && f.Texture.Name.ToLower() == "sky")))
 				{
 					texOffset += texInd;
 					continue;
@@ -211,23 +210,26 @@ namespace Sledge.BspEditor.Rendering.Converters
 				var t = await tc.GetTextureItem(f.Texture.Name);
 				var transparent = entityHasTransparency || opacity < 0.95f || t?.Flags.HasFlag(TextureFlags.Transparent) == true;
 
-                var texture = t == null ? string.Empty : $"{document.Environment.ID}::{f.Texture.Name}";
-                BufferGroup group;
-                if (skybox && f.Texture.Name.ToLower()  == "sky")
-                {
-					 group = new BufferGroup(
-						PipelineType.Skybox,
-						CameraType.Perspective, transparent, f.Origin, displayData.SkyboxName, texOffset, texInd
-					);
+				var texture = t == null ? string.Empty : $"{document.Environment.ID}::{f.Texture.Name}";
+				BufferGroup group;
+
+				//				if(skybox && f.Texture.Name.ToLower() == "sky")
+				//				{
+				//					group = new BufferGroup(
+				//    PipelineType.TexturedAlpha,
+				//   CameraType.Perspective, true, f.Origin, texture, texOffset, texInd
+				//);
+				//					flags |= VertexFlags.FlatColour;
+				//					points = points.Select(x => { x.Tint = new Vector4(1,1,1, 0.5f); return x; }).ToArray();
+				//				}
+				//else
+				{
+					group = new BufferGroup(
+					   pipeline == PipelineType.TexturedOpaque && transparent ? PipelineType.TexturedAlpha : pipeline,
+					   CameraType.Perspective, transparent, f.Origin, texture, texOffset, texInd
+				   );
 				}
-                else
-                {
-                     group = new BufferGroup(
-                        pipeline == PipelineType.TexturedOpaque && transparent ? PipelineType.TexturedAlpha : pipeline,
-                        CameraType.Perspective, transparent, f.Origin, texture, texOffset, texInd
-                    );
-                }
-                groups.Add(group);
+				groups.Add(group);
 
 
 				texOffset += texInd;

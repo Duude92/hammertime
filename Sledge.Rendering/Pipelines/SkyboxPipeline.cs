@@ -17,7 +17,7 @@ namespace Sledge.Rendering.Pipelines
 
 		public PipelineGroup Group => PipelineGroup.Opaque;
 
-		public float Order => 11;
+		public float Order => 1;
 
 		private Shader _vertex;
 		private Shader _fragment;
@@ -49,7 +49,7 @@ namespace Sledge.Rendering.Pipelines
 			{
 				BlendState = BlendStateDescription.SingleAlphaBlend,
 				DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
-				RasterizerState = RasterizerStateDescription.Default,
+				RasterizerState = new RasterizerStateDescription { CullMode = FaceCullMode.None, FillMode = PolygonFillMode.Solid, },
 
 				PrimitiveTopology = PrimitiveTopology.TriangleList,
 				ResourceLayouts = new ResourceLayout[] { context.ResourceLoader.ProjectionLayout, context.ResourceLoader.TextureLayout },

@@ -75,8 +75,8 @@ namespace Sledge.BspEditor.Rendering.Scene
 		}
 
 		// Document events
-		private async Task DocumentChangedEarly(Change change) =>await LoadSkybox();
-		
+		private async Task DocumentChangedEarly(Change change) => await LoadSkybox();
+
 		private async Task DocumentChanged(Change change)
 		{
 			if (_activeDocument.TryGetTarget(out var md) && change.Document == md)
@@ -170,6 +170,7 @@ namespace Sledge.BspEditor.Rendering.Scene
 						var resourceCollector = new ResourceCollector();
 						waitTask = _converter.Value.Convert(md, _sceneBuilder, affected, resourceCollector)
 							.ContinueWith(t => HandleResources(md.Environment, resourceCollector));
+						_converter.Value.ConvertSky(md, _sceneBuilder, resourceCollector).Wait();
 					}
 				}
 			}
