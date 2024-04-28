@@ -17,7 +17,7 @@ namespace Sledge.Rendering.Pipelines
 
 		public PipelineGroup Group => PipelineGroup.Opaque;
 
-		public float Order => 11;
+		public float Order => 1;
 
 		private Shader _vertex;
 		private Shader _fragment;
