@@ -1,18 +1,29 @@
 ﻿using Sledge.Rendering.Engine;
 using Sledge.Rendering.Interfaces;
 using Veldrid;
+using Vulkan;
 
 namespace Sledge.Rendering.Resources
 {
     public class Texture : IResource
     {
-        private readonly Veldrid.Texture _texture;
-        private readonly TextureView _view;
-        private readonly ResourceSet _set;
+        protected Veldrid.Texture _texture;
+        protected TextureView _view;
+        protected ResourceSet _set;
 
-        private bool _mipsGenerated;
+        protected bool _mipsGenerated;
+        public Texture() { }
+        public Texture(RenderContext context, Veldrid.Texture texture, TextureSampleType sampleType, ResourceSet resourceSet)
+        {
+            _texture = texture;
+			var device = context.Device;
+			var sampler = context.ResourceLoader.TextureSampler;
+			if (sampleType == TextureSampleType.Point) sampler = context.ResourceLoader.OverlaySampler;
 
-        public Texture(RenderContext context, int width, int height, byte[] data, TextureSampleType sampleType)
+			_view = device.ResourceFactory.CreateTextureView(_texture);
+            _set = resourceSet;
+		}
+		public Texture(RenderContext context, int width, int height, byte[] data, TextureSampleType sampleType)
         {
             uint w = (uint) width, h = (uint) height;
 
@@ -51,7 +62,6 @@ namespace Sledge.Rendering.Resources
         {
             // The resources are created in the constructor
         }
-
         public void BindTo(CommandList cl, uint slot)
         {
             if (!_mipsGenerated)

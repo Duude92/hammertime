@@ -31,7 +31,7 @@ namespace Sledge.Rendering.Resources
             cl.SetIndexBuffer(IndexBuffer, IndexFormat.UInt32);
         }
         
-        public void Update<T>(IEnumerable<T> vertices, IEnumerable<uint> indices) where T : struct
+        public void Update<T>(IEnumerable<T> vertices, IEnumerable<uint> indices) where T : unmanaged
         {
             var verts = vertices.ToArray();
             var index = indices.ToArray();

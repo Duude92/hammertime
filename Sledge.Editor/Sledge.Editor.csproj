@@ -6,8 +6,8 @@
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Sledge.Editor</RootNamespace>
+    <TargetFramework>net6.0-windows7.0</TargetFramework>
     <AssemblyName>Hammertime.Editor</AssemblyName>
-    <TargetFramework>net472</TargetFramework>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile />
@@ -83,6 +83,7 @@
     <ProjectReference Include="..\Sledge.BspEditor.Editing\Sledge.BspEditor.Editing.csproj">
       <Project>{d33e1027-1956-44c4-b920-85281f703704}</Project>
       <Name>Sledge.BspEditor.Editing</Name>
+      <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\Sledge.BspEditor.Rendering\Sledge.BspEditor.Rendering.csproj">
       <Project>{d27bb6a7-fe81-45b5-9b68-b23e4169f16d}</Project>
@@ -91,6 +92,7 @@
     <ProjectReference Include="..\Sledge.BspEditor.Tools\Sledge.BspEditor.Tools.csproj">
       <Project>{f5715cfa-8f04-4892-a1ef-c3e2c3017750}</Project>
       <Name>Sledge.BspEditor.Tools</Name>
+      <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\Sledge.BspEditor\Sledge.BspEditor.csproj">
       <Project>{37c3fe6b-16f4-431f-ab67-fba7c681ccee}</Project>
@@ -109,6 +111,8 @@
     <PackageReference Include="LogicAndTrick.Oy" Version="1.2.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="System.Resources.Extensions" Version="7.0.0" />
+    <PackageReference Include="Vortice.D3DCompiler" Version="3.2.0" />
+    <PackageReference Include="Vortice.DXGI" Version="3.2.0" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\Sledge.ico" />

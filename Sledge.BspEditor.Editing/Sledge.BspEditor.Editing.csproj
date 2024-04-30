@@ -7,7 +7,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Sledge.BspEditor.Editing</RootNamespace>
     <AssemblyName>Sledge.BspEditor.Editing</AssemblyName>
-    <TargetFramework>net472</TargetFramework>
+    <TargetFramework>net6.0-windows7.0</TargetFramework>
     <FileAlignment>512</FileAlignment>
     <Platforms>AnyCPU;x86</Platforms>
     <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>

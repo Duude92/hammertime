@@ -37,9 +37,9 @@ namespace Sledge.Editor.Update
 
 		public Task OnInitialise()
 		{
-//#if DEBUG
-//			_checkForUpdates = false;
-//#endif
+#if DEBUG
+			_checkForUpdates = false;
+#endif
 			Scheduler.Schedule(this, CheckForUpdates, TimeSpan.FromSeconds(5));
 
 			Oy.Subscribe<string>("Sledge:Editor:UpdateDownloaded", OnUpdateDownloaded);
@@ -60,7 +60,14 @@ namespace Sledge.Editor.Update
 #if DEBUG
 			arguments = "";
 #endif
-			Process.Start(_updateFileToInstall, arguments);
+			ProcessStartInfo startInfo = new ProcessStartInfo
+			{
+				FileName = _updateFileToInstall,
+				Arguments = arguments,
+				Verb = "runas",
+				UseShellExecute = true,
+			};
+			Process.Start(startInfo);
 		}
 
 		private Task OnUpdateDownloaded(string file)

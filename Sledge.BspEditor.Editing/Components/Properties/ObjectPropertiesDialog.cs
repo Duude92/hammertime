@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Linq;
-using System.Runtime.Remoting.Channels;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
@@ -159,6 +158,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties
 		{
 			e.Cancel = true;
 			Save().ContinueWith(Close);
+			this.Owner.Focus();
 		}
 
 		protected override void OnMouseEnter(EventArgs e)

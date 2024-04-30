@@ -267,6 +267,7 @@ namespace Sledge.Shell.Forms
 					Tag = document
 				};
 				DocumentTabs.TabPages.Add(page);
+				DocumentTabs.SelectedIndex = DocumentTabs.TabPages.Count - 1;
 				page.ImageKey = document.HasUnsavedChanges ? "Dirty" : "Clean";
 			}
 
@@ -278,13 +279,6 @@ namespace Sledge.Shell.Forms
 		/// </summary>
 		private void DocumentActivated(IDocument document)
 		{
-			var tab = DocumentTabs.TabPages.OfType<TabPage>().FirstOrDefault(x => x.Tag == document);
-			if (tab != null)
-			{
-				var idx = DocumentTabs.TabPages.IndexOf(tab);
-				if (idx >= 0) DocumentTabs.SelectedIndex = idx;
-			}
-
 			// Update the window title & other things
 			if (document == null || document is NoDocument)
 			{

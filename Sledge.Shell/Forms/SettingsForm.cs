@@ -88,7 +88,8 @@ namespace Sledge.Shell.Forms
         {
             e.Cancel = true;
             Oy.Publish("Context:Remove", new ContextInfo("SettingsForm"));
-        }
+            this.Owner.Focus();
+		}
 
         private void LoadGroupList()
         {
@@ -243,7 +244,7 @@ namespace Sledge.Shell.Forms
             {
                 kv.Key.LoadValues(kv.Value);
             }
-
+            Oy.Publish("SettingPreChanged");
             Oy.Publish("Settings:Save");
             Oy.Publish("SettingsChanged", new object());
             Close();

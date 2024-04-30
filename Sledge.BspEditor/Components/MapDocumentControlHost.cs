@@ -7,7 +7,11 @@ using System.Windows.Forms;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Controls;
 using Sledge.BspEditor.Controls.Layout;
-using Sledge.Common.Shell.Commands;
+using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Environment.Goldsource;
+using Sledge.BspEditor.Primitives.MapData;
+using Sledge.BspEditor.Primitives.MapObjectData;
+using Sledge.Common.Shell.Documents;
 using Sledge.Common.Shell.Hooks;
 using Sledge.Common.Shell.Settings;
 using Sledge.Shell;
@@ -35,6 +39,7 @@ namespace Sledge.BspEditor.Components
 
 		private MapDocumentContainer MainWindow { get; set; }
 		private List<ViewportWindow> Windows { get; set; }
+		private MapDocument _activeDocument { get; set; }
 
 		// Be careful to ensure this is created on the UI thread
 
@@ -60,6 +65,11 @@ namespace Sledge.BspEditor.Components
 			CreateHandle();
 
 			Application.AddMessageFilter(new LeftClickMessageFilter(this));
+
+			Oy.Subscribe<IDocument>("Document:Activated", document =>
+			{
+				if (document is MapDocument mapDocument) _activeDocument = mapDocument;
+			});
 		}
 
 		public void OnUIShutdown()
@@ -363,14 +373,6 @@ namespace Sledge.BspEditor.Components
 		{
 			if (_contextControl == null || !(e.ClickedItem is ContextMenuItem mi)) return;
 
-			var tags = mi.Style.Split('/');
-			if (tags[0] == "PerspectiveCamera" && tags[1] == "Wireframe")
-			{
-				Oy.Publish("Command:Run", new CommandMessage("BspEditor:Map:ToggleWireframe"));
-				Oy.Publish("SettingsChanged", new object());
-				return;
-			}
-
 
 			var container = GetContainer(_contextControl.WindowID);
 			if (container == null) return;
@@ -383,6 +385,44 @@ namespace Sledge.BspEditor.Components
 				Type = mi.Type,
 				Serialised = mi.Style
 			};
+
+
+			var tags = mi.Style.Split('/');
+			if (tags[0] == "PerspectiveCamera")
+			{
+				var tl = _activeDocument.Map.Data.GetOne<DisplayFlags>() ?? new DisplayFlags();
+				var dd = _activeDocument.Map.Data.GetOne<DisplayData>() ?? new DisplayData();
+
+				switch (tags[1])
+				{
+
+					case "Skybox":
+						var data = _activeDocument.Map.Root.Data.Get<EntityData>().First();
+						var skyname = data?.Get<string>("skyname", null);
+
+						if (_activeDocument.Environment is not GoldsourceEnvironment environment) return;
+
+						var sky = environment.GetSkyboxes().FirstOrDefault(x => x.Name == skyname);
+						if (sky == null) return;
+
+						tl.ToggleSkybox = !tl.ToggleSkybox;
+
+						dd.SkyboxName = skyname;
+						break;
+
+					case "Wireframe":
+						tl.Wireframe = !tl.Wireframe;
+						break;
+					case "View": break;
+					default:
+
+						return;
+
+				}
+				_activeDocument.Map.Data.Replace(dd);
+				_activeDocument.Map.Data.Replace(tl);
+				Oy.Publish("SettingsChanged", new object());
+			}
 
 			_shell.InvokeSync(() =>
 			{
@@ -426,11 +466,13 @@ namespace Sledge.BspEditor.Components
 		private void ShowContextMenu(HostedControl control, IMapDocumentControl mdc, Point screenPoint)
 		{
 			CreateContextMenu();
+			var tl = _activeDocument.Map.Data.GetOne<DisplayFlags>() ?? new DisplayFlags();
+
 
 			foreach (var cmi in _contextMenu.Items.OfType<ContextMenuItem>())
 			{
 				var f = _controlFactories.Select(x => x.Value).FirstOrDefault(x => x.Type == cmi.Type);
-				cmi.Checked = f != null && mdc != null && f.IsStyle(mdc, cmi.Style);
+				cmi.Checked = f != null && mdc != null && f.IsStyle(mdc, cmi.Style, tl);
 			}
 
 			_contextControl = control;

@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using LogicAndTrick.Oy;
 using Microsoft.Win32;
+using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Documents;
 using Sledge.Common.Shell.Hooks;
@@ -32,7 +33,6 @@ namespace Sledge.Shell.Registers
 		private readonly string _programIdVer = "1";
 		public bool ValuesLoaded { get; private set; } = false;
 
-
 		[ImportingConstructor]
 		public DocumentRegister(
 			[ImportMany] IEnumerable<Lazy<IDocumentLoader>> documentLoaders
@@ -44,6 +44,18 @@ namespace Sledge.Shell.Registers
 			_programId = assembly.Replace(".", "");
 
 			_openDocuments = new ThreadSafeList<IDocument>();
+			Oy.Subscribe<object>("SettingPreChanged", SettingsChanged);
+
+		}
+
+		private void SettingsChanged(object obj)
+		{
+			foreach (var document in _openDocuments)
+			{
+				var loader = _loaders.First(x => x.CanLoad(document.FileName));
+				if (loader == null) loader = _loaders.First();
+				loader.UpdateEnvironment(document);
+			}
 		}
 
 		public Task OnStartup()
@@ -166,7 +178,12 @@ namespace Sledge.Shell.Registers
 			if (!String.IsNullOrWhiteSpace(loaderHint)) loader = _loaders.FirstOrDefault(x => x.GetType().Name == loaderHint);
 			if (loader == null) loader = _loaders.FirstOrDefault(x => x.CanSave(document) && x.CanLoad(fileName));
 
-			if (loader == null) return false;
+			if (loader == null)
+			{
+				await Oy.Publish("Command:Run", new CommandMessage("File:SaveAs"));
+
+				return false;
+			}
 
 			await Oy.Publish("Document:BeforeSave", document);
 

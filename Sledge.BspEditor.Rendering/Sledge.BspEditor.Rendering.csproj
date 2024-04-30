@@ -7,7 +7,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Sledge.BspEditor.Rendering</RootNamespace>
     <AssemblyName>Sledge.BspEditor.Rendering</AssemblyName>
-    <TargetFramework>net472</TargetFramework>
+    <TargetFramework>net6.0-windows7.0</TargetFramework>
     <FileAlignment>512</FileAlignment>
     <Platforms>AnyCPU;x86</Platforms>
 
@@ -61,6 +61,7 @@
     <ProjectReference Include="..\Sledge.BspEditor\Sledge.BspEditor.csproj">
       <Project>{37c3fe6b-16f4-431f-ab67-fba7c681ccee}</Project>
       <Name>Sledge.BspEditor</Name>
+      <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\Sledge.Common\Sledge.Common.csproj">
       <Project>{5d414ac8-8b93-489f-9960-877923400fed}</Project>

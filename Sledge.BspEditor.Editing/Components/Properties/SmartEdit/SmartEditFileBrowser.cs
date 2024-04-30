@@ -98,7 +98,6 @@ namespace Sledge.BspEditor.Editing.Components.Properties.SmartEdit
 					path = rt.TraversePath("sprites");
 					break;
 				case VariableType.Studio:
-					path = rt.TraversePath("models");
 					break;
 			}
 			if (!String.IsNullOrEmpty(basePath))

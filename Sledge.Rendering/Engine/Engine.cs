@@ -73,11 +73,12 @@ namespace Sledge.Rendering.Engine
 			_pipelines.Add(PipelineGroup.Transparent, new List<IPipeline>());
 			_pipelines.Add(PipelineGroup.Overlay, new List<IPipeline>());
 
-			AddPipeline(new WireframePipeline());
-			AddPipeline(new TexturedOpaquePipeline());
-			AddPipeline(new BillboardOpaquePipeline());
-			AddPipeline(new WireframeModelPipeline());
-			AddPipeline(new TexturedModelPipeline());
+            AddPipeline(new SkyboxPipeline());
+            AddPipeline(new WireframePipeline());
+            AddPipeline(new TexturedOpaquePipeline());
+            AddPipeline(new BillboardOpaquePipeline());
+            AddPipeline(new WireframeModelPipeline());
+            AddPipeline(new TexturedModelPipeline());
 
 			AddPipeline(new TexturedAlphaPipeline());
 			AddPipeline(new TexturedAdditivePipeline());
@@ -145,6 +146,7 @@ namespace Sledge.Rendering.Engine
 		{
 			_timer.Start();
 			RenderThread.Start(_token.Token);
+			RenderThread.Name = "Render Thread";
 		}
 
 		private void Stop()

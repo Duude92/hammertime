@@ -301,7 +301,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
 
 		public IEnumerable<IDraggable> GetDraggables()
 		{
-			return GetVisiblePoints().OrderBy(x => x.IsSelected ? 1 : 0).ToList();
+			return GetVisiblePoints().OrderBy(x => x is not null ? x.IsSelected ? 1 : 0 : 0);
 		}
 
 		public override async Task ToolSelected()
@@ -582,7 +582,6 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
 		#endregion
 
 		#region Get point lists
-
 		private IEnumerable<VertexPoint> GetVisiblePoints()
 		{
 			var points = _vertices.SelectMany(x => x.Value.Points).ToList();
@@ -783,7 +782,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
 			public void Update()
 			{
 				var selected = Points.Where(x => x.IsSelected).ToList();
-				Points.Clear();
+				var newPoints = new ThreadSafeList<VertexPoint>();
 
 				var copy = Solid.Copy;
 
@@ -792,7 +791,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
 				// Add vertex points
 				foreach (var group in verts.GroupBy(x => x.Location.Position.Round(2)))
 				{
-					Points.Add(new VertexPoint(Tool, Solid)
+					newPoints.Add(new VertexPoint(Tool, Solid)
 					{
 						ID = verts.IndexOf(group.First()) + 1,
 						Position = group.First().Location.Position.Round(2),
@@ -808,10 +807,10 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
 					var s = group.Key.Start;
 					var e = group.Key.End;
 					var coord = (s + e) / 2;
-					var mpStart = Points.First(x => !x.IsMidpoint && x.Position == s);
-					var mpEnd = Points.First(x => !x.IsMidpoint && x.Position == e);
-					if (!Points.Where(x => (x.MidpointStart == mpStart || x.MidpointStart == mpEnd) && (x.MidpointEnd == mpEnd || x.MidpointEnd == mpStart)).Any())
-						Points.Add(new VertexPoint(Tool, Solid)
+					var mpStart = newPoints.First(x => !x.IsMidpoint && x.Position == s);
+					var mpEnd = newPoints.First(x => !x.IsMidpoint && x.Position == e);
+					if (!newPoints.Where(x => (x.MidpointStart == mpStart || x.MidpointStart == mpEnd) && (x.MidpointEnd == mpEnd || x.MidpointEnd == mpStart)).Any())
+						newPoints.Add(new VertexPoint(Tool, Solid)
 						{
 							Position = coord,
 							IsMidpoint = true,
@@ -820,6 +819,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
 							IsSelected = selected.Any(x => x.IsMidpoint && x.MidpointStart.Position == mpStart.Position && x.MidpointEnd.Position == mpEnd.Position)
 						});
 				}
+				Points = newPoints;
 			}
 		}
 

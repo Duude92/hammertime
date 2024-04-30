@@ -30,7 +30,7 @@ namespace Sledge.BspEditor.Documents
 	[Export(typeof(IDocumentLoader))]
 	public class BspSourceDocumentLoader : IDocumentLoader
 	{
-		private readonly IEnumerable<Lazy<IBspSourceProvider>> _providers;
+		private IEnumerable<Lazy<IBspSourceProvider>> _providers;
 		private readonly IEnumerable<Lazy<IBspSourceProcessor>> _processors;
 		private readonly Lazy<EnvironmentRegister> _environments;
 		private readonly Lazy<Form> _shell;
@@ -58,6 +58,8 @@ namespace Sledge.BspEditor.Documents
 			_processors = processors;
 			_environments = environments;
 			_shell = shell;
+			Oy.Subscribe<IBspSourceProvider>("Internal:RegisterDocumentLoader", p => _providers = _providers.Concat(new[] { new Lazy<IBspSourceProvider>(() => p) }));
+			Oy.Subscribe<IBspSourceProvider>("Internal:RemoveDocumentLoader", p => _providers = _providers.Where(x => x.Value != p));
 		}
 
 		/// <inheritdoc />
@@ -68,7 +70,7 @@ namespace Sledge.BspEditor.Documents
 
 		public IEnumerable<FileExtensionInfo> SupportedFileExtensionsForSave
 		{
-			get { return _providers.Where(x=>x.Value.CanSave).SelectMany(x => x.Value.SupportedFileExtensions); }
+			get { return _providers.Where(x => x.Value.CanSave).SelectMany(x => x.Value.SupportedFileExtensions); }
 		}
 
 		/// <inheritdoc />
@@ -148,7 +150,7 @@ namespace Sledge.BspEditor.Documents
 		public async Task<IDocument> Load(string location)
 		{
 			var env = await GetEnvironment();
-			if(env == null) return null;
+			if (env == null) return null;
 			var gameData = await env.GetGameData();
 			if (!gameData.Classes.Any())
 			{
@@ -360,6 +362,13 @@ namespace Sledge.BspEditor.Documents
 			}
 
 			return null;
+		}
+
+		public IDocument UpdateEnvironment(IDocument document)
+		{
+			if (document is not MapDocument md) return null;
+			md.Environment = _environments.Value.GetEnvironment(md.Environment.ID);
+			return md;
 		}
 	}
 }

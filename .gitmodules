@@ -1,0 +1,3 @@
+[submodule "HalfLife.UnifiedSdk.MapDecompiler"]
+	path = HalfLife.UnifiedSdk.MapDecompiler
+	url = https://github.com/twhl-community/HalfLife.UnifiedSdk.MapDecompiler.git

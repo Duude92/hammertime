@@ -42,9 +42,9 @@ namespace HammerTime.Formats.Map
 				VAxis = face.Texture.VAxis,
 				XScale = face.Texture.XScale,
 				YScale = face.Texture.YScale,
-				XShift = face.Texture.Rotation,
-				YShift = face.Texture.XShift,
-				Rotation = face.Texture.YShift,
+				XShift = Prefab.IsRmf ? face.Texture.Rotation : face.Texture.XShift,
+				YShift = Prefab.IsRmf ? face.Texture.XShift : face.Texture.YShift,
+				Rotation = Prefab.IsRmf ? face.Texture.YShift : face.Texture.Rotation,
 			};
 
 		}

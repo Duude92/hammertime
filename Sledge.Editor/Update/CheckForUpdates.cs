@@ -54,9 +54,9 @@ namespace Sledge.Editor.Update
 		public async Task Invoke(IContext context, CommandParameters parameters)
 		{
 			var silent = parameters.Get("Silent", false);
+			var buildInfo = GetBuildInfo();
 
-			var details = await GetLatestReleaseDetails();
-			var currentBuildTime = GetBuildTime();
+			var details = await GetLatestReleaseDetails(buildInfo.Tag);
 
 			if (!details.Exists)
 			{
@@ -69,7 +69,7 @@ namespace Sledge.Editor.Update
 				}
 				return;
 			}
-			if (details.PublishDate < (currentBuildTime.AddMinutes(15)))
+			if (details.PublishDate < (buildInfo.BuildTime.AddMinutes(15)))
 			{
 				if (!silent)
 				{
@@ -86,6 +86,19 @@ namespace Sledge.Editor.Update
 				var form = new UpdaterForm(details, _translation);
 				form.Show(_shell);
 			});
+		}
+		private BuildInfo GetBuildInfo()
+		{
+			var path = "./build";
+			if (!File.Exists(path)) return new BuildInfo { BuildTime = new DateTime(), Tag = "latest" };
+			using (TextReader reader = new StreamReader(path))
+			{
+				return new BuildInfo
+				{
+					BuildTime = DateTime.ParseExact(reader.ReadLine(), "yyyy-MM-dd HH:mm", null),
+					Tag = reader.ReadLine(),
+				};
+			}
 		}
 		private DateTime GetBuildTime()
 		{
@@ -106,7 +119,7 @@ namespace Sledge.Editor.Update
 			return typeof(Program).Assembly.GetName().Version;
 		}
 
-		private async Task<UpdateReleaseDetails> GetLatestReleaseDetails()
+		private async Task<UpdateReleaseDetails> GetLatestReleaseDetails(string tag)
 		{
 			using (var wc = new WebClient())
 			{
@@ -114,7 +127,7 @@ namespace Sledge.Editor.Update
 				{
 					wc.Headers.Add(HttpRequestHeader.UserAgent, "LogicAndTrick/Sledge-Editor");
 					var str = await wc.DownloadStringTaskAsync(GithubReleasesApiUrl);
-					return new UpdateReleaseDetails(str);
+					return new UpdateReleaseDetails(str, tag);
 				}
 				catch (WebException ex)
 				{
@@ -132,6 +145,11 @@ namespace Sledge.Editor.Update
 		{
 			public Version Version { get; set; }
 			public DateTime Date { get; set; }
+		}
+		private class BuildInfo
+		{
+			public string Tag { get; set; }
+			public DateTime BuildTime { get; set; }
 		}
 	}
 }

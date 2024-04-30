@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Numerics;
+using SixLabors.ImageSharp.PixelFormats;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.Overlay;
@@ -14,35 +16,35 @@ using Texture = Sledge.Rendering.Resources.Texture;
 
 namespace Sledge.Rendering.Engine
 {
-    [Export]
-    public class EngineInterface
-    {
-        public event EventHandler<IViewport> ViewportCreated
-        {
-            add => Engine.Instance.ViewportCreated += value;
-            remove => Engine.Instance.ViewportCreated -= value;
-        }
+	[Export]
+	public class EngineInterface
+	{
+		public event EventHandler<IViewport> ViewportCreated
+		{
+			add => Engine.Instance.ViewportCreated += value;
+			remove => Engine.Instance.ViewportCreated -= value;
+		}
 
-        public event EventHandler<IViewport> ViewportDestroyed
-        {
-            add => Engine.Instance.ViewportDestroyed += value;
-            remove => Engine.Instance.ViewportDestroyed -= value;
-        }
+		public event EventHandler<IViewport> ViewportDestroyed
+		{
+			add => Engine.Instance.ViewportDestroyed += value;
+			remove => Engine.Instance.ViewportDestroyed -= value;
+		}
 
-        public void SetClearColour(CameraType cameraType, Color colour)
-        {
-            Engine.Instance.SetClearColour(cameraType, new RgbaFloat(new Vector4(colour.R, colour.G, colour.B, colour.A) / 255));
-        }
+		public void SetClearColour(CameraType cameraType, Color colour)
+		{
+			Engine.Instance.SetClearColour(cameraType, new RgbaFloat(new Vector4(colour.R, colour.G, colour.B, colour.A) / 255));
+		}
 
-        public Buffer CreateBuffer()
-        {
-            return new Buffer(Engine.Instance.Device);
-        }
+		public Buffer CreateBuffer()
+		{
+			return new Buffer(Engine.Instance.Device);
+		}
 
-        public BufferBuilder CreateBufferBuilder(BufferSize size)
-        {
-            return new BufferBuilder(Engine.Instance.Device, size);
-        }
+		public BufferBuilder CreateBufferBuilder(BufferSize size)
+		{
+			return new BufferBuilder(Engine.Instance.Device, size);
+		}
 		public int InactiveTargetFps { get => Engine.Instance.InactiveTargetFps; set => Engine.Instance.InactiveTargetFps = value; }
 
 		/// <summary>
@@ -58,59 +60,63 @@ namespace Sledge.Rendering.Engine
 		/// <param name="sampleType">The sample type for this texture</param>
 		/// <returns>The created texture resource</returns>
 		public Texture UploadTexture(string name, int width, int height, byte[] data, TextureSampleType sampleType)
-        {
-            return Engine.Instance.Context.ResourceLoader.UploadTexture(name, width, height, data, sampleType);
-        }
+		{
+			return Engine.Instance.Context.ResourceLoader.UploadTexture(name, width, height, data, sampleType);
+		}
+		public Texture UploadCubemap(string name, IEnumerable<SixLabors.ImageSharp.Image<Rgba32>> images)
+		{
+			return Engine.Instance.Context.ResourceLoader.UploadCubemap(name, images, TextureSampleType.Point);
+		}
 
-        /// <summary>
-        /// Create a resource. This will create all the resources required for this class to render.
-        /// </summary>
-        /// <param name="resource">The resource to create</param>
-        public void CreateResource(IResource resource)
-        {
-            resource.CreateResources(this, Engine.Instance.Context);
-        }
+		/// <summary>
+		/// Create a resource. This will create all the resources required for this class to render.
+		/// </summary>
+		/// <param name="resource">The resource to create</param>
+		public void CreateResource(IResource resource)
+		{
+			resource.CreateResources(this, Engine.Instance.Context);
+		}
 
-        /// <summary>
-        /// Destroy a resource. This will not dispose the object, however it will destroy all engine resources owned by the resource.
-        /// </summary>
-        /// <param name="resource">The resource to destroy</param>
-        public void DestroyResource(IResource resource)
-        {
-            resource.DestroyResources();
-            switch (resource)
-            {
-                case Texture t:
-                    Engine.Instance.Context.ResourceLoader.DestroyTexture(t);
-                    break;
-            }
-        }
+		/// <summary>
+		/// Destroy a resource. This will not dispose the object, however it will destroy all engine resources owned by the resource.
+		/// </summary>
+		/// <param name="resource">The resource to destroy</param>
+		public void DestroyResource(IResource resource)
+		{
+			resource.DestroyResources();
+			switch (resource)
+			{
+				case Texture t:
+					Engine.Instance.Context.ResourceLoader.DestroyTexture(t);
+					break;
+			}
+		}
 
-        /// <summary>
-        /// Create a new viewport for the engine.
-        /// </summary>
-        /// <returns>The viewport</returns>
-        public IViewport CreateViewport()
-        {
-            return Engine.Instance.CreateViewport();
-        }
+		/// <summary>
+		/// Create a new viewport for the engine.
+		/// </summary>
+		/// <returns>The viewport</returns>
+		public IViewport CreateViewport()
+		{
+			return Engine.Instance.CreateViewport();
+		}
 
-        public IDisposable Pause()
-        {
-            return Engine.Instance.Pause();
-        }
+		public IDisposable Pause()
+		{
+			return Engine.Instance.Pause();
+		}
 
-        public void SetSelectiveTransform(Matrix4x4 matrix)
-        {
-            Engine.Instance.Context.SelectiveTransform = matrix;
-        }
+		public void SetSelectiveTransform(Matrix4x4 matrix)
+		{
+			Engine.Instance.Context.SelectiveTransform = matrix;
+		}
 
-        public void Add(IRenderable renderable) => Engine.Instance.Scene.Add(renderable);
-        public void Add(IUpdateable updateable) => Engine.Instance.Scene.Add(updateable);
-        public void Add(IOverlayRenderable overlayRenderable) => Engine.Instance.Scene.Add(overlayRenderable);
+		public void Add(IRenderable renderable) => Engine.Instance.Scene.Add(renderable);
+		public void Add(IUpdateable updateable) => Engine.Instance.Scene.Add(updateable);
+		public void Add(IOverlayRenderable overlayRenderable) => Engine.Instance.Scene.Add(overlayRenderable);
 
-        public void Remove(IRenderable renderable) => Engine.Instance.Scene.Remove(renderable);
-        public void Remove(IUpdateable updateable) => Engine.Instance.Scene.Remove(updateable);
-        public void Remove(IOverlayRenderable overlayRenderable) => Engine.Instance.Scene.Remove(overlayRenderable);
-    }
+		public void Remove(IRenderable renderable) => Engine.Instance.Scene.Remove(renderable);
+		public void Remove(IUpdateable updateable) => Engine.Instance.Scene.Remove(updateable);
+		public void Remove(IOverlayRenderable overlayRenderable) => Engine.Instance.Scene.Remove(overlayRenderable);
+	}
 }

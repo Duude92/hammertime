@@ -4,6 +4,7 @@ using SledgeRegular = Sledge.BspEditor.Primitives.MapObjects;
 using SledgeFormats = Sledge.Formats.Map.Objects;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapObjectData;
+using Sledge.Formats.Bsp.Lumps;
 using Sledge.DataStructures.Geometric;
 namespace HammerTime.Formats.Map
 {
@@ -22,7 +23,7 @@ namespace HammerTime.Formats.Map
 			{
 				try
 				{
-					var pg = poly.Polygons.FirstOrDefault(x => x.Plane != null ? x.Plane.Normal.EquivalentTo(face.Plane.Normal, 0.0075f) : false); // Magic number that seems to match VHE
+					var pg = poly.Polygons.FirstOrDefault(x => x.Plane is not null ? x.Plane.Normal.EquivalentTo(face.Plane.Normal, 0.0075f) : false); // Magic number that seems to match VHE
 
 					if (pg != null)
 					{
@@ -37,6 +38,7 @@ namespace HammerTime.Formats.Map
 				}
 				catch (Exception ex)
 				{
+					//TODO: fix polyhedron creation, some polys have only 2 vertices
 					Console.WriteLine(ex.ToString());
 				}
 

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Sledge.BspEditor.Primitives.MapData;
+using System.Collections.Generic;
 
 namespace Sledge.BspEditor.Components
 {
@@ -34,6 +35,6 @@ namespace Sledge.BspEditor.Components
         /// </summary>
         /// <param name="control">The control to test. Must be a control of this factory's type</param>
         /// <param name="style">The style to test for</param>
-        bool IsStyle(IMapDocumentControl control, string style);
+        bool IsStyle(IMapDocumentControl control, string style, DisplayFlags displayFlags);
     }
 }
