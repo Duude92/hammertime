@@ -27,7 +27,7 @@ jobs:
     - name: Build
       run: dotnet build -c Release -p:Platform=x86 --output ./bin/
     - name: Write build time
-      run: date +"%Y-%m-%d %H:%M" > ./bin/build && echo "latest" >> ./bin/build
+      run: date +"%Y-%m-%d %H:%M" > ./bin/build && echo "latest-${{env.BRANCH_NAME}}" >> ./bin/build
     - name: copy prefabs
       run: cp "./Resources/prefabs" "./bin" -r
     - name: Cleaning output symbols
