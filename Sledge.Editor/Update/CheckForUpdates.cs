@@ -68,7 +68,7 @@ namespace Sledge.Editor.Update
 				}
 				return;
 			}
-			if (details.PublishDate < (buildInfo.BuildTime.AddMinutes(15)))
+			if (details.PublishDate < (buildInfo.BuildTime.AddDays(-15)))
 			{
 				if (!silent)
 				{
