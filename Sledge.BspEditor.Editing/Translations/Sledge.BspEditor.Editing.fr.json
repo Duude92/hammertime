@@ -13,12 +13,12 @@
             "Details": "Voir et modifier les groupes VIS de la carte."
         },
         "OpenAboutWindow": {
-            "Name": "A propos de Sledge",
+            "Name": "A propos de Hammertime",
             "Details": "Voir les informations concernant cette application."
         },
         "OpenSledgeWebsite": {
-            "Name": "Site internet de Sledge",
-            "Details": "Aller sur le site internet de Sledge."
+            "Name": "Site internet de Hammertime",
+            "Details": "Aller sur le site internet de Hammertime."
         },
         "OpenEntityReport": {
             "Name": "Rapport des entités",

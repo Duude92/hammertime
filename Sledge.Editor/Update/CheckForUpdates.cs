@@ -33,7 +33,6 @@ namespace Sledge.Editor.Update
 		public string UpdateErrorMessage { get; set; } = "Error downloading the update details.";
 
 		private const string GithubReleasesApiUrl = "https://api.github.com/repos/Duude92/hammertime/releases?page=1";
-		private const string SledgeWebsiteUpdateSource = "http://sledge-editor.com/version.txt";
 
 		[ImportingConstructor]
 		public CheckForUpdates(
@@ -125,7 +124,7 @@ namespace Sledge.Editor.Update
 			{
 				try
 				{
-					wc.Headers.Add(HttpRequestHeader.UserAgent, "LogicAndTrick/Sledge-Editor");
+					wc.Headers.Add(HttpRequestHeader.UserAgent, "Duude92/hammertime");
 					var str = await wc.DownloadStringTaskAsync(GithubReleasesApiUrl);
 					return new UpdateReleaseDetails(str, tag);
 				}

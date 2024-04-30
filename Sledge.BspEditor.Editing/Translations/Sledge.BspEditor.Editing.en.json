@@ -24,8 +24,8 @@
       "Details": "Delete all selected solid entities and move their brushes back to the world."
     },
     "OpenAboutWindow": {
-      "Name": "About Sledge",
-      "Details": "View information about this application."
+        "Name": "About Hammertime",
+        "Details": "View information about this application."
     },
     "OpenCheckForProblemsDialog": {
       "Name": "Check for problems",
@@ -36,8 +36,8 @@
       "Details": "Open the compile dialog"
     },
     "OpenSledgeWebsite": {
-      "Name": "Sledge Website",
-      "Details": "Go to the Sledge website."
+        "Name": "Hammertime repository",
+        "Details": "Go to the Hammertime repository."
     },
     "OpenEntityReport": {
       "Name": "Entity report",
