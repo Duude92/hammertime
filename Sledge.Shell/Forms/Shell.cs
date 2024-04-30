@@ -267,6 +267,7 @@ namespace Sledge.Shell.Forms
 					Tag = document
 				};
 				DocumentTabs.TabPages.Add(page);
+				DocumentTabs.SelectedIndex = DocumentTabs.TabPages.Count - 1;
 				page.ImageKey = document.HasUnsavedChanges ? "Dirty" : "Clean";
 			}
 
