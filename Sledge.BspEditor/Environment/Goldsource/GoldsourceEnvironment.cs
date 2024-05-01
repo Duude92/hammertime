@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Numerics;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -164,7 +163,6 @@ namespace Sledge.BspEditor.Environment.Goldsource
 			var wadRefs = _wadProvider.GetPackagesInFile(Root).Where(x => !ExcludedWads.Contains(x.Name, StringComparer.InvariantCultureIgnoreCase));
 			var extraWads = AdditionalTextureFiles.SelectMany(x => _wadProvider.GetPackagesInFile(new NativeFile(x)));
 			var wads = await _wadProvider.GetTexturePackages(wadRefs.Union(extraWads));
-			_skyTextures = _envProvider.GetPackagesInFile(Root);
 
 			var spriteRefs = _spriteProvider.GetPackagesInFile(Root);
 			var sprites = await _spriteProvider.GetTexturePackages(spriteRefs);
@@ -175,7 +173,23 @@ namespace Sledge.BspEditor.Environment.Goldsource
 
 		private Task<GameData> MakeGameDataAsync()
 		{
-			return Task.FromResult(_fgdProvider.GetGameDataFromFiles(FgdFiles));
+			Func<GameData> fgdFunc = () =>
+			{
+				var fgd = _fgdProvider.GetGameDataFromFiles(FgdFiles);
+				_skyTextures = _envProvider.GetPackagesInFile(Root);
+
+				var worldSpawn = fgd.Classes.FirstOrDefault(c => c.Name.Equals("worldspawn"));
+				if (worldSpawn != null)
+				{
+					var skyProperty = worldSpawn.Properties.FirstOrDefault(c => c.Name.Equals("skyname"));
+					skyProperty.VariableType = DataStructures.GameData.VariableType.StringChoices;
+
+					skyProperty.Options = new List<DataStructures.GameData.Option>(_skyTextures.Select(x => new Option { Key = x.Name }).ToList());
+				}
+				return fgd;
+			};
+
+			return Task.FromResult(fgdFunc());
 		}
 
 		public Task<TextureCollection> GetTextureCollection()
