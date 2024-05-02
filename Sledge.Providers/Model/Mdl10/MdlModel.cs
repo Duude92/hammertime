@@ -188,7 +188,7 @@ namespace Sledge.Providers.Model.Mdl10
 
 				foreach (var mesh in model.Meshes)
 				{
-					var texId = skin[mesh.SkinRef];
+					var texId = skin[mesh.Header.SkinRef];
 					var rec = _rectangles.Count > texId ? _rectangles[texId] : Rectangle.Empty;
 					for (var i = 0; i < mesh.Vertices.Length; i++)
 					{

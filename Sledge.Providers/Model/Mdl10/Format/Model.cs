@@ -2,11 +2,11 @@
 
 namespace Sledge.Providers.Model.Mdl10.Format
 {
-	[StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
-	public struct Model
+    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
+    public struct ModelHeader
     {
-		[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
-		public string Name;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
+        public string Name;
         public int Type;
         public float Radius;
 
@@ -23,7 +23,10 @@ namespace Sledge.Providers.Model.Mdl10.Format
 
         public int NumGroups; // Not used
         public int GroupIndex;
-
-        public Mesh[] Meshes {  get; set; }
+    }
+	public struct Model
+	{
+        public ModelHeader Header;
+		public Mesh[] Meshes {  get; set; }
     }
 }
