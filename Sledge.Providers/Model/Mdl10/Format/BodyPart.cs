@@ -1,12 +1,16 @@
-﻿namespace Sledge.Providers.Model.Mdl10.Format
+﻿using System.Runtime.InteropServices;
+
+namespace Sledge.Providers.Model.Mdl10.Format
 {
-    public struct BodyPart
+	[StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
+	public struct BodyPart
     {
-        public string Name;
+		[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
+		public string Name;
         public int NumModels;
         public int Base;
         public int ModelIndex;
 
-        public Model[] Models;
+        public Model[] Models {  get; set; }
     }
 }

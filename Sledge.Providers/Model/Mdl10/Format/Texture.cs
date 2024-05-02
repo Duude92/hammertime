@@ -1,14 +1,18 @@
-﻿namespace Sledge.Providers.Model.Mdl10.Format
+﻿using System.Runtime.InteropServices;
+
+namespace Sledge.Providers.Model.Mdl10.Format
 {
-    public struct Texture
+	[StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
+	public struct Texture
     {
-        public string Name;
+		[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+		public string Name;
         public TextureFlags Flags;
         public int Width;
         public int Height;
         public int Index;
 
-        public byte[] Data;
-        public byte[] Palette;
+		public byte[] Data { get; set; }
+        public byte[] Palette { get; set; }
     }
 }

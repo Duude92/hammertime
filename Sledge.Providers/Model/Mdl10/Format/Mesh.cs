@@ -8,6 +8,6 @@
         public int NumNormals;
         public int NormalIndex;
 
-        public MeshVertex[] Vertices;
+        public MeshVertex[] Vertices { get; set; }
     }
 }

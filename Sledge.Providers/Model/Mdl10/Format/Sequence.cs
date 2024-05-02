@@ -1,9 +1,12 @@
 ﻿using System.Numerics;
+using System.Runtime.InteropServices;
 
 namespace Sledge.Providers.Model.Mdl10.Format
 {
+    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
     public struct Sequence
     {
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
         public string Name;
 
         public float Framerate;
@@ -31,9 +34,12 @@ namespace Sledge.Providers.Model.Mdl10.Format
 
         public int NumBlends;
         public int AnimationIndex;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
         public int[] BlendType;
-        public float[] BlendStart;
-        public float[] BlendEnd;
+		[MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+		public float[] BlendStart;
+		[MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+		public float[] BlendEnd;
         public int BlendParent;
 
         public int SequenceGroup;
