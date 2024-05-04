@@ -3,15 +3,18 @@
 namespace Sledge.Providers.Model.Mdl10.Format
 {
 	[StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
-	public struct Texture
-    {
-		[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+	public struct TextureHeader
+	{
+		[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
 		public string Name;
-        public TextureFlags Flags;
-        public int Width;
-        public int Height;
-        public int Index;
-
+		public TextureFlags Flags;
+		public int Width;
+		public int Height;
+		public int Index;
+	}
+	public struct Texture
+	{
+		public TextureHeader Header;
 		public byte[] Data { get; set; }
         public byte[] Palette { get; set; }
     }

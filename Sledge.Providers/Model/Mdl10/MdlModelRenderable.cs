@@ -75,14 +75,14 @@ namespace Sledge.Providers.Model.Mdl10
             if (currentSequence >= _model.Model.Sequences.Count) return;
 
             var seq = _model.Model.Sequences[currentSequence];
-            var targetFps = 1000 / seq.Framerate;
+            var targetFps = 1000 / seq.Header.Framerate;
             var diff = milliseconds - _lastFrameMillis;
 
             _interframePercent += diff / targetFps;
             var skip = (int)_interframePercent;
             _interframePercent -= skip;
 
-            _currentFrame = (_currentFrame + skip) % seq.NumFrames;
+            _currentFrame = (_currentFrame + skip) % seq.Header.NumFrames;
             _lastFrameMillis = milliseconds;
             
             _model.Model.GetTransforms(currentSequence, _currentFrame, _interframePercent, ref _transforms);

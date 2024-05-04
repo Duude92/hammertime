@@ -13,6 +13,8 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System;
 using Version = Sledge.Providers.Model.Mdl10.Format.Version;
+using Sledge.DataStructures.Geometric;
+using SixLabors.ImageSharp.ColorSpaces;
 
 namespace Sledge.BspEditor.Tools.PropExporter
 {
@@ -65,29 +67,31 @@ namespace Sledge.BspEditor.Tools.PropExporter
 			};
 			model.Sequences = new List<Sequence>(1) { new Sequence
 			{
-				Name = "idle",
-				Framerate = 30,
-				Flags = 1,
-				Activity = 1,
-				ActivityWeight = 1,
-				NumEvents = 0,
-				EventIndex = 0x0,
-				NumFrames = 1,
-				NumPivots = 0,
-				PivotIndex = 0x0,
-				MotionType = 0,
-				MotionBone = 0,
-				LinearMovement = Vector3.Zero,
-				AutoMoveAngleIndex = 0,
-				AutoMovePositionIndex = 0,
-				Min = bb.Start,
-				Max = bb.End,
-				NumBlends = 1,
-				AnimationIndex = 0x0,
-				BlendType = new int[2] {0,0},
-				BlendStart = new float[2] {0,0},
-				BlendEnd = new float[2] {1,0},
-				BlendParent = 0,
+				Header = new SequenceHeader{
+					Name = "idle",
+					Framerate = 30,
+					Flags = 1,
+					Activity = 1,
+					ActivityWeight = 1,
+					NumEvents = 0,
+					EventIndex = 0x0,
+					NumFrames = 1,
+					NumPivots = 0,
+					PivotIndex = 0x0,
+					MotionType = 0,
+					MotionBone = 0,
+					LinearMovement = Vector3.Zero,
+					AutoMoveAngleIndex = 0,
+					AutoMovePositionIndex = 0,
+					Min = bb.Start,
+					Max = bb.End,
+					NumBlends = 1,
+					AnimationIndex = 0x0,
+					BlendType = new int[2] {0,0},
+					BlendStart = new float[2] {0,0},
+					BlendEnd = new float[2] {1,0},
+					BlendParent = 0,
+				}
 			} };
 			model.SequenceGroups = new List<SequenceGroup>(1)
 			{
@@ -117,17 +121,20 @@ namespace Sledge.BspEditor.Tools.PropExporter
 				//streamsource.GetImage(x.Name, texFile.Width, texFile.Height).ContinueWith(image=>
 				using (var image = await streamsource.GetImage(x.Name, texFile.Width, texFile.Height))
 				{
-					var (data, palette) = GetBitmapDataWithPalette(image);
+					var (data, palette) = GetBitmapDataWithPalette(image, texFile.Height, texFile.Width);
 
 					ret = new Sledge.Providers.Model.Mdl10.Format.Texture
 					{
-						Name = x.Name,
-						Flags = TextureFlags.Flatshade,
-						Height = texFile.Height,
-						Width = texFile.Width,
+						Header = new TextureHeader
+						{
+							Name = x.Name,
+							Flags = TextureFlags.Flatshade,
+							Height = texFile.Height,
+							Width = texFile.Width,
+							Index = 0x0
+						},
 						Data = data,
 						Palette = palette,
-						Index = 0x0
 					};
 					return ret;
 				}
@@ -139,14 +146,15 @@ namespace Sledge.BspEditor.Tools.PropExporter
 			} };
 			model.Attachments = new List<Attachment>(0);
 			var vertices = solids.SelectMany(x => x.Faces).SelectMany(f => f.Vertices).ToList();
+			var rand = new Random(0);
 			var meshes = solids.Select(s => new Mesh
 			{
 				Header = new MeshHeader
 				{
 					NormalIndex = 0x0,
-					NumNormals = 0,
-					NumTriangles = 0,
-					SkinRef = 0,
+					NumNormals = vertices.Count,
+					NumTriangles = s.Faces.Count(),
+					SkinRef = 1,
 					TriangleIndex = 0x0,
 				},
 				Vertices = s.Faces.SelectMany(f => f.Vertices).Select(v => new MeshVertex
@@ -157,8 +165,38 @@ namespace Sledge.BspEditor.Tools.PropExporter
 					Vertex = v,
 					VertexBone = 0,
 				}).ToArray(),
+				Sequences = s.Faces.Select(f => {
+					var tex = textures1.FirstOrDefault(t => t.Header.Name.Equals(f.Texture.Name));
+					var uv = f.GetTextureCoordinates(tex.Header.Width, tex.Header.Height).ToArray();
+					var i = 0;
+					var triseq =  new TriSequence
+					{
+						TriCountDir = (short)(f.Vertices.Count * -1),
+						TriVerts = f.Vertices.Select(v => {
+
+							var triv = new Trivert
+							{
+								normindex = 0,
+								vertindex = (short)vertices.IndexOf(v),
+								s = (short)(uv[i].Item2 * tex.Header.Width),
+								t = (short)(uv[i].Item3 * tex.Header.Height),
+							};
+							i++;
+
+							return triv;	
+						}).ToArray()
+
+					};
+					return triseq;
+					}).ToArray()
 			}).ToArray();
-			model.BodyParts = new List<BodyPart>
+            for (var i = 0; i<meshes.Length; i++)
+            {
+				var seq = meshes[i].Sequences.ToList();
+				seq.Add (new TriSequence { TriCountDir = 0, TriVerts = new Trivert[0] });
+				meshes[i].Sequences = seq.ToArray();
+            }
+            model.BodyParts = new List<BodyPart>
 			{
 				new BodyPart
 				{
@@ -182,7 +220,7 @@ namespace Sledge.BspEditor.Tools.PropExporter
 								NumVerts = vertices.Count,
 								VertInfoIndex = 0x0,
 								VertIndex = 0x0,
-								NumNormals = 0,
+								NumNormals = vertices.Count,
 								NormalInfoIndex = 0x0,
 								NormalIndex = 0x0,
 								NumGroups = 0,
@@ -201,11 +239,12 @@ namespace Sledge.BspEditor.Tools.PropExporter
 					else if (obj is Group) CollectSolids(solids, obj);
 				}
 			}
+			
 
-			(byte[] pixelData, byte[] paletteData) GetBitmapDataWithPalette(Bitmap bitmap)
+			(byte[] pixelData, byte[] paletteData) GetBitmapDataWithPalette(Bitmap bitmap, int height, int width)
 			{
 				// Get the pixel data
-				BitmapData bmpData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, bitmap.PixelFormat);
+				BitmapData bmpData = bitmap.LockBits(new Rectangle(0, 0, height, width), ImageLockMode.ReadOnly, bitmap.PixelFormat);
 				int pixelDataSize = Math.Abs(bmpData.Stride) * bitmap.Height;
 				byte[] pixelData = new byte[pixelDataSize];
 				System.Runtime.InteropServices.Marshal.Copy(bmpData.Scan0, pixelData, 0, pixelDataSize);
@@ -213,10 +252,15 @@ namespace Sledge.BspEditor.Tools.PropExporter
 
 				// Get the palette data
 				ColorPalette palette = bitmap.Palette;
-				byte[] paletteData = new byte[palette.Entries.Length * 4]; // Assuming ARGB format
+				byte[] paletteData = new byte[palette.Entries.Length * 3]; // Assuming ARGB format
 				for (int i = 0; i < palette.Entries.Length; i++)
 				{
-					BitConverter.GetBytes(palette.Entries[i].ToArgb()).CopyTo(paletteData, i * 4);
+					var argb = palette.Entries[i].ToVector4() ;
+					paletteData[(i * 3) + 0] = (byte)(palette.Entries[i].R);
+					paletteData[(i * 3) + 1] = (byte)(palette.Entries[i].G);
+					paletteData[(i * 3) + 2] = (byte)(palette.Entries[i].B);
+
+
 				}
 
 				return (pixelData, paletteData);
@@ -226,4 +270,5 @@ namespace Sledge.BspEditor.Tools.PropExporter
 			return;
 		}
 	}
+
 }

@@ -9,6 +9,8 @@ namespace Sledge.Providers.Model.Mdl10.Format
 		public string Label;
 		[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
 		public string Name;
+		public int unused1;
+		public int unused2;
 
 	}
 }

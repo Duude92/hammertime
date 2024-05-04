@@ -44,7 +44,7 @@ namespace Sledge.Providers.Model.Mdl10
 
 		public List<string> GetSequences()
 		{
-			return Model.Sequences.Select(x => x.Name).ToList();
+			return Model.Sequences.Select(x => x.Header.Name).ToList();
 		}
 
 		public (Vector3, Vector3) GetBoundingBox(int sequence, int frame, float subframe)
@@ -96,7 +96,7 @@ namespace Sledge.Providers.Model.Mdl10
 			if (!Model.Textures.Any()) return new List<Rectangle>();
 
 			// Combine all the textures into one long texture
-			var textures = Model.Textures.Select(x => CreateBitmap(x.Width, x.Height, x.Data, x.Palette, x.Flags.HasFlag(TextureFlags.Masked))).ToList();
+			var textures = Model.Textures.Select(x => CreateBitmap(x.Header.Width, x.Header.Height, x.Data, x.Palette, x.Header.Flags.HasFlag(TextureFlags.Masked))).ToList();
 
 			var width = textures.Max(x => x.Width);
 			//var height = textures.Sum(x => x.Height);
