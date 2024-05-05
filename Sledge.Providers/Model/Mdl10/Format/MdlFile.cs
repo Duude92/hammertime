@@ -11,10 +11,15 @@ using Sledge.DataStructures;
 using Sledge.FileSystem;
 using static System.Collections.Specialized.BitVector32;
 
+
 namespace Sledge.Providers.Model.Mdl10.Format
 {
 	public class MdlFile
 	{
+		private static readonly int MESH_HEADER_SIZE = Marshal.SizeOf<MeshHeader>();
+		private static readonly int TRIVERT_SIZE = Marshal.SizeOf<Trivert>();
+
+
 		public Header Header { get; set; }
 		public List<Bone> Bones { get; set; }
 		public List<BoneController> BoneControllers { get; set; }
@@ -136,7 +141,6 @@ namespace Sledge.Providers.Model.Mdl10.Format
 				char[] name = new char[64];
 				int numskinref = 2;
 				int numskinfamilies = 1;
-				int skinindex = 0x0;
 
 				var headstruSize = Marshal.SizeOf<Header>();
 				var headstruBuffer = new byte[headstruSize];
@@ -179,9 +183,9 @@ namespace Sledge.Providers.Model.Mdl10.Format
 				var textureOffset = bonesOffset + Marshal.SizeOf<Texture>() * Textures.Count;
 				stream.Write(textureOffset);// textureindex (offset)
 				stream.Write(0);// texdataindex (offset)
-				stream.Write(numskinref);// numskinref
-				stream.Write(numskinfamilies);// numskinfamilies
-				stream.Write(skinindex);// skinindex ??? (offset)
+				stream.Write(Skins[0].Textures.Length);// numskinref
+				stream.Write(Skins.Count);// numskinfamilies
+				stream.Write(0x0);// skinindex ??? (offset)
 				stream.Write(BodyParts.Count);// numbodyparts
 				stream.Write(bodypartOffset);// bodypartindex				
 				bonesOffset += Marshal.SizeOf<BodyPartHeader>() * BodyParts.Count;
@@ -320,69 +324,38 @@ namespace Sledge.Providers.Model.Mdl10.Format
 						stream.Write(mdlStruBuffer);
 					}
 				}
+
+				var verticesData = GetVerticesInfo();
+				stream.Write(verticesData);
+
+				var (meshDataOffsets, meshData) = GetMeshesData();
+
+
 				foreach (var part in BodyParts)
 				{
 					foreach (var model in part.Models)
 					{
-						foreach (var mesh in model.Meshes)
-						{
-
-							var vBones = mesh.Vertices.Select(v => (byte)v.VertexBone).ToArray();
-							var nBones = mesh.Vertices.Select(v => (byte)v.NormalBone).ToArray();
-							var vertices = mesh.Vertices.Select(v => v.Vertex).ToArray();
-							var normals = mesh.Vertices.Select(v => v.Normal).ToArray();
-							stream.Write(vBones);
-							stream.Write(nBones);
-							foreach (var vertex in vertices)
-								stream.WriteVector3(vertex);
-							foreach (var normal in normals)
-								stream.WriteVector3(normal);
-						}
-					}
-				}
-				foreach (var part in BodyParts)
-				{
-					foreach (var model in part.Models)
-					{
-
+						var triangleIndex = model.Header.MeshIndex + MESH_HEADER_SIZE * model.Header.NumMesh;
+						var meshesOffset = (int)stream.BaseStream.Position + MESH_HEADER_SIZE * model.Header.NumMesh;
 						for (int i = 0; i < model.Header.NumMesh; i++)
 						{
 							var mesh = model.Meshes[i];
-							var struSize = Marshal.SizeOf<MeshHeader>();
-							mesh.Header.TriangleIndex = model.Header.MeshIndex + struSize;
-							var struBuffer = new byte[struSize];
-							IntPtr buffer = Marshal.AllocHGlobal(struSize);
+							mesh.Header.TriangleIndex = meshesOffset + meshDataOffsets[i];
+							var struBuffer = new byte[MESH_HEADER_SIZE];
+							IntPtr buffer = Marshal.AllocHGlobal(MESH_HEADER_SIZE);
 							Marshal.StructureToPtr(mesh.Header, buffer, false);
-							Marshal.Copy(buffer, struBuffer, 0, struSize);
+							Marshal.Copy(buffer, struBuffer, 0, MESH_HEADER_SIZE);
 							Marshal.FreeHGlobal(buffer);
 							stream.Write(struBuffer);
 						}
 
 					}
 				}
-				foreach (var part in BodyParts)
-				{
-					foreach (var model in part.Models)
-					{
-						foreach (var mesh in model.Meshes)
-						{
-							foreach (var sequence in mesh.Sequences)
-							{
-								stream.Write(sequence.TriCountDir);
-								foreach (var trivert in sequence.TriVerts)
-								{
-									var struSize = Marshal.SizeOf<Trivert>();
-									var struBuffer = new byte[struSize];
-									IntPtr buffer = Marshal.AllocHGlobal(struSize);
-									Marshal.StructureToPtr(trivert, buffer, false);
-									Marshal.Copy(buffer, struBuffer, 0, struSize);
-									Marshal.FreeHGlobal(buffer);
-									stream.Write(struBuffer);
-								}
-							}
-						}
-					}
-				}
+				stream.Write(meshData);
+				stream.Write(new byte[2]); //align
+
+				var (texturesOffset, textureData) = GetTexturesData();
+
 
 				// Textures
 				int textureIndex = (int)stream.BaseStream.Position;
@@ -390,7 +363,7 @@ namespace Sledge.Providers.Model.Mdl10.Format
 				{
 					var tex = Textures[i];
 					var struSize = Marshal.SizeOf<TextureHeader>();
-					tex.Header.Index = textureIndex + struSize * Textures.Count + numskinfamilies * numskinref * sizeof(short);
+					tex.Header.Index = ((textureIndex + struSize * Textures.Count) + Skins.Count * Skins[0].Textures.Length * sizeof(short)) + texturesOffset[i];
 					Textures[i] = tex;
 					var struBuffer = new byte[struSize];
 					IntPtr buffer = Marshal.AllocHGlobal(struSize);
@@ -401,27 +374,20 @@ namespace Sledge.Providers.Model.Mdl10.Format
 
 				}
 
-				var skins = new byte[numskinfamilies * numskinref * sizeof(short)];
+				var skins = new byte[Skins.Count * Skins[0].Textures.Length * sizeof(short)];
 				var skinIndex = (int)stream.BaseStream.Position;
-				stream.Write(skins);
+				foreach (var skinFamily in Skins)
+				{
+					foreach (var skin in skinFamily.Textures)
+					{
+						stream.Write(skin);
+					}
+				}
 
 
 				int textureDataIndex = (int)stream.BaseStream.Position;
 				// Texture data
-				foreach (var texture in Textures)
-				{
-					stream.Write(texture.Data);
-					stream.Write(texture.Palette);
-					//var t = Textures[i];
-					//br.BaseStream.Position = t.Index;
-					//t.Data = br.ReadBytes(t.Width * t.Height);
-					//t.Palette = br.ReadBytes(256 * 3);
-					//Textures[i] = t;
-				}
-
-
-
-
+				stream.Write(textureData);
 
 				stream.Seek(headstruSize + 11 * 4, SeekOrigin.Begin);
 				stream.Write(textureIndex);
@@ -431,29 +397,85 @@ namespace Sledge.Providers.Model.Mdl10.Format
 
 				stream.Seek(72, SeekOrigin.Begin);
 				stream.Write(stream.BaseStream.Length);
-
-				//// Skins
-				//var skinSection = sections[(int)Section.Skin];
-				//var numSkinRefs = skinSection[0];
-				//var numSkinFamilies = skinSection[1];
-				//br.BaseStream.Seek(skinSection[2], SeekOrigin.Begin);
-				//for (var i = 0; i < numSkinFamilies; i++)
-				//{
-				//	var skin = new SkinFamily
-				//	{
-				//		Textures = br.ReadShortArray(numSkinRefs)
-				//	};
-				//	Skins.Add(skin);
-				//}
-
-
-
-
-
-
-
 			}
 
+		}
+
+		private (int[], byte[]) GetTexturesData()
+		{
+			using (var stream = new BinaryWriter(new MemoryStream()))
+			{
+				var offsets = new List<int>(Textures.Count);
+				foreach (var texture in Textures)
+				{
+					offsets.Add((int)stream.BaseStream.Position);
+					stream.Write(texture.Data);
+					stream.Write(texture.Palette);
+
+				}
+				return (offsets.ToArray(), ((MemoryStream)stream.BaseStream).ToArray());
+			}
+		}
+
+		private byte[] GetVerticesInfo()
+		{
+			using (var stream = new BinaryWriter(new MemoryStream()))
+			{
+				foreach (var part in BodyParts)
+				{
+					foreach (var model in part.Models)
+					{
+						//foreach (var mesh in model.Meshes)
+
+						var vBones = model.Meshes.SelectMany(mesh => mesh.Vertices.Select(v => (byte)v.VertexBone)).ToArray(); //reoder to every v, every n, every ve, no
+						var nBones = model.Meshes.SelectMany(mesh => mesh.Vertices.Select(v => (byte)v.NormalBone)).ToArray();
+						var vertices = model.Meshes.SelectMany(mesh => mesh.Vertices.Select(v => v.Vertex)).ToArray();
+						var normals = model.Meshes.SelectMany(mesh => mesh.Vertices.Select(v => v.Normal)).ToArray();
+						stream.Write(vBones);
+						stream.Write(nBones);
+						foreach (var vertex in vertices)
+							stream.WriteVector3(vertex);
+						foreach (var normal in normals)
+							stream.WriteVector3(normal);
+					}
+				}
+				return ((MemoryStream)stream.BaseStream).ToArray();
+			}
+		}
+
+		private (int[], byte[]) GetMeshesData()
+		{
+			using (var memo = new BinaryWriter(new MemoryStream()))
+			{
+				var offsets = new List<int>();
+				foreach (var part in BodyParts)
+				{
+					foreach (var model in part.Models)
+					{
+						foreach (var mesh in model.Meshes)
+						{
+							offsets.Add((int)memo.BaseStream.Position);
+							foreach (var sequence in mesh.Sequences)
+							{
+								memo.Write(sequence.TriCountDir);
+								foreach (var trivert in sequence.TriVerts)
+								{
+									var struBuffer = new byte[TRIVERT_SIZE];
+									IntPtr buffer = Marshal.AllocHGlobal(TRIVERT_SIZE);
+									Marshal.StructureToPtr(trivert, buffer, false);
+									Marshal.Copy(buffer, struBuffer, 0, TRIVERT_SIZE);
+									Marshal.FreeHGlobal(buffer);
+									memo.Write(struBuffer);
+								}
+							}
+						}
+					}
+				}
+				var bytes = ((MemoryStream)memo.BaseStream).ToArray();
+
+
+				return (offsets.ToArray(), bytes);
+			}
 		}
 
 		private void Read(IEnumerable<BinaryReader> readers)

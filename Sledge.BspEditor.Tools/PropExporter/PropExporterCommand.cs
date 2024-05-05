@@ -108,6 +108,8 @@ namespace Sledge.BspEditor.Tools.PropExporter
 				CollectSolids(childSolids, mapObject);
 				solids.AddRange(childSolids);
 			}
+			solids = solids.Distinct().ToList();
+
 			var textures = solids.SelectMany(x => x.Faces).Select(f => f.Texture).DistinctBy(t => t.Name).ToList();
 			var textureCollection = await document.Environment.GetTextureCollection();
 			var streamsource = textureCollection.GetStreamSource();
@@ -145,52 +147,66 @@ namespace Sledge.BspEditor.Tools.PropExporter
 				Textures = new short[] {0,0,0,0,0,0,0},
 			} };
 			model.Attachments = new List<Attachment>(0);
+
+
 			var vertices = solids.SelectMany(x => x.Faces).SelectMany(f => f.Vertices).ToList();
 			var rand = new Random(0);
-			var meshes = solids.Select(s => new Mesh
-			{
-				Header = new MeshHeader
+			var meshes = solids
+				.SelectMany(s => s.Faces)
+				.GroupBy(f => f.Texture.Name)
+				.Select(g => new Mesh
 				{
-					NormalIndex = 0x0,
-					NumNormals = vertices.Count,
-					NumTriangles = s.Faces.Count(),
-					SkinRef = 1,
-					TriangleIndex = 0x0,
-				},
-				Vertices = s.Faces.SelectMany(f => f.Vertices).Select(v => new MeshVertex
-				{
-					Normal = Vector3.Zero,
-					NormalBone = 0,
-					Texture = Vector2.Zero,
-					Vertex = v,
-					VertexBone = 0,
-				}).ToArray(),
-				Sequences = s.Faces.Select(f => {
-					var tex = textures1.FirstOrDefault(t => t.Header.Name.Equals(f.Texture.Name));
-					var uv = f.GetTextureCoordinates(tex.Header.Width, tex.Header.Height).ToArray();
-					var i = 0;
-					var triseq =  new TriSequence
+					Header = new MeshHeader
 					{
-						TriCountDir = (short)(f.Vertices.Count * -1),
-						TriVerts = f.Vertices.Select(v => {
+						NormalIndex = 0x0,
+						NumNormals = g.Sum(f=>f.Vertices.Count),
+						NumTriangles = g.Count() - 2, //TODO: count right (x2 is for quads)
+						SkinRef = Array.IndexOf(textures1,textures1.First(t=>t.Header.Name == g.First().Texture.Name)),
+						TriangleIndex = 0x0
+					},
+					Vertices = g.SelectMany(f=>f.Vertices).Select(v => new MeshVertex
+					{
+						Normal = Vector3.Zero,
+						NormalBone = 0,
+						Texture = Vector2.Zero,
+						Vertex = v,
+						VertexBone = 0,
+					}).ToArray(),
+					Sequences = g.Select(f=> {
+						var tex = textures1.FirstOrDefault(t => t.Header.Name.Equals(f.Texture.Name));
+						var uv = f.GetTextureCoordinates(tex.Header.Width, tex.Header.Height).ToArray();
+						var i = 0;
+						var triseq = new TriSequence
+						{
+							TriCountDir = (short)(f.Vertices.Count * -1),
+							TriVerts = f.Vertices.Select(v => {
 
-							var triv = new Trivert
-							{
-								normindex = 0,
-								vertindex = (short)vertices.IndexOf(v),
-								s = (short)(uv[i].Item2 * tex.Header.Width),
-								t = (short)(uv[i].Item3 * tex.Header.Height),
-							};
-							i++;
+								var triv = new Trivert
+								{
+									normindex = 0,
+									vertindex = (short)vertices.IndexOf(v),
+									s = (short)(uv[i].Item2 * tex.Header.Width),
+									t = (short)(uv[i].Item3 * tex.Header.Height),
+								};
+								i++;
 
-							return triv;	
-						}).ToArray()
+								return triv;
+							}).ToArray()
 
-					};
-					return triseq;
+						};
+						return triseq;
 					}).ToArray()
-			}).ToArray();
-            for (var i = 0; i<meshes.Length; i++)
+				}).ToArray();
+			var tIndex = 0;
+			model.Skins = new List<SkinFamily>(1)
+			{
+				new SkinFamily
+				{
+					Textures = textures1.Select(t=>(short)tIndex++).ToArray(),
+				}
+			};
+
+			for (var i = 0; i<meshes.Length; i++)
             {
 				var seq = meshes[i].Sequences.ToList();
 				seq.Add (new TriSequence { TriCountDir = 0, TriVerts = new Trivert[0] });
@@ -215,7 +231,7 @@ namespace Sledge.BspEditor.Tools.PropExporter
 								Name = "solidBrush",
 								Type = 0,
 								Radius = 0,
-								NumMesh = solids.Count,
+								NumMesh = meshes.Length,
 								MeshIndex = 0x0,
 								NumVerts = vertices.Count,
 								VertInfoIndex = 0x0,
@@ -233,6 +249,8 @@ namespace Sledge.BspEditor.Tools.PropExporter
 			};
 			void CollectSolids(List<Solid> solids, IMapObject parent)
 			{
+				if(parent is Solid) solids.Add(parent as Solid);
+
 				foreach (var obj in parent.Hierarchy)
 				{
 					if (obj is Solid s) solids.Add(s);
