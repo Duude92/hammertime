@@ -262,7 +262,7 @@ namespace Sledge.BspEditor.Tools.PropExporter
 			(byte[] pixelData, byte[] paletteData) GetBitmapDataWithPalette(Bitmap bitmap, int height, int width)
 			{
 				// Get the pixel data
-				BitmapData bmpData = bitmap.LockBits(new Rectangle(0, 0, height, width), ImageLockMode.ReadOnly, bitmap.PixelFormat);
+				BitmapData bmpData = bitmap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadOnly, bitmap.PixelFormat);
 				int pixelDataSize = Math.Abs(bmpData.Stride) * bitmap.Height;
 				byte[] pixelData = new byte[pixelDataSize];
 				System.Runtime.InteropServices.Marshal.Copy(bmpData.Scan0, pixelData, 0, pixelDataSize);
