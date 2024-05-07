@@ -50,7 +50,7 @@ namespace Sledge.BspEditor.Tools.PropExporter
 				Parent = -1,
 				Flags = 0 ,
 				Controllers = new int[6]{-1,-1,-1,-1,-1,-1},
-				Position = bb.Center,
+				Position = Vector3.Zero,
 				PositionScale = Vector3.One,
 				Rotation = Vector3.Zero,
 				RotationScale = Vector3.One,
@@ -74,10 +74,10 @@ namespace Sledge.BspEditor.Tools.PropExporter
 					Activity = 1,
 					ActivityWeight = 1,
 					NumEvents = 0,
-					EventIndex = 580,//IDLE
+					EventIndex = 0,//offset to event, Zero as we dont have anims
 					NumFrames = 1,
 					NumPivots = 0,
-					PivotIndex = 580,
+					PivotIndex = 0,
 					MotionType = 0,
 					MotionBone = 0,
 					LinearMovement = Vector3.Zero,
@@ -159,9 +159,9 @@ namespace Sledge.BspEditor.Tools.PropExporter
 					Header = new MeshHeader
 					{
 						NormalIndex = 0x0,
-						NumNormals = g.Sum(f=>f.Vertices.Count),
-						NumTriangles = g.Sum(f=>f.Vertices.Count-2), //TODO: count right (x2 is for quads)
-						SkinRef = Array.IndexOf(textures1,textures1.First(t=>t.Header.Name == g.First().Texture.Name)),
+						NumNormals = g.Sum(f => f.Vertices.Count),
+						NumTriangles = g.Sum(f => f.Vertices.Count - 2), //TODO: count right (x2 is for quads)
+						SkinRef = Array.IndexOf(textures1, textures1.First(t => t.Header.Name == g.First().Texture.Name)),
 						TriangleIndex = 0x0
 					},
 					Vertices = g.SelectMany(f=>f.Vertices).Select(v => new MeshVertex
@@ -209,7 +209,7 @@ namespace Sledge.BspEditor.Tools.PropExporter
 			for (var i = 0; i<meshes.Length; i++)
             {
 				var seq = meshes[i].Sequences.ToList();
-				seq.Add (new TriSequence { TriCountDir = 0, TriVerts = new Trivert[0] });
+				seq.Add(new TriSequence { TriCountDir = 0, TriVerts = new Trivert[0] });
 				meshes[i].Sequences = seq.ToArray();
             }
             model.BodyParts = new List<BodyPart>
@@ -249,7 +249,7 @@ namespace Sledge.BspEditor.Tools.PropExporter
 			};
 			void CollectSolids(List<Solid> solids, IMapObject parent)
 			{
-				if(parent is Solid) solids.Add(parent as Solid);
+				if (parent is Solid) solids.Add(parent as Solid);
 
 				foreach (var obj in parent.Hierarchy)
 				{
@@ -273,7 +273,7 @@ namespace Sledge.BspEditor.Tools.PropExporter
 				byte[] paletteData = new byte[palette.Entries.Length * 3]; // Assuming ARGB format
 				for (int i = 0; i < palette.Entries.Length; i++)
 				{
-					var argb = palette.Entries[i].ToVector4() ;
+					var argb = palette.Entries[i].ToVector4();
 					paletteData[(i * 3) + 0] = (byte)(palette.Entries[i].R);
 					paletteData[(i * 3) + 1] = (byte)(palette.Entries[i].G);
 					paletteData[(i * 3) + 2] = (byte)(palette.Entries[i].B);
