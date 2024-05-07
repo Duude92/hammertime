@@ -25,6 +25,11 @@ namespace Sledge.BspEditor.Tools.PropExporter
 	{
 		public override string Name { get; set; } = "Create prop";
 		public override string Details { get; set; } = "Create prop from selection";
+		private string[] _filterTextures = new string[]
+		{
+			"null",
+			"sky",
+		};
 
 		protected async override Task Invoke(MapDocument document, CommandParameters parameters)
 		{
@@ -154,6 +159,7 @@ namespace Sledge.BspEditor.Tools.PropExporter
 			var meshes = solids
 				.SelectMany(s => s.Faces)
 				.GroupBy(f => f.Texture.Name)
+				.Where(g => !_filterTextures.Contains(g.First().Texture.Name.ToLower()))
 				.Select(g => new Mesh
 				{
 					Header = new MeshHeader
@@ -206,7 +212,7 @@ namespace Sledge.BspEditor.Tools.PropExporter
 				}
 			};
 
-			for (var i = 0; i<meshes.Length; i++)
+			for (var i = 0; i < meshes.Length; i++)
             {
 				var seq = meshes[i].Sequences.ToList();
 				seq.Add(new TriSequence { TriCountDir = 0, TriVerts = new Trivert[0] });
