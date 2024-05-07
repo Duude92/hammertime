@@ -124,33 +124,23 @@ namespace Sledge.BspEditor.Tools.PropExporter
 			var textures1 = await Task.WhenAll(textures.Select(async x =>
 			{
 				var texFile = texturesCollection.FirstOrDefault(t => t.Name == x.Name);
-				Sledge.Providers.Model.Mdl10.Format.Texture ret = default;
-				//streamsource.GetImage(x.Name, texFile.Width, texFile.Height).ContinueWith(image=>
 				using (var image = await streamsource.GetImage(x.Name, texFile.Width, texFile.Height))
 				{
-					var (data, palette) = GetBitmapDataWithPalette(image, texFile.Height, texFile.Width);
-
-					ret = new Sledge.Providers.Model.Mdl10.Format.Texture
+					return new Sledge.Providers.Model.Mdl10.Format.Texture(GetBitmapDataWithPalette(image, texFile.Height, texFile.Width), new TextureHeader
 					{
-						Header = new TextureHeader
-						{
 							Name = x.Name,
 							Flags = TextureFlags.Flatshade,
 							Height = texFile.Height,
 							Width = texFile.Width,
 							Index = 0x0
-						},
-						Data = data,
-						Palette = palette,
-					};
-					return ret;
+					});
 				}
 			}
 			));
 			model.Textures = textures1.ToList();
 			model.Skins = new List<SkinFamily> { new SkinFamily {
 				Textures = new short[] {0,0,0,0,0,0,0},
-			} };
+			}};
 			model.Attachments = new List<Attachment>(0);
 
 
