@@ -302,16 +302,18 @@ namespace Sledge.Providers.Model.Mdl10.Format
 
 				var vertInfoOffset = modelsStartOffset;
 				var v3Size = Marshal.SizeOf<Vector3>();
+
+				var (verticesoffset, verticesData) = GetVerticesInfo();
 				foreach (var part in BodyParts)
 				{
 					for (int i = 0; i < part.Models.Length; i++)
 					{
 						var localModel = part.Models[i];
 						localModel.Header.VertInfoIndex = vertInfoOffset;
-						localModel.Header.NormalInfoIndex = vertInfoOffset + localModel.Header.NumVerts;
-						localModel.Header.VertIndex = localModel.Header.NormalInfoIndex + localModel.Header.NumNormals;
-						localModel.Header.NormalIndex = localModel.Header.VertIndex + localModel.Header.NumVerts * v3Size;
-						localModel.Header.MeshIndex = localModel.Header.NormalIndex + localModel.Header.NumNormals * v3Size;
+						localModel.Header.NormalInfoIndex = vertInfoOffset + verticesoffset[0];
+						localModel.Header.VertIndex = vertInfoOffset + verticesoffset[1];
+						localModel.Header.NormalIndex = vertInfoOffset + verticesoffset[2];
+						localModel.Header.MeshIndex = vertInfoOffset + verticesoffset[3];
 						part.Models[i] = localModel;
 
 						var mdlStruSize = Marshal.SizeOf<ModelHeader>();
@@ -324,7 +326,6 @@ namespace Sledge.Providers.Model.Mdl10.Format
 					}
 				}
 
-				var verticesData = GetVerticesInfo();
 				stream.Write(verticesData);
 
 				var (meshDataOffsets, meshData) = GetMeshesData();
@@ -416,29 +417,46 @@ namespace Sledge.Providers.Model.Mdl10.Format
 			}
 		}
 
-		private byte[] GetVerticesInfo()
+		private (int[],byte[]) GetVerticesInfo()
 		{
+			var offsets = new List<int>();
 			using (var stream = new BinaryWriter(new MemoryStream()))
 			{
 				foreach (var part in BodyParts)
 				{
 					foreach (var model in part.Models)
 					{
-						//foreach (var mesh in model.Meshes)
-
-						var vBones = model.Meshes.SelectMany(mesh => mesh.Vertices.Select(v => (byte)v.VertexBone)).ToArray(); //reoder to every v, every n, every ve, no
-						var nBones = model.Meshes.SelectMany(mesh => mesh.Vertices.Select(v => (byte)v.NormalBone)).ToArray();
-						var vertices = model.Meshes.SelectMany(mesh => mesh.Vertices.Select(v => v.Vertex)).ToArray();
-						var normals = model.Meshes.SelectMany(mesh => mesh.Vertices.Select(v => v.Normal)).ToArray();
+						var vmdl = model.Meshes.SelectMany(mesh => mesh.Vertices);
+						var modelVertices = model.Vertices;
+						var vBones = modelVertices.Select(v => (byte)v.VertexBone).ToArray(); //reoder to every v, every n, every ve, no
 						stream.Write(vBones);
+						var bytestoadd = stream.BaseStream.Position % 4;
+						stream.Write(new byte[bytestoadd]);
+
+						offsets.Add((int)stream.BaseStream.Position);
+						var nBones = new ArraySegment<byte>( modelVertices.Select(v => (byte)v.NormalBone).ToArray(),0,6);
 						stream.Write(nBones);
+						bytestoadd = stream.BaseStream.Position % 4;
+						stream.Write(new byte[bytestoadd]);
+
+						offsets.Add((int)stream.BaseStream.Position);
+						var vertices = modelVertices.Select(v => v.Vertex).ToArray();
 						foreach (var vertex in vertices)
 							stream.WriteVector3(vertex);
+						bytestoadd = stream.BaseStream.Position % 4;
+						stream.Write(new byte[bytestoadd]);
+
+						offsets.Add((int)stream.BaseStream.Position);
+						var normals = new ArraySegment<Vector3>(modelVertices.Select(v => v.Normal).ToArray(),0,6);
 						foreach (var normal in normals)
 							stream.WriteVector3(normal);
+						bytestoadd = stream.BaseStream.Position % 4;
+						stream.Write(new byte[bytestoadd]);
+						offsets.Add((int)stream.BaseStream.Position);
+
 					}
 				}
-				return ((MemoryStream)stream.BaseStream).ToArray();
+				return (offsets.ToArray(),((MemoryStream)stream.BaseStream).ToArray());
 			}
 		}
 
