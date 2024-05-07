@@ -164,7 +164,7 @@ namespace Sledge.Providers.Model.Mdl10.Format
 				int bonesOffset = headstruSize + (11 * 2 * 4) + 2 * 4 + 2 * 4; //section count + offset by sizeof(int) + add tex field + add skin field 
 				int boneControllerOffset = bonesOffset + Marshal.SizeOf<Bone>() * Bones.Count;
 				int hitboxOffset = boneControllerOffset + Marshal.SizeOf<BoneController>() * BoneControllers.Count;
-				int unknownOffset = hitboxOffset + 24;
+				int unknownOffset = hitboxOffset + 16;
 				int sequencesOffset = unknownOffset + Marshal.SizeOf<Hitbox>() * Hitboxes.Count;
 				int seqGroupOffset = sequencesOffset + Marshal.SizeOf<SequenceHeader>() * Sequences.Count;
 				int bodypartOffset = seqGroupOffset + Marshal.SizeOf<SequenceGroup>() * SequenceGroups.Count;
@@ -242,10 +242,9 @@ namespace Sledge.Providers.Model.Mdl10.Format
 					stream.Write(struBuffer);
 				}
 				var animationIndex = (int)stream.BaseStream.Position;
-				byte[] animation = new byte[24]
+				byte[] animation = new byte[16]
 				{
-					0x0c, 0x00 ,0x10 ,0x00 ,0x00 ,0x00 ,0x00 ,0x00 ,0x00 ,0x00 ,0x14 ,0x00 ,0x01 ,0x01 ,0x9d ,0xff,
-0x01 ,0x01 ,0xe6 ,0xff ,0x01 ,0x01 ,0xff ,0x7f
+					0x00, 0x00 ,0x00 ,0x00 ,0x00 ,0x00 ,0x00 ,0x00 ,0x00 ,0x00 ,0x0c ,0x00 ,0x01 ,0x01 ,0x9d ,0xff
 
 				};
 				stream.Write(animation);
