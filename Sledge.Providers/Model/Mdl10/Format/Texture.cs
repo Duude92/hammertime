@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 
 namespace Sledge.Providers.Model.Mdl10.Format
 {
@@ -17,5 +18,11 @@ namespace Sledge.Providers.Model.Mdl10.Format
 		public TextureHeader Header;
 		public byte[] Data { get; set; }
         public byte[] Palette { get; set; }
+        public Texture((byte[], byte[]) tuple, TextureHeader header)
+        {
+			Data = tuple.Item1;
+			Header = header;
+			Palette = tuple.Item2;
+        }
     }
 }
