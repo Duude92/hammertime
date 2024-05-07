@@ -468,6 +468,8 @@ namespace Sledge.Providers.Model.Mdl10.Format
 									memo.Write(struBuffer);
 								}
 							}
+							var bytestoadd = memo.BaseStream.Position % 4;
+							memo.Write(new byte[bytestoadd]);
 						}
 					}
 				}

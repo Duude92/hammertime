@@ -160,7 +160,7 @@ namespace Sledge.BspEditor.Tools.PropExporter
 					{
 						NormalIndex = 0x0,
 						NumNormals = g.Sum(f=>f.Vertices.Count),
-						NumTriangles = g.Count() - 2, //TODO: count right (x2 is for quads)
+						NumTriangles = g.Sum(f=>f.Vertices.Count-2), //TODO: count right (x2 is for quads)
 						SkinRef = Array.IndexOf(textures1,textures1.First(t=>t.Header.Name == g.First().Texture.Name)),
 						TriangleIndex = 0x0
 					},
