@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Numerics;
+using System.Runtime.InteropServices;
 
 namespace Sledge.Providers.Model.Mdl10.Format
 {
@@ -28,5 +29,6 @@ namespace Sledge.Providers.Model.Mdl10.Format
 	{
         public ModelHeader Header;
 		public Mesh[] Meshes {  get; set; }
+        public MeshVertex[] Vertices { get; set; }
     }
 }
