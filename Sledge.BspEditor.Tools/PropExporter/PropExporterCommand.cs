@@ -128,11 +128,11 @@ namespace Sledge.BspEditor.Tools.PropExporter
 				{
 					return new Sledge.Providers.Model.Mdl10.Format.Texture(GetBitmapDataWithPalette(image, texFile.Height, texFile.Width), new TextureHeader
 					{
-							Name = x.Name,
-							Flags = TextureFlags.Flatshade,
-							Height = texFile.Height,
-							Width = texFile.Width,
-							Index = 0x0
+						Name = x.Name,
+						Flags = TextureFlags.Flatshade,
+						Height = texFile.Height,
+						Width = texFile.Width,
+						Index = 0x0
 					});
 				}
 			}
@@ -205,12 +205,12 @@ namespace Sledge.BspEditor.Tools.PropExporter
 			};
 
 			for (var i = 0; i < meshes.Length; i++)
-            {
+			{
 				var seq = meshes[i].Sequences.ToList();
 				seq.Add(new TriSequence { TriCountDir = 0, TriVerts = new Trivert[0] });
 				meshes[i].Sequences = seq.ToArray();
-            }
-            model.BodyParts = new List<BodyPart>
+			}
+			model.BodyParts = new List<BodyPart>
 			{
 				new BodyPart
 				{
@@ -234,7 +234,7 @@ namespace Sledge.BspEditor.Tools.PropExporter
 								NumVerts = meshVertices.Count,
 								VertInfoIndex = 0x0,
 								VertIndex = 0x0,
-								NumNormals = vertices.Count,
+								NumNormals = meshVertices.Count,
 								NormalInfoIndex = 0x0,
 								NormalIndex = 0x0,
 								NumGroups = 0,
@@ -256,7 +256,7 @@ namespace Sledge.BspEditor.Tools.PropExporter
 					else if (obj is Group) CollectSolids(solids, obj);
 				}
 			}
-			
+
 
 			(byte[] pixelData, byte[] paletteData) GetBitmapDataWithPalette(Bitmap bitmap, int height, int width)
 			{

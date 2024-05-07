@@ -447,7 +447,7 @@ namespace Sledge.Providers.Model.Mdl10.Format
 						stream.Write(new byte[bytestoadd]);
 
 						offsets.Add((int)stream.BaseStream.Position);
-						var normals = new ArraySegment<Vector3>(modelVertices.Select(v => v.Normal).ToArray(),0,6);
+						var normals = modelVertices.Select(v => v.Normal).ToArray();
 						foreach (var normal in normals)
 							stream.WriteVector3(normal);
 						bytestoadd = stream.BaseStream.Position % 4;
