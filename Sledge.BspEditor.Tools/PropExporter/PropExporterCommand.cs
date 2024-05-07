@@ -97,8 +97,8 @@ namespace Sledge.BspEditor.Tools.PropExporter
 			{
 				new SequenceGroup
 				{
-					Name = "default",
-					Label = "",
+					Name = "",
+					Label = "default",
 				}
 			};
 			var solids = new List<Solid>();
