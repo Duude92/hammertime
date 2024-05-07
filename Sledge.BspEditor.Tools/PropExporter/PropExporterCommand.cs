@@ -74,10 +74,10 @@ namespace Sledge.BspEditor.Tools.PropExporter
 					Activity = 1,
 					ActivityWeight = 1,
 					NumEvents = 0,
-					EventIndex = 0x0,
+					EventIndex = 580,//IDLE
 					NumFrames = 1,
 					NumPivots = 0,
-					PivotIndex = 0x0,
+					PivotIndex = 580,
 					MotionType = 0,
 					MotionBone = 0,
 					LinearMovement = Vector3.Zero,
