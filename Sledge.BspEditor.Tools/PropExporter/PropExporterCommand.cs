@@ -144,7 +144,14 @@ namespace Sledge.BspEditor.Tools.PropExporter
 			model.Attachments = new List<Attachment>(0);
 
 
-			var vertices = solids.SelectMany(x => x.Faces).SelectMany(f => f.Vertices).ToList();
+			var meshVertices = solids.SelectMany(x => x.Faces).SelectMany(f => f.Vertices).Distinct().Select(v => new MeshVertex
+			{
+				Normal = Vector3.Zero,
+				NormalBone = 0,
+				Texture = Vector2.Zero,
+				Vertex = v,
+				VertexBone = 0,
+			}).ToList();
 			var rand = new Random(0);
 			var meshes = solids
 				.SelectMany(s => s.Faces)
@@ -160,27 +167,22 @@ namespace Sledge.BspEditor.Tools.PropExporter
 						SkinRef = Array.IndexOf(textures1, textures1.First(t => t.Header.Name == g.First().Texture.Name)),
 						TriangleIndex = 0x0
 					},
-					Vertices = g.SelectMany(f=>f.Vertices).Select(v => new MeshVertex
+					Vertices = g.SelectMany(f => f.Vertices).Distinct().Select(v => meshVertices.FirstOrDefault(mv=>mv.Vertex == v)).ToArray(),
+					Sequences = g.Select(f =>
 					{
-						Normal = Vector3.Zero,
-						NormalBone = 0,
-						Texture = Vector2.Zero,
-						Vertex = v,
-						VertexBone = 0,
-					}).ToArray(),
-					Sequences = g.Select(f=> {
 						var tex = textures1.FirstOrDefault(t => t.Header.Name.Equals(f.Texture.Name));
 						var uv = f.GetTextureCoordinates(tex.Header.Width, tex.Header.Height).ToArray();
 						var i = 0;
 						var triseq = new TriSequence
 						{
 							TriCountDir = (short)(f.Vertices.Count * -1),
-							TriVerts = f.Vertices.Select(v => {
+							TriVerts = f.Vertices.Select(v =>
+							{
 
 								var triv = new Trivert
 								{
 									normindex = 0,
-									vertindex = (short)vertices.IndexOf(v),
+									vertindex = (short)meshVertices.IndexOf(meshVertices.FirstOrDefault(mv => mv.Vertex == v)),
 									s = (short)(uv[i].Item2 * tex.Header.Width),
 									t = (short)(uv[i].Item3 * tex.Header.Height),
 								};
@@ -229,7 +231,7 @@ namespace Sledge.BspEditor.Tools.PropExporter
 								Radius = 0,
 								NumMesh = meshes.Length,
 								MeshIndex = 0x0,
-								NumVerts = vertices.Count,
+								NumVerts = meshVertices.Count,
 								VertInfoIndex = 0x0,
 								VertIndex = 0x0,
 								NumNormals = vertices.Count,
@@ -239,6 +241,7 @@ namespace Sledge.BspEditor.Tools.PropExporter
 								GroupIndex = 0
 							},
 							Meshes = meshes,
+							Vertices = meshVertices.ToArray(),
 						}
 					}
 				}
