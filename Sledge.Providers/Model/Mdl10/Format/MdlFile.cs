@@ -364,6 +364,7 @@ namespace Sledge.Providers.Model.Mdl10.Format
 					var tex = Textures[i];
 					var struSize = Marshal.SizeOf<TextureHeader>();
 					tex.Header.Index = ((textureIndex + struSize * Textures.Count) + Skins.Count * Skins[0].Textures.Length * sizeof(short)) + texturesOffset[i];
+					tex.Header.Name += ".bmp";
 					Textures[i] = tex;
 					var struBuffer = new byte[struSize];
 					IntPtr buffer = Marshal.AllocHGlobal(struSize);
