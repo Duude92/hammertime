@@ -196,7 +196,7 @@ namespace Sledge.Providers.Model.Mdl10.Format
 				stream.Write(0);// soundgroups
 				stream.Write(0);// soundgroupindex
 				stream.Write(0);// numtransitions
-				stream.Write(692);// transitionindex
+				stream.Write(bodypartOffset);// transitionindex
 
 
 
@@ -309,11 +309,13 @@ namespace Sledge.Providers.Model.Mdl10.Format
 					for (int i = 0; i < part.Models.Length; i++)
 					{
 						var localModel = part.Models[i];
+						var normalCount = localModel.Meshes.Sum(m => m.Header.NumTriangles);
 						localModel.Header.VertInfoIndex = vertInfoOffset;
 						localModel.Header.NormalInfoIndex = vertInfoOffset + verticesoffset[0];
 						localModel.Header.VertIndex = vertInfoOffset + verticesoffset[1];
 						localModel.Header.NormalIndex = vertInfoOffset + verticesoffset[2];
 						localModel.Header.MeshIndex = vertInfoOffset + verticesoffset[3];
+						localModel.Header.NumNormals = normalCount * 3;
 						part.Models[i] = localModel;
 
 						var mdlStruSize = Marshal.SizeOf<ModelHeader>();
@@ -427,6 +429,7 @@ namespace Sledge.Providers.Model.Mdl10.Format
 				{
 					foreach (var model in part.Models)
 					{
+						var normalCount = model.Meshes.Sum(m => m.Header.NumTriangles) * 3;
 						var vmdl = model.Meshes.SelectMany(mesh => mesh.Vertices);
 						var modelVertices = model.Vertices;
 						var vBones = modelVertices.Select(v => (byte)v.VertexBone).ToArray(); //reoder to every v, every n, every ve, no
@@ -435,7 +438,8 @@ namespace Sledge.Providers.Model.Mdl10.Format
 						stream.Write(new byte[bytestoadd]);
 
 						offsets.Add((int)stream.BaseStream.Position);
-						var nBones = new ArraySegment<byte>( modelVertices.Select(v => (byte)v.NormalBone).ToArray(),0,6);
+						//var nBones = modelVertices.Select(v => (byte)v.NormalBone).ToArray();
+						var nBones = new byte[normalCount];
 						stream.Write(nBones);
 						bytestoadd = stream.BaseStream.Position % 4;
 						stream.Write(new byte[bytestoadd]);
@@ -448,7 +452,8 @@ namespace Sledge.Providers.Model.Mdl10.Format
 						stream.Write(new byte[bytestoadd]);
 
 						offsets.Add((int)stream.BaseStream.Position);
-						var normals = modelVertices.Select(v => v.Normal).ToArray();
+						//var normals = modelVertices.Select(v => v.Normal).ToArray();
+						var normals = new Vector3[normalCount];
 						foreach (var normal in normals)
 							stream.WriteVector3(normal);
 						bytestoadd = stream.BaseStream.Position % 4;
