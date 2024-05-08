@@ -106,13 +106,16 @@ namespace Sledge.BspEditor.Tools.PropExporter
 					Label = "default",
 				}
 			};
-			var solids = new List<Solid>();
-			foreach (var mapObject in selection)
+			var solids = selection.OfType<Solid>();
+
 			{
 				var childSolids = new List<Solid>();
 				CollectSolids(childSolids, mapObject);
-				solids.AddRange(childSolids);
-			}
+			//foreach (var mapObject in selection)
+			//{
+			//	var childSolids = CollectSolids(mapObject);
+			//	solids.AddRange(childSolids);
+			//}
 			solids = solids.Distinct().ToList();
 
 			var textures = solids.SelectMany(x => x.Faces).Select(f => f.Texture).DistinctBy(t => t.Name).ToList();
