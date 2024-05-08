@@ -79,10 +79,10 @@ namespace Sledge.BspEditor.Tools.PropExporter
 					Activity = 1,
 					ActivityWeight = 1,
 					NumEvents = 0,
-					EventIndex = 0,//offset to event, Zero as we dont have anims
+					EventIndex = 580,//offset to event, Zero as we dont have anims
 					NumFrames = 1,
 					NumPivots = 0,
-					PivotIndex = 0,
+					PivotIndex = 580,
 					MotionType = 0,
 					MotionBone = 0,
 					LinearMovement = Vector3.Zero,
@@ -132,7 +132,7 @@ namespace Sledge.BspEditor.Tools.PropExporter
 					return new Sledge.Providers.Model.Mdl10.Format.Texture(GetBitmapDataWithPalette(image, texFile.Height, texFile.Width), new TextureHeader
 					{
 						Name = x.Name,
-						Flags = TextureFlags.Flatshade,
+						Flags = 0,
 						Height = texFile.Height,
 						Width = texFile.Width,
 						Index = 0x0
@@ -156,11 +156,14 @@ namespace Sledge.BspEditor.Tools.PropExporter
 				VertexBone = 0,
 			}).ToList();
 			var rand = new Random(0);
-			var meshes = solids
+			var filteredMeshes = solids
 				.SelectMany(s => s.Faces)
 				.GroupBy(f => f.Texture.Name)
-				.Where(g => !_filterTextures.Contains(g.First().Texture.Name.ToLower()))
-				.Select(g => new Mesh
+				.Where(g => !_filterTextures.Contains(g.First().Texture.Name.ToLower()));
+			var allMeshVertices = filteredMeshes.SelectMany(g => g.SelectMany(f => f.Vertices)).Distinct();
+			meshVertices = meshVertices.Where(v => allMeshVertices.Contains(v.Vertex)).ToList();
+
+			var meshes = filteredMeshes.Select(g => new Mesh
 				{
 					Header = new MeshHeader
 					{
