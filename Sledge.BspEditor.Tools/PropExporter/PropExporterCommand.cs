@@ -16,6 +16,8 @@ using Version = Sledge.Providers.Model.Mdl10.Format.Version;
 using Sledge.DataStructures.Geometric;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations.Mutation;
+using System.Windows.Forms;
+using Sledge.BspEditor.Environment.Goldsource;
 
 namespace Sledge.BspEditor.Tools.PropExporter
 {
@@ -34,6 +36,12 @@ namespace Sledge.BspEditor.Tools.PropExporter
 
 		protected async override Task Invoke(MapDocument document, CommandParameters parameters)
 		{
+			var defaultPath = (document.Environment as GoldsourceEnvironment).BaseDirectory;
+			SaveFileDialog dialog = new SaveFileDialog();
+			dialog.InitialDirectory = defaultPath;
+			dialog.Filter = "Models (*.mdl)|*.mdl";
+			if (dialog.ShowDialog() != DialogResult.OK) return;
+			var path = dialog.FileName;
 			var selection = document.Selection;
 			MdlFile model = new MdlFile();
 			var bb = selection.GetSelectionBoundingBox();
@@ -286,7 +294,7 @@ namespace Sledge.BspEditor.Tools.PropExporter
 
 				return (pixelData, paletteData);
 			}
-			model.Write("D:\\1.mdl");
+			model.Write(path);
 
 			return;
 		}
