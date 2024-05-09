@@ -14,6 +14,8 @@ using System.Drawing.Imaging;
 using System;
 using Version = Sledge.Providers.Model.Mdl10.Format.Version;
 using Sledge.DataStructures.Geometric;
+using Sledge.BspEditor.Modification;
+using Sledge.BspEditor.Modification.Operations.Mutation;
 
 namespace Sledge.BspEditor.Tools.PropExporter
 {
@@ -35,6 +37,14 @@ namespace Sledge.BspEditor.Tools.PropExporter
 			var selection = document.Selection;
 			MdlFile model = new MdlFile();
 			var bb = selection.GetSelectionBoundingBox();
+			var matrix = Matrix4x4.CreateTranslation(-bb.Center);
+			var transaction = new Transaction(new Transform(matrix, selection.GetSelectedParents()));
+			transaction.Add(new TransformTexturesUniform(matrix, selection.GetSelectedParents().SelectMany(p => p.FindAll())));
+			await MapDocumentOperation.Perform(document, transaction);
+			var bbmin = bb.Center - bb.End;
+			var bbmax = bb.Center - bb.Start;
+			bbmin = new Vector3(bbmin.Y, bbmin.X, bbmin.Z);
+			bbmax = new Vector3(bbmax.Y, bbmax.X, bbmax.Z);
 			model.Header = new Header
 			{
 				ID = ID.Idst,
@@ -44,8 +54,8 @@ namespace Sledge.BspEditor.Tools.PropExporter
 				EyePosition = Vector3.Zero,
 				HullMin = Vector3.Zero,
 				HullMax = Vector3.Zero,
-				BoundingBoxMin = bb.Start,
-				BoundingBoxMax = bb.End,
+				BoundingBoxMin = bbmin,
+				BoundingBoxMax = bbmax,
 				Flags = 0,
 
 			};
@@ -65,8 +75,8 @@ namespace Sledge.BspEditor.Tools.PropExporter
 				new Hitbox {
 					Bone = 0,
 					Group = 0,
-					Min = bb.Start,
-					Max = bb.End,
+					Min = bb.Center - bb.End,
+					Max = bb.Center - bb.Start,
 				}
 			};
 			model.Sequences = new List<Sequence>(1) { new Sequence
@@ -158,43 +168,43 @@ namespace Sledge.BspEditor.Tools.PropExporter
 			meshVertices = meshVertices.Where(v => allMeshVertices.Contains(v.Vertex)).ToList();
 
 			var meshes = filteredMeshes.Select(g => new Mesh
+			{
+				Header = new MeshHeader
 				{
-					Header = new MeshHeader
-					{
-						NormalIndex = 0x0,
-						NumNormals = g.Sum(f => f.Vertices.Count),
-						NumTriangles = g.Sum(f => f.Vertices.Count - 2), //TODO: count right (x2 is for quads)
-						SkinRef = Array.IndexOf(textures1, textures1.First(t => t.Header.Name == g.First().Texture.Name)),
-						TriangleIndex = 0x0
-					},
+					NormalIndex = 0x0,
+					NumNormals = g.Sum(f => f.Vertices.Count),
+					NumTriangles = g.Sum(f => f.Vertices.Count - 2), //TODO: count right (x2 is for quads)
+					SkinRef = Array.IndexOf(textures1, textures1.First(t => t.Header.Name == g.First().Texture.Name)),
+					TriangleIndex = 0x0
+				},
 				Vertices = g.SelectMany(f => f.Vertices).Distinct().Select(v => meshVertices.FirstOrDefault(mv => mv.Vertex == v)).ToArray(),
-					Sequences = g.Select(f =>
+				Sequences = g.Select(f =>
+				{
+					var tex = textures1.FirstOrDefault(t => t.Header.Name.Equals(f.Texture.Name));
+					var uv = f.GetTextureCoordinates(tex.Header.Width, tex.Header.Height).ToArray();
+					var i = 0;
+					var triseq = new TriSequence
 					{
-						var tex = textures1.FirstOrDefault(t => t.Header.Name.Equals(f.Texture.Name));
-						var uv = f.GetTextureCoordinates(tex.Header.Width, tex.Header.Height).ToArray();
-						var i = 0;
-						var triseq = new TriSequence
+						TriCountDir = (short)(f.Vertices.Count * -1),
+						TriVerts = f.Vertices.Select(v =>
 						{
-							TriCountDir = (short)(f.Vertices.Count * -1),
-							TriVerts = f.Vertices.Select(v =>
+
+							var triv = new Trivert
 							{
+								normindex = 0,
+								vertindex = (short)meshVertices.IndexOf(meshVertices.FirstOrDefault(mv => mv.Vertex == v)),
+								s = (short)(uv[i].Item2 * tex.Header.Width),
+								t = (short)(uv[i].Item3 * tex.Header.Height),
+							};
+							i++;
 
-								var triv = new Trivert
-								{
-									normindex = 0,
-									vertindex = (short)meshVertices.IndexOf(meshVertices.FirstOrDefault(mv => mv.Vertex == v)),
-									s = (short)(uv[i].Item2 * tex.Header.Width),
-									t = (short)(uv[i].Item3 * tex.Header.Height),
-								};
-								i++;
+							return triv;
+						}).ToArray()
 
-								return triv;
-							}).ToArray()
-
-						};
-						return triseq;
-					}).ToArray()
-				}).ToArray();
+					};
+					return triseq;
+				}).ToArray()
+			}).ToArray();
 			var tIndex = 0;
 			model.Skins = new List<SkinFamily>(1)
 			{
@@ -245,8 +255,13 @@ namespace Sledge.BspEditor.Tools.PropExporter
 						}
 					}
 				}
-			};
 
+
+		};
+			matrix = Matrix4x4.CreateTranslation(bb.Center);
+			transaction = new Transaction(new Transform(matrix, selection.GetSelectedParents()));
+			transaction.Add(new TransformTexturesUniform(matrix, selection.GetSelectedParents().SelectMany(p => p.FindAll())));
+			await MapDocumentOperation.Perform(document, transaction);
 			(byte[] pixelData, byte[] paletteData) GetBitmapDataWithPalette(Bitmap bitmap, int height, int width)
 			{
 				// Get the pixel data
