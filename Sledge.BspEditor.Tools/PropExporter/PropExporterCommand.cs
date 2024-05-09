@@ -14,7 +14,6 @@ using System.Drawing.Imaging;
 using System;
 using Version = Sledge.Providers.Model.Mdl10.Format.Version;
 using Sledge.DataStructures.Geometric;
-using SixLabors.ImageSharp.ColorSpaces;
 
 namespace Sledge.BspEditor.Tools.PropExporter
 {
@@ -110,11 +109,15 @@ namespace Sledge.BspEditor.Tools.PropExporter
 
 			solids = solids.Distinct().ToList();
 
+			var entities = selection.OfType<Primitives.MapObjects.Entity>().Where(e => e.EntityData.Get<int>("renderamt", 255) < 255);
+			var transparentTexture = entities.SelectMany(e => e.FindAll().OfType<Solid>()).SelectMany(s => s.Faces).Select(f => f.Texture.Name).Distinct().ToList();
+
 			var textures = solids.SelectMany(x => x.Faces).Select(f => f.Texture).DistinctBy(t => t.Name).ToList();
 			var textureCollection = await document.Environment.GetTextureCollection();
 			var streamsource = textureCollection.GetStreamSource();
 			var texturesCollection = await textureCollection.GetTextureItems(textures.Select(x => x.Name));
 			var imageConverter = new ImageConverter();
+			var faces = solids.SelectMany(s => s.Faces);
 
 			var textures1 = await Task.WhenAll(textures.Select(async x =>
 			{
@@ -124,7 +127,7 @@ namespace Sledge.BspEditor.Tools.PropExporter
 					return new Sledge.Providers.Model.Mdl10.Format.Texture(GetBitmapDataWithPalette(image, texFile.Height, texFile.Width), new TextureHeader
 					{
 						Name = x.Name,
-						Flags = 0,
+						Flags = transparentTexture.Contains(x.Name) ? TextureFlags.Additive : 0,
 						Height = texFile.Height,
 						Width = texFile.Width,
 						Index = 0x0
@@ -243,17 +246,6 @@ namespace Sledge.BspEditor.Tools.PropExporter
 					}
 				}
 			};
-			void CollectSolids(List<Solid> solids, IMapObject parent)
-			{
-				if (parent is Solid) solids.Add(parent as Solid);
-
-				foreach (var obj in parent.Hierarchy)
-				{
-					if (obj is Solid s) solids.Add(s);
-					else if (obj is Group) CollectSolids(solids, obj);
-				}
-			}
-
 
 			(byte[] pixelData, byte[] paletteData) GetBitmapDataWithPalette(Bitmap bitmap, int height, int width)
 			{
