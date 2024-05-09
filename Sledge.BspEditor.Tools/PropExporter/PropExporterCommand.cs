@@ -155,9 +155,7 @@ namespace Sledge.BspEditor.Tools.PropExporter
 				Vertex = v,
 				VertexBone = 0,
 			}).ToList();
-			var rand = new Random(0);
-			var filteredMeshes = solids
-				.SelectMany(s => s.Faces)
+			var filteredMeshes = faces
 				.GroupBy(f => f.Texture.Name)
 				.Where(g => !_filterTextures.Contains(g.First().Texture.Name.ToLower()));
 			var allMeshVertices = filteredMeshes.SelectMany(g => g.SelectMany(f => f.Vertices)).Distinct();
@@ -173,7 +171,7 @@ namespace Sledge.BspEditor.Tools.PropExporter
 						SkinRef = Array.IndexOf(textures1, textures1.First(t => t.Header.Name == g.First().Texture.Name)),
 						TriangleIndex = 0x0
 					},
-					Vertices = g.SelectMany(f => f.Vertices).Distinct().Select(v => meshVertices.FirstOrDefault(mv=>mv.Vertex == v)).ToArray(),
+				Vertices = g.SelectMany(f => f.Vertices).Distinct().Select(v => meshVertices.FirstOrDefault(mv => mv.Vertex == v)).ToArray(),
 					Sequences = g.Select(f =>
 					{
 						var tex = textures1.FirstOrDefault(t => t.Header.Name.Equals(f.Texture.Name));
