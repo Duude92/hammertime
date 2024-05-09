@@ -18,16 +18,23 @@ using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations.Mutation;
 using System.Windows.Forms;
 using Sledge.BspEditor.Environment.Goldsource;
+using Sledge.Common.Shell.Settings;
+using System.IO;
 
 namespace Sledge.BspEditor.Tools.PropExporter
 {
 	[Export(typeof(ICommand))]
+	[Export(typeof(ISettingsContainer))]
 	[CommandID("Tools:CreateProp")]
 	[MenuItem("Tools", "", "CreateProp", "L")]
-	public class PropExporterCommand : BaseCommand
+	public class PropExporterCommand : BaseCommand, ISettingsContainer
 	{
 		public override string Name { get; set; } = "Create prop";
 		public override string Details { get; set; } = "Create prop from selection";
+
+		public bool ValuesLoaded => true;
+		public string lastPath = null;
+
 		private string[] _filterTextures = new string[]
 		{
 			"null",
@@ -36,12 +43,13 @@ namespace Sledge.BspEditor.Tools.PropExporter
 
 		protected async override Task Invoke(MapDocument document, CommandParameters parameters)
 		{
-			var defaultPath = (document.Environment as GoldsourceEnvironment).BaseDirectory;
+			var defaultPath = string.IsNullOrEmpty(lastPath) ? (document.Environment as GoldsourceEnvironment).BaseDirectory : lastPath;
 			SaveFileDialog dialog = new SaveFileDialog();
 			dialog.InitialDirectory = defaultPath;
 			dialog.Filter = "Models (*.mdl)|*.mdl";
 			if (dialog.ShowDialog() != DialogResult.OK) return;
 			var path = dialog.FileName;
+			lastPath = Path.GetDirectoryName(path);
 			var selection = document.Selection;
 			MdlFile model = new MdlFile();
 			var bb = selection.GetSelectionBoundingBox();
@@ -297,6 +305,21 @@ namespace Sledge.BspEditor.Tools.PropExporter
 			model.Write(path);
 
 			return;
+		}
+
+		public IEnumerable<SettingKey> GetKeys()
+		{
+			yield break;
+		}
+
+		public void LoadValues(ISettingsStore store)
+		{
+			lastPath = store.Get<string>("lastPath");
+		}
+
+		public void StoreValues(ISettingsStore store)
+		{
+			store.Set<string>("lastPath", lastPath);
 		}
 	}
 
