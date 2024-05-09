@@ -108,14 +108,6 @@ namespace Sledge.BspEditor.Tools.PropExporter
 			};
 			var solids = selection.OfType<Solid>();
 
-			{
-				var childSolids = new List<Solid>();
-				CollectSolids(childSolids, mapObject);
-			//foreach (var mapObject in selection)
-			//{
-			//	var childSolids = CollectSolids(mapObject);
-			//	solids.AddRange(childSolids);
-			//}
 			solids = solids.Distinct().ToList();
 
 			var textures = solids.SelectMany(x => x.Faces).Select(f => f.Texture).DistinctBy(t => t.Name).ToList();
@@ -140,6 +132,7 @@ namespace Sledge.BspEditor.Tools.PropExporter
 				}
 			}
 			));
+			textures1 = textures1.Where(t => !_filterTextures.Contains(t.Header.Name)).ToArray();
 			model.Textures = textures1.ToList();
 			model.Skins = new List<SkinFamily> { new SkinFamily {
 				Textures = new short[] {0,0,0,0,0,0,0},
