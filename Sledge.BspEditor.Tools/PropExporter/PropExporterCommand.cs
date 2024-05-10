@@ -22,9 +22,11 @@ using Sledge.Common.Shell.Settings;
 using System.IO;
 using Sledge.QuickForms;
 using System.Threading.Channels;
+using Sledge.Common.Translations;
 
 namespace Sledge.BspEditor.Tools.PropExporter
 {
+	[AutoTranslate]
 	[Export(typeof(ICommand))]
 	[Export(typeof(ISettingsContainer))]
 	[CommandID("Tools:CreateProp")]
