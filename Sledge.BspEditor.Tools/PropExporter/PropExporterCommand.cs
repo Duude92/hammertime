@@ -20,6 +20,8 @@ using System.Windows.Forms;
 using Sledge.BspEditor.Environment.Goldsource;
 using Sledge.Common.Shell.Settings;
 using System.IO;
+using Sledge.QuickForms;
+using System.Threading.Channels;
 
 namespace Sledge.BspEditor.Tools.PropExporter
 {
@@ -29,7 +31,7 @@ namespace Sledge.BspEditor.Tools.PropExporter
 	[MenuItem("Tools", "", "CreateProp", "L")]
 	public class PropExporterCommand : BaseCommand, ISettingsContainer
 	{
-		public override string Name { get; set; } = "Create prop";
+		public override string Name { get; set; } = "Create mdl prop";
 		public override string Details { get; set; } = "Create prop from selection";
 
 		public bool ValuesLoaded => true;
@@ -43,6 +45,11 @@ namespace Sledge.BspEditor.Tools.PropExporter
 
 		protected async override Task Invoke(MapDocument document, CommandParameters parameters)
 		{
+			if (document.Selection.IsEmpty || !document.Selection.OfType<Solid>().Any())
+			{
+				MessageBox.Show("Nothing to build.\nTry to select objects to build prop.", "Build error.", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				return;
+			}
 			var defaultPath = string.IsNullOrEmpty(lastPath) ? (document.Environment as GoldsourceEnvironment).BaseDirectory : lastPath;
 			SaveFileDialog dialog = new SaveFileDialog();
 			dialog.InitialDirectory = defaultPath;
