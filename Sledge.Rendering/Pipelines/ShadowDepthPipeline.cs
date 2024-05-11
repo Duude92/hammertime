@@ -1,9 +1,11 @@
 ﻿using Sledge.Rendering.Engine;
+using Sledge.Rendering.Primitives;
 using Sledge.Rendering.Renderables;
 using Sledge.Rendering.Viewports;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using Veldrid;
@@ -23,16 +25,35 @@ namespace Sledge.Rendering.Pipelines
 		private Pipeline _pipeline;
 		private DeviceBuffer _projectionBuffer;
 		private ResourceSet _projectionResourceSet;
+		public Resources.Texture NearShadowResourceTexture { get; private set; }
+		public Texture NearShadowMap { get; private set; }
+		public TextureView NearShadowMapView { get; private set; }
+		public Framebuffer NearShadowMapFramebuffer { get; private set; }
+
+		private DeviceBuffer _worldAndInverseBuffer;
+		private uint _uniformOffset = 0;
+
 		public void Bind(RenderContext context, CommandList cl, string binding)
 		{
-			var tex = context.ResourceLoader.GetTexture(binding);
-			tex?.BindTo(cl, 1);
-			cl.SetGraphicsResourceSet(0, _projectionResourceSet); ;
+			//var tex = context.ResourceLoader.GetTexture(binding);
+			//tex?.BindTo(cl, 1);
+			NearShadowResourceTexture?.BindTo(cl,1);
+			cl.SetGraphicsResourceSet(0, _projectionResourceSet);
 		}
 
 		public void Create(RenderContext context)
 		{
 			var gd = context.Device;
+			_uniformOffset = gd.UniformBufferMinOffsetAlignment;
+
+			var factory = gd.ResourceFactory;
+			TextureDescription desc = TextureDescription.Texture2D(2048, 2048, 1, 1, PixelFormat.D32_Float_S8_UInt, TextureUsage.DepthStencil | TextureUsage.Sampled);
+			NearShadowMap = factory.CreateTexture(desc);
+			NearShadowMap.Name = "Near Shadow Map";
+			NearShadowMapView = factory.CreateTextureView(NearShadowMap);
+			NearShadowMapFramebuffer = factory.CreateFramebuffer(new FramebufferDescription(
+				new FramebufferAttachmentDescription(NearShadowMap, 0), Array.Empty<FramebufferAttachmentDescription>()));
+
 
 			VertexLayoutDescription[] shadowDepthVertexLayouts = new VertexLayoutDescription[]
 			{
@@ -53,6 +74,14 @@ namespace Sledge.Rendering.Pipelines
 			ResourceLayout worldLayout = context.Device.ResourceFactory.CreateResourceLayout(new ResourceLayoutDescription(
 				new ResourceLayoutElementDescription("WorldAndInverse", ResourceKind.UniformBuffer, ShaderStages.Vertex, ResourceLayoutElementOptions.DynamicBinding)));
 
+
+
+			_projectionResourceSet = factory.CreateResourceSet(new ResourceSetDescription(
+				worldLayout,
+				new DeviceBufferRange(_worldAndInverseBuffer, _uniformOffset, 128)));
+
+
+
 			GraphicsPipelineDescription depthPD = new GraphicsPipelineDescription(
 				BlendStateDescription.Empty,
 				gd.IsDepthRangeZeroToOne ? DepthStencilStateDescription.DepthOnlyGreaterEqual : DepthStencilStateDescription.DepthOnlyLessEqual,
@@ -69,26 +98,49 @@ namespace Sledge.Rendering.Pipelines
 					DepthAttachment = new OutputAttachmentDescription(PixelFormat.R32_Float),
 					SampleCount = TextureSampleCount.Count1
 				});
+
+
+			NearShadowResourceTexture = new Resources.Texture(context, NearShadowMap, Resources.TextureSampleType.Standard, _projectionResourceSet);
+
 		}
 
 		public void Dispose()
 		{
-			throw new NotImplementedException();
+			_vertex.Dispose();
+			_fragment.Dispose();
+			_pipeline.Dispose();
+			_projectionBuffer.Dispose();
+			_projectionResourceSet.Dispose();
 		}
 
 		public void Render(RenderContext context, IViewport target, CommandList cl, IEnumerable<IRenderable> renderables)
 		{
-			throw new NotImplementedException();
+			cl.SetPipeline(_pipeline);
+			cl.SetGraphicsResourceSet(0, _projectionResourceSet);
+
+			foreach (var r in renderables)
+			{
+				r.Render(context, this, target, cl);
+			}
 		}
 
 		public void Render(RenderContext context, IViewport target, CommandList cl, IRenderable renderable, ILocation locationObject)
 		{
-			throw new NotImplementedException();
+			cl.SetPipeline(_pipeline);
+			cl.SetGraphicsResourceSet(0, _projectionResourceSet);
+
+			renderable.Render(context, this, target, cl, locationObject);
 		}
 
 		public void SetupFrame(RenderContext context, IViewport target)
 		{
-			throw new NotImplementedException();
+			context.Device.UpdateBuffer(_projectionBuffer, 0, new UniformProjection
+			{
+				Selective = context.SelectiveTransform,
+				Model = Matrix4x4.Identity,
+				View = target.Camera.View,
+				Projection = target.Camera.Projection,
+			});
 		}
 	}
 }
