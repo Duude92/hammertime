@@ -2,17 +2,12 @@
 using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.Resources;
-using Sledge.Formats.Bsp.Lumps;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Pipelines;
 using Sledge.Rendering.Primitives;
 using Sledge.Rendering.Resources;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Linq;
 using System.Numerics;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Sledge.BspEditor.Rendering.Converters

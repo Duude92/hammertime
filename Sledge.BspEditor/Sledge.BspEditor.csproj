@@ -64,7 +64,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\HalfLife.UnifiedSdk.MapDecompiler\HalfLife.UnifiedSdk.MapDecompiler\HalfLife.UnifiedSdk.MapDecompiler.csproj" />
     <ProjectReference Include="..\Sledge.Common\Sledge.Common.csproj">
       <Project>{5d414ac8-8b93-489f-9960-877923400fed}</Project>
       <Name>Sledge.Common</Name>

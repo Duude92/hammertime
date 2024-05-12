@@ -10,6 +10,7 @@
         "@Group.Tools/Brush": "Brush tool",
         "@Group.Tools/Entity": "Entity tool",
         "@Group.Tools/Selection": "Selection tool",
+        "@Group.Tools/Plugins": "Plugins",
         "BrushTool": {
             "SelectionBoxBackgroundOpacity": "Selection box background opacity",
             "SelectCreatedBrush": "Select brush on creation",
@@ -31,6 +32,9 @@
             "SelectionBoxOnlySelectsByCenterHandles": "Selection box only selects by center handles",
             "SelectionClickCycles": "Clicking a selection cycles through transform modes",
             "KeepVisgroupsWhenCloning": "Keep visgroups when cloning"
+        },
+        "Plugins": {
+            "IncludeDecompilerTool": "Use decompiler tool? (requires editor to restart)"
         }
     },
     "MenuDataProvider": {

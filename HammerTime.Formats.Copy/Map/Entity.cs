@@ -11,7 +11,7 @@ using System.Linq;
 
 namespace HammerTime.Formats.Map
 {
-    internal class Entity
+    public class Entity
     {
         public static SledgeRegular.Entity FromFmt(SledgeFormats.Entity Entity, UniqueNumberGenerator uniqueNumberGenerator)
         {

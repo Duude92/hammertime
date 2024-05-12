@@ -163,4 +163,7 @@
       <Link>cimgui.dll</Link>
     </Content>
   </ItemGroup>
+<ItemGroup>
+  <None Include="..\Resources\plugins\**" CopyToOutputDirectory="PreserveNewest" LinkBase="plugins\" />
+</ItemGroup>
 </Project>
