@@ -2,7 +2,6 @@
 using Sledge.Rendering.Engine;
 using Sledge.Rendering.Primitives;
 using Sledge.Rendering.Renderables;
-using Sledge.Rendering.Resources;
 using Sledge.Rendering.Viewports;
 using System.Collections.Generic;
 using System.Numerics;
@@ -25,13 +24,6 @@ namespace Sledge.Rendering.Pipelines
 		private DeviceBuffer _projectionBuffer;
 		private ResourceSet _projectionResourceSet;
 
-
-
-		private SixLabors.ImageSharp.Image<Rgba32> _right, _left, _top, _bottom, _back, _front;
-		private Veldrid.Texture _texture;
-		private TextureView _view;
-
-
 		public void Bind(RenderContext context, CommandList cl, string binding)
 		{
 			var tex = context.ResourceLoader.GetTexture(binding);
@@ -41,8 +33,6 @@ namespace Sledge.Rendering.Pipelines
 
 		public void Create(RenderContext context, TextureSampleCount sampleCount)
 		{
-			var factory = context.Device.ResourceFactory;
-
 			(_vertex, _fragment) = context.ResourceLoader.LoadShaders(Type.ToString());
 
 			var pd = new GraphicsPipelineDescription
