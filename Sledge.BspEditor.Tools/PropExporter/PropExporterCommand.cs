@@ -156,7 +156,7 @@ namespace Sledge.BspEditor.Tools.PropExporter
 
 			var textures1 = await Task.WhenAll(textures.Select(async x =>
 			{
-				var texFile = texturesCollection.FirstOrDefault(t => t.Name == x.Name);
+				var texFile = texturesCollection.FirstOrDefault(t => t.Name.ToLower().Equals( x.Name.ToLower()));
 				using (var image = await streamsource.GetImage(x.Name, texFile.Width, texFile.Height))
 				{
 					return new Sledge.Providers.Model.Mdl10.Format.Texture(GetBitmapDataWithPalette(image, texFile.Height, texFile.Width), new TextureHeader
