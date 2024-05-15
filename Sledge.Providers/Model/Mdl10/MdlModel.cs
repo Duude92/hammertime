@@ -91,77 +91,56 @@ namespace Sledge.Providers.Model.Mdl10
 		List<Rectangle> _originalRectangles;
 		private List<Rectangle> CreateTexuture(EngineInterface engine, RenderContext context)
 		{
-			//TODO:: i dont see necessity to use single long texture it creates more issues
-			//model with bunch of textures that has different dimensions is an issue!
 			if (!Model.Textures.Any()) return new List<Rectangle>();
 
 			// Combine all the textures into one long texture
 			var textures = Model.Textures.Select(x => CreateBitmap(x.Header.Width, x.Header.Height, x.Data, x.Palette, x.Header.Flags.HasFlag(TextureFlags.Masked))).ToList();
 
 			var width = textures.Max(x => x.Width);
-			//var height = textures.Sum(x => x.Height);
-			var textureHeight = textures.Aggregate(0, (acc, x) => acc + x.Height + TEXTURE_MARGIN);
+			var height = textures.Max(x => x.Height);
 
 			var rectangles = new List<Rectangle>();
 			_originalRectangles = new List<Rectangle>(textures.Count);
 
-
-			var maxTextureSize = SharpDX.Direct3D11.Texture2D.MaximumTexture2DSize;
-
-			if (textureHeight > maxTextureSize)
+			var data = new byte[textures.Count][];
+			var i = 0;
+			foreach (var bitmap in textures)
 			{
-				throw new Exception($"Texture size of {textureHeight} is higher than D3D11 feature size {maxTextureSize}");
-			}
-
-
-
-			var bmp = new Bitmap(width, textureHeight, PixelFormat.Format32bppArgb);
-			using (var g = Graphics.FromImage(bmp))
-			{
-				var y = 0;
-				foreach (var texture in textures)
+				var bmp = new Bitmap(width, height, PixelFormat.Format32bppArgb);
+				using (var g = Graphics.FromImage(bmp))
 				{
-					_originalRectangles.Add(new Rectangle(0, 0, texture.Width, texture.Height));
-					rectangles.Add(new Rectangle(0, y, texture.Width, texture.Height));
-					//g.DrawImageUnscaled(texture, 0, y);
-					g.DrawImage(texture, new Rectangle(0, y, texture.Width, texture.Height));
+					g.DrawImage(bitmap, new Rectangle(0, 0, width, height));
 
-					y += texture.Height + TEXTURE_MARGIN;
+					_originalRectangles.Add(new Rectangle(0, 0, bitmap.Width, bitmap.Height));
+					var lb = bmp.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+					data[i] = new byte[lb.Stride * lb.Height];
+					Marshal.Copy(lb.Scan0, data[i], 0, data[i].Length);
+					bmp.UnlockBits(lb);
 				}
+
+				i++;
+				bmp.Dispose();
 			}
 
-			textures.ForEach(x => x.Dispose());
+			rectangles = _originalRectangles;
 
-			// Upload the texture to the engine
-			var lb = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
-			var data = new byte[lb.Stride * lb.Height];
-			Marshal.Copy(lb.Scan0, data, 0, data.Length);
-			bmp.UnlockBits(lb);
-
-			_textureResource = engine.UploadTexture(TextureName, bmp.Width, bmp.Height, data, TextureSampleType.Standard);
-
-			bmp.Dispose();
+			_textureResource = engine.UploadTexture(TextureName, width, height, data, TextureSampleType.Standard, (uint)textures.Count);
 
 			return rectangles;
 		}
 		private List<Rectangle> _rectangles;
 		public void CreateResources(EngineInterface engine, RenderContext context)
 		{
-			// textures = model textures 0 - count
-			// vertex buffer = all vertices
-			// index buffer = indices grouped by texture, in texture order
-			// indices per texture - number of indices per texture, in texture order
 			_rectangles = CreateTexuture(engine, context);
 			_buffer = engine.CreateBuffer();
 
-
 			ReInitResources();
-
 		}
 		public void ReInitResources(int skinId = 0, int bodyPartId = 0)
 		{
 			var texHeight = _rectangles.Max(x => x.Bottom);
 			var texWidth = _rectangles.Max(x => x.Right);
+			var maxTexSize = new Vector2(texWidth, texHeight);
 			var vertices = new List<VertexModel3>();
 			var indices = new Dictionary<short, List<uint>>();
 			for (short i = 0; i < Model.Textures.Count; i++) indices[i] = new List<uint>();
@@ -185,7 +164,6 @@ namespace Sledge.Providers.Model.Mdl10
 				bodyPartId /= part.Models.Length;
 				var model = part.Models[body];
 				_bodyPartIndices1[bpi][0] = (uint)model.Meshes.Sum(x => x.Vertices.Length);
-
 				foreach (var mesh in model.Meshes)
 				{
 					var texId = skin[mesh.Header.SkinRef];
@@ -194,14 +172,14 @@ namespace Sledge.Providers.Model.Mdl10
 					{
 						var x = mesh.Vertices[i];
 						var origRect = _originalRectangles.Count > texId ? _originalRectangles[texId] : Rectangle.Empty;
-						var texCoverage = (x.Texture / new Vector2(origRect.Width, origRect.Height));
-						texCoverage = new Vector2(texCoverage.X, texCoverage.Y % 1);
-						var texCoord = texCoverage * new Vector2(rec.Width, rec.Height);
+
+						var coeff = maxTexSize / new Vector2(origRect.Width, origRect.Height);
+						var texturePosition = new Vector3((x.Texture.X / maxTexSize.X) * coeff.X, (x.Texture.Y / maxTexSize.Y) * coeff.Y, mesh.Header.SkinRef);
 						vertices.Add(new VertexModel3
 						{
 							Position = x.Vertex,
 							Normal = x.Normal,
-							Texture = (texCoord + new Vector2(rec.X, rec.Y)) / new Vector2(texWidth, texHeight),
+							Texture = texturePosition,
 							Bone = (uint)x.VertexBone
 						});
 						indices[texId].Add(vi);

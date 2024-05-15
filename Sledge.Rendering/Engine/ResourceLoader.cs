@@ -59,7 +59,7 @@ namespace Sledge.Rendering.Engine
             VertexModel3LayoutDescription = new VertexLayoutDescription(
                 new VertexElementDescription("Position", VertexElementSemantic.Position, VertexElementFormat.Float3),
                 new VertexElementDescription("Normal", VertexElementSemantic.Normal, VertexElementFormat.Float3),
-                new VertexElementDescription("Texture", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2),
+                new VertexElementDescription("Texture", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float3),
                 new VertexElementDescription("Bone", VertexElementSemantic.Position, VertexElementFormat.UInt1)
             );
 
@@ -76,7 +76,11 @@ namespace Sledge.Rendering.Engine
         {
 			return _textures.GetOrAdd(name, n => new Texture(_context, width, height, data, sampleType));
         }
-        internal Texture UploadTexture(string name, Texture texture, TextureSampleType sampleType)
+		internal Texture UploadTexture(string name, int width, int height, byte[][] data, TextureSampleType sampleType, uint layerCount)
+		{
+			return _textures.GetOrAdd(name, n => new Texture(_context, width, height, data, sampleType, layerCount));
+		}
+		internal Texture UploadTexture(string name, Texture texture, TextureSampleType sampleType)
         {
             return _textures.GetOrAdd(name, texture);
         }

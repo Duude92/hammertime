@@ -13,12 +13,12 @@ namespace Sledge.Rendering.Primitives
         public Vector3 Normal;
 
         /// <summary>The texture coordinates of the vertex</summary>
-        public Vector2 Texture;
+        public Vector3 Texture;
 
         /// <summary>The bone weightings of the vertex</summary>
         public uint Bone;
 
         /// <summary>The size of this structure in bytes</summary>
-        public const int SizeInBytes = (3 + 3 + 2 + 1) * 4;
+        public const int SizeInBytes = (3 + 3 + 3 + 1) * 4;
     }
 }

@@ -24,41 +24,77 @@ namespace Sledge.Rendering.Resources
             _set = resourceSet;
 		}
 		public Texture(RenderContext context, int width, int height, byte[] data, TextureSampleType sampleType)
-        {
-            uint w = (uint) width, h = (uint) height;
+		{
+			uint w = (uint)width, h = (uint)height;
 
-            uint numMips = 4;
-            if (w < 16 || h < 16)
-            {
-                numMips = 1;
-            }
-            var device = context.Device;
-            _texture = device.ResourceFactory.CreateTexture(TextureDescription.Texture2D(
-                w, h, numMips, 1,
-                PixelFormat.B8_G8_R8_A8_UNorm,
-                TextureUsage.Sampled | TextureUsage.GenerateMipmaps
-            ));
+			uint numMips = 4;
+			if (w < 16 || h < 16)
+			{
+				numMips = 1;
+			}
+			var device = context.Device;
+			_texture = device.ResourceFactory.CreateTexture(TextureDescription.Texture2D(
+				w, h, numMips, 1,
+				PixelFormat.B8_G8_R8_A8_UNorm,
+				TextureUsage.Sampled | TextureUsage.GenerateMipmaps
+			));
 
-            try
-            {
-                device.UpdateTexture(_texture, data, 0, 0, 0, w, h, _texture.Depth, 0, 0);
-            }
-            catch
-            {
-                // Error updating texture, the texture may have been disposed
-            }
-            _mipsGenerated = false;
+			try
+			{
+				device.UpdateTexture(_texture, data, 0, 0, 0, w, h, _texture.Depth, 0, 0);
+			}
+			catch
+			{
+				// Error updating texture, the texture may have been disposed
+			}
+			_mipsGenerated = false;
 
-            var sampler = context.ResourceLoader.TextureSampler;
-            if (sampleType == TextureSampleType.Point) sampler = context.ResourceLoader.OverlaySampler;
-            
-            _view = device.ResourceFactory.CreateTextureView(_texture);
-            _set = device.ResourceFactory.CreateResourceSet(new ResourceSetDescription(
-                context.ResourceLoader.TextureLayout, _view, sampler
-            ));
-        }
+			var sampler = context.ResourceLoader.TextureSampler;
+			if (sampleType == TextureSampleType.Point) sampler = context.ResourceLoader.OverlaySampler;
 
-        public void CreateResources(EngineInterface engine, RenderContext context)
+			_view = device.ResourceFactory.CreateTextureView(_texture);
+			_set = device.ResourceFactory.CreateResourceSet(new ResourceSetDescription(
+				context.ResourceLoader.TextureLayout, _view, sampler
+			));
+		}
+		public Texture(RenderContext context, int width, int height, byte[][] data, TextureSampleType sampleType, uint layers)
+		{
+			uint w = (uint)width, h = (uint)height;
+
+			uint numMips = 4;
+			if (w < 16 || h < 16)
+			{
+				numMips = 1;
+			}
+			var device = context.Device;
+			_texture = device.ResourceFactory.CreateTexture(TextureDescription.Texture2D(
+				w, h, numMips, layers,
+				PixelFormat.B8_G8_R8_A8_UNorm,
+				TextureUsage.Sampled | TextureUsage.GenerateMipmaps
+			));
+			for (uint i = 0; i < layers; i++)
+			{
+				try
+				{
+					device.UpdateTexture(_texture, data[i], 0, 0, 0, w, h, _texture.Depth, 0, i);
+				}
+				catch
+				{
+					// Error updating texture, the texture may have been disposed
+				}
+			}
+			_mipsGenerated = false;
+
+			var sampler = context.ResourceLoader.TextureSampler;
+			if (sampleType == TextureSampleType.Point) sampler = context.ResourceLoader.OverlaySampler;
+
+			_view = device.ResourceFactory.CreateTextureView(_texture);
+			_set = device.ResourceFactory.CreateResourceSet(new ResourceSetDescription(
+				context.ResourceLoader.TextureLayout, _view, sampler
+			));
+		}
+
+		public void CreateResources(EngineInterface engine, RenderContext context)
         {
             // The resources are created in the constructor
         }
