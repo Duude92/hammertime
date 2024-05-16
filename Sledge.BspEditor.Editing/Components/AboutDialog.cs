@@ -21,7 +21,7 @@ namespace Sledge.BspEditor.Editing.Components
 
         private void OpenSite(string url)
         {
-            Process.Start(url);
+            Process.Start(new ProcessStartInfo { FileName = url, UseShellExecute = true });
         }
     }
 }

@@ -23,7 +23,7 @@ namespace Sledge.BspEditor.Editing.Commands
 
         public async Task Invoke(IContext context, CommandParameters parameters)
         {
-            System.Diagnostics.Process.Start("https://github.com/Duude92/hammertime");
+            System.Diagnostics.Process.Start( new System.Diagnostics.ProcessStartInfo { FileName = "https://github.com/Duude92/hammertime", UseShellExecute = true });
         }
     }
 }
