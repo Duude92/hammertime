@@ -2,6 +2,7 @@
 using System.Numerics;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Modification.Operations.Mutation;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Transport;
@@ -39,7 +40,13 @@ namespace Sledge.BspEditor.Modification.Operations.Data
                         if (float.TryParse(split[0], out var x) &&
                             float.TryParse(split[1], out var y) &&
                             float.TryParse(split[2], out var z))
-                            obj.Data.Replace(new Origin(new Vector3(x, y, z)));
+                        {
+                            var vec = new Vector3(x, y, z) - obj.Data.GetOne<Origin>().Location;
+							var translation = Matrix4x4.CreateTranslation(vec);
+
+                            var tr = new Transaction(new Transform(translation, new[] { obj }));
+                            MapDocumentOperation.Perform(document, tr);
+                        }
                     }
                     else data.Properties[kv.Key] = kv.Value;
                 }
