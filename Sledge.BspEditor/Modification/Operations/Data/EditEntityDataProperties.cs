@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Numerics;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapObjectData;
@@ -32,6 +33,14 @@ namespace Sledge.BspEditor.Modification.Operations.Data
                 foreach (var kv in _valuesToSet)
                 {
                     if (kv.Value == null) data.Properties.Remove(kv.Key);
+                    else if (kv.Key == "origin")
+                    {
+                        var split = kv.Value.Split(' ');
+                        if (float.TryParse(split[0], out var x) &&
+                            float.TryParse(split[1], out var y) &&
+                            float.TryParse(split[2], out var z))
+                            obj.Data.Replace(new Origin(new Vector3(x, y, z)));
+                    }
                     else data.Properties[kv.Key] = kv.Value;
                 }
                 ch.Update(obj);
