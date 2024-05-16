@@ -360,7 +360,8 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 				cmbClass.Text = entityClass.Name;
 				if (entityClass.ClassType == ClassType.Point)
 				{
-					_tableValues.Add(new TableValue(new Property("origin", VariableType.Vector), "origin", new[] { objects.First().Data.GetOne<Origin>().Location.ToString() }));
+					var location = objects.First().Data.GetOne<Origin>().Location.ToString().Trim('<', '>').Replace(",", "");
+					_tableValues.Add(new TableValue(new Property("origin", VariableType.Vector), "origin", new[] { location }));
 				}
 			}
 			cmbClass.EndUpdate();

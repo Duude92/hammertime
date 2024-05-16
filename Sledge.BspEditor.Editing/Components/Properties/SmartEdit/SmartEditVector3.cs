@@ -46,8 +46,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.SmartEdit
 
 		protected override void OnSetProperty(MapDocument document)
 		{
-			var property = PropertyValue.Trim('<','>');
-			var split = property.Split(',');
+			var split = PropertyValue.Split(' ');
 			var x = decimal.Parse(split[0]);
 			var y = decimal.Parse(split[1]);
 			var z = decimal.Parse(split[2]);
