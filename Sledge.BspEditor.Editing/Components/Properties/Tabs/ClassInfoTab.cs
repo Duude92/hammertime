@@ -361,7 +361,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 				if (entityClass.ClassType == ClassType.Point)
 				{
 					var location = objects.First().Data.GetOne<Origin>().Location.ToString().Trim('<', '>').Replace(",", "");
-					_tableValues.Add(new TableValue(new Property("origin", VariableType.Vector), "origin", new[] { location }));
+					_tableValues.Add(new TableValue(new Property("Location", VariableType.Vector), "Location", new[] { location }));
 				}
 			}
 			cmbClass.EndUpdate();

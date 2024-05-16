@@ -33,7 +33,7 @@ namespace Sledge.BspEditor.Modification.Operations.Data
                 foreach (var kv in _valuesToSet)
                 {
                     if (kv.Value == null) data.Properties.Remove(kv.Key);
-                    else if (kv.Key == "origin")
+                    else if (kv.Key == "Location")
                     {
                         var split = kv.Value.Split(' ');
                         if (float.TryParse(split[0], out var x) &&
