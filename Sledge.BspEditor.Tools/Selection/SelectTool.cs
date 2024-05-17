@@ -196,7 +196,12 @@ namespace Sledge.BspEditor.Tools.Selection
 				b.AddCommand("BspEditor:Edit:Cut");
 				b.AddCommand("BspEditor:Edit:Copy");
 				b.AddCommand("BspEditor:Edit:Delete");
-				b.AddCommand("BspEditor:Edit:Paste");
+				b.AddCommand("BspEditor:Edit:Paste", new
+				{
+					AxisLock = (b.Viewport.Viewport.Camera is OrthographicCamera camera1) ?
+				camera1.ViewType == OrthographicCamera.OrthographicType.Top ? "Z" :
+				camera1.ViewType == OrthographicCamera.OrthographicType.Front ? "X" : "Y" : "3D"
+				});
 				b.AddCommand("BspEditor:Edit:PasteSpecial");
 				b.AddSeparator();
 
