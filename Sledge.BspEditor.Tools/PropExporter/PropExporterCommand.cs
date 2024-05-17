@@ -90,9 +90,9 @@ namespace Sledge.BspEditor.Tools.PropExporter
 				Flags = 0 ,
 				Controllers = new int[6]{-1,-1,-1,-1,-1,-1},
 				Position = Vector3.Zero,
-				PositionScale = Vector3.One,
+				PositionScale = new Vector3(0.00390637f,0.00390637f,0.00390637f),
 				Rotation = Vector3.Zero,
-				RotationScale = Vector3.One,
+				RotationScale = new Vector3(0.00001198f,0.00001198f,0.00004794f),
 			} };
 			model.BoneControllers = new List<BoneController>(0);
 			model.Hitboxes = new List<Hitbox>
@@ -156,7 +156,7 @@ namespace Sledge.BspEditor.Tools.PropExporter
 
 			var textures1 = await Task.WhenAll(textures.Select(async x =>
 			{
-				var texFile = texturesCollection.FirstOrDefault(t => t.Name.ToLower().Equals( x.Name.ToLower()));
+				var texFile = texturesCollection.FirstOrDefault(t => t.Name.ToLower().Equals(x.Name.ToLower()));
 				using (var image = await streamsource.GetImage(x.Name, texFile.Width, texFile.Height))
 				{
 					return new Sledge.Providers.Model.Mdl10.Format.Texture(GetBitmapDataWithPalette(image, texFile.Height, texFile.Width), new TextureHeader
