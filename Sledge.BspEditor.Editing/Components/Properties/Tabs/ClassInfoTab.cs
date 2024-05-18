@@ -354,7 +354,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 			var classes = _tableValues.OriginalClasses.ToHashSet();
 			if (classes.Count == 0) cmbClass.Text = "";
 			else if (classes.Count > 1) cmbClass.Text = MultipleClassesText + @" " + String.Join("; ", classes.Select(x => x.Name));
-			else if (classes.Count == 1)
+			else if (classes.Count == 1 && objects.Count == 1)
 			{
 				var entityClass = classes.First();
 				cmbClass.Text = entityClass.Name;
