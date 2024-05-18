@@ -230,6 +230,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties
 		/// </summary>
 		private async Task<bool> Save()
 		{
+			if (_selectedObjects.Count > 1) return false;
 			if (_currentDocument == null) return true;
 			var changed = _tabs.Select(x => x.Value).Where(x => x.HasChanges).ToList();
 			if (!changed.Any()) return true;
