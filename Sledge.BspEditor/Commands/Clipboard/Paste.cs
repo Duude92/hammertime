@@ -50,10 +50,7 @@ namespace Sledge.BspEditor.Commands.Clipboard
 		{
 			_document = document;
 			var moveLock = parameters.Get<string>("AxisLock", null);
-			if (moveLock != null)
-				await PasteClipboard(moveLock);
-			else
-				await Oy.Publish("BspEditor:Viewport:Paste");
+			await PasteClipboard(moveLock);
 		}
 
 		private ICollection<IMapObject> RetriveNonGroupedObjectsRecursively(IEnumerable<IMapObject> objects)
@@ -102,8 +99,8 @@ namespace Sledge.BspEditor.Commands.Clipboard
 				var itemNames = _document.Map.Root
 								.Find(x => x is Entity)
 								.OfType<Entity>()
-								.Select(x => (x.EntityData.Properties.ContainsKey("targetname") ? x.EntityData.Properties["targetname"]:null))
-								.Where(x=>!String.IsNullOrEmpty(x))
+								.Select(x => (x.EntityData.Properties.ContainsKey("targetname") ? x.EntityData.Properties["targetname"] : null))
+								.Where(x => !String.IsNullOrEmpty(x))
 								.Distinct()
 								.ToArray();
 
@@ -144,7 +141,7 @@ namespace Sledge.BspEditor.Commands.Clipboard
 				new Deselect(_document.Selection),
 				new Attach(_document.Map.Root.ID, content),
 				new Transform(translation, content),
-				new TransformTexturesUniform(translation, content.SelectMany(x=>x.FindAll())),
+				new TransformTexturesUniform(translation, content.SelectMany(x => x.FindAll())),
 				new Select(content)
 			);
 
