@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -353,8 +354,16 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 			var classes = _tableValues.OriginalClasses.ToHashSet();
 			if (classes.Count == 0) cmbClass.Text = "";
 			else if (classes.Count > 1) cmbClass.Text = MultipleClassesText + @" " + String.Join("; ", classes.Select(x => x.Name));
-			else if (classes.Count == 1) cmbClass.Text = classes.First().Name;
-
+			else if (classes.Count == 1)
+			{
+				var entityClass = classes.First();
+				cmbClass.Text = entityClass.Name;
+				if (entityClass.ClassType == ClassType.Point)
+				{
+					var location = objects.First().Data.GetOne<Origin>().Location.ToString().Trim('<', '>').Replace(",", "");
+					_tableValues.Add(new TableValue(new Property("Location", VariableType.Vector), "Location", new[] { location }));
+				}
+			}
 			cmbClass.EndUpdate();
 
 			cmbClass.Enabled = !objects.Any(x => x is Root);
