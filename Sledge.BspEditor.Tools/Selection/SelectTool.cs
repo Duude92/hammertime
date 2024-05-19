@@ -425,6 +425,9 @@ namespace Sledge.BspEditor.Tools.Selection
 			// Don't bother deselecting the objects we're about to select
 			objectsToDeselect = objectsToDeselect.Where(x => !objectsToSelect.Contains(x));
 
+			// Ignore transaction on secondary selection of same object (doubleclick)
+			if (objectsToDeselect.Count()==0 && !objectsToSelect.Except(document.Selection).Any()) return;
+
 			// Perform selections
 			var deselected = objectsToDeselect.ToList();
 			var selected = objectsToSelect.ToList();
