@@ -37,7 +37,7 @@ namespace Sledge.BspEditor.Grid
 				gd.MapSizeLow = (int)goldSrcEnvironment.MapSizeLow;
 				gd.MapSizeHigh = (int)goldSrcEnvironment.MapSizeHigh;
 			}
-			return new SquareGrid(gd.MapSizeHigh, gd.MapSizeLow, 16);
+			return new SquareGrid(gd.MapSizeHigh, gd.MapSizeLow, environment.DefaultGridSize);
 		}
 
 		public bool IsInstance(IGrid grid)
