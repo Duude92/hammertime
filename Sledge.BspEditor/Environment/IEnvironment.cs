@@ -99,5 +99,9 @@ namespace Sledge.BspEditor.Environment
         /// The name of the default texture scale for this environment
         /// </summary>
         decimal DefaultTextureScale { get; }
+        /// <summary>
+        /// Default grid size for environment
+        /// </summary>
+        float DefaultGridSize { get; }
     }
 }

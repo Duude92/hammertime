@@ -1,3 +1,5 @@
+using Sledge.BspEditor.Environment.Controls;
+
 namespace Sledge.BspEditor.Environment.Goldsource
 {
     partial class GoldsourceEnvironmentEditor
@@ -20,791 +22,846 @@ namespace Sledge.BspEditor.Environment.Goldsource
             base.Dispose(disposing);
         }
 
-        #region Component Designer generated code
+		#region Component Designer generated code
 
-        /// <summary> 
-        /// Required method for Designer support - do not modify 
-        /// the contents of this method with the code editor.
-        /// </summary>
-        private void InitializeComponent()
-        {
-			this.lblBaseGame = new System.Windows.Forms.Label();
-			this.cmbBaseGame = new System.Windows.Forms.ComboBox();
-			this.txtGameDir = new System.Windows.Forms.TextBox();
-			this.lblGameDir = new System.Windows.Forms.Label();
-			this.btnGameDirBrowse = new System.Windows.Forms.Button();
-			this.lblGameExe = new System.Windows.Forms.Label();
-			this.lblGameMod = new System.Windows.Forms.Label();
-			this.cmbGameExe = new System.Windows.Forms.ComboBox();
-			this.cmbGameMod = new System.Windows.Forms.ComboBox();
-			this.lstFgds = new System.Windows.Forms.ListView();
-			this.colFgdName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.colFgdPath = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.btnAddFgd = new System.Windows.Forms.Button();
-			this.lblDefaultBrushEntity = new System.Windows.Forms.Label();
-			this.btnRemoveFgd = new System.Windows.Forms.Button();
-			this.lblDefaultPointEntity = new System.Windows.Forms.Label();
-			this.cmbDefaultBrushEntity = new System.Windows.Forms.ComboBox();
-			this.cmbDefaultPointEntity = new System.Windows.Forms.ComboBox();
-			this.nudDefaultTextureScale = new System.Windows.Forms.NumericUpDown();
-			this.lblDefaultTextureScale = new System.Windows.Forms.Label();
-			this.chkIncludeFgdDirectories = new System.Windows.Forms.CheckBox();
-			this.cmbMapSizeOverrideHigh = new System.Windows.Forms.ComboBox();
-			this.lblMapSizeOverrideHigh = new System.Windows.Forms.Label();
-			this.cmbMapSizeOverrideLow = new System.Windows.Forms.ComboBox();
-			this.chkOverrideMapSize = new System.Windows.Forms.CheckBox();
-			this.lblMapSizeOverrideLow = new System.Windows.Forms.Label();
-			this.chkLoadHdModels = new System.Windows.Forms.CheckBox();
-			this.grpDirectories = new System.Windows.Forms.GroupBox();
-			this.grpFgds = new System.Windows.Forms.GroupBox();
-			this.grpBuildTools = new System.Windows.Forms.GroupBox();
-			this.lblCopyToMapFolder = new System.Windows.Forms.Label();
-			this.chkCopyBsp = new System.Windows.Forms.CheckBox();
-			this.chkCopyRes = new System.Windows.Forms.CheckBox();
-			this.chkCopyErr = new System.Windows.Forms.CheckBox();
-			this.chkCopyLog = new System.Windows.Forms.CheckBox();
-			this.chkCopyMap = new System.Windows.Forms.CheckBox();
-			this.chkMapCopyBsp = new System.Windows.Forms.CheckBox();
-			this.chkAskRunGame = new System.Windows.Forms.CheckBox();
-			this.chkRunGame = new System.Windows.Forms.CheckBox();
-			this.chkIncludeToolsDirectory = new System.Windows.Forms.CheckBox();
-			this.lblBuildExeFolder = new System.Windows.Forms.Label();
-			this.lblBuildBSP = new System.Windows.Forms.Label();
-			this.txtBuildToolsDirectory = new System.Windows.Forms.TextBox();
-			this.lblBuildCSG = new System.Windows.Forms.Label();
-			this.cmbRadExe = new System.Windows.Forms.ComboBox();
-			this.cmbBspExe = new System.Windows.Forms.ComboBox();
-			this.lblBuildVIS = new System.Windows.Forms.Label();
-			this.cmbVisExe = new System.Windows.Forms.ComboBox();
-			this.cmbCsgExe = new System.Windows.Forms.ComboBox();
-			this.lblBuildRAD = new System.Windows.Forms.Label();
-			this.btnBuildToolsBrowse = new System.Windows.Forms.Button();
-			this.grpTextures = new System.Windows.Forms.GroupBox();
-			this.lstAdditionalTextures = new System.Windows.Forms.ListView();
-			this.colWadName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.colWadPath = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.btnRemoveTextures = new System.Windows.Forms.Button();
-			this.btnAddTextures = new System.Windows.Forms.Button();
-			this.lblAdditionalTexturePackages = new System.Windows.Forms.Label();
-			this.lblTexturePackageExclusions = new System.Windows.Forms.Label();
-			this.cklTexturePackages = new System.Windows.Forms.CheckedListBox();
-			this.chkToggleAllTextures = new System.Windows.Forms.CheckBox();
-			this.FilterBox = new System.Windows.Forms.TextBox();
-			((System.ComponentModel.ISupportInitialize)(this.nudDefaultTextureScale)).BeginInit();
-			this.grpDirectories.SuspendLayout();
-			this.grpFgds.SuspendLayout();
-			this.grpBuildTools.SuspendLayout();
-			this.grpTextures.SuspendLayout();
-			this.SuspendLayout();
+		/// <summary> 
+		/// Required method for Designer support - do not modify 
+		/// the contents of this method with the code editor.
+		/// </summary>
+		private void InitializeComponent()
+		{
+			lblBaseGame = new System.Windows.Forms.Label();
+			cmbBaseGame = new System.Windows.Forms.ComboBox();
+			txtGameDir = new System.Windows.Forms.TextBox();
+			lblGameDir = new System.Windows.Forms.Label();
+			btnGameDirBrowse = new System.Windows.Forms.Button();
+			lblGameExe = new System.Windows.Forms.Label();
+			lblGameMod = new System.Windows.Forms.Label();
+			cmbGameExe = new System.Windows.Forms.ComboBox();
+			cmbGameMod = new System.Windows.Forms.ComboBox();
+			lstFgds = new System.Windows.Forms.ListView();
+			colFgdName = new System.Windows.Forms.ColumnHeader();
+			colFgdPath = new System.Windows.Forms.ColumnHeader();
+			btnAddFgd = new System.Windows.Forms.Button();
+			lblDefaultBrushEntity = new System.Windows.Forms.Label();
+			btnRemoveFgd = new System.Windows.Forms.Button();
+			lblDefaultPointEntity = new System.Windows.Forms.Label();
+			cmbDefaultBrushEntity = new System.Windows.Forms.ComboBox();
+			cmbDefaultPointEntity = new System.Windows.Forms.ComboBox();
+			nudDefaultTextureScale = new System.Windows.Forms.NumericUpDown();
+			lblDefaultTextureScale = new System.Windows.Forms.Label();
+			chkIncludeFgdDirectories = new System.Windows.Forms.CheckBox();
+			cmbMapSizeOverrideHigh = new System.Windows.Forms.ComboBox();
+			lblMapSizeOverrideHigh = new System.Windows.Forms.Label();
+			cmbMapSizeOverrideLow = new System.Windows.Forms.ComboBox();
+			chkOverrideMapSize = new System.Windows.Forms.CheckBox();
+			lblMapSizeOverrideLow = new System.Windows.Forms.Label();
+			chkLoadHdModels = new System.Windows.Forms.CheckBox();
+			grpDirectories = new System.Windows.Forms.GroupBox();
+			grpFgds = new System.Windows.Forms.GroupBox();
+			gridUpDown = new GridUpDown();
+			DefaultGridSizeLabel = new System.Windows.Forms.Label();
+			grpBuildTools = new System.Windows.Forms.GroupBox();
+			lblCopyToMapFolder = new System.Windows.Forms.Label();
+			chkCopyBsp = new System.Windows.Forms.CheckBox();
+			chkCopyRes = new System.Windows.Forms.CheckBox();
+			chkCopyErr = new System.Windows.Forms.CheckBox();
+			chkCopyLog = new System.Windows.Forms.CheckBox();
+			chkCopyMap = new System.Windows.Forms.CheckBox();
+			chkMapCopyBsp = new System.Windows.Forms.CheckBox();
+			chkAskRunGame = new System.Windows.Forms.CheckBox();
+			chkRunGame = new System.Windows.Forms.CheckBox();
+			chkIncludeToolsDirectory = new System.Windows.Forms.CheckBox();
+			lblBuildExeFolder = new System.Windows.Forms.Label();
+			lblBuildBSP = new System.Windows.Forms.Label();
+			txtBuildToolsDirectory = new System.Windows.Forms.TextBox();
+			lblBuildCSG = new System.Windows.Forms.Label();
+			cmbRadExe = new System.Windows.Forms.ComboBox();
+			cmbBspExe = new System.Windows.Forms.ComboBox();
+			lblBuildVIS = new System.Windows.Forms.Label();
+			cmbVisExe = new System.Windows.Forms.ComboBox();
+			cmbCsgExe = new System.Windows.Forms.ComboBox();
+			lblBuildRAD = new System.Windows.Forms.Label();
+			btnBuildToolsBrowse = new System.Windows.Forms.Button();
+			grpTextures = new System.Windows.Forms.GroupBox();
+			FilterBox = new System.Windows.Forms.TextBox();
+			lstAdditionalTextures = new System.Windows.Forms.ListView();
+			colWadName = new System.Windows.Forms.ColumnHeader();
+			colWadPath = new System.Windows.Forms.ColumnHeader();
+			btnRemoveTextures = new System.Windows.Forms.Button();
+			btnAddTextures = new System.Windows.Forms.Button();
+			lblAdditionalTexturePackages = new System.Windows.Forms.Label();
+			lblTexturePackageExclusions = new System.Windows.Forms.Label();
+			cklTexturePackages = new System.Windows.Forms.CheckedListBox();
+			chkToggleAllTextures = new System.Windows.Forms.CheckBox();
+			((System.ComponentModel.ISupportInitialize)nudDefaultTextureScale).BeginInit();
+			grpDirectories.SuspendLayout();
+			grpFgds.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)gridUpDown).BeginInit();
+			grpBuildTools.SuspendLayout();
+			grpTextures.SuspendLayout();
+			SuspendLayout();
 			// 
 			// lblBaseGame
 			// 
-			this.lblBaseGame.Location = new System.Drawing.Point(2, 41);
-			this.lblBaseGame.Name = "lblBaseGame";
-			this.lblBaseGame.Size = new System.Drawing.Size(198, 20);
-			this.lblBaseGame.TabIndex = 20;
-			this.lblBaseGame.Text = "Base Game Directory (e.g. \'valve\')";
-			this.lblBaseGame.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			lblBaseGame.Location = new System.Drawing.Point(2, 47);
+			lblBaseGame.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			lblBaseGame.Name = "lblBaseGame";
+			lblBaseGame.Size = new System.Drawing.Size(231, 23);
+			lblBaseGame.TabIndex = 20;
+			lblBaseGame.Text = "Base Game Directory (e.g. 'valve')";
+			lblBaseGame.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// cmbBaseGame
 			// 
-			this.cmbBaseGame.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.cmbBaseGame.FormattingEnabled = true;
-			this.cmbBaseGame.Items.AddRange(new object[] {
-            "(Steam only) Half-Life",
-            "Counter-Strike"});
-			this.cmbBaseGame.Location = new System.Drawing.Point(210, 42);
-			this.cmbBaseGame.Name = "cmbBaseGame";
-			this.cmbBaseGame.Size = new System.Drawing.Size(153, 21);
-			this.cmbBaseGame.TabIndex = 21;
-			this.cmbBaseGame.SelectedIndexChanged += new System.EventHandler(this.BaseGameDirectoryChanged);
+			cmbBaseGame.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			cmbBaseGame.FormattingEnabled = true;
+			cmbBaseGame.Items.AddRange(new object[] { "(Steam only) Half-Life", "Counter-Strike" });
+			cmbBaseGame.Location = new System.Drawing.Point(245, 48);
+			cmbBaseGame.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			cmbBaseGame.Name = "cmbBaseGame";
+			cmbBaseGame.Size = new System.Drawing.Size(178, 23);
+			cmbBaseGame.TabIndex = 21;
+			cmbBaseGame.SelectedIndexChanged += BaseGameDirectoryChanged;
 			// 
 			// txtGameDir
 			// 
-			this.txtGameDir.Location = new System.Drawing.Point(107, 16);
-			this.txtGameDir.Name = "txtGameDir";
-			this.txtGameDir.Size = new System.Drawing.Size(256, 20);
-			this.txtGameDir.TabIndex = 13;
-			this.txtGameDir.Text = "example: C:\\Sierra\\Half-Life";
-			this.txtGameDir.TextChanged += new System.EventHandler(this.GameDirectoryTextChanged);
+			txtGameDir.Location = new System.Drawing.Point(125, 18);
+			txtGameDir.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			txtGameDir.Name = "txtGameDir";
+			txtGameDir.Size = new System.Drawing.Size(298, 23);
+			txtGameDir.TabIndex = 13;
+			txtGameDir.Text = "example: C:\\Sierra\\Half-Life";
+			txtGameDir.TextChanged += GameDirectoryTextChanged;
 			// 
 			// lblGameDir
 			// 
-			this.lblGameDir.Location = new System.Drawing.Point(6, 16);
-			this.lblGameDir.Name = "lblGameDir";
-			this.lblGameDir.Size = new System.Drawing.Size(95, 20);
-			this.lblGameDir.TabIndex = 14;
-			this.lblGameDir.Text = "Game Dir";
-			this.lblGameDir.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			lblGameDir.Location = new System.Drawing.Point(7, 18);
+			lblGameDir.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			lblGameDir.Name = "lblGameDir";
+			lblGameDir.Size = new System.Drawing.Size(111, 23);
+			lblGameDir.TabIndex = 14;
+			lblGameDir.Text = "Game Dir";
+			lblGameDir.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// btnGameDirBrowse
 			// 
-			this.btnGameDirBrowse.Location = new System.Drawing.Point(369, 16);
-			this.btnGameDirBrowse.Name = "btnGameDirBrowse";
-			this.btnGameDirBrowse.Size = new System.Drawing.Size(74, 20);
-			this.btnGameDirBrowse.TabIndex = 15;
-			this.btnGameDirBrowse.Text = "Browse...";
-			this.btnGameDirBrowse.UseVisualStyleBackColor = true;
-			this.btnGameDirBrowse.Click += new System.EventHandler(this.BrowseGameDirectory);
+			btnGameDirBrowse.Location = new System.Drawing.Point(430, 18);
+			btnGameDirBrowse.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			btnGameDirBrowse.Name = "btnGameDirBrowse";
+			btnGameDirBrowse.Size = new System.Drawing.Size(86, 23);
+			btnGameDirBrowse.TabIndex = 15;
+			btnGameDirBrowse.Text = "Browse...";
+			btnGameDirBrowse.UseVisualStyleBackColor = true;
+			btnGameDirBrowse.Click += BrowseGameDirectory;
 			// 
 			// lblGameExe
 			// 
-			this.lblGameExe.Location = new System.Drawing.Point(3, 95);
-			this.lblGameExe.Name = "lblGameExe";
-			this.lblGameExe.Size = new System.Drawing.Size(198, 20);
-			this.lblGameExe.TabIndex = 16;
-			this.lblGameExe.Text = "Game Executable (e.g. \'hl.exe\')";
-			this.lblGameExe.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			lblGameExe.Location = new System.Drawing.Point(4, 110);
+			lblGameExe.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			lblGameExe.Name = "lblGameExe";
+			lblGameExe.Size = new System.Drawing.Size(231, 23);
+			lblGameExe.TabIndex = 16;
+			lblGameExe.Text = "Game Executable (e.g. 'hl.exe')";
+			lblGameExe.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// lblGameMod
 			// 
-			this.lblGameMod.Location = new System.Drawing.Point(2, 68);
-			this.lblGameMod.Name = "lblGameMod";
-			this.lblGameMod.Size = new System.Drawing.Size(198, 20);
-			this.lblGameMod.TabIndex = 17;
-			this.lblGameMod.Text = "Mod Directory (e.g. \'cstrike\')";
-			this.lblGameMod.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			lblGameMod.Location = new System.Drawing.Point(2, 78);
+			lblGameMod.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			lblGameMod.Name = "lblGameMod";
+			lblGameMod.Size = new System.Drawing.Size(231, 23);
+			lblGameMod.TabIndex = 17;
+			lblGameMod.Text = "Mod Directory (e.g. 'cstrike')";
+			lblGameMod.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// cmbGameExe
 			// 
-			this.cmbGameExe.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.cmbGameExe.FormattingEnabled = true;
-			this.cmbGameExe.Items.AddRange(new object[] {
-            "Valve"});
-			this.cmbGameExe.Location = new System.Drawing.Point(210, 96);
-			this.cmbGameExe.Name = "cmbGameExe";
-			this.cmbGameExe.Size = new System.Drawing.Size(153, 21);
-			this.cmbGameExe.TabIndex = 18;
+			cmbGameExe.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			cmbGameExe.FormattingEnabled = true;
+			cmbGameExe.Items.AddRange(new object[] { "Valve" });
+			cmbGameExe.Location = new System.Drawing.Point(245, 111);
+			cmbGameExe.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			cmbGameExe.Name = "cmbGameExe";
+			cmbGameExe.Size = new System.Drawing.Size(178, 23);
+			cmbGameExe.TabIndex = 18;
 			// 
 			// cmbGameMod
 			// 
-			this.cmbGameMod.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.cmbGameMod.FormattingEnabled = true;
-			this.cmbGameMod.Items.AddRange(new object[] {
-            "Valve"});
-			this.cmbGameMod.Location = new System.Drawing.Point(210, 69);
-			this.cmbGameMod.Name = "cmbGameMod";
-			this.cmbGameMod.Size = new System.Drawing.Size(153, 21);
-			this.cmbGameMod.TabIndex = 19;
-			this.cmbGameMod.SelectedIndexChanged += new System.EventHandler(this.ModDirectoryChanged);
+			cmbGameMod.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			cmbGameMod.FormattingEnabled = true;
+			cmbGameMod.Items.AddRange(new object[] { "Valve" });
+			cmbGameMod.Location = new System.Drawing.Point(245, 80);
+			cmbGameMod.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			cmbGameMod.Name = "cmbGameMod";
+			cmbGameMod.Size = new System.Drawing.Size(178, 23);
+			cmbGameMod.TabIndex = 19;
+			cmbGameMod.SelectedIndexChanged += ModDirectoryChanged;
 			// 
 			// lstFgds
 			// 
-			this.lstFgds.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.colFgdName,
-            this.colFgdPath});
-			this.lstFgds.FullRowSelect = true;
-			this.lstFgds.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-			this.lstFgds.HideSelection = false;
-			this.lstFgds.Location = new System.Drawing.Point(6, 19);
-			this.lstFgds.Name = "lstFgds";
-			this.lstFgds.ShowItemToolTips = true;
-			this.lstFgds.Size = new System.Drawing.Size(357, 115);
-			this.lstFgds.TabIndex = 34;
-			this.lstFgds.UseCompatibleStateImageBehavior = false;
-			this.lstFgds.View = System.Windows.Forms.View.Details;
+			lstFgds.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { colFgdName, colFgdPath });
+			lstFgds.FullRowSelect = true;
+			lstFgds.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+			lstFgds.Location = new System.Drawing.Point(7, 22);
+			lstFgds.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			lstFgds.Name = "lstFgds";
+			lstFgds.ShowItemToolTips = true;
+			lstFgds.Size = new System.Drawing.Size(416, 132);
+			lstFgds.TabIndex = 34;
+			lstFgds.UseCompatibleStateImageBehavior = false;
+			lstFgds.View = System.Windows.Forms.View.Details;
 			// 
 			// colFgdName
 			// 
-			this.colFgdName.Text = "Name";
+			colFgdName.Text = "Name";
 			// 
 			// colFgdPath
 			// 
-			this.colFgdPath.Text = "Path";
+			colFgdPath.Text = "Path";
 			// 
 			// btnAddFgd
 			// 
-			this.btnAddFgd.Location = new System.Drawing.Point(369, 19);
-			this.btnAddFgd.Name = "btnAddFgd";
-			this.btnAddFgd.Size = new System.Drawing.Size(74, 23);
-			this.btnAddFgd.TabIndex = 27;
-			this.btnAddFgd.Text = "Add...";
-			this.btnAddFgd.UseVisualStyleBackColor = true;
-			this.btnAddFgd.Click += new System.EventHandler(this.BrowseFgd);
+			btnAddFgd.Location = new System.Drawing.Point(430, 22);
+			btnAddFgd.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			btnAddFgd.Name = "btnAddFgd";
+			btnAddFgd.Size = new System.Drawing.Size(86, 27);
+			btnAddFgd.TabIndex = 27;
+			btnAddFgd.Text = "Add...";
+			btnAddFgd.UseVisualStyleBackColor = true;
+			btnAddFgd.Click += BrowseFgd;
 			// 
 			// lblDefaultBrushEntity
 			// 
-			this.lblDefaultBrushEntity.Location = new System.Drawing.Point(7, 168);
-			this.lblDefaultBrushEntity.Name = "lblDefaultBrushEntity";
-			this.lblDefaultBrushEntity.Size = new System.Drawing.Size(151, 20);
-			this.lblDefaultBrushEntity.TabIndex = 30;
-			this.lblDefaultBrushEntity.Text = "Default Brush Entity";
-			this.lblDefaultBrushEntity.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			lblDefaultBrushEntity.Location = new System.Drawing.Point(8, 194);
+			lblDefaultBrushEntity.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			lblDefaultBrushEntity.Name = "lblDefaultBrushEntity";
+			lblDefaultBrushEntity.Size = new System.Drawing.Size(176, 23);
+			lblDefaultBrushEntity.TabIndex = 30;
+			lblDefaultBrushEntity.Text = "Default Brush Entity";
+			lblDefaultBrushEntity.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// btnRemoveFgd
 			// 
-			this.btnRemoveFgd.Location = new System.Drawing.Point(369, 48);
-			this.btnRemoveFgd.Name = "btnRemoveFgd";
-			this.btnRemoveFgd.Size = new System.Drawing.Size(74, 23);
-			this.btnRemoveFgd.TabIndex = 28;
-			this.btnRemoveFgd.Text = "Remove";
-			this.btnRemoveFgd.UseVisualStyleBackColor = true;
-			this.btnRemoveFgd.Click += new System.EventHandler(this.RemoveFgd);
+			btnRemoveFgd.Location = new System.Drawing.Point(430, 55);
+			btnRemoveFgd.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			btnRemoveFgd.Name = "btnRemoveFgd";
+			btnRemoveFgd.Size = new System.Drawing.Size(86, 27);
+			btnRemoveFgd.TabIndex = 28;
+			btnRemoveFgd.Text = "Remove";
+			btnRemoveFgd.UseVisualStyleBackColor = true;
+			btnRemoveFgd.Click += RemoveFgd;
 			// 
 			// lblDefaultPointEntity
 			// 
-			this.lblDefaultPointEntity.Location = new System.Drawing.Point(7, 141);
-			this.lblDefaultPointEntity.Name = "lblDefaultPointEntity";
-			this.lblDefaultPointEntity.Size = new System.Drawing.Size(151, 20);
-			this.lblDefaultPointEntity.TabIndex = 31;
-			this.lblDefaultPointEntity.Text = "Default Point Entity";
-			this.lblDefaultPointEntity.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			lblDefaultPointEntity.Location = new System.Drawing.Point(8, 163);
+			lblDefaultPointEntity.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			lblDefaultPointEntity.Name = "lblDefaultPointEntity";
+			lblDefaultPointEntity.Size = new System.Drawing.Size(176, 23);
+			lblDefaultPointEntity.TabIndex = 31;
+			lblDefaultPointEntity.Text = "Default Point Entity";
+			lblDefaultPointEntity.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// cmbDefaultBrushEntity
 			// 
-			this.cmbDefaultBrushEntity.DropDownHeight = 300;
-			this.cmbDefaultBrushEntity.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.cmbDefaultBrushEntity.FormattingEnabled = true;
-			this.cmbDefaultBrushEntity.IntegralHeight = false;
-			this.cmbDefaultBrushEntity.Items.AddRange(new object[] {
-            "Valve"});
-			this.cmbDefaultBrushEntity.Location = new System.Drawing.Point(164, 167);
-			this.cmbDefaultBrushEntity.Name = "cmbDefaultBrushEntity";
-			this.cmbDefaultBrushEntity.Size = new System.Drawing.Size(199, 21);
-			this.cmbDefaultBrushEntity.TabIndex = 32;
+			cmbDefaultBrushEntity.DropDownHeight = 300;
+			cmbDefaultBrushEntity.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			cmbDefaultBrushEntity.FormattingEnabled = true;
+			cmbDefaultBrushEntity.IntegralHeight = false;
+			cmbDefaultBrushEntity.Items.AddRange(new object[] { "Valve" });
+			cmbDefaultBrushEntity.Location = new System.Drawing.Point(191, 193);
+			cmbDefaultBrushEntity.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			cmbDefaultBrushEntity.Name = "cmbDefaultBrushEntity";
+			cmbDefaultBrushEntity.Size = new System.Drawing.Size(231, 23);
+			cmbDefaultBrushEntity.TabIndex = 32;
 			// 
 			// cmbDefaultPointEntity
 			// 
-			this.cmbDefaultPointEntity.DropDownHeight = 300;
-			this.cmbDefaultPointEntity.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.cmbDefaultPointEntity.FormattingEnabled = true;
-			this.cmbDefaultPointEntity.IntegralHeight = false;
-			this.cmbDefaultPointEntity.Items.AddRange(new object[] {
-            "Valve"});
-			this.cmbDefaultPointEntity.Location = new System.Drawing.Point(164, 140);
-			this.cmbDefaultPointEntity.Name = "cmbDefaultPointEntity";
-			this.cmbDefaultPointEntity.Size = new System.Drawing.Size(199, 21);
-			this.cmbDefaultPointEntity.TabIndex = 33;
+			cmbDefaultPointEntity.DropDownHeight = 300;
+			cmbDefaultPointEntity.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			cmbDefaultPointEntity.FormattingEnabled = true;
+			cmbDefaultPointEntity.IntegralHeight = false;
+			cmbDefaultPointEntity.Items.AddRange(new object[] { "Valve" });
+			cmbDefaultPointEntity.Location = new System.Drawing.Point(191, 162);
+			cmbDefaultPointEntity.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			cmbDefaultPointEntity.Name = "cmbDefaultPointEntity";
+			cmbDefaultPointEntity.Size = new System.Drawing.Size(231, 23);
+			cmbDefaultPointEntity.TabIndex = 33;
 			// 
 			// nudDefaultTextureScale
 			// 
-			this.nudDefaultTextureScale.DecimalPlaces = 2;
-			this.nudDefaultTextureScale.Increment = new decimal(new int[] {
-            5,
-            0,
-            0,
-            131072});
-			this.nudDefaultTextureScale.Location = new System.Drawing.Point(198, 16);
-			this.nudDefaultTextureScale.Name = "nudDefaultTextureScale";
-			this.nudDefaultTextureScale.Size = new System.Drawing.Size(51, 20);
-			this.nudDefaultTextureScale.TabIndex = 38;
-			this.nudDefaultTextureScale.Value = new decimal(new int[] {
-            25,
-            0,
-            0,
-            131072});
+			nudDefaultTextureScale.DecimalPlaces = 2;
+			nudDefaultTextureScale.Increment = new decimal(new int[] { 5, 0, 0, 131072 });
+			nudDefaultTextureScale.Location = new System.Drawing.Point(231, 18);
+			nudDefaultTextureScale.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			nudDefaultTextureScale.Name = "nudDefaultTextureScale";
+			nudDefaultTextureScale.Size = new System.Drawing.Size(59, 23);
+			nudDefaultTextureScale.TabIndex = 38;
+			nudDefaultTextureScale.Value = new decimal(new int[] { 25, 0, 0, 131072 });
 			// 
 			// lblDefaultTextureScale
 			// 
-			this.lblDefaultTextureScale.Location = new System.Drawing.Point(6, 16);
-			this.lblDefaultTextureScale.Name = "lblDefaultTextureScale";
-			this.lblDefaultTextureScale.Size = new System.Drawing.Size(186, 20);
-			this.lblDefaultTextureScale.TabIndex = 36;
-			this.lblDefaultTextureScale.Text = "Default Texture Scale";
-			this.lblDefaultTextureScale.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			lblDefaultTextureScale.Location = new System.Drawing.Point(7, 18);
+			lblDefaultTextureScale.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			lblDefaultTextureScale.Name = "lblDefaultTextureScale";
+			lblDefaultTextureScale.Size = new System.Drawing.Size(217, 23);
+			lblDefaultTextureScale.TabIndex = 36;
+			lblDefaultTextureScale.Text = "Default Texture Scale";
+			lblDefaultTextureScale.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// chkIncludeFgdDirectories
 			// 
-			this.chkIncludeFgdDirectories.Checked = true;
-			this.chkIncludeFgdDirectories.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.chkIncludeFgdDirectories.Location = new System.Drawing.Point(6, 194);
-			this.chkIncludeFgdDirectories.Name = "chkIncludeFgdDirectories";
-			this.chkIncludeFgdDirectories.Size = new System.Drawing.Size(357, 24);
-			this.chkIncludeFgdDirectories.TabIndex = 39;
-			this.chkIncludeFgdDirectories.Text = "Load sprites and models from FGD directories";
-			this.chkIncludeFgdDirectories.UseVisualStyleBackColor = true;
+			chkIncludeFgdDirectories.Checked = true;
+			chkIncludeFgdDirectories.CheckState = System.Windows.Forms.CheckState.Checked;
+			chkIncludeFgdDirectories.Location = new System.Drawing.Point(7, 224);
+			chkIncludeFgdDirectories.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			chkIncludeFgdDirectories.Name = "chkIncludeFgdDirectories";
+			chkIncludeFgdDirectories.Size = new System.Drawing.Size(416, 28);
+			chkIncludeFgdDirectories.TabIndex = 39;
+			chkIncludeFgdDirectories.Text = "Load sprites and models from FGD directories";
+			chkIncludeFgdDirectories.UseVisualStyleBackColor = true;
 			// 
 			// cmbMapSizeOverrideHigh
 			// 
-			this.cmbMapSizeOverrideHigh.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.cmbMapSizeOverrideHigh.FormattingEnabled = true;
-			this.cmbMapSizeOverrideHigh.Items.AddRange(new object[] {
-            "4096",
-            "8192",
-            "16384",
-            "32768",
-            "65536",
-            "131072"});
-			this.cmbMapSizeOverrideHigh.Location = new System.Drawing.Point(75, 275);
-			this.cmbMapSizeOverrideHigh.Name = "cmbMapSizeOverrideHigh";
-			this.cmbMapSizeOverrideHigh.Size = new System.Drawing.Size(57, 21);
-			this.cmbMapSizeOverrideHigh.TabIndex = 44;
+			cmbMapSizeOverrideHigh.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			cmbMapSizeOverrideHigh.FormattingEnabled = true;
+			cmbMapSizeOverrideHigh.Items.AddRange(new object[] { "4096", "8192", "16384", "32768", "65536", "131072" });
+			cmbMapSizeOverrideHigh.Location = new System.Drawing.Point(88, 317);
+			cmbMapSizeOverrideHigh.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			cmbMapSizeOverrideHigh.Name = "cmbMapSizeOverrideHigh";
+			cmbMapSizeOverrideHigh.Size = new System.Drawing.Size(66, 23);
+			cmbMapSizeOverrideHigh.TabIndex = 44;
 			// 
 			// lblMapSizeOverrideHigh
 			// 
-			this.lblMapSizeOverrideHigh.Location = new System.Drawing.Point(5, 274);
-			this.lblMapSizeOverrideHigh.Name = "lblMapSizeOverrideHigh";
-			this.lblMapSizeOverrideHigh.Size = new System.Drawing.Size(64, 20);
-			this.lblMapSizeOverrideHigh.TabIndex = 43;
-			this.lblMapSizeOverrideHigh.Text = "High";
-			this.lblMapSizeOverrideHigh.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			lblMapSizeOverrideHigh.Location = new System.Drawing.Point(6, 316);
+			lblMapSizeOverrideHigh.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			lblMapSizeOverrideHigh.Name = "lblMapSizeOverrideHigh";
+			lblMapSizeOverrideHigh.Size = new System.Drawing.Size(75, 23);
+			lblMapSizeOverrideHigh.TabIndex = 43;
+			lblMapSizeOverrideHigh.Text = "High";
+			lblMapSizeOverrideHigh.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// cmbMapSizeOverrideLow
 			// 
-			this.cmbMapSizeOverrideLow.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.cmbMapSizeOverrideLow.FormattingEnabled = true;
-			this.cmbMapSizeOverrideLow.Items.AddRange(new object[] {
-            "-4096",
-            "-8192",
-            "-16384",
-            "-32768",
-            "-65536",
-            "-131072"});
-			this.cmbMapSizeOverrideLow.Location = new System.Drawing.Point(75, 248);
-			this.cmbMapSizeOverrideLow.Name = "cmbMapSizeOverrideLow";
-			this.cmbMapSizeOverrideLow.Size = new System.Drawing.Size(57, 21);
-			this.cmbMapSizeOverrideLow.TabIndex = 42;
+			cmbMapSizeOverrideLow.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			cmbMapSizeOverrideLow.FormattingEnabled = true;
+			cmbMapSizeOverrideLow.Items.AddRange(new object[] { "-4096", "-8192", "-16384", "-32768", "-65536", "-131072" });
+			cmbMapSizeOverrideLow.Location = new System.Drawing.Point(88, 286);
+			cmbMapSizeOverrideLow.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			cmbMapSizeOverrideLow.Name = "cmbMapSizeOverrideLow";
+			cmbMapSizeOverrideLow.Size = new System.Drawing.Size(66, 23);
+			cmbMapSizeOverrideLow.TabIndex = 42;
 			// 
 			// chkOverrideMapSize
 			// 
-			this.chkOverrideMapSize.Checked = true;
-			this.chkOverrideMapSize.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.chkOverrideMapSize.Location = new System.Drawing.Point(6, 221);
-			this.chkOverrideMapSize.Name = "chkOverrideMapSize";
-			this.chkOverrideMapSize.Size = new System.Drawing.Size(196, 24);
-			this.chkOverrideMapSize.TabIndex = 41;
-			this.chkOverrideMapSize.Text = "Override FGD map size";
-			this.chkOverrideMapSize.UseVisualStyleBackColor = true;
+			chkOverrideMapSize.Checked = true;
+			chkOverrideMapSize.CheckState = System.Windows.Forms.CheckState.Checked;
+			chkOverrideMapSize.Location = new System.Drawing.Point(7, 255);
+			chkOverrideMapSize.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			chkOverrideMapSize.Name = "chkOverrideMapSize";
+			chkOverrideMapSize.Size = new System.Drawing.Size(229, 28);
+			chkOverrideMapSize.TabIndex = 41;
+			chkOverrideMapSize.Text = "Override FGD map size";
+			chkOverrideMapSize.UseVisualStyleBackColor = true;
 			// 
 			// lblMapSizeOverrideLow
 			// 
-			this.lblMapSizeOverrideLow.Location = new System.Drawing.Point(6, 249);
-			this.lblMapSizeOverrideLow.Name = "lblMapSizeOverrideLow";
-			this.lblMapSizeOverrideLow.Size = new System.Drawing.Size(63, 20);
-			this.lblMapSizeOverrideLow.TabIndex = 40;
-			this.lblMapSizeOverrideLow.Text = "Low";
-			this.lblMapSizeOverrideLow.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			lblMapSizeOverrideLow.Location = new System.Drawing.Point(7, 287);
+			lblMapSizeOverrideLow.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			lblMapSizeOverrideLow.Name = "lblMapSizeOverrideLow";
+			lblMapSizeOverrideLow.Size = new System.Drawing.Size(74, 23);
+			lblMapSizeOverrideLow.TabIndex = 40;
+			lblMapSizeOverrideLow.Text = "Low";
+			lblMapSizeOverrideLow.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// chkLoadHdModels
 			// 
-			this.chkLoadHdModels.Checked = true;
-			this.chkLoadHdModels.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.chkLoadHdModels.Location = new System.Drawing.Point(210, 123);
-			this.chkLoadHdModels.Name = "chkLoadHdModels";
-			this.chkLoadHdModels.Size = new System.Drawing.Size(243, 24);
-			this.chkLoadHdModels.TabIndex = 45;
-			this.chkLoadHdModels.Text = "Load HD Models (if available)";
-			this.chkLoadHdModels.UseVisualStyleBackColor = true;
+			chkLoadHdModels.Checked = true;
+			chkLoadHdModels.CheckState = System.Windows.Forms.CheckState.Checked;
+			chkLoadHdModels.Location = new System.Drawing.Point(245, 142);
+			chkLoadHdModels.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			chkLoadHdModels.Name = "chkLoadHdModels";
+			chkLoadHdModels.Size = new System.Drawing.Size(284, 28);
+			chkLoadHdModels.TabIndex = 45;
+			chkLoadHdModels.Text = "Load HD Models (if available)";
+			chkLoadHdModels.UseVisualStyleBackColor = true;
 			// 
 			// grpDirectories
 			// 
-			this.grpDirectories.Controls.Add(this.lblGameDir);
-			this.grpDirectories.Controls.Add(this.cmbGameMod);
-			this.grpDirectories.Controls.Add(this.chkLoadHdModels);
-			this.grpDirectories.Controls.Add(this.cmbGameExe);
-			this.grpDirectories.Controls.Add(this.lblGameMod);
-			this.grpDirectories.Controls.Add(this.lblGameExe);
-			this.grpDirectories.Controls.Add(this.btnGameDirBrowse);
-			this.grpDirectories.Controls.Add(this.txtGameDir);
-			this.grpDirectories.Controls.Add(this.cmbBaseGame);
-			this.grpDirectories.Controls.Add(this.lblBaseGame);
-			this.grpDirectories.Location = new System.Drawing.Point(6, 3);
-			this.grpDirectories.Name = "grpDirectories";
-			this.grpDirectories.Size = new System.Drawing.Size(459, 160);
-			this.grpDirectories.TabIndex = 46;
-			this.grpDirectories.TabStop = false;
-			this.grpDirectories.Text = "Directories";
+			grpDirectories.Controls.Add(lblGameDir);
+			grpDirectories.Controls.Add(cmbGameMod);
+			grpDirectories.Controls.Add(chkLoadHdModels);
+			grpDirectories.Controls.Add(cmbGameExe);
+			grpDirectories.Controls.Add(lblGameMod);
+			grpDirectories.Controls.Add(lblGameExe);
+			grpDirectories.Controls.Add(btnGameDirBrowse);
+			grpDirectories.Controls.Add(txtGameDir);
+			grpDirectories.Controls.Add(cmbBaseGame);
+			grpDirectories.Controls.Add(lblBaseGame);
+			grpDirectories.Location = new System.Drawing.Point(7, 3);
+			grpDirectories.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			grpDirectories.Name = "grpDirectories";
+			grpDirectories.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			grpDirectories.Size = new System.Drawing.Size(536, 185);
+			grpDirectories.TabIndex = 46;
+			grpDirectories.TabStop = false;
+			grpDirectories.Text = "Directories";
 			// 
 			// grpFgds
 			// 
-			this.grpFgds.Controls.Add(this.lstFgds);
-			this.grpFgds.Controls.Add(this.cmbDefaultPointEntity);
-			this.grpFgds.Controls.Add(this.cmbDefaultBrushEntity);
-			this.grpFgds.Controls.Add(this.chkIncludeFgdDirectories);
-			this.grpFgds.Controls.Add(this.cmbMapSizeOverrideHigh);
-			this.grpFgds.Controls.Add(this.lblDefaultPointEntity);
-			this.grpFgds.Controls.Add(this.lblMapSizeOverrideHigh);
-			this.grpFgds.Controls.Add(this.btnRemoveFgd);
-			this.grpFgds.Controls.Add(this.cmbMapSizeOverrideLow);
-			this.grpFgds.Controls.Add(this.lblDefaultBrushEntity);
-			this.grpFgds.Controls.Add(this.chkOverrideMapSize);
-			this.grpFgds.Controls.Add(this.btnAddFgd);
-			this.grpFgds.Controls.Add(this.lblMapSizeOverrideLow);
-			this.grpFgds.Location = new System.Drawing.Point(6, 169);
-			this.grpFgds.Name = "grpFgds";
-			this.grpFgds.Size = new System.Drawing.Size(459, 304);
-			this.grpFgds.TabIndex = 47;
-			this.grpFgds.TabStop = false;
-			this.grpFgds.Text = "Game Data Files";
+			grpFgds.Controls.Add(gridUpDown);
+			grpFgds.Controls.Add(DefaultGridSizeLabel);
+			grpFgds.Controls.Add(lstFgds);
+			grpFgds.Controls.Add(cmbDefaultPointEntity);
+			grpFgds.Controls.Add(cmbDefaultBrushEntity);
+			grpFgds.Controls.Add(chkIncludeFgdDirectories);
+			grpFgds.Controls.Add(cmbMapSizeOverrideHigh);
+			grpFgds.Controls.Add(lblDefaultPointEntity);
+			grpFgds.Controls.Add(lblMapSizeOverrideHigh);
+			grpFgds.Controls.Add(btnRemoveFgd);
+			grpFgds.Controls.Add(cmbMapSizeOverrideLow);
+			grpFgds.Controls.Add(lblDefaultBrushEntity);
+			grpFgds.Controls.Add(chkOverrideMapSize);
+			grpFgds.Controls.Add(btnAddFgd);
+			grpFgds.Controls.Add(lblMapSizeOverrideLow);
+			grpFgds.Location = new System.Drawing.Point(7, 195);
+			grpFgds.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			grpFgds.Name = "grpFgds";
+			grpFgds.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			grpFgds.Size = new System.Drawing.Size(536, 351);
+			grpFgds.TabIndex = 47;
+			grpFgds.TabStop = false;
+			grpFgds.Text = "Game Data Files";
+			// 
+			// gridUpDown
+			// 
+			gridUpDown.DecimalPlaces = 2;
+			gridUpDown.Location = new System.Drawing.Point(311, 259);
+			gridUpDown.Maximum = new decimal(new int[] { 1024, 0, 0, 0 });
+			gridUpDown.Name = "gridUpDown";
+			gridUpDown.Size = new System.Drawing.Size(120, 23);
+			gridUpDown.TabIndex = 47;
+			// 
+			// DefaultGridSizeLabel
+			// 
+			DefaultGridSizeLabel.AutoSize = true;
+			DefaultGridSizeLabel.Location = new System.Drawing.Point(211, 261);
+			DefaultGridSizeLabel.Name = "DefaultGridSizeLabel";
+			DefaultGridSizeLabel.Size = new System.Drawing.Size(94, 15);
+			DefaultGridSizeLabel.TabIndex = 46;
+			DefaultGridSizeLabel.Text = "Default grid size:";
 			// 
 			// grpBuildTools
 			// 
-			this.grpBuildTools.Controls.Add(this.lblCopyToMapFolder);
-			this.grpBuildTools.Controls.Add(this.chkCopyBsp);
-			this.grpBuildTools.Controls.Add(this.chkCopyRes);
-			this.grpBuildTools.Controls.Add(this.chkCopyErr);
-			this.grpBuildTools.Controls.Add(this.chkCopyLog);
-			this.grpBuildTools.Controls.Add(this.chkCopyMap);
-			this.grpBuildTools.Controls.Add(this.chkMapCopyBsp);
-			this.grpBuildTools.Controls.Add(this.chkAskRunGame);
-			this.grpBuildTools.Controls.Add(this.chkRunGame);
-			this.grpBuildTools.Controls.Add(this.chkIncludeToolsDirectory);
-			this.grpBuildTools.Controls.Add(this.lblBuildExeFolder);
-			this.grpBuildTools.Controls.Add(this.lblBuildBSP);
-			this.grpBuildTools.Controls.Add(this.txtBuildToolsDirectory);
-			this.grpBuildTools.Controls.Add(this.lblBuildCSG);
-			this.grpBuildTools.Controls.Add(this.cmbRadExe);
-			this.grpBuildTools.Controls.Add(this.cmbBspExe);
-			this.grpBuildTools.Controls.Add(this.lblBuildVIS);
-			this.grpBuildTools.Controls.Add(this.cmbVisExe);
-			this.grpBuildTools.Controls.Add(this.cmbCsgExe);
-			this.grpBuildTools.Controls.Add(this.lblBuildRAD);
-			this.grpBuildTools.Controls.Add(this.btnBuildToolsBrowse);
-			this.grpBuildTools.Location = new System.Drawing.Point(6, 479);
-			this.grpBuildTools.Name = "grpBuildTools";
-			this.grpBuildTools.Size = new System.Drawing.Size(459, 307);
-			this.grpBuildTools.TabIndex = 48;
-			this.grpBuildTools.TabStop = false;
-			this.grpBuildTools.Text = "Build Tools";
+			grpBuildTools.Controls.Add(lblCopyToMapFolder);
+			grpBuildTools.Controls.Add(chkCopyBsp);
+			grpBuildTools.Controls.Add(chkCopyRes);
+			grpBuildTools.Controls.Add(chkCopyErr);
+			grpBuildTools.Controls.Add(chkCopyLog);
+			grpBuildTools.Controls.Add(chkCopyMap);
+			grpBuildTools.Controls.Add(chkMapCopyBsp);
+			grpBuildTools.Controls.Add(chkAskRunGame);
+			grpBuildTools.Controls.Add(chkRunGame);
+			grpBuildTools.Controls.Add(chkIncludeToolsDirectory);
+			grpBuildTools.Controls.Add(lblBuildExeFolder);
+			grpBuildTools.Controls.Add(lblBuildBSP);
+			grpBuildTools.Controls.Add(txtBuildToolsDirectory);
+			grpBuildTools.Controls.Add(lblBuildCSG);
+			grpBuildTools.Controls.Add(cmbRadExe);
+			grpBuildTools.Controls.Add(cmbBspExe);
+			grpBuildTools.Controls.Add(lblBuildVIS);
+			grpBuildTools.Controls.Add(cmbVisExe);
+			grpBuildTools.Controls.Add(cmbCsgExe);
+			grpBuildTools.Controls.Add(lblBuildRAD);
+			grpBuildTools.Controls.Add(btnBuildToolsBrowse);
+			grpBuildTools.Location = new System.Drawing.Point(7, 553);
+			grpBuildTools.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			grpBuildTools.Name = "grpBuildTools";
+			grpBuildTools.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			grpBuildTools.Size = new System.Drawing.Size(536, 354);
+			grpBuildTools.TabIndex = 48;
+			grpBuildTools.TabStop = false;
+			grpBuildTools.Text = "Build Tools";
 			// 
 			// lblCopyToMapFolder
 			// 
-			this.lblCopyToMapFolder.Location = new System.Drawing.Point(6, 277);
-			this.lblCopyToMapFolder.Name = "lblCopyToMapFolder";
-			this.lblCopyToMapFolder.Size = new System.Drawing.Size(182, 20);
-			this.lblCopyToMapFolder.TabIndex = 43;
-			this.lblCopyToMapFolder.Text = "Copy to map folder:";
-			this.lblCopyToMapFolder.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			lblCopyToMapFolder.Location = new System.Drawing.Point(7, 320);
+			lblCopyToMapFolder.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			lblCopyToMapFolder.Name = "lblCopyToMapFolder";
+			lblCopyToMapFolder.Size = new System.Drawing.Size(212, 23);
+			lblCopyToMapFolder.TabIndex = 43;
+			lblCopyToMapFolder.Text = "Copy to map folder:";
+			lblCopyToMapFolder.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// chkCopyBsp
 			// 
-			this.chkCopyBsp.Checked = true;
-			this.chkCopyBsp.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.chkCopyBsp.Location = new System.Drawing.Point(75, 202);
-			this.chkCopyBsp.Name = "chkCopyBsp";
-			this.chkCopyBsp.Size = new System.Drawing.Size(368, 20);
-			this.chkCopyBsp.TabIndex = 42;
-			this.chkCopyBsp.Text = "Copy BSP/RES to game folder";
-			this.chkCopyBsp.UseVisualStyleBackColor = true;
+			chkCopyBsp.Checked = true;
+			chkCopyBsp.CheckState = System.Windows.Forms.CheckState.Checked;
+			chkCopyBsp.Location = new System.Drawing.Point(88, 233);
+			chkCopyBsp.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			chkCopyBsp.Name = "chkCopyBsp";
+			chkCopyBsp.Size = new System.Drawing.Size(429, 23);
+			chkCopyBsp.TabIndex = 42;
+			chkCopyBsp.Text = "Copy BSP/RES to game folder";
+			chkCopyBsp.UseVisualStyleBackColor = true;
 			// 
 			// chkCopyRes
 			// 
-			this.chkCopyRes.Checked = true;
-			this.chkCopyRes.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.chkCopyRes.Location = new System.Drawing.Point(379, 276);
-			this.chkCopyRes.Name = "chkCopyRes";
-			this.chkCopyRes.Size = new System.Drawing.Size(49, 24);
-			this.chkCopyRes.TabIndex = 42;
-			this.chkCopyRes.Text = "RES";
-			this.chkCopyRes.UseVisualStyleBackColor = true;
+			chkCopyRes.Checked = true;
+			chkCopyRes.CheckState = System.Windows.Forms.CheckState.Checked;
+			chkCopyRes.Location = new System.Drawing.Point(442, 318);
+			chkCopyRes.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			chkCopyRes.Name = "chkCopyRes";
+			chkCopyRes.Size = new System.Drawing.Size(57, 28);
+			chkCopyRes.TabIndex = 42;
+			chkCopyRes.Text = "RES";
+			chkCopyRes.UseVisualStyleBackColor = true;
 			// 
 			// chkCopyErr
 			// 
-			this.chkCopyErr.Checked = true;
-			this.chkCopyErr.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.chkCopyErr.Location = new System.Drawing.Point(332, 276);
-			this.chkCopyErr.Name = "chkCopyErr";
-			this.chkCopyErr.Size = new System.Drawing.Size(49, 24);
-			this.chkCopyErr.TabIndex = 42;
-			this.chkCopyErr.Text = "ERR";
-			this.chkCopyErr.UseVisualStyleBackColor = true;
+			chkCopyErr.Checked = true;
+			chkCopyErr.CheckState = System.Windows.Forms.CheckState.Checked;
+			chkCopyErr.Location = new System.Drawing.Point(387, 318);
+			chkCopyErr.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			chkCopyErr.Name = "chkCopyErr";
+			chkCopyErr.Size = new System.Drawing.Size(57, 28);
+			chkCopyErr.TabIndex = 42;
+			chkCopyErr.Text = "ERR";
+			chkCopyErr.UseVisualStyleBackColor = true;
 			// 
 			// chkCopyLog
 			// 
-			this.chkCopyLog.Checked = true;
-			this.chkCopyLog.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.chkCopyLog.Location = new System.Drawing.Point(284, 276);
-			this.chkCopyLog.Name = "chkCopyLog";
-			this.chkCopyLog.Size = new System.Drawing.Size(49, 24);
-			this.chkCopyLog.TabIndex = 42;
-			this.chkCopyLog.Text = "LOG";
-			this.chkCopyLog.UseVisualStyleBackColor = true;
+			chkCopyLog.Checked = true;
+			chkCopyLog.CheckState = System.Windows.Forms.CheckState.Checked;
+			chkCopyLog.Location = new System.Drawing.Point(331, 318);
+			chkCopyLog.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			chkCopyLog.Name = "chkCopyLog";
+			chkCopyLog.Size = new System.Drawing.Size(57, 28);
+			chkCopyLog.TabIndex = 42;
+			chkCopyLog.Text = "LOG";
+			chkCopyLog.UseVisualStyleBackColor = true;
 			// 
 			// chkCopyMap
 			// 
-			this.chkCopyMap.Checked = true;
-			this.chkCopyMap.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.chkCopyMap.Location = new System.Drawing.Point(238, 276);
-			this.chkCopyMap.Name = "chkCopyMap";
-			this.chkCopyMap.Size = new System.Drawing.Size(49, 24);
-			this.chkCopyMap.TabIndex = 42;
-			this.chkCopyMap.Text = "MAP";
-			this.chkCopyMap.UseVisualStyleBackColor = true;
+			chkCopyMap.Checked = true;
+			chkCopyMap.CheckState = System.Windows.Forms.CheckState.Checked;
+			chkCopyMap.Location = new System.Drawing.Point(278, 318);
+			chkCopyMap.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			chkCopyMap.Name = "chkCopyMap";
+			chkCopyMap.Size = new System.Drawing.Size(57, 28);
+			chkCopyMap.TabIndex = 42;
+			chkCopyMap.Text = "MAP";
+			chkCopyMap.UseVisualStyleBackColor = true;
 			// 
 			// chkMapCopyBsp
 			// 
-			this.chkMapCopyBsp.Checked = true;
-			this.chkMapCopyBsp.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.chkMapCopyBsp.Location = new System.Drawing.Point(194, 276);
-			this.chkMapCopyBsp.Name = "chkMapCopyBsp";
-			this.chkMapCopyBsp.Size = new System.Drawing.Size(49, 24);
-			this.chkMapCopyBsp.TabIndex = 42;
-			this.chkMapCopyBsp.Text = "BSP";
-			this.chkMapCopyBsp.UseVisualStyleBackColor = true;
+			chkMapCopyBsp.Checked = true;
+			chkMapCopyBsp.CheckState = System.Windows.Forms.CheckState.Checked;
+			chkMapCopyBsp.Location = new System.Drawing.Point(226, 318);
+			chkMapCopyBsp.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			chkMapCopyBsp.Name = "chkMapCopyBsp";
+			chkMapCopyBsp.Size = new System.Drawing.Size(57, 28);
+			chkMapCopyBsp.TabIndex = 42;
+			chkMapCopyBsp.Text = "BSP";
+			chkMapCopyBsp.UseVisualStyleBackColor = true;
 			// 
 			// chkAskRunGame
 			// 
-			this.chkAskRunGame.Checked = true;
-			this.chkAskRunGame.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.chkAskRunGame.Location = new System.Drawing.Point(75, 254);
-			this.chkAskRunGame.Name = "chkAskRunGame";
-			this.chkAskRunGame.Size = new System.Drawing.Size(368, 20);
-			this.chkAskRunGame.TabIndex = 42;
-			this.chkAskRunGame.Text = "Ask before running the game";
-			this.chkAskRunGame.UseVisualStyleBackColor = true;
+			chkAskRunGame.Checked = true;
+			chkAskRunGame.CheckState = System.Windows.Forms.CheckState.Checked;
+			chkAskRunGame.Location = new System.Drawing.Point(88, 293);
+			chkAskRunGame.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			chkAskRunGame.Name = "chkAskRunGame";
+			chkAskRunGame.Size = new System.Drawing.Size(429, 23);
+			chkAskRunGame.TabIndex = 42;
+			chkAskRunGame.Text = "Ask before running the game";
+			chkAskRunGame.UseVisualStyleBackColor = true;
 			// 
 			// chkRunGame
 			// 
-			this.chkRunGame.Checked = true;
-			this.chkRunGame.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.chkRunGame.Location = new System.Drawing.Point(75, 228);
-			this.chkRunGame.Name = "chkRunGame";
-			this.chkRunGame.Size = new System.Drawing.Size(368, 20);
-			this.chkRunGame.TabIndex = 42;
-			this.chkRunGame.Text = "Run the game after successful compile";
-			this.chkRunGame.UseVisualStyleBackColor = true;
+			chkRunGame.Checked = true;
+			chkRunGame.CheckState = System.Windows.Forms.CheckState.Checked;
+			chkRunGame.Location = new System.Drawing.Point(88, 263);
+			chkRunGame.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			chkRunGame.Name = "chkRunGame";
+			chkRunGame.Size = new System.Drawing.Size(429, 23);
+			chkRunGame.TabIndex = 42;
+			chkRunGame.Text = "Run the game after successful compile";
+			chkRunGame.UseVisualStyleBackColor = true;
 			// 
 			// chkIncludeToolsDirectory
 			// 
-			this.chkIncludeToolsDirectory.Checked = true;
-			this.chkIncludeToolsDirectory.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.chkIncludeToolsDirectory.Location = new System.Drawing.Point(9, 64);
-			this.chkIncludeToolsDirectory.Name = "chkIncludeToolsDirectory";
-			this.chkIncludeToolsDirectory.Size = new System.Drawing.Size(434, 20);
-			this.chkIncludeToolsDirectory.TabIndex = 33;
-			this.chkIncludeToolsDirectory.Text = "Automatically include textures found in this directory";
-			this.chkIncludeToolsDirectory.UseVisualStyleBackColor = true;
-			this.chkIncludeToolsDirectory.CheckedChanged += new System.EventHandler(this.IncludeBuildToolsChanged);
+			chkIncludeToolsDirectory.Checked = true;
+			chkIncludeToolsDirectory.CheckState = System.Windows.Forms.CheckState.Checked;
+			chkIncludeToolsDirectory.Location = new System.Drawing.Point(10, 74);
+			chkIncludeToolsDirectory.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			chkIncludeToolsDirectory.Name = "chkIncludeToolsDirectory";
+			chkIncludeToolsDirectory.Size = new System.Drawing.Size(506, 23);
+			chkIncludeToolsDirectory.TabIndex = 33;
+			chkIncludeToolsDirectory.Text = "Automatically include textures found in this directory";
+			chkIncludeToolsDirectory.UseVisualStyleBackColor = true;
+			chkIncludeToolsDirectory.CheckedChanged += IncludeBuildToolsChanged;
 			// 
 			// lblBuildExeFolder
 			// 
-			this.lblBuildExeFolder.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.lblBuildExeFolder.Location = new System.Drawing.Point(6, 16);
-			this.lblBuildExeFolder.Name = "lblBuildExeFolder";
-			this.lblBuildExeFolder.Size = new System.Drawing.Size(357, 20);
-			this.lblBuildExeFolder.TabIndex = 27;
-			this.lblBuildExeFolder.Text = "Folder containing build executables:";
-			this.lblBuildExeFolder.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			lblBuildExeFolder.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			lblBuildExeFolder.Location = new System.Drawing.Point(7, 18);
+			lblBuildExeFolder.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			lblBuildExeFolder.Name = "lblBuildExeFolder";
+			lblBuildExeFolder.Size = new System.Drawing.Size(416, 23);
+			lblBuildExeFolder.TabIndex = 27;
+			lblBuildExeFolder.Text = "Folder containing build executables:";
+			lblBuildExeFolder.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// lblBuildBSP
 			// 
-			this.lblBuildBSP.Location = new System.Drawing.Point(35, 91);
-			this.lblBuildBSP.Name = "lblBuildBSP";
-			this.lblBuildBSP.Size = new System.Drawing.Size(34, 20);
-			this.lblBuildBSP.TabIndex = 23;
-			this.lblBuildBSP.Text = "BSP";
-			this.lblBuildBSP.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			lblBuildBSP.Location = new System.Drawing.Point(41, 105);
+			lblBuildBSP.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			lblBuildBSP.Name = "lblBuildBSP";
+			lblBuildBSP.Size = new System.Drawing.Size(40, 23);
+			lblBuildBSP.TabIndex = 23;
+			lblBuildBSP.Text = "BSP";
+			lblBuildBSP.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// txtBuildToolsDirectory
 			// 
-			this.txtBuildToolsDirectory.Location = new System.Drawing.Point(9, 38);
-			this.txtBuildToolsDirectory.Name = "txtBuildToolsDirectory";
-			this.txtBuildToolsDirectory.Size = new System.Drawing.Size(354, 20);
-			this.txtBuildToolsDirectory.TabIndex = 22;
-			this.txtBuildToolsDirectory.Text = "example: C:\\hammer_alt";
-			this.txtBuildToolsDirectory.TextChanged += new System.EventHandler(this.BuildToolsDirectoryTextChanged);
+			txtBuildToolsDirectory.Location = new System.Drawing.Point(10, 44);
+			txtBuildToolsDirectory.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			txtBuildToolsDirectory.Name = "txtBuildToolsDirectory";
+			txtBuildToolsDirectory.Size = new System.Drawing.Size(412, 23);
+			txtBuildToolsDirectory.TabIndex = 22;
+			txtBuildToolsDirectory.Text = "example: C:\\hammer_alt";
+			txtBuildToolsDirectory.TextChanged += BuildToolsDirectoryTextChanged;
 			// 
 			// lblBuildCSG
 			// 
-			this.lblBuildCSG.Location = new System.Drawing.Point(35, 118);
-			this.lblBuildCSG.Name = "lblBuildCSG";
-			this.lblBuildCSG.Size = new System.Drawing.Size(34, 20);
-			this.lblBuildCSG.TabIndex = 24;
-			this.lblBuildCSG.Text = "CSG";
-			this.lblBuildCSG.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			lblBuildCSG.Location = new System.Drawing.Point(41, 136);
+			lblBuildCSG.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			lblBuildCSG.Name = "lblBuildCSG";
+			lblBuildCSG.Size = new System.Drawing.Size(40, 23);
+			lblBuildCSG.TabIndex = 24;
+			lblBuildCSG.Text = "CSG";
+			lblBuildCSG.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// cmbRadExe
 			// 
-			this.cmbRadExe.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.cmbRadExe.FormattingEnabled = true;
-			this.cmbRadExe.Location = new System.Drawing.Point(75, 171);
-			this.cmbRadExe.Name = "cmbRadExe";
-			this.cmbRadExe.Size = new System.Drawing.Size(153, 21);
-			this.cmbRadExe.TabIndex = 28;
+			cmbRadExe.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			cmbRadExe.FormattingEnabled = true;
+			cmbRadExe.Location = new System.Drawing.Point(88, 197);
+			cmbRadExe.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			cmbRadExe.Name = "cmbRadExe";
+			cmbRadExe.Size = new System.Drawing.Size(178, 23);
+			cmbRadExe.TabIndex = 28;
 			// 
 			// cmbBspExe
 			// 
-			this.cmbBspExe.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.cmbBspExe.FormattingEnabled = true;
-			this.cmbBspExe.Location = new System.Drawing.Point(75, 90);
-			this.cmbBspExe.Name = "cmbBspExe";
-			this.cmbBspExe.Size = new System.Drawing.Size(153, 21);
-			this.cmbBspExe.TabIndex = 29;
+			cmbBspExe.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			cmbBspExe.FormattingEnabled = true;
+			cmbBspExe.Location = new System.Drawing.Point(88, 104);
+			cmbBspExe.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			cmbBspExe.Name = "cmbBspExe";
+			cmbBspExe.Size = new System.Drawing.Size(178, 23);
+			cmbBspExe.TabIndex = 29;
 			// 
 			// lblBuildVIS
 			// 
-			this.lblBuildVIS.Location = new System.Drawing.Point(35, 145);
-			this.lblBuildVIS.Name = "lblBuildVIS";
-			this.lblBuildVIS.Size = new System.Drawing.Size(34, 20);
-			this.lblBuildVIS.TabIndex = 25;
-			this.lblBuildVIS.Text = "VIS";
-			this.lblBuildVIS.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			lblBuildVIS.Location = new System.Drawing.Point(41, 167);
+			lblBuildVIS.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			lblBuildVIS.Name = "lblBuildVIS";
+			lblBuildVIS.Size = new System.Drawing.Size(40, 23);
+			lblBuildVIS.TabIndex = 25;
+			lblBuildVIS.Text = "VIS";
+			lblBuildVIS.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// cmbVisExe
 			// 
-			this.cmbVisExe.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.cmbVisExe.FormattingEnabled = true;
-			this.cmbVisExe.Location = new System.Drawing.Point(75, 144);
-			this.cmbVisExe.Name = "cmbVisExe";
-			this.cmbVisExe.Size = new System.Drawing.Size(153, 21);
-			this.cmbVisExe.TabIndex = 30;
+			cmbVisExe.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			cmbVisExe.FormattingEnabled = true;
+			cmbVisExe.Location = new System.Drawing.Point(88, 166);
+			cmbVisExe.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			cmbVisExe.Name = "cmbVisExe";
+			cmbVisExe.Size = new System.Drawing.Size(178, 23);
+			cmbVisExe.TabIndex = 30;
 			// 
 			// cmbCsgExe
 			// 
-			this.cmbCsgExe.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.cmbCsgExe.FormattingEnabled = true;
-			this.cmbCsgExe.Location = new System.Drawing.Point(75, 117);
-			this.cmbCsgExe.Name = "cmbCsgExe";
-			this.cmbCsgExe.Size = new System.Drawing.Size(153, 21);
-			this.cmbCsgExe.TabIndex = 31;
+			cmbCsgExe.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			cmbCsgExe.FormattingEnabled = true;
+			cmbCsgExe.Location = new System.Drawing.Point(88, 135);
+			cmbCsgExe.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			cmbCsgExe.Name = "cmbCsgExe";
+			cmbCsgExe.Size = new System.Drawing.Size(178, 23);
+			cmbCsgExe.TabIndex = 31;
 			// 
 			// lblBuildRAD
 			// 
-			this.lblBuildRAD.Location = new System.Drawing.Point(35, 172);
-			this.lblBuildRAD.Name = "lblBuildRAD";
-			this.lblBuildRAD.Size = new System.Drawing.Size(34, 20);
-			this.lblBuildRAD.TabIndex = 26;
-			this.lblBuildRAD.Text = "RAD";
-			this.lblBuildRAD.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			lblBuildRAD.Location = new System.Drawing.Point(41, 198);
+			lblBuildRAD.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			lblBuildRAD.Name = "lblBuildRAD";
+			lblBuildRAD.Size = new System.Drawing.Size(40, 23);
+			lblBuildRAD.TabIndex = 26;
+			lblBuildRAD.Text = "RAD";
+			lblBuildRAD.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// btnBuildToolsBrowse
 			// 
-			this.btnBuildToolsBrowse.Location = new System.Drawing.Point(369, 38);
-			this.btnBuildToolsBrowse.Name = "btnBuildToolsBrowse";
-			this.btnBuildToolsBrowse.Size = new System.Drawing.Size(74, 20);
-			this.btnBuildToolsBrowse.TabIndex = 32;
-			this.btnBuildToolsBrowse.Text = "Browse...";
-			this.btnBuildToolsBrowse.UseVisualStyleBackColor = true;
-			this.btnBuildToolsBrowse.Click += new System.EventHandler(this.BrowseBuildToolsDirectory);
+			btnBuildToolsBrowse.Location = new System.Drawing.Point(430, 44);
+			btnBuildToolsBrowse.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			btnBuildToolsBrowse.Name = "btnBuildToolsBrowse";
+			btnBuildToolsBrowse.Size = new System.Drawing.Size(86, 23);
+			btnBuildToolsBrowse.TabIndex = 32;
+			btnBuildToolsBrowse.Text = "Browse...";
+			btnBuildToolsBrowse.UseVisualStyleBackColor = true;
+			btnBuildToolsBrowse.Click += BrowseBuildToolsDirectory;
 			// 
 			// grpTextures
 			// 
-			this.grpTextures.Controls.Add(this.FilterBox);
-			this.grpTextures.Controls.Add(this.lstAdditionalTextures);
-			this.grpTextures.Controls.Add(this.btnRemoveTextures);
-			this.grpTextures.Controls.Add(this.btnAddTextures);
-			this.grpTextures.Controls.Add(this.lblAdditionalTexturePackages);
-			this.grpTextures.Controls.Add(this.lblTexturePackageExclusions);
-			this.grpTextures.Controls.Add(this.cklTexturePackages);
-			this.grpTextures.Controls.Add(this.chkToggleAllTextures);
-			this.grpTextures.Controls.Add(this.lblDefaultTextureScale);
-			this.grpTextures.Controls.Add(this.nudDefaultTextureScale);
-			this.grpTextures.Location = new System.Drawing.Point(6, 792);
-			this.grpTextures.Name = "grpTextures";
-			this.grpTextures.Size = new System.Drawing.Size(459, 407);
-			this.grpTextures.TabIndex = 49;
-			this.grpTextures.TabStop = false;
-			this.grpTextures.Text = "Textures";
-			// 
-			// lstAdditionalTextures
-			// 
-			this.lstAdditionalTextures.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.colWadName,
-            this.colWadPath});
-			this.lstAdditionalTextures.FullRowSelect = true;
-			this.lstAdditionalTextures.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-			this.lstAdditionalTextures.HideSelection = false;
-			this.lstAdditionalTextures.Location = new System.Drawing.Point(9, 254);
-			this.lstAdditionalTextures.Name = "lstAdditionalTextures";
-			this.lstAdditionalTextures.ShowItemToolTips = true;
-			this.lstAdditionalTextures.Size = new System.Drawing.Size(364, 147);
-			this.lstAdditionalTextures.TabIndex = 45;
-			this.lstAdditionalTextures.UseCompatibleStateImageBehavior = false;
-			this.lstAdditionalTextures.View = System.Windows.Forms.View.Details;
-			// 
-			// colWadName
-			// 
-			this.colWadName.Text = "Name";
-			// 
-			// colWadPath
-			// 
-			this.colWadPath.Text = "Path";
-			// 
-			// btnRemoveTextures
-			// 
-			this.btnRemoveTextures.Location = new System.Drawing.Point(379, 283);
-			this.btnRemoveTextures.Name = "btnRemoveTextures";
-			this.btnRemoveTextures.Size = new System.Drawing.Size(74, 23);
-			this.btnRemoveTextures.TabIndex = 44;
-			this.btnRemoveTextures.Text = "Remove";
-			this.btnRemoveTextures.UseVisualStyleBackColor = true;
-			this.btnRemoveTextures.Click += new System.EventHandler(this.RemoveWad);
-			// 
-			// btnAddTextures
-			// 
-			this.btnAddTextures.Location = new System.Drawing.Point(379, 254);
-			this.btnAddTextures.Name = "btnAddTextures";
-			this.btnAddTextures.Size = new System.Drawing.Size(74, 23);
-			this.btnAddTextures.TabIndex = 43;
-			this.btnAddTextures.Text = "Add...";
-			this.btnAddTextures.UseVisualStyleBackColor = true;
-			this.btnAddTextures.Click += new System.EventHandler(this.BrowseWad);
-			// 
-			// lblAdditionalTexturePackages
-			// 
-			this.lblAdditionalTexturePackages.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.lblAdditionalTexturePackages.Location = new System.Drawing.Point(6, 231);
-			this.lblAdditionalTexturePackages.Name = "lblAdditionalTexturePackages";
-			this.lblAdditionalTexturePackages.Size = new System.Drawing.Size(357, 20);
-			this.lblAdditionalTexturePackages.TabIndex = 34;
-			this.lblAdditionalTexturePackages.Text = "Additional texture packages:";
-			this.lblAdditionalTexturePackages.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// lblTexturePackageExclusions
-			// 
-			this.lblTexturePackageExclusions.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.lblTexturePackageExclusions.Location = new System.Drawing.Point(12, 36);
-			this.lblTexturePackageExclusions.Name = "lblTexturePackageExclusions";
-			this.lblTexturePackageExclusions.Size = new System.Drawing.Size(314, 20);
-			this.lblTexturePackageExclusions.TabIndex = 34;
-			this.lblTexturePackageExclusions.Text = "Texture packages to include:";
-			this.lblTexturePackageExclusions.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// cklTexturePackages
-			// 
-			this.cklTexturePackages.CheckOnClick = true;
-			this.cklTexturePackages.FormattingEnabled = true;
-			this.cklTexturePackages.Location = new System.Drawing.Point(9, 59);
-			this.cklTexturePackages.Name = "cklTexturePackages";
-			this.cklTexturePackages.Size = new System.Drawing.Size(444, 169);
-			this.cklTexturePackages.TabIndex = 39;
-			this.cklTexturePackages.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.cklTexturePackages_KeyPress);
-			// 
-			// chkToggleAllTextures
-			// 
-			this.chkToggleAllTextures.Checked = true;
-			this.chkToggleAllTextures.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.chkToggleAllTextures.Location = new System.Drawing.Point(332, 41);
-			this.chkToggleAllTextures.Name = "chkToggleAllTextures";
-			this.chkToggleAllTextures.Size = new System.Drawing.Size(121, 18);
-			this.chkToggleAllTextures.TabIndex = 42;
-			this.chkToggleAllTextures.Text = "Toggle all";
-			this.chkToggleAllTextures.UseVisualStyleBackColor = true;
-			this.chkToggleAllTextures.CheckedChanged += new System.EventHandler(this.ToggleAllTextures);
+			grpTextures.Controls.Add(FilterBox);
+			grpTextures.Controls.Add(lstAdditionalTextures);
+			grpTextures.Controls.Add(btnRemoveTextures);
+			grpTextures.Controls.Add(btnAddTextures);
+			grpTextures.Controls.Add(lblAdditionalTexturePackages);
+			grpTextures.Controls.Add(lblTexturePackageExclusions);
+			grpTextures.Controls.Add(cklTexturePackages);
+			grpTextures.Controls.Add(chkToggleAllTextures);
+			grpTextures.Controls.Add(lblDefaultTextureScale);
+			grpTextures.Controls.Add(nudDefaultTextureScale);
+			grpTextures.Location = new System.Drawing.Point(7, 914);
+			grpTextures.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			grpTextures.Name = "grpTextures";
+			grpTextures.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			grpTextures.Size = new System.Drawing.Size(536, 470);
+			grpTextures.TabIndex = 49;
+			grpTextures.TabStop = false;
+			grpTextures.Text = "Textures";
 			// 
 			// FilterBox
 			// 
-			this.FilterBox.Location = new System.Drawing.Point(164, 37);
-			this.FilterBox.Name = "FilterBox";
-			this.FilterBox.Size = new System.Drawing.Size(100, 20);
-			this.FilterBox.TabIndex = 46;
-			this.FilterBox.TextChanged += new System.EventHandler(this.FilterBox_TextChanged);
+			FilterBox.Location = new System.Drawing.Point(191, 43);
+			FilterBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			FilterBox.Name = "FilterBox";
+			FilterBox.Size = new System.Drawing.Size(116, 23);
+			FilterBox.TabIndex = 46;
+			FilterBox.TextChanged += FilterBox_TextChanged;
+			// 
+			// lstAdditionalTextures
+			// 
+			lstAdditionalTextures.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { colWadName, colWadPath });
+			lstAdditionalTextures.FullRowSelect = true;
+			lstAdditionalTextures.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+			lstAdditionalTextures.Location = new System.Drawing.Point(10, 293);
+			lstAdditionalTextures.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			lstAdditionalTextures.Name = "lstAdditionalTextures";
+			lstAdditionalTextures.ShowItemToolTips = true;
+			lstAdditionalTextures.Size = new System.Drawing.Size(424, 169);
+			lstAdditionalTextures.TabIndex = 45;
+			lstAdditionalTextures.UseCompatibleStateImageBehavior = false;
+			lstAdditionalTextures.View = System.Windows.Forms.View.Details;
+			// 
+			// colWadName
+			// 
+			colWadName.Text = "Name";
+			// 
+			// colWadPath
+			// 
+			colWadPath.Text = "Path";
+			// 
+			// btnRemoveTextures
+			// 
+			btnRemoveTextures.Location = new System.Drawing.Point(442, 327);
+			btnRemoveTextures.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			btnRemoveTextures.Name = "btnRemoveTextures";
+			btnRemoveTextures.Size = new System.Drawing.Size(86, 27);
+			btnRemoveTextures.TabIndex = 44;
+			btnRemoveTextures.Text = "Remove";
+			btnRemoveTextures.UseVisualStyleBackColor = true;
+			btnRemoveTextures.Click += RemoveWad;
+			// 
+			// btnAddTextures
+			// 
+			btnAddTextures.Location = new System.Drawing.Point(442, 293);
+			btnAddTextures.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			btnAddTextures.Name = "btnAddTextures";
+			btnAddTextures.Size = new System.Drawing.Size(86, 27);
+			btnAddTextures.TabIndex = 43;
+			btnAddTextures.Text = "Add...";
+			btnAddTextures.UseVisualStyleBackColor = true;
+			btnAddTextures.Click += BrowseWad;
+			// 
+			// lblAdditionalTexturePackages
+			// 
+			lblAdditionalTexturePackages.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			lblAdditionalTexturePackages.Location = new System.Drawing.Point(7, 267);
+			lblAdditionalTexturePackages.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			lblAdditionalTexturePackages.Name = "lblAdditionalTexturePackages";
+			lblAdditionalTexturePackages.Size = new System.Drawing.Size(416, 23);
+			lblAdditionalTexturePackages.TabIndex = 34;
+			lblAdditionalTexturePackages.Text = "Additional texture packages:";
+			lblAdditionalTexturePackages.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// lblTexturePackageExclusions
+			// 
+			lblTexturePackageExclusions.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			lblTexturePackageExclusions.Location = new System.Drawing.Point(14, 42);
+			lblTexturePackageExclusions.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			lblTexturePackageExclusions.Name = "lblTexturePackageExclusions";
+			lblTexturePackageExclusions.Size = new System.Drawing.Size(366, 23);
+			lblTexturePackageExclusions.TabIndex = 34;
+			lblTexturePackageExclusions.Text = "Texture packages to include:";
+			lblTexturePackageExclusions.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// cklTexturePackages
+			// 
+			cklTexturePackages.CheckOnClick = true;
+			cklTexturePackages.FormattingEnabled = true;
+			cklTexturePackages.Location = new System.Drawing.Point(10, 68);
+			cklTexturePackages.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			cklTexturePackages.Name = "cklTexturePackages";
+			cklTexturePackages.Size = new System.Drawing.Size(517, 184);
+			cklTexturePackages.TabIndex = 39;
+			cklTexturePackages.KeyPress += cklTexturePackages_KeyPress;
+			// 
+			// chkToggleAllTextures
+			// 
+			chkToggleAllTextures.Checked = true;
+			chkToggleAllTextures.CheckState = System.Windows.Forms.CheckState.Checked;
+			chkToggleAllTextures.Location = new System.Drawing.Point(387, 47);
+			chkToggleAllTextures.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			chkToggleAllTextures.Name = "chkToggleAllTextures";
+			chkToggleAllTextures.Size = new System.Drawing.Size(141, 21);
+			chkToggleAllTextures.TabIndex = 42;
+			chkToggleAllTextures.Text = "Toggle all";
+			chkToggleAllTextures.UseVisualStyleBackColor = true;
+			chkToggleAllTextures.CheckedChanged += ToggleAllTextures;
 			// 
 			// GoldsourceEnvironmentEditor
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this.grpTextures);
-			this.Controls.Add(this.grpBuildTools);
-			this.Controls.Add(this.grpFgds);
-			this.Controls.Add(this.grpDirectories);
-			this.Name = "GoldsourceEnvironmentEditor";
-			this.Size = new System.Drawing.Size(472, 1202);
-			((System.ComponentModel.ISupportInitialize)(this.nudDefaultTextureScale)).EndInit();
-			this.grpDirectories.ResumeLayout(false);
-			this.grpDirectories.PerformLayout();
-			this.grpFgds.ResumeLayout(false);
-			this.grpBuildTools.ResumeLayout(false);
-			this.grpBuildTools.PerformLayout();
-			this.grpTextures.ResumeLayout(false);
-			this.grpTextures.PerformLayout();
-			this.ResumeLayout(false);
+			AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+			AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			Controls.Add(grpTextures);
+			Controls.Add(grpBuildTools);
+			Controls.Add(grpFgds);
+			Controls.Add(grpDirectories);
+			Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			Name = "GoldsourceEnvironmentEditor";
+			Size = new System.Drawing.Size(551, 1387);
+			((System.ComponentModel.ISupportInitialize)nudDefaultTextureScale).EndInit();
+			grpDirectories.ResumeLayout(false);
+			grpDirectories.PerformLayout();
+			grpFgds.ResumeLayout(false);
+			grpFgds.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)gridUpDown).EndInit();
+			grpBuildTools.ResumeLayout(false);
+			grpBuildTools.PerformLayout();
+			grpTextures.ResumeLayout(false);
+			grpTextures.PerformLayout();
+			ResumeLayout(false);
+		}
 
-        }
+		#endregion
 
-        #endregion
-
-        private System.Windows.Forms.Label lblBaseGame;
+		private System.Windows.Forms.Label lblBaseGame;
         private System.Windows.Forms.ComboBox cmbBaseGame;
         private System.Windows.Forms.TextBox txtGameDir;
         private System.Windows.Forms.Label lblGameDir;
@@ -866,5 +923,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
         private System.Windows.Forms.Button btnAddTextures;
         private System.Windows.Forms.Label lblAdditionalTexturePackages;
 		private System.Windows.Forms.TextBox FilterBox;
+		private System.Windows.Forms.Label DefaultGridSizeLabel;
+		private GridUpDown gridUpDown;
 	}
 }

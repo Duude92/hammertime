@@ -69,6 +69,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
                 MapCopyRes = GetVal(environment.Properties, "MapCopyRes", false),
 
                 DefaultTextureScale = GetVal(environment.Properties, "DefaultTextureScale", 1m),
+                DefaultGridSize = GetVal(environment.Properties, "DefaultGridSize", 16f),
                 ExcludedWads = GetVal(environment.Properties, "ExcludedWads", "").Split(';').Where(x => !String.IsNullOrWhiteSpace(x)).ToList(),
                 AdditionalTextureFiles = GetVal(environment.Properties, "AdditionalTextureFiles", "").Split(';').Where(x => !String.IsNullOrWhiteSpace(x)).ToList(),
             };
@@ -111,7 +112,9 @@ namespace Sledge.BspEditor.Environment.Goldsource
 				MapCopyRes = GetVal(environment.Properties, "MapCopyRes", false),
 
 				DefaultTextureScale = GetVal(environment.Properties, "DefaultTextureScale", 1m),
-                IncludedWads = GetVal(environment.Properties, "IncludedWads", "").Split(';').Where(x => !String.IsNullOrWhiteSpace(x)).ToList(),
+				DefaultGridSize = GetVal(environment.Properties, "DefaultGridSize", 16f),
+
+				IncludedWads = GetVal(environment.Properties, "IncludedWads", "").Split(';').Where(x => !String.IsNullOrWhiteSpace(x)).ToList(),
 				AdditionalTextureFiles = GetVal(environment.Properties, "AdditionalTextureFiles", "").Split(';').Where(x => !String.IsNullOrWhiteSpace(x)).ToList(),
 			};
 			return gse;
@@ -157,6 +160,8 @@ namespace Sledge.BspEditor.Environment.Goldsource
 					{ "MapCopyRes", Convert.ToString(env.MapCopyRes, CultureInfo.InvariantCulture) },
 
 					{ "DefaultTextureScale", Convert.ToString(env.DefaultTextureScale, CultureInfo.InvariantCulture) },
+
+					{ "DefaultGridSize", Convert.ToString(env.DefaultGridSize, CultureInfo.InvariantCulture)},
 
 					{ "IncludedWads", String.Join(";", env.IncludedWads) },
 					{ "AdditionalTextureFiles", String.Join(";", env.AdditionalTextureFiles) }
@@ -207,8 +212,9 @@ namespace Sledge.BspEditor.Environment.Goldsource
                     { "MapCopyRes", Convert.ToString(env.MapCopyRes, CultureInfo.InvariantCulture) },
 
                     { "DefaultTextureScale", Convert.ToString(env.DefaultTextureScale, CultureInfo.InvariantCulture) },
+					{ "DefaultGridSize", Convert.ToString(env.DefaultGridSize, CultureInfo.InvariantCulture)},
 
-                    { "ExcludedWads", String.Join(";", env.ExcludedWads) },
+					{ "ExcludedWads", String.Join(";", env.ExcludedWads) },
                     { "AdditionalTextureFiles", String.Join(";", env.AdditionalTextureFiles) }
                 }
             };

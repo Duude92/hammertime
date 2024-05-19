@@ -64,6 +64,8 @@ namespace Sledge.BspEditor.Environment.Goldsource
 			chkCopyErr.CheckedChanged += OnEnvironmentChanged;
 			chkCopyRes.CheckedChanged += OnEnvironmentChanged;
 
+			gridUpDown.ValueChanged += OnEnvironmentChanged;
+
 			nudDefaultTextureScale.ValueChanged += OnEnvironmentChanged;
 
 			//cklTexturePackages.ItemCheck += (s, e) => this.InvokeLater(() => OnEnvironmentChanged(s, e)); // So it happens after the checkstate has changed, not before
@@ -176,6 +178,8 @@ namespace Sledge.BspEditor.Environment.Goldsource
 			chkCopyErr.Checked = env.MapCopyErr;
 			chkCopyRes.Checked = env.MapCopyRes;
 
+			gridUpDown.Value += (decimal)env.DefaultGridSize; 
+
 			nudDefaultTextureScale.Value = env.DefaultTextureScale;
 
 
@@ -229,8 +233,9 @@ namespace Sledge.BspEditor.Environment.Goldsource
 				MapCopyErr = chkCopyErr.Checked,
 				MapCopyRes = chkCopyRes.Checked,
 
+				DefaultGridSize = (float)gridUpDown.Value,
+
 				DefaultTextureScale = nudDefaultTextureScale.Value,
-				//ExcludedWads = GetTexturePackageSelection().Where(x => !x.Value).Select(x => x.Key).ToList(),
 				ExcludedWads = _initialObjectCollection.Where(x => !x.Value).Select(x=>x.Key).ToList(),
 				AdditionalTextureFiles = lstAdditionalTextures.Items.OfType<ListViewItem>().Select(x => x.SubItems[1].Text).Where(File.Exists).ToList()
 			};
