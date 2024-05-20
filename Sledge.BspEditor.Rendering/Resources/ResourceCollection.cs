@@ -156,7 +156,7 @@ namespace Sledge.BspEditor.Rendering.Resources
 
 		private async Task<IResource> UploadTexture(IEnvironment environment, TextureItem item, ITextureStreamSource source)
 		{
-			using (var bitmap = await source.GetImage(item.Name, 512, 512))
+			using (var bitmap = await source.GetProcessedImage(item.Name, 512, 512))
 			{
 				var lb = bitmap.LockBits(new Rectangle(0, 0, item.Width, item.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
 				var data = new byte[lb.Stride * lb.Height];
