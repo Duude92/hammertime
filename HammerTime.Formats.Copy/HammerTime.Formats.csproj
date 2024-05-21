@@ -15,9 +15,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Sledge.Formats" Version="1.2.3" />
+    <PackageReference Include="Sledge.Formats" Version="1.2.4" />
     <PackageReference Include="Sledge.Formats.Bsp" Version="1.0.15" />
-    <PackageReference Include="Sledge.Formats.Map" Version="1.1.6" />
+    <PackageReference Include="Sledge.Formats.Map" Version="1.2.1" />
   </ItemGroup>
 
   <ItemGroup>
