@@ -1,5 +1,6 @@
 ﻿using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Rendering.Viewport;
+using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Overlay;
 using Sledge.Rendering.Resources;
@@ -11,6 +12,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using static System.Windows.Forms.AxHost;
 
 namespace Sledge.BspEditor.Tools.Draggable
@@ -20,6 +22,9 @@ namespace Sledge.BspEditor.Tools.Draggable
 		private Vector3 _position;
 		public override Vector3 Origin => _position;
 		public bool IsSelected { get; set; }
+		public bool IsDragging { get; set; } = false;
+		public bool IsHighlighted { get; private set; }
+
 		public SphereHandle(Vector3 position)
 		{
 			_position = position;
@@ -27,7 +32,10 @@ namespace Sledge.BspEditor.Tools.Draggable
 
 		public override bool CanDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
 		{
-			return true;
+			const int width = 5;
+			var screenPosition = camera.WorldToScreen(_position);
+			var diff = (e.Location - screenPosition).Absolute();
+			return diff.X < width && diff.Y < width;
 		}
 
 		public override void Click(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
@@ -36,14 +44,25 @@ namespace Sledge.BspEditor.Tools.Draggable
 
 		public override void Highlight(MapDocument document, MapViewport viewport)
 		{
-			return;
+			IsHighlighted = true;
+			viewport.Control.Cursor = Cursors.SizeAll;
+
+		}
+		public override void Unhighlight(MapDocument document, MapViewport viewport)
+		{
+			IsHighlighted = false;
+			viewport.Control.Cursor = Cursors.Default;
+
 		}
 
 		public override void Render(MapDocument document, BufferBuilder builder)
 		{
 			return;
 		}
-
+		public void MoveTo(Vector3 position)
+		{
+			_position = position;
+		}
 		protected (Vector3, Vector3) GetWorldPositionAndScreenOffset(ICamera camera)
 		{
 			const int distance = 6;
@@ -75,9 +94,23 @@ namespace Sledge.BspEditor.Tools.Draggable
 			return;
 		}
 
-		public override void Unhighlight(MapDocument document, MapViewport viewport)
+		public override void StartDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
 		{
-			throw new NotImplementedException();
+			IsDragging = true;
+			base.StartDrag(document, viewport, camera, e, position);
+		}
+		public override void Drag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 lastPosition, Vector3 position)
+		{
+			if (IsDragging)
+			{
+				_position = camera.Expand( position);
+			}
+			base.Drag(document, viewport, camera, e, lastPosition, position);
+		}
+		public override void EndDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
+		{
+			IsDragging = false;	
+			base.EndDrag(document, viewport, camera, e, position);
 		}
 	}
 }
