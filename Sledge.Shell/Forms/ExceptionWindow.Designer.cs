@@ -201,8 +201,10 @@
 			// 
 			// label3
 			// 
+			label3.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
 			label3.AutoSize = true;
 			label3.Location = new System.Drawing.Point(16, 375);
+			label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
 			label3.Name = "label3";
 			label3.Size = new System.Drawing.Size(108, 15);
 			label3.TabIndex = 5;
@@ -210,7 +212,9 @@
 			// 
 			// applicationBranch
 			// 
+			applicationBranch.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
 			applicationBranch.Location = new System.Drawing.Point(214, 375);
+			applicationBranch.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
 			applicationBranch.Name = "applicationBranch";
 			applicationBranch.ReadOnly = true;
 			applicationBranch.Size = new System.Drawing.Size(336, 23);
