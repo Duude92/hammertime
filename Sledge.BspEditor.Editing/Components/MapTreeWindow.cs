@@ -17,7 +17,7 @@ using Sledge.Shell;
 
 namespace Sledge.BspEditor.Editing.Components
 {
-    [Export(typeof(IDialog))]
+	[Export(typeof(IDialog))]
     [AutoTranslate]
     public partial class MapTreeWindow : Form, IDialog, IManualTranslate
     {
@@ -152,7 +152,7 @@ namespace Sledge.BspEditor.Editing.Components
         private void LoadMapNode(TreeNode parent, IMapObject obj)
         {
             var text = GetNodeText(obj);
-            var node = new TreeNode(obj.GetType().Name + text) { Tag = obj };
+            var node = new TreeNode(obj.GetType().Name + $" {obj.ID}" + text) { Tag = obj };
             if (obj is Root w)
             {
                 node.Nodes.AddRange(GetEntityNodes(w.Data.GetOne<EntityData>()).ToArray());
@@ -232,11 +232,16 @@ namespace Sledge.BspEditor.Editing.Components
 
         private async void TreeSelectionChanged(object sender, TreeViewEventArgs e)
         {
+            //var document = _context.Get<MapDocument>("ActiveDocument"); 
             await RefreshSelectionProperties();
-            // if (MapTree.SelectedNode != null && MapTree.SelectedNode.Tag is MapObject && !(MapTree.SelectedNode.Tag is World) && MapDocument != null && !MapDocument.Selection.InFaceSelection)
-            // {
-            //     MapDocument.PerformAction("Select object", new ChangeSelection(((MapObject)MapTree.SelectedNode.Tag).FindAll(), MapDocument.Selection.GetSelectedObjects()));
-            // }
+            //if (MapTree.SelectedNode != null && MapTree.SelectedNode.Tag is IMapObject && !(MapTree.SelectedNode.Tag is Root) && document != null)
+            //{
+            //    var transaction = new Transaction(
+            //        new Deselect(document.Selection),
+            //        new Select((IMapObject)MapTree.SelectedNode.Tag)
+            //        );
+            //    await MapDocumentOperation.Perform(document, transaction);
+            //}
         }
 
         private async Task RefreshSelectionProperties()
@@ -244,7 +249,7 @@ namespace Sledge.BspEditor.Editing.Components
             Properties.Items.Clear();
             if (MapTree.SelectedNode != null && MapTree.SelectedNode.Tag != null)
             {
-                var list = await GetTagProperties(MapTree.SelectedNode.Tag);
+                var list = await GetTagProperties((IMapObject)MapTree.SelectedNode.Tag);
                 foreach (var kv in list)
                 {
                     Properties.Items.Add(new ListViewItem(new[] {kv.Item1, kv.Item2}));
@@ -253,10 +258,10 @@ namespace Sledge.BspEditor.Editing.Components
             }
         }
 
-        private async Task<IEnumerable<Tuple<string, string>>> GetTagProperties(object tag)
+        private async Task<IEnumerable<Tuple<string, string>>> GetTagProperties(IMapObject tag)
         {
             var list = new List<Tuple<string, string>>();
-            if (!(tag is long id)) return list;
+            if (!(tag.ID is long id)) return list;
 
             var doc = _context.Get<MapDocument>("ActiveDocument");
             if (doc == null) return list;
