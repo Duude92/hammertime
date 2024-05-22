@@ -160,6 +160,9 @@
     <PackageReference Include="System.Resources.Extensions" Version="7.0.0" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="PathTool\Forms\PathProperties.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Prefab\Prefabs\NewPrefabDialog.cs" />
     <Compile Update="Prefab\Prefabs\PrefabSidebarPanel.cs" />
   </ItemGroup>
