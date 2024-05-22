@@ -39,6 +39,15 @@ UninstPage instfiles
 
 ; Installer Sections
 
+Section "Clean Install"
+    IfSilent 0 +2
+        Goto end ; Silent update: Don't use clean install
+        
+    Delete "$INSTDIR\*.dll"
+
+    end:
+SectionEnd
+
 Section "Sledge Editor"
     IfSilent 0 +2 ; Silent mode: Sledge has executed the installer for an update
         Sleep 2000 ; Make sure the program has shut down...
@@ -47,7 +56,7 @@ Section "Sledge Editor"
     SetOutPath $INSTDIR
 
     ; Purge junk from old installs
-    Delete "$INSTDIR\*.dll"
+    ; Delete "$INSTDIR\*.dll"
     Delete "$INSTDIR\*.pdb"
     Delete "$INSTDIR\Sledge.Editor.Elevate.exe"
     Delete "$INSTDIR\Sledge.Editor.Updater.exe"
