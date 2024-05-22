@@ -6,9 +6,11 @@ using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Shell.Settings;
 using Sledge.Common.Translations;
+using Sledge.DataStructures.Geometric;
 using Sledge.Formats.Bsp.Lumps;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Renderables;
+using Sledge.Shell.Input;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
@@ -29,8 +31,6 @@ namespace Sledge.BspEditor.Tools.PathTool
 	{
 		private BoxDraggableState box;
 
-		private List<SpherePointState> _highlightedStates = new List<SpherePointState>();
-		
 		private bool _shiftPressed;
 
 		public PathTool()
@@ -49,19 +49,22 @@ namespace Sledge.BspEditor.Tools.PathTool
 			if (_shiftPressed)
 			{
 				if (e.Button != MouseButtons.Left && e.Button != MouseButtons.Right) return;
-
+				var hl = States.OfType<SpherePointState>().Where(s => s.IsSelected).ToList();
+				if (hl.Count > 1) return;
+				var parent = hl.FirstOrDefault();
+				if (parent?.Next) return;
 
 				var loc = SnapIfNeeded(camera.ScreenToWorld(e.X, e.Y));
-				//_location = camera.GetUnusedCoordinate(_location) + loc;
 
 				var state = new SpherePointState(loc);
-				States.Add(state);
-				if (_highlightedStates.Count == 1)
+				if (parent)
 				{
-					_highlightedStates.First().Next = state;
+					parent.Next = state;
+					parent.IsSelected = false;
 				}
-				_highlightedStates.Add(state);
-				//_sphereHandle = new SphereHandle(camera.Location);
+				States.Insert(0, state);
+
+				state.IsSelected = true;
 			}
 			else
 			{
@@ -70,8 +73,7 @@ namespace Sledge.BspEditor.Tools.PathTool
 				var spheres = States.OfType<SpherePointState>();
 
 				var l = camera.ScreenToWorld(e.X, e.Y);
-
-				var pos = new Vector3((float)l.X, (float)l.Y, (float)l.Z);
+				var pos = l;
 				var p = new Vector3(e.X, e.Y, 0);
 
 				const int d = 5;
@@ -91,17 +93,18 @@ namespace Sledge.BspEditor.Tools.PathTool
 			}
 			base.MouseDown(document, viewport, camera, e);
 		}
+
 		private void Select(List<SpherePointState> points, bool toggle)
 		{
-			if (!points.Any()) return;
-			var first = points[0];
-			points.ForEach(x => x.IsSelected = true);
+			var spheres = States.OfType<SpherePointState>().ToList();
+			spheres.ForEach(x => x.IsSelected = points.Contains(x) );
 		}
 
 		protected override void KeyDown(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
 		{
 			_shiftPressed = e.KeyCode == Keys.ShiftKey;
-			//if (e.KeyCode == Keys.Enter) Confirm(document, viewport);
+			if (e.KeyCode == Keys.Enter) ConfirmSelection(document, viewport);
+			else if (e.KeyCode == Keys.Back) DeleteSelection();
 			//else if (e.KeyCode == Keys.Escape) Cancel(document, viewport);
 
 			base.KeyDown(document, viewport, camera, e);
@@ -117,15 +120,44 @@ namespace Sledge.BspEditor.Tools.PathTool
 				box.State.End += translate;
 			}
 		}
+
+		private void DeleteSelection()
+		{
+			States.RemoveAll(x=>x is  SpherePointState state && state.IsSelected);
+		}
+
+		private void ConfirmSelection(MapDocument document, MapViewport viewport)
+		{
+			if (box.State.Action != BoxAction.Drawn) return;
+			var bbox = box.State.GetSelectionBox();
+			if (bbox != null && !bbox.IsEmpty())
+			{
+				SelectPointsInBox(bbox, KeyboardState.Ctrl);
+				box.RememberedDimensions = bbox;
+			}
+			box.State.Action = BoxAction.Idle;
+
+		}
+		public bool SelectPointsInBox(Box box, bool toggle)
+		{
+			var inBox = States.OfType<SpherePointState>().Where(x => box.Vector3IsInside(x.Origin)).ToList();
+			Select(inBox, toggle);
+			return inBox.Any();
+		}
 		protected override void KeyUp(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
 		{
 			base.KeyUp(document, viewport, camera, e);
 		}
 		protected override void KeyUp(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
 		{
-			_shiftPressed = !((e.KeyCode == Keys.ShiftKey) && _shiftPressed);
+			_shiftPressed = (!(e.KeyCode == Keys.ShiftKey) && _shiftPressed);
 
 			base.KeyUp(document, viewport, camera, e);
+		}
+
+		protected override void DragStart(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
+		{
+			base.DragStart(document, viewport, camera, e);
 		}
 	}
 }
