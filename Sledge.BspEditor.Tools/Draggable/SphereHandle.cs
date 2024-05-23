@@ -23,11 +23,15 @@ namespace Sledge.BspEditor.Tools.Draggable
 		public override Vector3 Origin => _position;
 		public bool IsSelected { get; set; }
 		public bool IsDragging { get; set; } = false;
+
+		private Vector3 _draggingPosion;
+
 		public bool IsHighlighted { get; private set; }
 		private PathState _path;
-
-		public SphereHandle(Vector3 position, PathState path)
+		private PathTool.PathTool _pathTool;
+		public SphereHandle(Vector3 position, PathState path, PathTool.PathTool pathTool)
 		{
+			_pathTool = pathTool;
 			_position = position;
 			_path = path;
 		}
@@ -101,19 +105,22 @@ namespace Sledge.BspEditor.Tools.Draggable
 		public override void StartDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
 		{
 			IsDragging = true;
+			_draggingPosion = camera.ZeroUnusedCoordinate(position);
 			base.StartDrag(document, viewport, camera, e, position);
 		}
 		public override void Drag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 lastPosition, Vector3 position)
 		{
 			if (IsDragging)
 			{
-				_position = camera.Expand(position);
+				var draggingPosition = _pathTool.SnapIfNeeded(camera.Expand(position));
+				var diff = new Vector3(draggingPosition.X != 0 ? 0 : Origin.X, draggingPosition.Y != 0 ? 0 : Origin.Y, draggingPosition.Z != 0 ? 0 : Origin.Z);
+				_position = draggingPosition + diff;
 			}
 			base.Drag(document, viewport, camera, e, lastPosition, position);
 		}
 		public override void EndDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
 		{
-			IsDragging = false;	
+			IsDragging = false;
 			base.EndDrag(document, viewport, camera, e, position);
 		}
 	}
