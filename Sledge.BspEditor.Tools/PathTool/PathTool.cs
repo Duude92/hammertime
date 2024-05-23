@@ -53,7 +53,7 @@ namespace Sledge.BspEditor.Tools.PathTool
 		private void CreatePath(PathProperty property)
 		{
 			var loc = property.Position;
-			var state = new PathState(loc);
+			var state = new PathState(loc, this);
 			States.Insert(0, state);
 			state.Head.IsSelected = true;
 		}

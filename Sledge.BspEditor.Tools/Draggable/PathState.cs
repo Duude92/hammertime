@@ -34,15 +34,17 @@ namespace Sledge.BspEditor.Tools.Draggable
 
 		LinkedList<SphereHandle> _sphereHandles = new LinkedList<SphereHandle>();
 		public SphereHandle Head => _sphereHandles.First();
+		private PathTool.PathTool _pathTool;
 
-		public PathState(Vector3 start)
+		public PathState(Vector3 start, PathTool.PathTool pathTool)
 		{
-			_sphereHandles.AddFirst(new SphereHandle(start, this));
+			_sphereHandles.AddFirst(new SphereHandle(start, this, pathTool));
+			_pathTool = pathTool;
 		}
 		public void AddNode(Vector3 location)
 		{
 			_sphereHandles.Last().IsSelected = false;
-			_sphereHandles.AddLast(new SphereHandle(location, this));
+			_sphereHandles.AddLast(new SphereHandle(location, this, _pathTool));
 			_sphereHandles.Last().IsSelected = true;
 		}
 		public override void StartDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
