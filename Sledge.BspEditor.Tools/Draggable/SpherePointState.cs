@@ -43,10 +43,6 @@ namespace Sledge.BspEditor.Tools.Draggable
 
 
 			_pointDragStart = camera.ZeroUnusedCoordinate(position);
-			//_pointDragGridOffset = SnapIfNeeded(camera.ZeroUnusedCoordinate(position)) - camera.ZeroUnusedCoordinate(position);
-
-
-
 
 			base.StartDrag(document, viewport, camera, e, position);
 		}

@@ -32,12 +32,12 @@
 			PP = new System.Windows.Forms.RadioButton();
 			Circular = new System.Windows.Forms.RadioButton();
 			OneWay = new System.Windows.Forms.RadioButton();
-			CancelButton = new System.Windows.Forms.Button();
 			OKButton = new System.Windows.Forms.Button();
 			label1 = new System.Windows.Forms.Label();
 			label2 = new System.Windows.Forms.Label();
-			textBox1 = new System.Windows.Forms.TextBox();
-			classCombo = new System.Windows.Forms.ComboBox();
+			nameBox = new System.Windows.Forms.TextBox();
+			classBox = new System.Windows.Forms.ComboBox();
+			CancelButton = new System.Windows.Forms.Button();
 			DirectionGroup.SuspendLayout();
 			SuspendLayout();
 			// 
@@ -63,7 +63,6 @@
 			PP.Name = "PP";
 			PP.Size = new System.Drawing.Size(82, 19);
 			PP.TabIndex = 11;
-			PP.TabStop = true;
 			PP.Text = "Ping-pong";
 			PP.UseVisualStyleBackColor = true;
 			// 
@@ -75,13 +74,13 @@
 			Circular.Name = "Circular";
 			Circular.Size = new System.Drawing.Size(66, 19);
 			Circular.TabIndex = 10;
-			Circular.TabStop = true;
 			Circular.Text = "Circular";
 			Circular.UseVisualStyleBackColor = true;
 			// 
 			// OneWay
 			// 
 			OneWay.AutoSize = true;
+			OneWay.Checked = true;
 			OneWay.Location = new System.Drawing.Point(10, 22);
 			OneWay.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
 			OneWay.Name = "OneWay";
@@ -90,18 +89,6 @@
 			OneWay.TabStop = true;
 			OneWay.Text = "One way";
 			OneWay.UseVisualStyleBackColor = true;
-			// 
-			// CancelButton
-			// 
-			CancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			CancelButton.Location = new System.Drawing.Point(267, 122);
-			CancelButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-			CancelButton.Name = "CancelButton";
-			CancelButton.Size = new System.Drawing.Size(88, 27);
-			CancelButton.TabIndex = 14;
-			CancelButton.Text = "Cancel";
-			CancelButton.UseVisualStyleBackColor = true;
-			CancelButton.Click += CancelClicked;
 			// 
 			// OKButton
 			// 
@@ -133,29 +120,42 @@
 			label2.TabIndex = 16;
 			label2.Text = "Class:";
 			// 
-			// textBox1
+			// nameBox
 			// 
-			textBox1.Location = new System.Drawing.Point(12, 39);
-			textBox1.Name = "textBox1";
-			textBox1.Size = new System.Drawing.Size(166, 23);
-			textBox1.TabIndex = 17;
+			nameBox.Location = new System.Drawing.Point(12, 39);
+			nameBox.Name = "nameBox";
+			nameBox.Size = new System.Drawing.Size(166, 23);
+			nameBox.TabIndex = 17;
 			// 
-			// classCombo
+			// classBox
 			// 
-			classCombo.FormattingEnabled = true;
-			classCombo.Location = new System.Drawing.Point(12, 93);
-			classCombo.Name = "classCombo";
-			classCombo.Size = new System.Drawing.Size(166, 23);
-			classCombo.TabIndex = 18;
+			classBox.FormattingEnabled = true;
+			classBox.Location = new System.Drawing.Point(12, 93);
+			classBox.Name = "classBox";
+			classBox.Size = new System.Drawing.Size(166, 23);
+			classBox.TabIndex = 18;
+			// 
+			// CancelButton
+			// 
+			CancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			CancelButton.Location = new System.Drawing.Point(267, 122);
+			CancelButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			CancelButton.Name = "CancelButton";
+			CancelButton.Size = new System.Drawing.Size(88, 27);
+			CancelButton.TabIndex = 14;
+			CancelButton.Text = "Cancel";
+			CancelButton.UseVisualStyleBackColor = true;
+			CancelButton.Click += CancelClicked;
 			// 
 			// PathProperties
 			// 
 			AcceptButton = OKButton;
 			AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			CancelButton = CancelButton;
 			ClientSize = new System.Drawing.Size(361, 157);
-			Controls.Add(classCombo);
-			Controls.Add(textBox1);
+			Controls.Add(classBox);
+			Controls.Add(nameBox);
 			Controls.Add(label2);
 			Controls.Add(label1);
 			Controls.Add(OKButton);
@@ -167,7 +167,7 @@
 			MinimizeBox = false;
 			Name = "PathProperties";
 			ShowInTaskbar = false;
-			Text = "Replace Textures";
+			Text = "New Path";
 			DirectionGroup.ResumeLayout(false);
 			DirectionGroup.PerformLayout();
 			ResumeLayout(false);
@@ -192,13 +192,13 @@
         private System.Windows.Forms.RadioButton Circular;
         private System.Windows.Forms.RadioButton OneWay;
         private System.Windows.Forms.CheckBox RescaleTextures;
-        private System.Windows.Forms.Button CancelButton;
         private System.Windows.Forms.Button OKButton;
         private System.Windows.Forms.TextBox FindTextbox;
         private System.Windows.Forms.TextBox ReplaceTextbox;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.TextBox textBox1;
-		private System.Windows.Forms.ComboBox classCombo;
+		private System.Windows.Forms.TextBox nameBox;
+		private System.Windows.Forms.ComboBox classBox;
+		private System.Windows.Forms.Button CancelButton;
 	}
 }
