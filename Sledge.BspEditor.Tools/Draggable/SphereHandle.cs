@@ -24,10 +24,12 @@ namespace Sledge.BspEditor.Tools.Draggable
 		public bool IsSelected { get; set; }
 		public bool IsDragging { get; set; } = false;
 		public bool IsHighlighted { get; private set; }
+		private PathState _path;
 
-		public SphereHandle(Vector3 position)
+		public SphereHandle(Vector3 position, PathState path)
 		{
 			_position = position;
+			_path = path;
 		}
 
 		public override bool CanDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
@@ -86,6 +88,8 @@ namespace Sledge.BspEditor.Tools.Draggable
 
 			const int boxOffset = 3;
 
+			im.AddCircle(new Vector2(spos.X - size, spos.Y - size), 10, Color.Bisque);
+
 			im.AddRectFilled(new Vector2(spos.X - size - boxOffset, spos.Y - size - boxOffset), new Vector2(spos.X - size + boxOffset, spos.Y - size + boxOffset), IsSelected ? Color.Red : Color.Bisque);
 		}
 
@@ -103,7 +107,7 @@ namespace Sledge.BspEditor.Tools.Draggable
 		{
 			if (IsDragging)
 			{
-				_position = camera.Expand( position);
+				_position = camera.Expand(position);
 			}
 			base.Drag(document, viewport, camera, e, lastPosition, position);
 		}

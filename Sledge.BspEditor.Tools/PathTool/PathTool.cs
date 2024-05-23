@@ -22,6 +22,7 @@ using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using System.Windows.Forms;
+using static Sledge.BspEditor.Tools.Draggable.PathState;
 using static System.Windows.Forms.AxHost;
 
 namespace Sledge.BspEditor.Tools.PathTool
@@ -47,15 +48,14 @@ namespace Sledge.BspEditor.Tools.PathTool
 		protected override IEnumerable<Subscription> Subscribe()
 		{
 			yield return Oy.Subscribe<PathProperty>("PathTool:NewPath", p => CreatePath(p));
-
 		}
 
 		private void CreatePath(PathProperty property)
 		{
 			var loc = property.Position;
-			var state = new SpherePointState(loc);
+			var state = new PathState(loc);
 			States.Insert(0, state);
-			state.IsSelected = true;
+			state.Head.IsSelected = true;
 		}
 
 		public override Image GetIcon() => Resources.Tool_VM;
@@ -66,7 +66,7 @@ namespace Sledge.BspEditor.Tools.PathTool
 			if (_shiftPressed)
 			{
 				if (e.Button != MouseButtons.Left && e.Button != MouseButtons.Right) return;
-				var hl = States.OfType<SpherePointState>().Where(s => s.IsSelected).ToList();
+				var hl = States.OfType<PathState>().Where(s => s.IsSelected).ToList();
 				var loc = SnapIfNeeded(camera.ScreenToWorld(e.X, e.Y));
 
 				if (!hl.Any())
@@ -81,20 +81,21 @@ namespace Sledge.BspEditor.Tools.PathTool
 				var parent = hl.FirstOrDefault();
 				if (parent?.Next) return; // Ignore if selected node has Next item
 
-				var state = new SpherePointState(loc);
-				if (parent)
-				{
-					parent.Next = state;
-					parent.IsSelected = false;
-				}
-				States.Insert(0, state);
-				state.IsSelected = true;
+				parent.AddNode(loc);
+				//var state = new PathState(loc);
+				//if (parent)
+				//{
+				//	parent.Next = state;
+				//	//parent.IsSelected = false;
+				//}
+				//States.Insert(0, state);
+				//state.IsSelected = true;
 			}
 			else
 			{
 				var toggle = false;
 
-				var spheres = States.OfType<SpherePointState>();
+				var spheres = States.OfType<PathState>();
 
 				var l = camera.ScreenToWorld(e.X, e.Y);
 				var pos = l;
@@ -103,7 +104,7 @@ namespace Sledge.BspEditor.Tools.PathTool
 				const int d = 5;
 
 
-				var clicked = (from point in spheres
+				var clicked = (from point in spheres.SelectMany(s=>s.Handles)
 							   let c = viewport.Viewport.Camera.WorldToScreen(point.Origin)
 							   where c.Z <= 1
 							   where p.X >= c.X - d && p.X <= c.X + d && p.Y >= c.Y - d && p.Y <= c.Y + d
@@ -118,10 +119,10 @@ namespace Sledge.BspEditor.Tools.PathTool
 			base.MouseDown(document, viewport, camera, e);
 		}
 
-		private void Select(List<SpherePointState> points, bool toggle)
+		private void Select(List<SphereHandle> points, bool toggle)
 		{
-			var spheres = States.OfType<SpherePointState>().ToList();
-			spheres.ForEach(x => x.IsSelected = points.Contains(x));
+			var spheres = States.OfType<PathState>().ToList();
+			spheres.SelectMany(s=>s.Handles).ToList().ForEach(x => x.IsSelected = points.Contains(x));
 		}
 
 		protected override void KeyDown(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
@@ -147,7 +148,7 @@ namespace Sledge.BspEditor.Tools.PathTool
 
 		private void DeleteSelection()
 		{
-			States.RemoveAll(x => x is SpherePointState state && state.IsSelected);
+			States.RemoveAll(x => x is PathState state && state.IsSelected);
 		}
 
 		private void ConfirmSelection(MapDocument document, MapViewport viewport)
@@ -164,7 +165,7 @@ namespace Sledge.BspEditor.Tools.PathTool
 		}
 		public bool SelectPointsInBox(Box box, bool toggle)
 		{
-			var inBox = States.OfType<SpherePointState>().Where(x => box.Vector3IsInside(x.Origin)).ToList();
+			var inBox = States.OfType<PathState>().SelectMany(s=>s.Handles).Where(x => box.Vector3IsInside(x.Origin)).ToList();
 			Select(inBox, toggle);
 			return inBox.Any();
 		}
@@ -183,18 +184,6 @@ namespace Sledge.BspEditor.Tools.PathTool
 		{
 			base.DragStart(document, viewport, camera, e);
 		}
-		internal enum PathDirection
-		{
-			ONE_WAY,
-			CIRCULAR,
-			PING_PONG
-		}
-		internal struct PathProperty
-		{
-			public PathDirection Direction;
-			public string Name;
-			public string ClassName;
-			public Vector3 Position;
-		}
+
 	}
 }
