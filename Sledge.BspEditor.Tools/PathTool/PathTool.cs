@@ -1,7 +1,11 @@
-﻿using Sledge.BspEditor.Documents;
+﻿using LogicAndTrick.Oy;
+using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Draggable;
+using Sledge.BspEditor.Tools.PathTool.Forms;
 using Sledge.BspEditor.Tools.Properties;
+using Sledge.BspEditor.Tools.Vertex;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Shell.Settings;
@@ -26,7 +30,6 @@ namespace Sledge.BspEditor.Tools.PathTool
 	[OrderHint("H")]
 	[AutoTranslate]
 	[DefaultHotkey("Shift+P")]
-
 	public class PathTool : BaseDraggableTool
 	{
 		private BoxDraggableState box;
@@ -41,6 +44,20 @@ namespace Sledge.BspEditor.Tools.PathTool
 			//box.State.Changed += BoxChanged;
 			States.Add(box);
 		}
+		protected override IEnumerable<Subscription> Subscribe()
+		{
+			yield return Oy.Subscribe<PathProperty>("PathTool:NewPath", p => CreatePath(p));
+
+		}
+
+		private void CreatePath(PathProperty property)
+		{
+			var loc = property.Position;
+			var state = new SpherePointState(loc);
+			States.Insert(0, state);
+			state.IsSelected = true;
+		}
+
 		public override Image GetIcon() => Resources.Tool_VM;
 
 		public override string GetName() => "Path Tool";
@@ -50,11 +67,19 @@ namespace Sledge.BspEditor.Tools.PathTool
 			{
 				if (e.Button != MouseButtons.Left && e.Button != MouseButtons.Right) return;
 				var hl = States.OfType<SpherePointState>().Where(s => s.IsSelected).ToList();
-				if (hl.Count > 1) return;
-				var parent = hl.FirstOrDefault();
-				if (parent?.Next) return;
-
 				var loc = SnapIfNeeded(camera.ScreenToWorld(e.X, e.Y));
+
+				if (!hl.Any())
+				{
+					PathProperties dialog = new PathProperties(loc);
+					var result = dialog.ShowDialog();
+					if (result == DialogResult.Cancel) return;
+					return;
+				}
+
+				if (hl.Count > 1) return; // Ignore on multiple selected
+				var parent = hl.FirstOrDefault();
+				if (parent?.Next) return; // Ignore if selected node has Next item
 
 				var state = new SpherePointState(loc);
 				if (parent)
@@ -63,7 +88,6 @@ namespace Sledge.BspEditor.Tools.PathTool
 					parent.IsSelected = false;
 				}
 				States.Insert(0, state);
-
 				state.IsSelected = true;
 			}
 			else
@@ -97,7 +121,7 @@ namespace Sledge.BspEditor.Tools.PathTool
 		private void Select(List<SpherePointState> points, bool toggle)
 		{
 			var spheres = States.OfType<SpherePointState>().ToList();
-			spheres.ForEach(x => x.IsSelected = points.Contains(x) );
+			spheres.ForEach(x => x.IsSelected = points.Contains(x));
 		}
 
 		protected override void KeyDown(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
@@ -123,7 +147,7 @@ namespace Sledge.BspEditor.Tools.PathTool
 
 		private void DeleteSelection()
 		{
-			States.RemoveAll(x=>x is  SpherePointState state && state.IsSelected);
+			States.RemoveAll(x => x is SpherePointState state && state.IsSelected);
 		}
 
 		private void ConfirmSelection(MapDocument document, MapViewport viewport)
@@ -158,6 +182,19 @@ namespace Sledge.BspEditor.Tools.PathTool
 		protected override void DragStart(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
 		{
 			base.DragStart(document, viewport, camera, e);
+		}
+		internal enum PathDirection
+		{
+			ONE_WAY,
+			CIRCULAR,
+			PING_PONG
+		}
+		internal struct PathProperty
+		{
+			public PathDirection Direction;
+			public string Name;
+			public string ClassName;
+			public Vector3 Position;
 		}
 	}
 }
