@@ -129,8 +129,6 @@ namespace Sledge.BspEditor.Tools.PathTool
 		{
 			_shiftPressed = e.KeyCode == Keys.ShiftKey;
 			if (e.KeyCode == Keys.Enter) ConfirmSelection(document, viewport);
-			else if (e.KeyCode == Keys.Back) DeleteSelection();
-			//else if (e.KeyCode == Keys.Escape) Cancel(document, viewport);
 
 			base.KeyDown(document, viewport, camera, e);
 
@@ -146,10 +144,6 @@ namespace Sledge.BspEditor.Tools.PathTool
 			}
 		}
 
-		private void DeleteSelection()
-		{
-			States.RemoveAll(x => x is PathState state && state.IsSelected);
-		}
 
 		private void ConfirmSelection(MapDocument document, MapViewport viewport)
 		{

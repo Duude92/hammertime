@@ -1,19 +1,14 @@
-﻿using Sledge.BspEditor.Documents;
+﻿using LogicAndTrick.Oy;
+using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Overlay;
 using Sledge.Rendering.Resources;
 using Sledge.Rendering.Viewports;
-using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using static System.Windows.Forms.AxHost;
 
 namespace Sledge.BspEditor.Tools.Draggable
 {
@@ -35,6 +30,19 @@ namespace Sledge.BspEditor.Tools.Draggable
 			_position = position;
 			_path = path;
 		}
+		private Subscription _subscription;
+		private void Subscribe() => _subscription = Oy.Subscribe<RightClickMenuBuilder>("MapViewport:RightClick", b =>
+			{
+				b.Clear();
+				b.AddCommand("BspEditor:PathToolDeleteNodes");
+				b.AddCommand("BspEditor:PathInsertNode");
+				b.AddCommand("BspEditor:PathProperties");
+
+				b.AddSeparator();
+				b.AddCommand("BspEditor:PathProperties");
+				b.AddCommand("BspEditor:PathToolDeletePath");
+				b.AddCommand("BspEditor:SelectPath");
+			});
 
 		public override bool CanDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
 		{
@@ -50,12 +58,14 @@ namespace Sledge.BspEditor.Tools.Draggable
 
 		public override void Highlight(MapDocument document, MapViewport viewport)
 		{
+			Subscribe();
 			IsHighlighted = true;
 			viewport.Control.Cursor = Cursors.SizeAll;
 
 		}
 		public override void Unhighlight(MapDocument document, MapViewport viewport)
 		{
+			_subscription.Dispose();
 			IsHighlighted = false;
 			viewport.Control.Cursor = Cursors.Default;
 
@@ -96,7 +106,6 @@ namespace Sledge.BspEditor.Tools.Draggable
 
 			im.AddRectFilled(new Vector2(spos.X - size - boxOffset, spos.Y - size - boxOffset), new Vector2(spos.X - size + boxOffset, spos.Y - size + boxOffset), IsSelected ? Color.Red : Color.Bisque);
 		}
-
 		public override void Render(IViewport viewport, PerspectiveCamera camera, I2DRenderer im)
 		{
 			return;

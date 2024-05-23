@@ -1,4 +1,5 @@
-﻿using Sledge.BspEditor.Documents;
+﻿using LogicAndTrick.Oy;
+using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
@@ -40,6 +41,31 @@ namespace Sledge.BspEditor.Tools.Draggable
 		{
 			_sphereHandles.AddFirst(new SphereHandle(start, this, pathTool));
 			_pathTool = pathTool;
+			Oy.Subscribe("PathTool:InsertNode", new Action(InsertNode));
+			Oy.Subscribe("PathTool:Delete", new Action(DeleteSelection));
+
+		}
+		private void DeleteSelection()
+		{
+			var selection = _sphereHandles.Where(h => h.IsSelected).ToList();
+			selection.ForEach(s => _sphereHandles.Remove(s));
+		}
+		private void InsertNode()
+		{
+			var node = _sphereHandles.First;
+			while (node != null)
+			{
+				if (node.Value.IsSelected)
+				{
+					var prev = node.Previous ?? node;
+					var position = (prev.Value.Origin + node.Value.Origin) / 2;
+					node.Value.IsSelected = false;
+					var nextHandle = new SphereHandle(position, this, _pathTool);
+					nextHandle.IsSelected = true;
+					_sphereHandles.AddBefore(node, nextHandle);
+				}
+				node = node.Next;
+			}
 		}
 		public void AddNode(Vector3 location)
 		{

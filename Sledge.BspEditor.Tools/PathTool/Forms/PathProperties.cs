@@ -8,11 +8,7 @@ namespace Sledge.BspEditor.Tools.PathTool.Forms
 {
 	public partial class PathProperties : Form
 	{
-		//[Import("Shell", typeof(Form))] private Lazy<Form> _parent;
-		//[Import] private IContext _context;
 		private Vector3 _position;
-
-
 		public PathProperties(Vector3 location)
 		{
 			_position = location;
