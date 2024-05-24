@@ -177,14 +177,15 @@ namespace Sledge.BspEditor.Providers
 			var numPaths = br.ReadInt32();
 			for (var i = 0; i < numPaths; i++)
 			{
-				wld.Data.Add(ReadPath(br));
+				//wld.Data.Add(ReadPath(map, br));
+				ReadPath(map, br).Hierarchy.Parent = wld;
 			}
 			return wld;
 		}
 
-		private Path ReadPath(BinaryReader br)
+		private Path ReadPath(Map map, BinaryReader br)
 		{
-			var path = new Path
+			var path = new Path(map.NumberGenerator.Next("MapObject"))
 			{
 				Name = br.ReadFixedLengthString(Encoding.ASCII, 128),
 				Type = br.ReadFixedLengthString(Encoding.ASCII, 128),
@@ -193,7 +194,7 @@ namespace Sledge.BspEditor.Providers
 			var numNodes = br.ReadInt32();
 			for (var i = 0; i < numNodes; i++)
 			{
-				var node = new Path.PathNode
+				var node = new Path.PathNode(map.NumberGenerator.Next("MapObject"))
 				{
 					Position = br.ReadVector3(),
 					ID = br.ReadInt32(),
@@ -208,6 +209,7 @@ namespace Sledge.BspEditor.Providers
 					node.Properties[key] = value;
 				}
 				path.Nodes.Add(node);
+				node.Hierarchy.Parent = path;
 			}
 			return path;
 		}

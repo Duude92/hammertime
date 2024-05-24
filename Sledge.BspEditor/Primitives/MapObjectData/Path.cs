@@ -6,151 +6,193 @@ using System.Numerics;
 using System.Runtime.Serialization;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Transport;
+using Sledge.DataStructures.Geometric;
 
 namespace Sledge.BspEditor.Primitives.MapObjectData
 {
-    [Serializable]
-    public class Path : IMapObjectData
-    {
-        public string Name { get; set; }
-        public string Type { get; set; }
-        public PathDirection Direction { get; set; }
-        public List<PathNode> Nodes { get; private set; }
+	[Serializable]
+	public class Path : BaseMapObject
+	{
+		public string Name { get; set; }
+		public string Type { get; set; }
+		public PathDirection Direction { get; set; }
+		public List<PathNode> Nodes { get; private set; }
 
-        public Path()
-        {
-            Nodes = new List<PathNode>();
-        }
+		protected override string SerialisedName => "Path";
 
-        public Path(SerialisedObject obj)
-        {
-            Name = obj.Get("Name", "");
-            Type = obj.Get("Type", "");
-            Direction = obj.Get("Direction", PathDirection.OneWay);
+		public Path(long id) : base(id)
+		{
 
-            var children = obj.Children.Where(x => x.Name == "Node");
-            Nodes = children.Select(x => new PathNode(x)).ToList();
-        }
+			Nodes = new List<PathNode>();
+		}
 
-        [Export(typeof(IMapElementFormatter))]
-        public class EntityFormatter : StandardMapElementFormatter<Path> { }
+		public Path(SerialisedObject obj) : base(obj)
+		{
+			Name = obj.Get("Name", "");
+			Type = obj.Get("Type", "");
+			Direction = obj.Get("Direction", PathDirection.OneWay);
 
-        protected Path(SerializationInfo info, StreamingContext context)
-        {
-            Name = info.GetString("Name");
-            Type = info.GetString("Type");
-            Direction = (PathDirection) info.GetValue("Direction", typeof(PathDirection));
-            Nodes = (List<PathNode>) info.GetValue("Nodes", typeof(List<PathNode>));
-        }
+			var children = obj.Children.Where(x => x.Name == "Node");
+			Nodes = children.Select(x => new PathNode(x)).ToList();
+		}
 
-        public void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            info.AddValue("Name", Name);
-            info.AddValue("Type", Type);
-            info.AddValue("Direction", Direction);
-            info.AddValue("Nodes", Nodes);
-        }
+		[Export(typeof(IMapElementFormatter))]
+		public class EntityFormatter : StandardMapElementFormatter<Path> { }
 
-        public IMapElement Clone()
-        {
-            return new Path
-            {
-                Name = Name,
-                Type = Type,
-                Direction = Direction,
-                Nodes = Nodes.Select(x => x.Clone()).ToList()
-            };
-        }
+		//protected Path(SerializationInfo info, StreamingContext context)
+		//{
+		//	Name = info.GetString("Name");
+		//	Type = info.GetString("Type");
+		//	Direction = (PathDirection)info.GetValue("Direction", typeof(PathDirection));
+		//	Nodes = (List<PathNode>)info.GetValue("Nodes", typeof(List<PathNode>));
+		//}
 
-        public IMapElement Copy(UniqueNumberGenerator numberGenerator)
-        {
-            return Clone();
-        }
+		public override void GetObjectData(SerializationInfo info, StreamingContext context)
+		{
+			info.AddValue("Name", Name);
+			info.AddValue("Type", Type);
+			info.AddValue("Direction", Direction);
+			info.AddValue("Nodes", Nodes);
+		}
 
-        public SerialisedObject ToSerialisedObject()
-        {
-            var so = new SerialisedObject("Path");
-            so.Set("Name", Name);
-            so.Set("Type", Type);
-            so.Set("Direction", Direction);
-            so.Children.AddRange(Nodes.Select(x => x.ToSerialisedObject()));
-            return so;
-        }
+		public override IMapElement Clone()
+		{
+			var clone = base.Clone() as Path;
+			clone.Nodes = Nodes.Select(x => x.Clone()).ToList();
+			return clone;
+			//return new Path
+			//{
+			//	Name = Name,
+			//	Type = Type,
+			//	Direction = Direction,
+			//	Nodes = Nodes.Select(x => x.Clone()).ToList()
+			//};
+		}
 
-        public enum PathDirection
-        {
-            OneWay,
-            Circular,
-            PingPong
-        }
+		public override IMapElement Copy(UniqueNumberGenerator numberGenerator)
+		{
+			return Clone();
+		}
 
-        [Serializable]
-        public class PathNode : ISerializable
-        {
-            public Vector3 Position { get; set; }
-            public int ID { get; set; }
-            public string Name { get; set; }
-            public Dictionary<string, string> Properties { get; private set; }
+		public override SerialisedObject ToSerialisedObject()
+		{
+			var so = new SerialisedObject("Path");
+			so.Set("Name", Name);
+			so.Set("Type", Type);
+			so.Set("Direction", Direction);
+			so.Children.AddRange(Nodes.Select(x => x.ToSerialisedObject()));
+			return so;
+		}
 
-            public PathNode()
-            {
-                Properties = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
-            }
+		protected override Box GetBoundingBox()
+		{
+			return Box.Empty;
+		}
 
-            public PathNode(SerialisedObject obj)
-            {
-                ID = obj.Get("ID", 0);
-                Name = obj.Get("Name", "");
-                Position = obj.Get<Vector3>("Position");
-                
-                Properties = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
-                foreach (var prop in obj.Properties)
-                {
-                    if (prop.Key == "ID" || prop.Key == "Name" || prop.Key == "Position") continue;
-                    Properties[prop.Key] = prop.Value;
-                }
-            }
+		public override IEnumerable<Polygon> GetPolygons()
+		{
+			return new Polygon[0];
+		}
 
-            protected PathNode(SerializationInfo info, StreamingContext context)
-            {
-                ID = info.GetInt32("ID");
-                Name = info.GetString("Name");
-                Position = (Vector3) info.GetValue("Position", typeof(Vector3));
-                Properties = (Dictionary<string, string>) info.GetValue("Properties", typeof(Dictionary<string, string>));
-            }
+		public override IEnumerable<IMapObject> Decompose(IEnumerable<Type> allowedTypes)
+		{
+			throw new NotImplementedException();
+		}
 
-            public void GetObjectData(SerializationInfo info, StreamingContext context)
-            {
-                info.AddValue("ID", ID);
-                info.AddValue("Name", Name);
-                info.AddValue("Position", Position);
-                info.AddValue("Properties", Properties);
-            }
+		public enum PathDirection
+		{
+			OneWay,
+			Circular,
+			PingPong
+		}
 
-            public SerialisedObject ToSerialisedObject()
-            {
-                var so = new SerialisedObject("PathNode");
+		[Serializable]
+		public class PathNode : BaseMapObject, ISerializable
+		{
+			public Vector3 Position { get; set; }
+			public int ID { get; set; }
+			public string Name { get; set; }
+			public Dictionary<string, string> Properties { get; private set; }
 
-                foreach (var kv in Properties) so.Set(kv.Key, kv.Value);
-                
-                so.Set("ID", ID);
-                so.Set("Name", Name);
-                so.Set("Position", Position);
+			protected override string SerialisedName => "PathNode";
 
-                return so;
-            }
+			public PathNode(long id) : base(id)
+			{
+				Properties = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
+			}
 
-            public PathNode Clone()
-            {
-                var node = new PathNode
-                {
-                    Position = Position,
-                    ID = ID,
-                    Name = Name
-                };
-                foreach (var kv in Properties) node.Properties[kv.Key] = kv.Value;
-                return node;
-            }
-        }
-    }
+			public PathNode(SerialisedObject obj) : base(obj)
+			{
+				ID = obj.Get("ID", 0);
+				Name = obj.Get("Name", "");
+				Position = obj.Get<Vector3>("Position");
+
+				Properties = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
+				foreach (var prop in obj.Properties)
+				{
+					if (prop.Key == "ID" || prop.Key == "Name" || prop.Key == "Position") continue;
+					Properties[prop.Key] = prop.Value;
+				}
+			}
+
+			//protected PathNode(SerializationInfo info, StreamingContext context)
+			//{
+			//	ID = info.GetInt32("ID");
+			//	Name = info.GetString("Name");
+			//	Position = (Vector3)info.GetValue("Position", typeof(Vector3));
+			//	Properties = (Dictionary<string, string>)info.GetValue("Properties", typeof(Dictionary<string, string>));
+			//}
+
+			public override void GetObjectData(SerializationInfo info, StreamingContext context)
+			{
+				info.AddValue("ID", ID);
+				info.AddValue("Name", Name);
+				info.AddValue("Position", Position);
+				info.AddValue("Properties", Properties);
+			}
+
+			public override SerialisedObject ToSerialisedObject()
+			{
+				var so = new SerialisedObject("PathNode");
+
+				foreach (var kv in Properties) so.Set(kv.Key, kv.Value);
+
+				so.Set("ID", ID);
+				so.Set("Name", Name);
+				so.Set("Position", Position);
+
+				return so;
+			}
+
+			public override PathNode Clone()
+			{
+				var clone = base.Clone() as PathNode;
+				//var node = new PathNode
+				//{
+				//	Position = Position,
+				//	ID = ID,
+				//	Name = Name
+				//};
+				clone.Position = Position;
+				clone.Name = Name;
+				foreach (var kv in Properties) clone.Properties[kv.Key] = kv.Value;
+				return clone;
+			}
+
+			protected override Box GetBoundingBox()
+			{
+				return new Box(Position - Vector3.One * 20, Position + Vector3.One * 20);
+			}
+
+			public override IEnumerable<Polygon> GetPolygons()
+			{
+				throw new NotImplementedException();
+			}
+
+			public override IEnumerable<IMapObject> Decompose(IEnumerable<Type> allowedTypes)
+			{
+				throw new NotImplementedException();
+			}
+		}
+	}
 }
