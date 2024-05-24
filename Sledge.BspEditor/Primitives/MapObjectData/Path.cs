@@ -86,7 +86,9 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
 
 		protected override Box GetBoundingBox()
 		{
-			return Box.Empty;
+			var bboxes = Nodes.Select(n => n.BoundingBox);
+			if (bboxes.Count() == 0) return Box.Empty;
+			return new Box(bboxes);
 		}
 
 		public override IEnumerable<Polygon> GetPolygons()
@@ -176,6 +178,7 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
 				clone.Position = Position;
 				clone.Name = Name;
 				foreach (var kv in Properties) clone.Properties[kv.Key] = kv.Value;
+				clone.DescendantsChanged();
 				return clone;
 			}
 
