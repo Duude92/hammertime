@@ -189,7 +189,7 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
 
 			public override IEnumerable<Polygon> GetPolygons()
 			{
-				throw new NotImplementedException();
+				return BoundingBox.GetBoxFaces().Select(x => new Polygon(x));
 			}
 
 			public override IEnumerable<IMapObject> Decompose(IEnumerable<Type> allowedTypes)
