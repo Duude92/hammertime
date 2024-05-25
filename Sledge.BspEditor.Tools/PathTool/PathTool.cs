@@ -25,7 +25,7 @@ using static System.Windows.Forms.AxHost;
 namespace Sledge.BspEditor.Tools.PathTool
 {
 	[Export(typeof(ITool))]
-	[OrderHint("H")]
+	[OrderHint("S")]
 	[AutoTranslate]
 	[DefaultHotkey("Shift+P")]
 	public class PathTool : BaseDraggableTool
@@ -127,14 +127,6 @@ namespace Sledge.BspEditor.Tools.PathTool
 				if (parent?.Next) return; // Ignore if selected node has Next item
 
 				parent.AddNode(loc);
-				//var state = new PathState(loc);
-				//if (parent)
-				//{
-				//	parent.Next = state;
-				//	//parent.IsSelected = false;
-				//}
-				//States.Insert(0, state);
-				//state.IsSelected = true;
 			}
 			else
 			{
@@ -148,15 +140,12 @@ namespace Sledge.BspEditor.Tools.PathTool
 
 				const int d = 5;
 
-
 				var clicked = (from point in spheres.SelectMany(s => s.Handles)
 							   let c = viewport.Viewport.Camera.WorldToScreen(point.Origin)
 							   where c.Z <= 1
 							   where p.X >= c.X - d && p.X <= c.X + d && p.Y >= c.Y - d && p.Y <= c.Y + d
 							   orderby (pos - point.Origin).LengthSquared()
 							   select point).ToList();
-
-
 
 				Select(clicked, toggle);
 
@@ -225,6 +214,5 @@ namespace Sledge.BspEditor.Tools.PathTool
 		{
 			base.DragStart(document, viewport, camera, e);
 		}
-
 	}
 }
