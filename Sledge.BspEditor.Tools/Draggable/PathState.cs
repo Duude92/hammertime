@@ -112,83 +112,30 @@ namespace Sledge.BspEditor.Tools.Draggable
 			throw new NotImplementedException();
 		}
 
-		// Method to generate circle vertices in 3D space
-		private static List<Vector3> GenerateCircleVertices(Vector3 center, float radius, Vector3 normal, int segments)
-		{
-			List<Vector3> vertices = new List<Vector3>();
-
-			// Create a basis with the normal vector as one of the axes
-			Vector3 tangent1, tangent2;
-			if (normal == Vector3.UnitZ || normal == -Vector3.UnitZ)
-			{
-				tangent1 = Vector3.UnitY;
-			}
-			else
-			{
-				tangent1 = Vector3.Cross(normal, Vector3.UnitZ).Normalise();
-			}
-			tangent2 = Vector3.Cross(normal, tangent1).Normalise();
-
-			// Generate vertices
-			for (int i = 0; i < segments; i++)
-			{
-				float angle = (float)i / segments * 2.0f * MathF.PI;
-				float x = MathF.Cos(angle) * radius;
-				float y = MathF.Sin(angle) * radius;
-
-				// Convert 2D circle point to 3D
-				Vector3 point = center + tangent1 * x + tangent2 * y;
-				vertices.Add(point);
-			}
-
-			return vertices;
-		}
-
 		public override void Render(MapDocument document, BufferBuilder builder)
 		{
-			if (true)
-			{
-				// Draw a box around the point
-				var c = Origin;
+			var path = this;
 
-				const uint numVertices = 8 * 3;
-				const uint numWireframeIndices = numVertices * 2;
+			var color = Color.Goldenrod.ToVector4();
 
-				var points = new VertexStandard[8];
-				var indices = new uint[numWireframeIndices];
-
-				var col = Color.BlueViolet;
-				var colour = new Vector4(col.R, col.G, col.B, 255) / 255;
-
-				var vi = 0u;
-				var wi = 0u;
-				foreach (var vertex in GenerateCircleVertices(c, 20, Vector3.UnitZ, 8))
-				{
-					var offs = vi;
+			var vertices = path._sphereHandles.Select(n => new VertexStandard { Position = n.Origin, Colour = color });
+			var nodeCount = path._sphereHandles.Count;
+			var indices = Enumerable.Range(0, nodeCount).SelectMany(i => (i == 0 || i == nodeCount) ? new[] { (uint)i } : new[] { (uint)i, (uint)i });
 
 
-					points[vi++] = new VertexStandard
-					{
-						Position = vertex,
-						Colour = colour,
-						Tint = Vector4.One
-					};
+			//uint sectorCount = 8;
+			//uint stackCount = 8;
+			//var vertices = GenerateSphereVertices(20, sectorCount, stackCount);
+			//var vertexStandart = vertices.Select(v => new VertexStandard { Position = v + pathNode.Position, Colour = color, Tint = color }).ToArray();
+			//var indices = GenerateSphereIndices(sectorCount, stackCount).ToArray();
+			var groups = new List<BufferGroup>();
+			//groups.Add(new BufferGroup(PipelineType.TexturedOpaque, CameraType.Both, (uint)0, (uint)indices.Length));
+			groups.Add(new BufferGroup(PipelineType.Wireframe, CameraType.Both, (uint)0, (uint)indices.Count()));
 
-					// Lines - [0 1] ... [n-1 n] [n 0]
-					for (uint i = 0; i < 3; i++)
-					{
-						indices[wi++] = offs + i;
-						indices[wi++] = offs + (i == 4 - 1 ? 0 : i + 1);
-					}
-				}
 
-				var groups = new[]
-				{
-					new BufferGroup(PipelineType.Wireframe, CameraType.Perspective, 0, numWireframeIndices)
-				};
+			builder.Append(vertices, indices, groups);
+			builder.Complete();
 
-				builder.Append(points, indices, groups);
-			}
 		}
 
 		public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, I2DRenderer im)
