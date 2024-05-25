@@ -23,6 +23,9 @@ namespace Sledge.BspEditor.Tools.Draggable
 		public override Vector3 Origin => _position;
 		public bool IsSelected { get; set; }
 		public bool IsDragging { get; set; } = false;
+		public string Name { get; set; }
+		public int? ID { get; set; } = null;
+		public Dictionary<string, string> Properties { get; set; }
 
 		private Vector3 _draggingPosion;
 
