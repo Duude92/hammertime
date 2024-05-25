@@ -16,6 +16,8 @@ using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
 using System.Numerics;
+using System.Reflection.Metadata;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using static Sledge.BspEditor.Tools.Draggable.PathState;
 using static System.Windows.Forms.AxHost;
@@ -31,6 +33,7 @@ namespace Sledge.BspEditor.Tools.PathTool
 		private BoxDraggableState box;
 
 		private bool _shiftPressed;
+		private MapDocument _lastDocument;
 		public PathTool()
 		{
 			RenderedByDefault = true;
@@ -41,11 +44,42 @@ namespace Sledge.BspEditor.Tools.PathTool
 			States.Add(box);
 			Oy.Subscribe<MapDocument>("Document:Activated", document =>
 			{
+				_lastDocument = document;
 				var states = States.OfType<PathState>();
 				States.RemoveAll(state => states.Contains(state));
 				var path = document.Map.Root.Data.Get<Path>();
-				States.AddRange(path.Select(p=>new PathState(this).AddRange(p.Nodes.Select(n=>new SphereHandle(n.Position, this)))));
+				States.InsertRange(0, path.Select(p => new PathState(this)
+				{
+					Property = new PathProperty
+					{
+						Name = p.Name,
+						Direction = p.Direction,
+					}
+				}.AddRange(p.Nodes.Select(n => new SphereHandle(n.Position, this)
+				{
+					ID = n.ID,
+				}))));
 			});
+		}
+		public override Task ToolDeselected()
+		{
+			var states = States.OfType<PathState>();
+			var path = _lastDocument.Map.Root.Data.Get<Path>();
+			_lastDocument.Map.Root.Data.Remove(data => path.Contains(data));
+			_lastDocument.Map.Root.Data.AddRange(states.Select(p => new Path
+			{
+				Direction = p.Property.Direction,
+				Name = p.Property.Name,
+				Nodes = p.Handles.Select(h => new Path.PathNode
+				{
+					ID = h.ID.Value,
+					Name = h.Name,
+					Position = h.Origin,
+					Properties = h.Properties
+				}).ToList()
+			}));
+
+			return base.ToolDeselected();
 		}
 		protected override IEnumerable<Subscription> Subscribe()
 		{
