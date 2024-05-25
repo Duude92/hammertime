@@ -26,19 +26,26 @@ namespace Sledge.BspEditor.Rendering.Converters
 
 		public Task Convert(BufferBuilder builder, MapDocument document, IMapObject obj, ResourceCollector resourceCollector)
 		{
-			var pathNode = obj as Path.PathNode;
-			uint sectorCount = 8;
-			uint stackCount = 8;
-			var vertices = GenerateSphereVertices(20, sectorCount, stackCount);
-			var color = Color.Green.ToVector4();
-			var vertexStandart = vertices.Select(v => new VertexStandard { Position = v + pathNode.Position, Colour = color, Tint = color }).ToArray();
-			var indices = GenerateSphereIndices(sectorCount, stackCount).ToArray();
+			var path = obj as Path;
+
+			var color = Color.Goldenrod.ToVector4();
+
+			var vertices = path.Nodes.Select(n => new VertexStandard { Position = n.Position, Colour = color });
+			var nodeCount = path.Nodes.Count;
+			var indices = Enumerable.Range(0, nodeCount).SelectMany(i => (i == 0 || i == nodeCount) ? new[] { (uint)i } : new[] { (uint)i, (uint)i });
+
+
+			//uint sectorCount = 8;
+			//uint stackCount = 8;
+			//var vertices = GenerateSphereVertices(20, sectorCount, stackCount);
+			//var vertexStandart = vertices.Select(v => new VertexStandard { Position = v + pathNode.Position, Colour = color, Tint = color }).ToArray();
+			//var indices = GenerateSphereIndices(sectorCount, stackCount).ToArray();
 			var groups = new List<BufferGroup>();
-			groups.Add(new BufferGroup(PipelineType.TexturedOpaque, CameraType.Both, (uint)0, (uint)indices.Length));
-			groups.Add(new BufferGroup(PipelineType.Wireframe, CameraType.Both, (uint)0, (uint)indices.Length));
+			//groups.Add(new BufferGroup(PipelineType.TexturedOpaque, CameraType.Both, (uint)0, (uint)indices.Length));
+			groups.Add(new BufferGroup(PipelineType.Wireframe, CameraType.Both, (uint)0, (uint)indices.Count()));
 
 
-			builder.Append(vertexStandart, indices, groups);
+			builder.Append(vertices, indices, groups);
 			builder.Complete();
 			return Task.CompletedTask;
 		}
@@ -50,73 +57,7 @@ namespace Sledge.BspEditor.Rendering.Converters
 
 		public bool Supports(IMapObject obj)
 		{
-			return obj is Path.PathNode;
+			return obj is Path;
 		}
-
-		static List<Vector3> GenerateSphereVertices(float radius, uint sectorCount, uint stackCount)
-		{
-			List<Vector3> vertices = new List<Vector3>();
-
-			float x, y, z, xy; // vertex position
-			float sectorStep = 2 * (float)Math.PI / sectorCount;
-			float stackStep = (float)Math.PI / stackCount;
-			float sectorAngle, stackAngle;
-
-			for (int i = 0; i <= stackCount; ++i)
-			{
-				stackAngle = (float)Math.PI / 2 - i * stackStep; // starting from pi/2 to -pi/2
-				xy = radius * (float)Math.Cos(stackAngle); // r * cos(u)
-				z = radius * (float)Math.Sin(stackAngle);  // r * sin(u)
-
-				// add (sectorCount+1) vertices per stack
-				// the first and last vertices have same position and normal, but different tex coords
-				for (int j = 0; j <= sectorCount; ++j)
-				{
-					sectorAngle = j * sectorStep; // starting from 0 to 2pi
-
-					// vertex position (x, y, z)
-					x = xy * (float)Math.Cos(sectorAngle); // r * cos(u) * cos(v)
-					y = xy * (float)Math.Sin(sectorAngle); // r * cos(u) * sin(v)
-					vertices.Add(new Vector3(x, y, z));
-				}
-			}
-
-			return vertices;
-		}
-
-		static List<uint> GenerateSphereIndices(uint sectorCount, uint stackCount)
-		{
-			List<uint> indices = new List<uint>();
-			uint k1, k2;
-
-			for (uint i = 0; i < stackCount; ++i)
-			{
-				k1 = i * (sectorCount + 1); // beginning of current stack
-				k2 = k1 + sectorCount + 1;  // beginning of next stack
-
-				for (int j = 0; j < sectorCount; ++j, ++k1, ++k2)
-				{
-					// 2 triangles per sector excluding the first and last stacks
-					if (i != 0)
-					{
-						indices.Add(k1 + 1);
-						indices.Add(k2 + 1);
-						indices.Add(k1);
-					}
-
-					if (i != (stackCount - 1))
-					{
-						indices.Add(k1 + 0);
-						indices.Add(k2 + 1);
-						indices.Add(k2);
-					}
-
-				}
-			}
-
-			return indices;
-		}
-
-
 	}
 }
