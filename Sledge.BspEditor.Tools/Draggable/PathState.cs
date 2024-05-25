@@ -182,15 +182,9 @@ namespace Sledge.BspEditor.Tools.Draggable
 			return;
 		}
 		public static implicit operator bool(PathState sphere) => sphere != null;
-		public enum PathDirection
-		{
-			ONE_WAY,
-			CIRCULAR,
-			PING_PONG
-		}
 		public struct PathProperty
 		{
-			public PathDirection Direction;
+			public Primitives.MapObjectData.Path.PathDirection Direction;
 			public string Name;
 			public string ClassName;
 			public Vector3 Position;

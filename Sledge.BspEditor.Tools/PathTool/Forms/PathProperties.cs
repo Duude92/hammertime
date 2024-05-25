@@ -21,7 +21,7 @@ namespace Sledge.BspEditor.Tools.PathTool.Forms
 			{
 				Name = nameBox.Text.Trim(),
 				ClassName = classBox.Text.Trim(),
-				Direction = OneWay.Checked ? PathDirection.ONE_WAY : Circular.Checked ? PathDirection.CIRCULAR : PathDirection.PING_PONG,
+				Direction = OneWay.Checked ? Primitives.MapObjectData.Path.PathDirection.OneWay : Circular.Checked ? Primitives.MapObjectData.Path.PathDirection.Circular : Primitives.MapObjectData.Path.PathDirection.PingPong,				
 				Position = _position
 			};
 			Oy.Publish("PathTool:NewPath", property);
