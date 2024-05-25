@@ -37,13 +37,15 @@ namespace Sledge.BspEditor.Tools.Draggable
 		public SphereHandle Head => _sphereHandles.First();
 		private PathTool.PathTool _pathTool;
 
-		public PathState(Vector3 start, PathTool.PathTool pathTool)
+		public PathState(Vector3 start, PathTool.PathTool pathTool) : this(pathTool)
 		{
 			_sphereHandles.AddFirst(new SphereHandle(start, this, pathTool));
+		}
+		public PathState(PathTool.PathTool pathTool)
+		{
 			_pathTool = pathTool;
 			Oy.Subscribe("PathTool:InsertNode", new Action(InsertNode));
 			Oy.Subscribe("PathTool:Delete", new Action(DeleteSelection));
-
 		}
 		private void DeleteSelection()
 		{
@@ -72,6 +74,14 @@ namespace Sledge.BspEditor.Tools.Draggable
 			_sphereHandles.Last().IsSelected = false;
 			_sphereHandles.AddLast(new SphereHandle(location, this, _pathTool));
 			_sphereHandles.Last().IsSelected = true;
+		}
+		public PathState AddRange(IEnumerable<SphereHandle> handles)
+		{
+			foreach(SphereHandle handle in handles)
+			{
+				_sphereHandles.AddLast(handle);
+			}
+			return this;
 		}
 		public override void StartDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
 		{
