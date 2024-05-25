@@ -1,21 +1,15 @@
 ﻿using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
-using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Draggable;
 using Sledge.BspEditor.Tools.PathTool.Forms;
 using Sledge.BspEditor.Tools.Properties;
-using Sledge.BspEditor.Tools.Vertex;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Hotkeys;
-using Sledge.Common.Shell.Settings;
 using Sledge.Common.Translations;
 using Sledge.DataStructures.Geometric;
-using Sledge.Formats.Bsp.Lumps;
 using Sledge.Rendering.Cameras;
-using Sledge.Rendering.Renderables;
 using Sledge.Shell.Input;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
@@ -23,7 +17,6 @@ using System.Linq;
 using System.Numerics;
 using System.Windows.Forms;
 using static Sledge.BspEditor.Tools.Draggable.PathState;
-using static System.Windows.Forms.AxHost;
 
 namespace Sledge.BspEditor.Tools.PathTool
 {
@@ -39,6 +32,7 @@ namespace Sledge.BspEditor.Tools.PathTool
 
 		public PathTool()
 		{
+			RenderedByDefault = true;
 			box = new BoxDraggableState(this);
 			box.BoxColour = Color.Turquoise;
 			box.FillColour = Color.FromArgb(1, Color.Aqua);
@@ -104,7 +98,7 @@ namespace Sledge.BspEditor.Tools.PathTool
 				const int d = 5;
 
 
-				var clicked = (from point in spheres.SelectMany(s=>s.Handles)
+				var clicked = (from point in spheres.SelectMany(s => s.Handles)
 							   let c = viewport.Viewport.Camera.WorldToScreen(point.Origin)
 							   where c.Z <= 1
 							   where p.X >= c.X - d && p.X <= c.X + d && p.Y >= c.Y - d && p.Y <= c.Y + d
@@ -122,7 +116,7 @@ namespace Sledge.BspEditor.Tools.PathTool
 		private void Select(List<SphereHandle> points, bool toggle)
 		{
 			var spheres = States.OfType<PathState>().ToList();
-			spheres.SelectMany(s=>s.Handles).ToList().ForEach(x => x.IsSelected = points.Contains(x));
+			spheres.SelectMany(s => s.Handles).ToList().ForEach(x => x.IsSelected = points.Contains(x));
 		}
 
 		protected override void KeyDown(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
@@ -159,7 +153,7 @@ namespace Sledge.BspEditor.Tools.PathTool
 		}
 		public bool SelectPointsInBox(Box box, bool toggle)
 		{
-			var inBox = States.OfType<PathState>().SelectMany(s=>s.Handles).Where(x => box.Vector3IsInside(x.Origin)).ToList();
+			var inBox = States.OfType<PathState>().SelectMany(s => s.Handles).Where(x => box.Vector3IsInside(x.Origin)).ToList();
 			Select(inBox, toggle);
 			return inBox.Any();
 		}
