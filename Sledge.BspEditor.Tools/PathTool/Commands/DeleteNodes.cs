@@ -12,7 +12,7 @@ namespace Sledge.BspEditor.Tools.PathTool.Commands
 	[AutoTranslate]
 	[Export(typeof(ICommand))]
 	[CommandID("BspEditor:PathToolDeleteNodes")]
-	[DefaultHotkey("Del")]
+	[DefaultHotkey("Del")] //TODO: add support of using HotKeys on ActiveTool
 	internal class DeleteNodes : ICommand
 	{
 		public string Name => "Delete Nodes";
