@@ -30,11 +30,11 @@ namespace Sledge.BspEditor.Tools.Draggable
 		private Vector3 _draggingPosion;
 
 		public bool IsHighlighted { get; private set; }
-		private PathState _path;
+		public PathState Path { get; set; }
 		private PathTool.PathTool _pathTool;
 		public SphereHandle(Vector3 position, PathState path, PathTool.PathTool pathTool) : this(position, pathTool)
 		{
-			_path = path;
+			Path = path;
 		}
 		public SphereHandle(Vector3 position, PathTool.PathTool pathTool)
 		{

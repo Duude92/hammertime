@@ -79,6 +79,7 @@ namespace Sledge.BspEditor.Tools.Draggable
 		{
 			foreach (SphereHandle handle in handles)
 			{
+				handle.Path = this;
 				_sphereHandles.AddLast(handle);
 			}
 			return this;
