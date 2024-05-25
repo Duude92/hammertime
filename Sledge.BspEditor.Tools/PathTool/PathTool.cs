@@ -33,6 +33,7 @@ namespace Sledge.BspEditor.Tools.PathTool
 		private BoxDraggableState box;
 
 		private bool _shiftPressed;
+		private bool _controlPressed;
 		private MapDocument _lastDocument;
 		public PathTool()
 		{
@@ -137,7 +138,7 @@ namespace Sledge.BspEditor.Tools.PathTool
 			}
 			else
 			{
-				var toggle = false;
+					var toggle = _controlPressed;
 
 				var spheres = States.OfType<PathState>();
 
@@ -166,12 +167,13 @@ namespace Sledge.BspEditor.Tools.PathTool
 		private void Select(List<SphereHandle> points, bool toggle)
 		{
 			var spheres = States.OfType<PathState>().ToList();
-			spheres.SelectMany(s => s.Handles).ToList().ForEach(x => x.IsSelected = points.Contains(x));
+			spheres.SelectMany(s => s.Handles).ToList().ForEach(x => x.IsSelected = (points.Contains(x) || (toggle && x.IsSelected)));
 		}
 
 		protected override void KeyDown(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
 		{
 			_shiftPressed = e.KeyCode == Keys.ShiftKey;
+			_controlPressed = e.KeyCode == Keys.ControlKey;
 			if (e.KeyCode == Keys.Enter) ConfirmSelection(document, viewport);
 
 			base.KeyDown(document, viewport, camera, e);
@@ -214,6 +216,7 @@ namespace Sledge.BspEditor.Tools.PathTool
 		protected override void KeyUp(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
 		{
 			_shiftPressed = (!(e.KeyCode == Keys.ShiftKey) && _shiftPressed);
+			_controlPressed = (!(e.KeyCode == Keys.ControlKey) && _controlPressed);
 
 			base.KeyUp(document, viewport, camera, e);
 		}
