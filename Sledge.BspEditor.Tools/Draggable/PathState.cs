@@ -22,7 +22,7 @@ namespace Sledge.BspEditor.Tools.Draggable
 
 		public BoxAction Action { get; set; }
 
-		public override Vector3 Origin => _sphereHandles.First.Value.Origin;
+		public override Vector3 Origin => _sphereHandles.First?.Value.Origin ?? Vector3.Zero;
 		public PathState Next { get; set; }
 		public PathProperty Property { get; set; }
 
@@ -39,7 +39,7 @@ namespace Sledge.BspEditor.Tools.Draggable
 
 		public PathState(Vector3 start, PathTool.PathTool pathTool) : this(pathTool)
 		{
-			_sphereHandles.AddFirst(new SphereHandle(start, this, pathTool));
+			_sphereHandles.AddFirst(new SphereHandle(start, this, pathTool) { ID = 0 });
 		}
 		public PathState(PathTool.PathTool pathTool)
 		{
@@ -100,7 +100,7 @@ namespace Sledge.BspEditor.Tools.Draggable
 		}
 
 
-		public override bool CanDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position) => true;
+		public override bool CanDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position) => false;
 		//_head.CanDrag(document, viewport, camera, e, position);
 
 
