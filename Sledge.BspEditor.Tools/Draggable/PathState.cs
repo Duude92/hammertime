@@ -62,7 +62,7 @@ namespace Sledge.BspEditor.Tools.Draggable
 					var prev = node.Previous ?? node;
 					var position = (prev.Value.Origin + node.Value.Origin) / 2;
 					node.Value.IsSelected = false;
-					var nextHandle = new SphereHandle(position, this, _pathTool);
+					var nextHandle = new SphereHandle(position, this, _pathTool) { ID = _sphereHandles.Last.Value.ID + 1 };
 					nextHandle.IsSelected = true;
 					_sphereHandles.AddBefore(node, nextHandle);
 				}
@@ -72,12 +72,12 @@ namespace Sledge.BspEditor.Tools.Draggable
 		public void AddNode(Vector3 location)
 		{
 			_sphereHandles.Last().IsSelected = false;
-			_sphereHandles.AddLast(new SphereHandle(location, this, _pathTool));
+			_sphereHandles.AddLast(new SphereHandle(location, this, _pathTool) { ID = _sphereHandles.Last.Value.ID + 1 });
 			_sphereHandles.Last().IsSelected = true;
 		}
 		public PathState AddRange(IEnumerable<SphereHandle> handles)
 		{
-			foreach(SphereHandle handle in handles)
+			foreach (SphereHandle handle in handles)
 			{
 				_sphereHandles.AddLast(handle);
 			}
