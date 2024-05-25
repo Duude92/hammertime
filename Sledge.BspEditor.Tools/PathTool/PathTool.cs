@@ -1,5 +1,6 @@
 ﻿using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Draggable;
 using Sledge.BspEditor.Tools.PathTool.Forms;
@@ -17,6 +18,7 @@ using System.Linq;
 using System.Numerics;
 using System.Windows.Forms;
 using static Sledge.BspEditor.Tools.Draggable.PathState;
+using static System.Windows.Forms.AxHost;
 
 namespace Sledge.BspEditor.Tools.PathTool
 {
@@ -29,7 +31,6 @@ namespace Sledge.BspEditor.Tools.PathTool
 		private BoxDraggableState box;
 
 		private bool _shiftPressed;
-
 		public PathTool()
 		{
 			RenderedByDefault = true;
@@ -38,18 +39,29 @@ namespace Sledge.BspEditor.Tools.PathTool
 			box.FillColour = Color.FromArgb(1, Color.Aqua);
 			//box.State.Changed += BoxChanged;
 			States.Add(box);
+			Oy.Subscribe<MapDocument>("Document:Activated", document =>
+			{
+				var states = States.OfType<PathState>();
+				States.RemoveAll(state => states.Contains(state));
+				var path = document.Map.Root.Data.Get<Path>();
+				States.AddRange(path.Select(p=>new PathState(this).AddRange(p.Nodes.Select(n=>new SphereHandle(n.Position, this)))));
+			});
 		}
 		protected override IEnumerable<Subscription> Subscribe()
 		{
-			yield return Oy.Subscribe<PathProperty>("PathTool:NewPath", p => CreatePath(p));
+			yield return Oy.Subscribe<PathProperty>("PathTool:NewPath", p => CreateAndAddPath(p));
 		}
-
-		private void CreatePath(PathProperty property)
+		private void CreateAndAddPath(PathProperty property)
+		{
+			var state = CreatePath(property);
+			States.Insert(0, state);
+			state.Head.IsSelected = true;
+		}
+		private PathState CreatePath(PathProperty property)
 		{
 			var loc = property.Position;
 			var state = new PathState(loc, this);
-			States.Insert(0, state);
-			state.Head.IsSelected = true;
+			return state;
 		}
 
 		public override Image GetIcon() => Resources.Tool_VM;
