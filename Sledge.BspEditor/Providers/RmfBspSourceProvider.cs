@@ -396,15 +396,15 @@ namespace Sledge.BspEditor.Providers
 
 		private void WritePath(BinaryWriter bw, Path path)
 		{
-			bw.WriteFixedLengthString(Encoding.ASCII, 128, path.Name);
-			bw.WriteFixedLengthString(Encoding.ASCII, 128, path.Type);
+			bw.WriteFixedLengthString(Encoding.ASCII, 128, path.Name??"");
+			bw.WriteFixedLengthString(Encoding.ASCII, 128, path.Type??"path_corner");
 			bw.Write((int)path.Direction);
 			bw.Write(path.Nodes.Count);
 			foreach (var node in path.Nodes)
 			{
 				bw.WriteVector3(node.Position);
 				bw.Write(node.ID);
-				bw.WriteFixedLengthString(Encoding.ASCII, 128, node.Name);
+				bw.WriteFixedLengthString(Encoding.ASCII, 128, node.Name??"");
 				bw.Write(node.Properties.Count);
 				foreach (var property in node.Properties)
 				{
