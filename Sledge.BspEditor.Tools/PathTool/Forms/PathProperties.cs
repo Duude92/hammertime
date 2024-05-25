@@ -2,6 +2,8 @@
 using System.Numerics;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
+using Sledge.BspEditor.Tools.Draggable;
+using Sledge.BspEditor.Primitives.MapObjectData;
 using static Sledge.BspEditor.Tools.Draggable.PathState;
 
 namespace Sledge.BspEditor.Tools.PathTool.Forms
@@ -14,6 +16,15 @@ namespace Sledge.BspEditor.Tools.PathTool.Forms
 			_position = location;
 			InitializeComponent();
 		}
+		public PathProperties(PathState path)
+		{
+			InitializeComponent();
+			nameBox.Text = path.Property.Name;
+			classBox.Text = path.Property.ClassName;
+			OneWay.Checked = path.Property.Direction == Path.PathDirection.OneWay;
+			Circular.Checked = path.Property.Direction == Path.PathDirection.Circular;
+			PP.Checked = path.Property.Direction == Path.PathDirection.PingPong;
+		}
 
 		private void OkClicked(object sender, EventArgs e)
 		{
@@ -21,7 +32,7 @@ namespace Sledge.BspEditor.Tools.PathTool.Forms
 			{
 				Name = nameBox.Text.Trim(),
 				ClassName = classBox.Text.Trim(),
-				Direction = OneWay.Checked ? Primitives.MapObjectData.Path.PathDirection.OneWay : Circular.Checked ? Primitives.MapObjectData.Path.PathDirection.Circular : Primitives.MapObjectData.Path.PathDirection.PingPong,				
+				Direction = OneWay.Checked ? Path.PathDirection.OneWay : Circular.Checked ? Path.PathDirection.Circular : Path.PathDirection.PingPong,				
 				Position = _position
 			};
 			Oy.Publish("PathTool:NewPath", property);
