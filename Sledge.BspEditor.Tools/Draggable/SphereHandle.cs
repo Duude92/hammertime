@@ -40,6 +40,7 @@ namespace Sledge.BspEditor.Tools.Draggable
 		{
 			_pathTool = pathTool;
 			_position = position;
+			Properties = new Dictionary<string, string>();
 		}
 		private Subscription _subscription;
 		private void Subscribe() => _subscription = Oy.Subscribe<RightClickMenuBuilder>("MapViewport:RightClick", b =>
