@@ -54,6 +54,7 @@ namespace Sledge.BspEditor.Tools.PathTool
 					{
 						Name = p.Name,
 						Direction = p.Direction,
+						ClassName = p.Type
 					}
 				}.AddRange(p.Nodes.Select(n => new SphereHandle(n.Position, this)
 				{
@@ -70,9 +71,10 @@ namespace Sledge.BspEditor.Tools.PathTool
 			{
 				Direction = p.Property.Direction,
 				Name = p.Property.Name,
+				Type = p.Property.ClassName,
 				Nodes = p.Handles.Select(h => new Path.PathNode
 				{
-					ID = h.ID.Value,
+					ID = h.ID.HasValue ? h.ID.Value : 0,
 					Name = h.Name,
 					Position = h.Origin,
 					Properties = h.Properties
@@ -103,6 +105,7 @@ namespace Sledge.BspEditor.Tools.PathTool
 		public override string GetName() => "Path Tool";
 		protected override void MouseDown(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
 		{
+			if (e.Button == MouseButtons.Left)
 			if (_shiftPressed)
 			{
 				if (e.Button != MouseButtons.Left && e.Button != MouseButtons.Right) return;
@@ -114,6 +117,7 @@ namespace Sledge.BspEditor.Tools.PathTool
 					PathProperties dialog = new PathProperties(loc);
 					var result = dialog.ShowDialog();
 					if (result == DialogResult.Cancel) return;
+						_shiftPressed = false;
 					return;
 				}
 
