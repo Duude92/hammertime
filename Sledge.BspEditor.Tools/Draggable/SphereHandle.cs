@@ -29,11 +29,14 @@ namespace Sledge.BspEditor.Tools.Draggable
 		public bool IsHighlighted { get; private set; }
 		private PathState _path;
 		private PathTool.PathTool _pathTool;
-		public SphereHandle(Vector3 position, PathState path, PathTool.PathTool pathTool)
+		public SphereHandle(Vector3 position, PathState path, PathTool.PathTool pathTool) : this(position, pathTool)
+		{
+			_path = path;
+		}
+		public SphereHandle(Vector3 position, PathTool.PathTool pathTool)
 		{
 			_pathTool = pathTool;
 			_position = position;
-			_path = path;
 		}
 		private Subscription _subscription;
 		private void Subscribe() => _subscription = Oy.Subscribe<RightClickMenuBuilder>("MapViewport:RightClick", b =>
@@ -73,7 +76,6 @@ namespace Sledge.BspEditor.Tools.Draggable
 			_subscription.Dispose();
 			IsHighlighted = false;
 			viewport.Control.Cursor = Cursors.Default;
-
 		}
 
 		public override void Render(MapDocument document, BufferBuilder builder)
@@ -87,14 +89,7 @@ namespace Sledge.BspEditor.Tools.Draggable
 			var indices = GenerateSphereIndices(sectorCount, stackCount).ToArray();
 			var groups = new List<BufferGroup>();
 
-			var vertices1 = GenerateSphereVertices(20, 8, stackCount).Select(v => new VertexStandard { Position = v + pathNode.Origin, Colour = color, Tint = color });
-			var indices1 = GenerateSphereIndices(8, stackCount).ToArray();
-
-
 			groups.Add(new BufferGroup(PipelineType.TexturedOpaque, CameraType.Perspective, (uint)0, (uint)indices.Length));
-
-			builder.Append(vertices1, indices1, new[] { new BufferGroup(PipelineType.Wireframe, CameraType.Orthographic, (uint)0, (uint)indices1.Length) });
-
 
 			builder.Append(vertexStandart, indices, groups);
 			builder.Complete();
