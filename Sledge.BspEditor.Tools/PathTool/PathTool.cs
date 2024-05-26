@@ -6,6 +6,7 @@ using Sledge.BspEditor.Tools.Draggable;
 using Sledge.BspEditor.Tools.PathTool.Forms;
 using Sledge.BspEditor.Tools.Properties;
 using Sledge.Common.Shell.Components;
+using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Translations;
 using Sledge.DataStructures.Geometric;
@@ -16,11 +17,9 @@ using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
 using System.Numerics;
-using System.Reflection.Metadata;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static Sledge.BspEditor.Tools.Draggable.PathState;
-using static System.Windows.Forms.AxHost;
 
 namespace Sledge.BspEditor.Tools.PathTool
 {
@@ -86,19 +85,12 @@ namespace Sledge.BspEditor.Tools.PathTool
 		}
 		protected override IEnumerable<Subscription> Subscribe()
 		{
-			yield return Oy.Subscribe<PathProperty>("PathTool:NewPath", p => CreateAndAddPath(p));
+			yield return Oy.Subscribe<PathProperty>("PathTool:SavePathProperties", p => ApplyPathSettings(p));
 		}
-		private void CreateAndAddPath(PathProperty property)
+		private void ApplyPathSettings(PathProperty property)
 		{
-			var state = CreatePath(property);
-			States.Insert(0, state);
-			state.Head.IsSelected = true;
-		}
-		private PathState CreatePath(PathProperty property)
-		{
-			var loc = property.Position;
-			var state = new PathState(loc, this);
-			return state;
+			var hl = States.OfType<PathState>().Where(s => s.IsSelected).ToList();
+			hl.First().Property = property;
 		}
 
 		public override Image GetIcon() => Resources.Tool_VM;
@@ -107,6 +99,7 @@ namespace Sledge.BspEditor.Tools.PathTool
 		protected override void MouseDown(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
 		{
 			if (e.Button == MouseButtons.Left)
+			{
 			if (_shiftPressed)
 			{
 				if (e.Button != MouseButtons.Left && e.Button != MouseButtons.Right) return;
@@ -116,9 +109,14 @@ namespace Sledge.BspEditor.Tools.PathTool
 				if (!hl.Any())
 				{
 					PathProperties dialog = new PathProperties(loc);
+						_shiftPressed = false;
+						var state = new PathState(loc, this);
+						States.Insert(0, state);
+						state.Head.IsSelected = true;
+
 					var result = dialog.ShowDialog();
 					if (result == DialogResult.Cancel) return;
-						_shiftPressed = false;
+
 					return;
 				}
 
@@ -132,6 +130,17 @@ namespace Sledge.BspEditor.Tools.PathTool
 			{
 					var toggle = _controlPressed;
 
+					List<SphereHandle> clicked = GetClicked(viewport, camera, e);
+
+					Select(clicked, toggle);
+
+				}
+			}
+			base.MouseDown(document, viewport, camera, e);
+		}
+
+		private List<SphereHandle> GetClicked(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
+		{
 				var spheres = States.OfType<PathState>();
 
 				var l = camera.ScreenToWorld(e.X, e.Y);
@@ -140,7 +149,13 @@ namespace Sledge.BspEditor.Tools.PathTool
 
 				const int d = 5;
 
-				var clicked = (from point in spheres.SelectMany(s => s.Handles)
+			List<SphereHandle> clicked = GetClickedAt(viewport, spheres, pos, p, d);
+			return clicked;
+		}
+
+		private static List<SphereHandle> GetClickedAt(MapViewport viewport, IEnumerable<PathState> spheres, Vector3 pos, Vector3 p, int d)
+		{
+			return (from point in spheres.SelectMany(s => s.Handles)
 							   let c = viewport.Viewport.Camera.WorldToScreen(point.Origin)
 							   where c.Z <= 1
 							   where p.X >= c.X - d && p.X <= c.X + d && p.Y >= c.Y - d && p.Y <= c.Y + d

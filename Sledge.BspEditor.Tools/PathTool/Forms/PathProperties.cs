@@ -35,7 +35,7 @@ namespace Sledge.BspEditor.Tools.PathTool.Forms
 				Direction = OneWay.Checked ? Path.PathDirection.OneWay : Circular.Checked ? Path.PathDirection.Circular : Path.PathDirection.PingPong,				
 				Position = _position
 			};
-			Oy.Publish("PathTool:NewPath", property);
+			Oy.Publish("PathTool:SavePathProperties", property);
 			Close();
 		}
 

@@ -8,6 +8,7 @@ using Sledge.Rendering.Pipelines;
 using Sledge.Rendering.Primitives;
 using Sledge.Rendering.Resources;
 using Sledge.Rendering.Viewports;
+using Sledge.BspEditor.Primitives.MapObjectData;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -185,7 +186,7 @@ namespace Sledge.BspEditor.Tools.Draggable
 		public static implicit operator bool(PathState sphere) => sphere != null;
 		public struct PathProperty
 		{
-			public Primitives.MapObjectData.Path.PathDirection Direction;
+			public Path.PathDirection Direction;
 			public string Name;
 			public string ClassName;
 			public Vector3 Position;
