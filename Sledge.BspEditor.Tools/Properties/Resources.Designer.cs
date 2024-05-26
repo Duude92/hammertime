@@ -139,23 +139,11 @@ namespace Sledge.BspEditor.Tools.Properties {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-
-		/// <summary>
-		///   Looks up a localized resource of type System.Drawing.Bitmap.
-		/// </summary>
-		internal static System.Drawing.Bitmap Tool_Prefab
-		{
-			get
-			{
-				object obj = ResourceManager.GetObject("Tool_Prefab", resourceCulture);
-				return ((System.Drawing.Bitmap)(obj));
-			}
-		}
-
-		/// <summary>
-		///   Looks up a localized resource of type System.Drawing.Bitmap.
-		/// </summary>
-		internal static System.Drawing.Bitmap Tool_Camera {
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Tool_Camera {
             get {
                 object obj = ResourceManager.GetObject("Tool_Camera", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -198,6 +186,26 @@ namespace Sledge.BspEditor.Tools.Properties {
         internal static System.Drawing.Bitmap Tool_Entity {
             get {
                 object obj = ResourceManager.GetObject("Tool_Entity", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Tool_Path {
+            get {
+                object obj = ResourceManager.GetObject("Tool_Path", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Tool_Prefab {
+            get {
+                object obj = ResourceManager.GetObject("Tool_Prefab", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

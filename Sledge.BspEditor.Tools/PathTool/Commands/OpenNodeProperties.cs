@@ -3,7 +3,6 @@ using Sledge.BspEditor.Tools.Draggable;
 using Sledge.BspEditor.Tools.PathTool.Forms;
 using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Context;
-using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Translations;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
