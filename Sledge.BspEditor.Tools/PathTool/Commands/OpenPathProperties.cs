@@ -29,7 +29,7 @@ namespace Sledge.BspEditor.Tools.PathTool.Commands
 		{
 			var path = parameters.Get<IEnumerable<PathState>>("SyncRoot").FirstOrDefault();
 			if(path == null) return Task.CompletedTask;
-			PathProperties dialog = new PathProperties(path as PathState);
+			PathProperties dialog = new PathProperties(path);
 			var result = dialog.ShowDialog();
 			if (result == DialogResult.Cancel) return Task.CompletedTask;
 			return Task.CompletedTask;

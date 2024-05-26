@@ -11,13 +11,10 @@ namespace Sledge.BspEditor.Tools.PathTool.Forms
 	public partial class PathProperties : Form
 	{
 		private Vector3 _position;
-		public PathProperties(Vector3 location)
-		{
-			_position = location;
-			InitializeComponent();
-		}
+		private PathState _state;
 		public PathProperties(PathState path)
 		{
+			_state = path;
 			InitializeComponent();
 			nameBox.Text = path.Property.Name;
 			classBox.Text = path.Property.ClassName;
@@ -32,10 +29,10 @@ namespace Sledge.BspEditor.Tools.PathTool.Forms
 			{
 				Name = nameBox.Text.Trim(),
 				ClassName = classBox.Text.Trim(),
-				Direction = OneWay.Checked ? Path.PathDirection.OneWay : Circular.Checked ? Path.PathDirection.Circular : Path.PathDirection.PingPong,				
+				Direction = OneWay.Checked ? Path.PathDirection.OneWay : Circular.Checked ? Path.PathDirection.Circular : Path.PathDirection.PingPong,
 				Position = _position
 			};
-			Oy.Publish("PathTool:SavePathProperties", property);
+			_state.Property = property;
 			Close();
 		}
 

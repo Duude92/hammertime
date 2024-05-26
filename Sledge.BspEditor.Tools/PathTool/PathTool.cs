@@ -34,6 +34,9 @@ namespace Sledge.BspEditor.Tools.PathTool
 		private bool _shiftPressed;
 		private bool _controlPressed;
 		private MapDocument _lastDocument;
+		public override Image GetIcon() => Resources.Tool_VM;
+		public override string GetName() => "Path Tool";
+
 		public PathTool()
 		{
 			RenderedByDefault = true;
@@ -85,7 +88,7 @@ namespace Sledge.BspEditor.Tools.PathTool
 		}
 		protected override IEnumerable<Subscription> Subscribe()
 		{
-			yield return Oy.Subscribe<PathProperty>("PathTool:SavePathProperties", p => ApplyPathSettings(p));
+			yield break;
 		}
 		private void ApplyPathSettings(PathProperty property)
 		{
@@ -108,9 +111,9 @@ namespace Sledge.BspEditor.Tools.PathTool
 
 				if (!hl.Any())
 				{
-					PathProperties dialog = new PathProperties(loc);
 						_shiftPressed = false;
 						var state = new PathState(loc, this);
+						PathProperties dialog = new PathProperties(state);
 						States.Insert(0, state);
 						state.Head.IsSelected = true;
 
@@ -161,11 +164,6 @@ namespace Sledge.BspEditor.Tools.PathTool
 							   where p.X >= c.X - d && p.X <= c.X + d && p.Y >= c.Y - d && p.Y <= c.Y + d
 							   orderby (pos - point.Origin).LengthSquared()
 							   select point).ToList();
-
-				Select(clicked, toggle);
-
-			}
-			base.MouseDown(document, viewport, camera, e);
 		}
 
 		private void Select(List<SphereHandle> points, bool toggle)
