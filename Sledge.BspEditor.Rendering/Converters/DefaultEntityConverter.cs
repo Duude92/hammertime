@@ -83,8 +83,6 @@ namespace Sledge.BspEditor.Rendering.Converters
 					relationIndices[i] = i;
 					relationIndices[i + 1] = i + 1;
 					i += 2;
-
-
 				}
                 foreach (var removeEntitye in entitiesToRemove)
                 {
