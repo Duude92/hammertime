@@ -52,8 +52,11 @@ namespace Sledge.BspEditor.Tools.Draggable
 
 				b.AddSeparator();
 				b.AddCommand("BspEditor:PathProperties", new[] { Path });
-				b.AddCommand("BspEditor:PathToolDeletePath");
-				b.AddCommand("BspEditor:SelectPath");
+				b.AddCommand("BspEditor:PathToolDeletePath", new[] { Path });
+				b.AddCommand("BspEditor:PathToolSelectPath", new[] { Path });
+
+				b.AddSeparator();
+				b.AddCommand("BspEditor:PathToolConvertPath", new[] { Path });
 			});
 
 		public override bool CanDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
