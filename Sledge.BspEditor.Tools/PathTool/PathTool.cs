@@ -75,9 +75,9 @@ namespace Sledge.BspEditor.Tools.PathTool
 				Direction = p.Property.Direction,
 				Name = p.Property.Name,
 				Type = p.Property.ClassName,
-				Nodes = p.Handles.Select(h => new Path.PathNode
+				Nodes = p.Handles.Select((h,count) => new Path.PathNode
 				{
-					ID = h.ID.HasValue ? h.ID.Value : 0,
+					ID = count,
 					Name = h.Name,
 					Position = h.Origin,
 					Properties = h.Properties
@@ -90,15 +90,6 @@ namespace Sledge.BspEditor.Tools.PathTool
 		{
 			yield break;
 		}
-		private void ApplyPathSettings(PathProperty property)
-		{
-			var hl = States.OfType<PathState>().Where(s => s.IsSelected).ToList();
-			hl.First().Property = property;
-		}
-
-		public override Image GetIcon() => Resources.Tool_VM;
-
-		public override string GetName() => "Path Tool";
 		protected override void MouseDown(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
 		{
 			if (e.Button == MouseButtons.Left)
