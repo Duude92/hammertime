@@ -69,6 +69,8 @@ namespace Sledge.BspEditor.Tools.PathTool
 		}
 		public override Task ToolDeselected()
 		{
+			box.State.Action = BoxAction.Idle;
+
 			var states = States.OfType<PathState>().Where(p => p.Handles.Any());
 			var path = _lastDocument.Map.Root.Data.Get<Path>();
 			_lastDocument.Map.Root.Data.Remove(data => path.Contains(data));
