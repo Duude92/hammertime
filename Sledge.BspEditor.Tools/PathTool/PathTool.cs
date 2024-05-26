@@ -62,6 +62,8 @@ namespace Sledge.BspEditor.Tools.PathTool
 				}.AddRange(p.Nodes.Select(n => new SphereHandle(n.Position, this)
 				{
 					ID = n.ID,
+					Name = n.Name,
+					Properties = n.Properties,
 				}))));
 			});
 		}
