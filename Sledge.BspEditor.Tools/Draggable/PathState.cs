@@ -14,29 +14,21 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Numerics;
+using Sledge.BspEditor.Primitives.MapObjects;
 
 namespace Sledge.BspEditor.Tools.Draggable
 {
 	public class PathState : BaseDraggable, IDraggableState
 	{
 		public IEnumerable<PathNodeHandle> Handles => _sphereHandles;
-
 		public BoxAction Action { get; set; }
-
 		public override Vector3 Origin => _sphereHandles.First?.Value.Origin ?? Vector3.Zero;
 		public PathState Next { get; set; }
 		public PathProperty Property { get; set; }
-
-
-		private Vector3 _pointDragStart;
-		private Vector3 _pointDragGridOffset;
-
 		public bool IsSelected { get => _sphereHandles.FirstOrDefault(h => h.IsSelected) != null; }
-
-
-		LinkedList<PathNodeHandle> _sphereHandles = new LinkedList<PathNodeHandle>();
 		public PathNodeHandle Head => _sphereHandles.First();
 		private PathTool.PathTool _pathTool;
+		private LinkedList<PathNodeHandle> _sphereHandles = new LinkedList<PathNodeHandle>();
 
 		public PathState(Vector3 start, PathTool.PathTool pathTool) : this(pathTool)
 		{
@@ -182,6 +174,68 @@ namespace Sledge.BspEditor.Tools.Draggable
 		public override void Unhighlight(MapDocument document, MapViewport viewport)
 		{
 			return;
+		}
+		public IEnumerable<IMapObject> ToMapObject(MapDocument mapDocument)
+		{
+			var data = mapDocument.Environment.GetGameData();
+			Color color = Color.White;
+			if (data.Result != null)
+			{
+				var cls = data.Result.Classes.FirstOrDefault(x => x.Name.Equals(Property.ClassName));
+				if (cls != null)
+				{
+					var col = cls.Behaviours.Where(x => x.Name == "color").ToArray();
+					if (col.Any()) color = col[0].GetColour(0);
+				}
+			}
+
+
+			var result = new List<Primitives.MapObjects.Entity>();
+			var handles = Handles.ToList();
+			for (int i = 0; i < _sphereHandles.Count; i++)
+			{
+				string nextNodeName = "";
+				if (i == _sphereHandles.Count - 1)
+				{
+					if (Property.Direction != Path.PathDirection.OneWay)
+						nextNodeName = string.IsNullOrEmpty(handles[0].Name.Trim()) ? Property.Name + 0 : handles[0].Name;
+				}
+				else
+				{
+					nextNodeName = string.IsNullOrEmpty(handles[i + 1].Name.Trim()) ? Property.Name + (i + 1) : handles[i + 1].Name;
+				}
+				var entity = new Primitives.MapObjects.Entity(mapDocument.Map.NumberGenerator.Next("MapObject"))
+				{
+					Origin = handles[i].Origin,
+					Data = {
+				new EntityData
+					{
+						Name = Property.ClassName,
+						Flags = handles[i].Properties.TryGetValue("spawnflags", out var flags) && int.TryParse(flags, out var spawnFlags) ? spawnFlags : 0,
+						Properties = new Dictionary<string, string>(handles[i].Properties.Where(p => p.Key != "spawnflags")){
+							{
+								"targetname", string.IsNullOrEmpty(handles[i].Name.Trim()) ? Property.Name + i : handles[i].Name
+							},
+							{
+								"target", nextNodeName
+							}
+						}
+					},
+				new ObjectColor(color),
+					}
+				};
+				result.Add(entity);
+			}
+
+
+
+			Primitives.MapObjects.Entity.FindRelationsStatic(result);
+			_sphereHandles.Clear();
+			return result;
+		}
+		public void Clear()
+		{
+			_sphereHandles.Clear();
 		}
 		public static implicit operator bool(PathState sphere) => sphere != null;
 		public struct PathProperty
