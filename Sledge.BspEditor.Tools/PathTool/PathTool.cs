@@ -79,7 +79,7 @@ namespace Sledge.BspEditor.Tools.PathTool
 				Direction = p.Property.Direction,
 				Name = p.Property.Name,
 				Type = p.Property.ClassName,
-				Nodes = p.Handles.Select((h,count) => new Path.PathNode
+				Nodes = p.Handles.Select((h, count) => new Path.PathNode
 				{
 					ID = count,
 					Name = h.Name,
@@ -164,7 +164,7 @@ namespace Sledge.BspEditor.Tools.PathTool
 		private void Select(List<PathNodeHandle> points, bool toggle)
 		{
 			var spheres = States.OfType<PathState>().ToList();
-			spheres.SelectMany(s => s.Handles).ToList().ForEach(x => x.IsSelected = (points.Contains(x) || (toggle && x.IsSelected)));
+			spheres.SelectMany(s => s.Handles).ToList().ForEach(x => x.IsSelected = points.Contains(x) ? !x.IsSelected : (toggle && x.IsSelected));
 		}
 
 		protected override void KeyDown(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
