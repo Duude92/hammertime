@@ -160,6 +160,9 @@
     <PackageReference Include="System.Resources.Extensions" Version="7.0.0" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="PathTool\Forms\NodeProperties.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="PathTool\Forms\PathProperties.cs">
       <SubType>Form</SubType>
     </Compile>

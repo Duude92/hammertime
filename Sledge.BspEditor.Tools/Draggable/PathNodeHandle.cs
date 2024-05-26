@@ -17,7 +17,7 @@ using Sledge.Rendering.Primitives;
 
 namespace Sledge.BspEditor.Tools.Draggable
 {
-	public class SphereHandle : BaseDraggable
+	public class PathNodeHandle : BaseDraggable
 	{
 		private Vector3 _position;
 		public override Vector3 Origin => _position;
@@ -32,11 +32,11 @@ namespace Sledge.BspEditor.Tools.Draggable
 		public bool IsHighlighted { get; private set; }
 		public PathState Path { get; set; }
 		private PathTool.PathTool _pathTool;
-		public SphereHandle(Vector3 position, PathState path, PathTool.PathTool pathTool) : this(position, pathTool)
+		public PathNodeHandle(Vector3 position, PathState path, PathTool.PathTool pathTool) : this(position, pathTool)
 		{
 			Path = path;
 		}
-		public SphereHandle(Vector3 position, PathTool.PathTool pathTool)
+		public PathNodeHandle(Vector3 position, PathTool.PathTool pathTool)
 		{
 			_pathTool = pathTool;
 			_position = position;
@@ -48,10 +48,10 @@ namespace Sledge.BspEditor.Tools.Draggable
 				b.Clear();
 				b.AddCommand("BspEditor:PathToolDeleteNodes");
 				b.AddCommand("BspEditor:PathInsertNode");
-				b.AddCommand("BspEditor:PathProperties", new[] { Path });
+				b.AddCommand("BspEditor:NodeProperties", new[] { this });
 
 				b.AddSeparator();
-				b.AddCommand("BspEditor:PathProperties");
+				b.AddCommand("BspEditor:PathProperties", new[] { Path });
 				b.AddCommand("BspEditor:PathToolDeletePath");
 				b.AddCommand("BspEditor:SelectPath");
 			});

@@ -19,7 +19,7 @@ namespace Sledge.BspEditor.Tools.Draggable
 {
 	public class PathState : BaseDraggable, IDraggableState
 	{
-		public IEnumerable<SphereHandle> Handles => _sphereHandles;
+		public IEnumerable<PathNodeHandle> Handles => _sphereHandles;
 
 		public BoxAction Action { get; set; }
 
@@ -34,13 +34,13 @@ namespace Sledge.BspEditor.Tools.Draggable
 		public bool IsSelected { get => _sphereHandles.FirstOrDefault(h => h.IsSelected) != null; }
 
 
-		LinkedList<SphereHandle> _sphereHandles = new LinkedList<SphereHandle>();
-		public SphereHandle Head => _sphereHandles.First();
+		LinkedList<PathNodeHandle> _sphereHandles = new LinkedList<PathNodeHandle>();
+		public PathNodeHandle Head => _sphereHandles.First();
 		private PathTool.PathTool _pathTool;
 
 		public PathState(Vector3 start, PathTool.PathTool pathTool) : this(pathTool)
 		{
-			_sphereHandles.AddFirst(new SphereHandle(start, this, pathTool) { ID = 0 });
+			_sphereHandles.AddFirst(new PathNodeHandle(start, this, pathTool) { ID = 0 });
 		}
 		public PathState(PathTool.PathTool pathTool)
 		{
@@ -63,7 +63,7 @@ namespace Sledge.BspEditor.Tools.Draggable
 					var prev = node.Previous ?? node;
 					var position = (prev.Value.Origin + node.Value.Origin) / 2;
 					node.Value.IsSelected = false;
-					var nextHandle = new SphereHandle(position, this, _pathTool) { ID = _sphereHandles.Last.Value.ID + 1 };
+					var nextHandle = new PathNodeHandle(position, this, _pathTool) { ID = _sphereHandles.Last.Value.ID + 1 };
 					nextHandle.IsSelected = true;
 					_sphereHandles.AddBefore(node, nextHandle);
 				}
@@ -73,12 +73,12 @@ namespace Sledge.BspEditor.Tools.Draggable
 		public void AddNode(Vector3 location)
 		{
 			_sphereHandles.Last().IsSelected = false;
-			_sphereHandles.AddLast(new SphereHandle(location, this, _pathTool) { ID = _sphereHandles.Last.Value.ID + 1 });
+			_sphereHandles.AddLast(new PathNodeHandle(location, this, _pathTool) { ID = _sphereHandles.Last.Value.ID + 1 });
 			_sphereHandles.Last().IsSelected = true;
 		}
-		public PathState AddRange(IEnumerable<SphereHandle> handles)
+		public PathState AddRange(IEnumerable<PathNodeHandle> handles)
 		{
-			foreach (SphereHandle handle in handles)
+			foreach (PathNodeHandle handle in handles)
 			{
 				handle.Path = this;
 				_sphereHandles.AddLast(handle);

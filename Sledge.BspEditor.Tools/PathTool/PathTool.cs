@@ -59,7 +59,7 @@ namespace Sledge.BspEditor.Tools.PathTool
 						Direction = p.Direction,
 						ClassName = p.Type
 					}
-				}.AddRange(p.Nodes.Select(n => new SphereHandle(n.Position, this)
+				}.AddRange(p.Nodes.Select(n => new PathNodeHandle(n.Position, this)
 				{
 					ID = n.ID,
 					Name = n.Name,
@@ -96,37 +96,37 @@ namespace Sledge.BspEditor.Tools.PathTool
 		{
 			if (e.Button == MouseButtons.Left)
 			{
-			if (_shiftPressed)
-			{
-				if (e.Button != MouseButtons.Left && e.Button != MouseButtons.Right) return;
-				var hl = States.OfType<PathState>().Where(s => s.IsSelected).ToList();
-				var loc = SnapIfNeeded(camera.ScreenToWorld(e.X, e.Y));
-
-				if (!hl.Any())
+				if (_shiftPressed)
 				{
+					if (e.Button != MouseButtons.Left && e.Button != MouseButtons.Right) return;
+					var hl = States.OfType<PathState>().Where(s => s.IsSelected).ToList();
+					var loc = SnapIfNeeded(camera.ScreenToWorld(e.X, e.Y));
+
+					if (!hl.Any())
+					{
 						_shiftPressed = false;
 						var state = new PathState(loc, this);
 						PathProperties dialog = new PathProperties(state);
 						States.Insert(0, state);
 						state.Head.IsSelected = true;
 
-					var result = dialog.ShowDialog();
-					if (result == DialogResult.Cancel) return;
+						var result = dialog.ShowDialog();
+						if (result == DialogResult.Cancel) return;
 
-					return;
+						return;
+					}
+
+					if (hl.Count > 1) return; // Ignore on multiple selected
+					var parent = hl.FirstOrDefault();
+					if (parent?.Next) return; // Ignore if selected node has Next item
+
+					parent.AddNode(loc);
 				}
-
-				if (hl.Count > 1) return; // Ignore on multiple selected
-				var parent = hl.FirstOrDefault();
-				if (parent?.Next) return; // Ignore if selected node has Next item
-
-				parent.AddNode(loc);
-			}
-			else
-			{
+				else
+				{
 					var toggle = _controlPressed;
 
-					List<SphereHandle> clicked = GetClicked(viewport, camera, e);
+					List<PathNodeHandle> clicked = GetClicked(viewport, camera, e);
 
 					Select(clicked, toggle);
 
@@ -135,31 +135,31 @@ namespace Sledge.BspEditor.Tools.PathTool
 			base.MouseDown(document, viewport, camera, e);
 		}
 
-		private List<SphereHandle> GetClicked(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
+		private List<PathNodeHandle> GetClicked(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
 		{
-				var spheres = States.OfType<PathState>();
+			var spheres = States.OfType<PathState>();
 
-				var l = camera.ScreenToWorld(e.X, e.Y);
-				var pos = l;
-				var p = new Vector3(e.X, e.Y, 0);
+			var l = camera.ScreenToWorld(e.X, e.Y);
+			var pos = l;
+			var p = new Vector3(e.X, e.Y, 0);
 
-				const int d = 5;
+			const int d = 5;
 
-			List<SphereHandle> clicked = GetClickedAt(viewport, spheres, pos, p, d);
+			List<PathNodeHandle> clicked = GetClickedAt(viewport, spheres, pos, p, d);
 			return clicked;
 		}
 
-		private static List<SphereHandle> GetClickedAt(MapViewport viewport, IEnumerable<PathState> spheres, Vector3 pos, Vector3 p, int d)
+		private static List<PathNodeHandle> GetClickedAt(MapViewport viewport, IEnumerable<PathState> spheres, Vector3 pos, Vector3 p, int d)
 		{
 			return (from point in spheres.SelectMany(s => s.Handles)
-							   let c = viewport.Viewport.Camera.WorldToScreen(point.Origin)
-							   where c.Z <= 1
-							   where p.X >= c.X - d && p.X <= c.X + d && p.Y >= c.Y - d && p.Y <= c.Y + d
-							   orderby (pos - point.Origin).LengthSquared()
-							   select point).ToList();
+					let c = viewport.Viewport.Camera.WorldToScreen(point.Origin)
+					where c.Z <= 1
+					where p.X >= c.X - d && p.X <= c.X + d && p.Y >= c.Y - d && p.Y <= c.Y + d
+					orderby (pos - point.Origin).LengthSquared()
+					select point).ToList();
 		}
 
-		private void Select(List<SphereHandle> points, bool toggle)
+		private void Select(List<PathNodeHandle> points, bool toggle)
 		{
 			var spheres = States.OfType<PathState>().ToList();
 			spheres.SelectMany(s => s.Handles).ToList().ForEach(x => x.IsSelected = (points.Contains(x) || (toggle && x.IsSelected)));
