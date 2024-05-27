@@ -130,9 +130,11 @@
 			// classBox
 			// 
 			classBox.FormattingEnabled = true;
+			classBox.Items.AddRange(new object[] { "path_corner", "path_track" });
 			classBox.Location = new System.Drawing.Point(12, 93);
 			classBox.Name = "classBox";
 			classBox.Size = new System.Drawing.Size(166, 23);
+			classBox.Sorted = true;
 			classBox.TabIndex = 18;
 			// 
 			// CancelButton
@@ -152,7 +154,6 @@
 			AcceptButton = OKButton;
 			AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			CancelButton = CancelButton;
 			ClientSize = new System.Drawing.Size(361, 157);
 			Controls.Add(classBox);
 			Controls.Add(nameBox);

@@ -17,7 +17,8 @@ namespace Sledge.BspEditor.Tools.PathTool.Forms
 			_state = path;
 			InitializeComponent();
 			nameBox.Text = path.Property.Name;
-			classBox.Text = path.Property.ClassName;
+			if (string.IsNullOrEmpty(path.Property.ClassName)) classBox.SelectedIndex = 0;
+			else classBox.Text = path.Property.ClassName;
 			OneWay.Checked = path.Property.Direction == Path.PathDirection.OneWay;
 			Circular.Checked = path.Property.Direction == Path.PathDirection.Circular;
 			PP.Checked = path.Property.Direction == Path.PathDirection.PingPong;
