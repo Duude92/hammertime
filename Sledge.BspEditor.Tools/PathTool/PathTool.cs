@@ -1,5 +1,7 @@
 ﻿using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Modification;
+using Sledge.BspEditor.Modification.Operations.Data;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Draggable;
@@ -17,6 +19,7 @@ using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
 using System.Numerics;
+using System.Reflection.Metadata;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static Sledge.BspEditor.Tools.Draggable.PathState;
@@ -48,33 +51,55 @@ namespace Sledge.BspEditor.Tools.PathTool
 			Oy.Subscribe<MapDocument>("Document:Activated", document =>
 			{
 				_lastDocument = document;
-				var states = States.OfType<PathState>();
-				States.RemoveAll(state => states.Contains(state));
-				var path = document.Map.Root.Data.Get<Path>();
-				States.InsertRange(0, path.Select(p => new PathState(this)
-				{
-					Property = new PathProperty
-					{
-						Name = p.Name,
-						Direction = p.Direction,
-						ClassName = p.Type
-					}
-				}.AddRange(p.Nodes.Select(n => new PathNodeHandle(n.Position, this)
-				{
-					ID = n.ID,
-					Name = n.Name,
-					Properties = n.Properties,
-				}))));
+				UpdateNodes();
+			});
+			Oy.Subscribe<Change>("MapDocument:Changed:Late", change =>
+			{
+				UpdateNodes();
 			});
 		}
-		public override Task ToolDeselected()
+		public override Task ToolSelected()
 		{
+			UpdateNodes();
+			return base.ToolSelected();
+		}
+
+		private void UpdateNodes()
+		{
+			var states = States.OfType<PathState>();
+			States.RemoveAll(state => states.Contains(state));
+			var path = _lastDocument.Map.Root.Data.Get<Path>();
+			States.InsertRange(0, path.Select(p => new PathState(this)
+			{
+				Property = new PathProperty
+				{
+					Name = p.Name,
+					Direction = p.Direction,
+					ClassName = p.Type
+				}
+			}.AddRange(p.Nodes.Select(n => new PathNodeHandle(n.Position, this)
+			{
+				ID = n.ID,
+				Name = n.Name,
+				Properties = n.Properties,
+			}))));
+		}
+
+		public override async Task ToolDeselected()
+		{
+			var transaction = new Transaction();
+
 			box.State.Action = BoxAction.Idle;
 
 			var states = States.OfType<PathState>().Where(p => p.Handles.Any());
+
 			var path = _lastDocument.Map.Root.Data.Get<Path>();
-			_lastDocument.Map.Root.Data.Remove(data => path.Contains(data));
-			_lastDocument.Map.Root.Data.AddRange(states.Select(p => new Path
+
+			//_lastDocument.Map.Root.Data.Remove(data => path.Contains(data));
+
+			transaction.Add(new RemoveMapObjectData(_lastDocument.Map.Root.ID, path));
+
+			var newPath = (states.Select(p => new Path
 			{
 				Direction = p.Property.Direction,
 				Name = p.Property.Name,
@@ -87,8 +112,11 @@ namespace Sledge.BspEditor.Tools.PathTool
 					Properties = h.Properties
 				}).ToList()
 			}));
+			transaction.Add(new AddMapObjectData(_lastDocument.Map.Root.ID, newPath));
 
-			return base.ToolDeselected();
+			await MapDocumentOperation.Perform(_lastDocument, transaction);
+
+			await base.ToolDeselected();
 		}
 		protected override IEnumerable<Subscription> Subscribe()
 		{

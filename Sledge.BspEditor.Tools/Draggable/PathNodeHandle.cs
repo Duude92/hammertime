@@ -14,6 +14,8 @@ using System.Numerics;
 using System.Windows.Forms;
 using System.Linq;
 using Sledge.Rendering.Primitives;
+using Sledge.BspEditor.Modification;
+using Sledge.BspEditor.Modification.Operations.Mutation;
 
 namespace Sledge.BspEditor.Tools.Draggable
 {
