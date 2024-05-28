@@ -53,7 +53,7 @@ namespace Sledge.BspEditor.Tools.Draggable
 				b.AddCommand("BspEditor:NodeProperties", new[] { this });
 
 				b.AddSeparator();
-				b.AddCommand("BspEditor:PathProperties", new { Path });
+				b.AddCommand("BspEditor:PathProperties", new { state = Path });
 				b.AddCommand("BspEditor:PathToolDeletePath", new[] { Path });
 				b.AddCommand("BspEditor:PathToolSelectPath", new[] { Path });
 
