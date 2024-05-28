@@ -184,16 +184,14 @@ namespace Sledge.BspEditor.Tools.Draggable
 
 		public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, I2DRenderer im)
 		{
-			//if (State.State.Action != BoxAction.Drawn) return;
-
 			var (wpos, soff) = GetWorldPositionAndScreenOffset(camera);
 			var spos = camera.WorldToScreen(wpos) + soff;
 
-			const int size = 4;
+			float size = 4;
 
-			const int boxOffset = 3;
+			float boxOffset = camera.Zoom / 0.06f;
 
-			im.AddCircle(new Vector2(spos.X - size, spos.Y - size), 10, Color.Bisque);
+			im.AddCircle(new Vector2(spos.X - size, spos.Y - size), camera.Zoom / 0.02f, Color.Bisque);
 
 			im.AddRectFilled(new Vector2(spos.X - size - boxOffset, spos.Y - size - boxOffset), new Vector2(spos.X - size + boxOffset, spos.Y - size + boxOffset), IsSelected ? Color.Red : Color.Bisque);
 		}
