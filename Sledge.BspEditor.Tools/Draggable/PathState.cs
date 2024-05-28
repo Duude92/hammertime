@@ -157,7 +157,7 @@ namespace Sledge.BspEditor.Tools.Draggable
 			var @enum = _sphereHandles.GetEnumerator();
 			@enum.MoveNext();
 			var current = @enum.Current;
-			var (clipDistance, cameraZoom) = (camera is PerspectiveCamera perspective) ? (perspective.ClipDistance, 1500 / Vector3.Distance(camera.Position, current.Origin)) : (1, camera.Zoom);
+			var (clipDistance, cameraZoom) = (camera is PerspectiveCamera perspective) ? (perspective.ClipDistance, 1500 / Vector3.Distance(camera.Position, current?.Origin ?? Vector3.Zero)) : (1, camera.Zoom);
 			var nextPresent = @enum.MoveNext();
 			while (nextPresent)
 			{
