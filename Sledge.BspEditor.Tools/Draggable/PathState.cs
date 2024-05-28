@@ -133,15 +133,7 @@ namespace Sledge.BspEditor.Tools.Draggable
 
 		public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, I2DRenderer im)
 		{
-			var @enum = _sphereHandles.GetEnumerator();
-			@enum.MoveNext();
-			var current = @enum.Current;
-			while (@enum.MoveNext())
-			{
-				var next = @enum.Current;
-				im.AddLine(camera.WorldToScreen(current.Origin).ToVector2(), camera.WorldToScreen(next.Origin).ToVector2(), Color.YellowGreen);
-				current = next;
-			}
+			DrawPath(camera, im);
 		}
 
 		protected (Vector3, Vector3) GetWorldPositionAndScreenOffset(ICamera camera)
@@ -157,38 +149,57 @@ namespace Sledge.BspEditor.Tools.Draggable
 		}
 		public override void Render(IViewport viewport, PerspectiveCamera camera, I2DRenderer im)
 		{
+			DrawPath(camera, im);
+		}
+
+		private void DrawPath(ICamera camera, I2DRenderer im)
+		{
 			var @enum = _sphereHandles.GetEnumerator();
 			@enum.MoveNext();
 			var current = @enum.Current;
-			while (@enum.MoveNext())
+			var (clipDistance, cameraZoom) = (camera is PerspectiveCamera perspective) ? (perspective.ClipDistance, 1500 / Vector3.Distance(camera.Position, current.Origin)) : (1, camera.Zoom);
+			var nextPresent = @enum.MoveNext();
+			while (nextPresent)
 			{
 				var next = @enum.Current;
-				if (Vector3.Distance(camera.Position, current.Origin) < camera.ClipDistance)
+				if (cameraZoom < clipDistance)
 				{
 					var currentCameraOrigin = camera.WorldToScreen(current.Origin).ToVector2();
 					var nextCameraOrigin = camera.WorldToScreen(next.Origin).ToVector2();
-					var center = (currentCameraOrigin + nextCameraOrigin) / 2;
-					var direction = Vector2.Normalize(nextCameraOrigin - currentCameraOrigin);
-					var lineLength = Vector2.One*100;
-
-					const float arrowBaseLength = 0.1f;
-					var arrowBaseLengthActual = lineLength * arrowBaseLength;
-
-					var perpDirection = new Vector2(-direction.Y, direction.X);
-					perpDirection *= arrowBaseLengthActual /2;
-
-					var arrowBasePoint = center + direction * -arrowBaseLengthActual; // Base of the arrow head
-
-					var arrowPoint1 = arrowBasePoint + perpDirection; // One side of the arrowhead
-					var arrowPoint2 = arrowBasePoint - perpDirection; // Other side of the arrowhead
-
-					im.AddLine(currentCameraOrigin, nextCameraOrigin, Color.Goldenrod);
-					im.AddLine(center, arrowPoint1, Color.Goldenrod);
-					im.AddLine(center, arrowPoint2, Color.Goldenrod);
-
+					DrawLine(im, currentCameraOrigin, nextCameraOrigin, Color.Goldenrod, cameraZoom);
 				}
 				current = next;
+				nextPresent = @enum.MoveNext();
 			}
+			if (Property.Direction == Path.PathDirection.Circular || Property.Direction == Path.PathDirection.PingPong)
+			{
+				if (cameraZoom < clipDistance)
+					DrawLine(im, camera.WorldToScreen(current.Origin).ToVector2(), camera.WorldToScreen(_sphereHandles.First().Origin).ToVector2(), Color.BlueViolet, cameraZoom);
+			}
+		}
+
+		private static void DrawLine(I2DRenderer im, Vector2 current, Vector2 next, Color color, float arrowzoom)
+		{
+			var currentCameraOrigin = current;
+			var nextCameraOrigin = next;
+			var center = (currentCameraOrigin + nextCameraOrigin) / 2;
+			var direction = Vector2.Normalize(nextCameraOrigin - currentCameraOrigin);
+			var lineLength = Vector2.One * 100;
+
+			const float arrowBaseLength = 0.1f;
+			var arrowBaseLengthActual = lineLength * arrowBaseLength;
+
+			var perpDirection = new Vector2(-direction.Y, direction.X);
+			perpDirection *= arrowBaseLengthActual / 2 * arrowzoom;
+
+			var arrowBasePoint = center + direction * -arrowBaseLengthActual * arrowzoom; // Base of the arrow head
+
+			var arrowPoint1 = arrowBasePoint + perpDirection; // One side of the arrowhead
+			var arrowPoint2 = arrowBasePoint - perpDirection; // Other side of the arrowhead
+
+			im.AddLine(currentCameraOrigin, nextCameraOrigin, color);
+			im.AddLine(center, arrowPoint1, color);
+			im.AddLine(center, arrowPoint2, color);
 		}
 
 		public override void Unhighlight(MapDocument document, MapViewport viewport)
