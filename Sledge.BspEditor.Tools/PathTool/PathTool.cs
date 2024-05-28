@@ -5,21 +5,21 @@ using Sledge.BspEditor.Modification.Operations.Data;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Draggable;
-using Sledge.BspEditor.Tools.PathTool.Forms;
 using Sledge.BspEditor.Tools.Properties;
+using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Components;
-using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Translations;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Overlay;
+using Sledge.Rendering.Viewports;
 using Sledge.Shell.Input;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
 using System.Numerics;
-using System.Reflection.Metadata;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static Sledge.BspEditor.Tools.Draggable.PathState;
@@ -46,7 +46,6 @@ namespace Sledge.BspEditor.Tools.PathTool
 			box = new BoxDraggableState(this);
 			box.BoxColour = Color.Turquoise;
 			box.FillColour = Color.FromArgb(1, Color.Aqua);
-			//box.State.Changed += BoxChanged;
 			States.Add(box);
 			Oy.Subscribe<MapDocument>("Document:Activated", document =>
 			{
@@ -95,7 +94,6 @@ namespace Sledge.BspEditor.Tools.PathTool
 
 			var path = _lastDocument.Map.Root.Data.Get<Path>();
 
-			//_lastDocument.Map.Root.Data.Remove(data => path.Contains(data));
 
 			transaction.Add(new RemoveMapObjectData(_lastDocument.Map.Root.ID, path));
 
@@ -122,6 +120,19 @@ namespace Sledge.BspEditor.Tools.PathTool
 		{
 			yield break;
 		}
+		protected override void Render(MapDocument document, IViewport viewport, PerspectiveCamera camera, I2DRenderer im)
+		{
+			if (_pathToOpen)
+			{
+				// Duct tape to let MouseDown event end its loop, and to not start BoxSelection
+				// TODO: find appropriate way to call blocking dialog without blocking MouseDown event
+				Oy.Publish("Command:Run", new CommandMessage("BspEditor:PathProperties", new { state = _pathToOpen }));
+				_pathToOpen = null;
+			}
+
+			base.Render(document, viewport, camera, im);
+		}
+		private PathState _pathToOpen;
 		protected override void MouseDown(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
 		{
 			if (e.Button == MouseButtons.Left)
@@ -136,13 +147,9 @@ namespace Sledge.BspEditor.Tools.PathTool
 					{
 						_shiftPressed = false;
 						var state = new PathState(loc, this);
-						PathProperties dialog = new PathProperties(state);
+						_pathToOpen = state;
 						States.Insert(0, state);
 						state.Head.IsSelected = true;
-
-						var result = dialog.ShowDialog();
-						if (result == DialogResult.Cancel) return;
-
 						return;
 					}
 
