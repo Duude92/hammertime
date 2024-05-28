@@ -1,21 +1,38 @@
 ﻿using System;
 using System.Numerics;
 using System.Windows.Forms;
-using LogicAndTrick.Oy;
 using Sledge.BspEditor.Tools.Draggable;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using static Sledge.BspEditor.Tools.Draggable.PathState;
+using Sledge.Common.Shell.Components;
+using Sledge.Common.Shell.Context;
+using System.ComponentModel.Composition;
+using static Sledge.Shell.ControlExtensions;
+using LogicAndTrick.Oy;
+using System.ComponentModel;
 
 namespace Sledge.BspEditor.Tools.PathTool.Forms
 {
-	public partial class PathProperties : Form
+	[Export(typeof(IDialog))]
+	public partial class PathProperties : Form, IDialog
 	{
 		private Vector3 _position;
 		private PathState _state;
-		public PathProperties(PathState path)
+		[Import("Shell", typeof(Form))] private Lazy<Form> _parent;
+        public PathProperties()
+        {
+            InitializeComponent();
+			CreateHandle();
+        }
+
+        public PathProperties(PathState path)
+		{
+			InitializeComponent();
+			InitializeForm(path);
+		}
+		private void InitializeForm(PathState path)
 		{
 			_state = path;
-			InitializeComponent();
 			nameBox.Text = path.Property.Name;
 			if (string.IsNullOrEmpty(path.Property.ClassName)) classBox.SelectedIndex = 0;
 			else classBox.Text = path.Property.ClassName;
@@ -42,5 +59,31 @@ namespace Sledge.BspEditor.Tools.PathTool.Forms
 			this.Close();
 		}
 
+		public void SetVisible(IContext context, bool visible)
+		{
+			this.InvokeLater(() =>
+			{
+				if (visible)
+				{
+					var state = context.Get<PathState>("PathState");
+
+					InitializeForm(state);
+					if (!Visible) Show(_parent.Value);
+				}
+				else
+				{
+					Hide();
+				}
+			});
+		}
+		protected override void OnClosing(CancelEventArgs e)
+		{
+			e.Cancel = true;
+			Oy.Publish("Context:Remove", new ContextInfo("BspEditor:PathPropertiesShow"));
+		}
+		public bool IsInContext(IContext context)
+		{
+			return context.HasAny("BspEditor:PathPropertiesShow");
+		}
 	}
 }

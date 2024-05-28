@@ -165,9 +165,7 @@
     <Compile Update="PathTool\Forms\NodeProperties.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="PathTool\Forms\PathProperties.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Update="PathTool\Forms\PathProperties.cs" />
     <Compile Update="Prefab\Prefabs\NewPrefabDialog.cs" />
     <Compile Update="Prefab\Prefabs\PrefabSidebarPanel.cs" />
     <Compile Update="Properties\Resources.Designer.cs">

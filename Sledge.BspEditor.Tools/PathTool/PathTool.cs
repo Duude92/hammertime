@@ -120,19 +120,7 @@ namespace Sledge.BspEditor.Tools.PathTool
 		{
 			yield break;
 		}
-		protected override void Render(MapDocument document, IViewport viewport, PerspectiveCamera camera, I2DRenderer im)
-		{
-			if (_pathToOpen)
-			{
-				// Duct tape to let MouseDown event end its loop, and to not start BoxSelection
-				// TODO: find appropriate way to call blocking dialog without blocking MouseDown event
-				Oy.Publish("Command:Run", new CommandMessage("BspEditor:PathProperties", new { state = _pathToOpen }));
-				_pathToOpen = null;
-			}
 
-			base.Render(document, viewport, camera, im);
-		}
-		private PathState _pathToOpen;
 		protected override void MouseDown(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
 		{
 			if (e.Button == MouseButtons.Left)
@@ -147,7 +135,8 @@ namespace Sledge.BspEditor.Tools.PathTool
 					{
 						_shiftPressed = false;
 						var state = new PathState(loc, this);
-						_pathToOpen = state;
+						Oy.Publish("Command:Run", new CommandMessage("BspEditor:PathProperties", new { state }));
+
 						States.Insert(0, state);
 						state.Head.IsSelected = true;
 						return;

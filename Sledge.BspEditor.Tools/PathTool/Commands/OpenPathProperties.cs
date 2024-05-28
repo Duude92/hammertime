@@ -1,15 +1,12 @@
-﻿using Sledge.BspEditor.Documents;
+﻿using LogicAndTrick.Oy;
+using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Tools.Draggable;
-using Sledge.BspEditor.Tools.PathTool.Forms;
 using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Translations;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace Sledge.BspEditor.Tools.PathTool.Commands
 {
@@ -25,14 +22,14 @@ namespace Sledge.BspEditor.Tools.PathTool.Commands
 
 		public string Details => "Open properties of Path of selected Node";
 
-		public Task Invoke(IContext context, CommandParameters parameters)
+		public async Task Invoke(IContext context, CommandParameters parameters)
 		{
 			var path = parameters.Get<PathState>("state");
-			if (path == null) return Task.CompletedTask;
-			PathProperties dialog = new PathProperties(path);
-			var result = dialog.ShowDialog();
-			if (result == DialogResult.Cancel) return Task.CompletedTask;
-			return Task.CompletedTask;
+			if (path == null) return;
+			await Oy.Publish("Context:Add", new ContextInfo("PathState", path));
+			await Oy.Publish("Context:Add", new ContextInfo("BspEditor:PathPropertiesShow"));
+
+			return;
 		}
 
 		public bool IsInContext(IContext context)
