@@ -27,8 +27,8 @@ namespace Sledge.BspEditor.Tools.PathTool.Commands
 
 		public Task Invoke(IContext context, CommandParameters parameters)
 		{
-			var path = parameters.Get<IEnumerable<PathState>>("SyncRoot").FirstOrDefault();
-			if(path == null) return Task.CompletedTask;
+			var path = parameters.Get<PathState>("state");
+			if (path == null) return Task.CompletedTask;
 			PathProperties dialog = new PathProperties(path);
 			var result = dialog.ShowDialog();
 			if (result == DialogResult.Cancel) return Task.CompletedTask;
