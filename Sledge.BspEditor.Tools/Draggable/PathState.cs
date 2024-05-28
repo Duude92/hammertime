@@ -118,27 +118,16 @@ namespace Sledge.BspEditor.Tools.Draggable
 
 		public override void Render(MapDocument document, BufferBuilder builder)
 		{
-			var path = this;
+			//var path = this;
 
-			var color = Color.Goldenrod.ToVector4();
+			//var color = Color.Goldenrod.ToVector4();
 
-			var vertices = path._sphereHandles.Select(n => new VertexStandard { Position = n.Origin, Colour = color });
-			var nodeCount = path._sphereHandles.Count;
-			var indices = Enumerable.Range(0, nodeCount).SelectMany(i => (i == 0 || i == nodeCount) ? new[] { (uint)i } : new[] { (uint)i, (uint)i });
+			//var vertices = path._sphereHandles.Select(n => new VertexStandard { Position = n.Origin, Colour = color });
+			//var nodeCount = path._sphereHandles.Count;
+			//var indices = Enumerable.Range(0, nodeCount).SelectMany(i => (i == 0 || i == nodeCount) ? new[] { (uint)i } : new[] { (uint)i, (uint)i });
 
-
-			//uint sectorCount = 8;
-			//uint stackCount = 8;
-			//var vertices = GenerateSphereVertices(20, sectorCount, stackCount);
-			//var vertexStandart = vertices.Select(v => new VertexStandard { Position = v + pathNode.Position, Colour = color, Tint = color }).ToArray();
-			//var indices = GenerateSphereIndices(sectorCount, stackCount).ToArray();
-			var groups = new List<BufferGroup>();
-			//groups.Add(new BufferGroup(PipelineType.TexturedOpaque, CameraType.Both, (uint)0, (uint)indices.Length));
-			groups.Add(new BufferGroup(PipelineType.Wireframe, CameraType.Both, (uint)0, (uint)indices.Count()));
-
-
-			builder.Append(vertices, indices, groups);
-			builder.Complete();
+			//builder.Append(vertices, indices, new[] { new BufferGroup(PipelineType.Wireframe, CameraType.Both, (uint)0, (uint)indices.Count()) });
+			//builder.Complete();
 
 		}
 
@@ -168,7 +157,38 @@ namespace Sledge.BspEditor.Tools.Draggable
 		}
 		public override void Render(IViewport viewport, PerspectiveCamera camera, I2DRenderer im)
 		{
-			return;
+			var @enum = _sphereHandles.GetEnumerator();
+			@enum.MoveNext();
+			var current = @enum.Current;
+			while (@enum.MoveNext())
+			{
+				var next = @enum.Current;
+				if (Vector3.Distance(camera.Position, current.Origin) < camera.ClipDistance)
+				{
+					var currentCameraOrigin = camera.WorldToScreen(current.Origin).ToVector2();
+					var nextCameraOrigin = camera.WorldToScreen(next.Origin).ToVector2();
+					var center = (currentCameraOrigin + nextCameraOrigin) / 2;
+					var direction = Vector2.Normalize(nextCameraOrigin - currentCameraOrigin);
+					var lineLength = Vector2.One*100;
+
+					const float arrowBaseLength = 0.1f;
+					var arrowBaseLengthActual = lineLength * arrowBaseLength;
+
+					var perpDirection = new Vector2(-direction.Y, direction.X);
+					perpDirection *= arrowBaseLengthActual /2;
+
+					var arrowBasePoint = center + direction * -arrowBaseLengthActual; // Base of the arrow head
+
+					var arrowPoint1 = arrowBasePoint + perpDirection; // One side of the arrowhead
+					var arrowPoint2 = arrowBasePoint - perpDirection; // Other side of the arrowhead
+
+					im.AddLine(currentCameraOrigin, nextCameraOrigin, Color.Goldenrod);
+					im.AddLine(center, arrowPoint1, Color.Goldenrod);
+					im.AddLine(center, arrowPoint2, Color.Goldenrod);
+
+				}
+				current = next;
+			}
 		}
 
 		public override void Unhighlight(MapDocument document, MapViewport viewport)
