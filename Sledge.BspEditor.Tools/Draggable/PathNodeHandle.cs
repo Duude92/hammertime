@@ -189,9 +189,9 @@ namespace Sledge.BspEditor.Tools.Draggable
 
 			float size = 4;
 
-			float boxOffset = camera.Zoom / 0.06f;
+			float boxOffset = camera.Zoom / 0.2f;
 
-			im.AddCircle(new Vector2(spos.X - size, spos.Y - size), camera.Zoom / 0.02f, Color.Bisque);
+			im.AddCircle(new Vector2(spos.X - size, spos.Y - size), camera.Zoom / 0.05f, Color.Bisque);
 
 			im.AddRectFilled(new Vector2(spos.X - size - boxOffset, spos.Y - size - boxOffset), new Vector2(spos.X - size + boxOffset, spos.Y - size + boxOffset), IsSelected ? Color.Red : Color.Bisque);
 		}
