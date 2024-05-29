@@ -376,15 +376,15 @@ namespace Sledge.BspEditor.Providers
 			strings.Add(String.IsNullOrWhiteSpace(face.Texture.Name) ? "AAATRIGGER" : face.Texture.Name);
 			strings.Add("[");
 			strings.Add(FormatVector3(face.Texture.UAxis));
-			strings.Add(face.Texture.XShift.ToString("0.000", CultureInfo.InvariantCulture));
+			strings.Add(face.Texture.XShift.ToString("0.0000", CultureInfo.InvariantCulture));
 			strings.Add("]");
 			strings.Add("[");
 			strings.Add(FormatVector3(face.Texture.VAxis));
-			strings.Add(face.Texture.YShift.ToString("0.000", CultureInfo.InvariantCulture));
+			strings.Add(face.Texture.YShift.ToString("0.0000", CultureInfo.InvariantCulture));
 			strings.Add("]");
-			strings.Add(face.Texture.Rotation.ToString("0.000", CultureInfo.InvariantCulture));
-			strings.Add(face.Texture.XScale.ToString("0.000", CultureInfo.InvariantCulture));
-			strings.Add(face.Texture.YScale.ToString("0.000", CultureInfo.InvariantCulture));
+			strings.Add(face.Texture.Rotation.ToString("0.0000", CultureInfo.InvariantCulture));
+			strings.Add(face.Texture.XScale.ToString("0.0000", CultureInfo.InvariantCulture));
+			strings.Add(face.Texture.YScale.ToString("0.0000", CultureInfo.InvariantCulture));
 			sw.WriteLine(String.Join(" ", strings));
 		}
 
