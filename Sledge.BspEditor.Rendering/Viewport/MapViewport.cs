@@ -134,7 +134,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
 
 		private void OnMouseEnter(object sender, EventArgs e)
 		{
-			if (!DialogRegister.IsAnyDialogOpened())
+			if (!DialogRegister.IsAnyDialogFocused())
 				Viewport.Control.Focus();
 
 			ListenerDoEvent(new ViewportEvent(this, e), (l, v) => l.MouseEnter(v));
@@ -226,6 +226,8 @@ namespace Sledge.BspEditor.Rendering.Viewport
 
 		private void OnMouseDown(object sender, MouseEventArgs e)
 		{
+			Viewport.Control.Focus();
+
 			if (!_lastMouseLocationKnown)
 			{
 				_lastMouseLocation = new Point(e.X, e.Y);
