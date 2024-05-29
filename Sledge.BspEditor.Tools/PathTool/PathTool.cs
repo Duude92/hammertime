@@ -42,6 +42,7 @@ namespace Sledge.BspEditor.Tools.PathTool
 
 		public PathTool()
 		{
+			Usage = ToolUsage.Both;
 			RenderedByDefault = true;
 			box = new BoxDraggableState(this);
 			box.BoxColour = Color.Turquoise;
@@ -120,7 +121,16 @@ namespace Sledge.BspEditor.Tools.PathTool
 		{
 			yield break;
 		}
+		protected override void MouseDown(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
+		{
+			if (e.Button == MouseButtons.Left)
+			{
+				var clicked = GetClicked(viewport, camera, e);
+				Select(clicked, false);
 
+			}
+			base.MouseDown(document, viewport, camera, e);
+		}
 		protected override void MouseDown(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
 		{
 			if (e.Button == MouseButtons.Left)
@@ -161,6 +171,22 @@ namespace Sledge.BspEditor.Tools.PathTool
 			base.MouseDown(document, viewport, camera, e);
 		}
 
+		private List<PathNodeHandle> GetClicked(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
+		{
+			var l = camera.EyeLocation;
+			var pos = new Vector3((float)l.X, (float)l.Y, (float)l.Z);
+			var p = new Vector3(e.X, e.Y, 0);
+			const int d = 5;
+			var clicked = (from point in States.OfType<PathState>().SelectMany(p=>p.Handles)
+						   let c = viewport.Viewport.Camera.WorldToScreen(point.Origin)
+						   where c.Z <= 1
+						   where p.X >= c.X - d && p.X <= c.X + d && p.Y >= c.Y - d && p.Y <= c.Y + d
+						   orderby (pos - point.Origin).LengthSquared()
+						   select point).ToList();
+
+			return clicked.ToList();
+
+		}
 		private List<PathNodeHandle> GetClicked(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
 		{
 			var spheres = States.OfType<PathState>();

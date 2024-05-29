@@ -46,20 +46,25 @@ namespace Sledge.BspEditor.Tools.Draggable
 		}
 		private Subscription _subscription;
 		private void Subscribe() => _subscription = Oy.Subscribe<RightClickMenuBuilder>("MapViewport:RightClick", b =>
-			{
-				b.Clear();
-				b.AddCommand("BspEditor:PathToolDeleteNodes");
-				b.AddCommand("BspEditor:PathInsertNode");
-				b.AddCommand("BspEditor:NodeProperties", new[] { this });
+		{
+			MenuBuilderSubscribe(b);
+		});
 
-				b.AddSeparator();
-				b.AddCommand("BspEditor:PathProperties", new { state = Path });
-				b.AddCommand("BspEditor:PathToolDeletePath", new[] { Path });
-				b.AddCommand("BspEditor:PathToolSelectPath", new[] { Path });
+		private void MenuBuilderSubscribe(RightClickMenuBuilder b)
+		{
+			b.Clear();
+			b.AddCommand("BspEditor:PathToolDeleteNodes");
+			b.AddCommand("BspEditor:PathInsertNode");
+			b.AddCommand("BspEditor:NodeProperties", new[] { this });
 
-				b.AddSeparator();
-				b.AddCommand("BspEditor:PathToolConvertPath", new[] { Path });
-			});
+			b.AddSeparator();
+			b.AddCommand("BspEditor:PathProperties", new { state = Path });
+			b.AddCommand("BspEditor:PathToolDeletePath", new[] { Path });
+			b.AddCommand("BspEditor:PathToolSelectPath", new[] { Path });
+
+			b.AddSeparator();
+			b.AddCommand("BspEditor:PathToolConvertPath", new[] { Path });
+		}
 
 		public override bool CanDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
 		{
@@ -72,13 +77,11 @@ namespace Sledge.BspEditor.Tools.Draggable
 		public override void Click(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
 		{
 		}
-
 		public override void Highlight(MapDocument document, MapViewport viewport)
 		{
 			Subscribe();
 			IsHighlighted = true;
 			viewport.Control.Cursor = Cursors.SizeAll;
-
 		}
 		public override void Unhighlight(MapDocument document, MapViewport viewport)
 		{
@@ -93,7 +96,7 @@ namespace Sledge.BspEditor.Tools.Draggable
 			uint sectorCount = 10;
 			uint stackCount = 10;
 			var vertices = GenerateSphereVertices(20, sectorCount, stackCount);
-			var color = Color.Green.ToVector4();
+			var color = IsSelected ? Color.Red.ToVector4() : Color.Green.ToVector4();
 			var vertexStandart = vertices.Select(v => new VertexStandard { Position = v + pathNode.Origin, Tint = color }).ToArray();
 			var indices = GenerateSphereIndices(sectorCount, stackCount).ToArray();
 			var groups = new List<BufferGroup>();
