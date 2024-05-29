@@ -13,8 +13,8 @@ namespace Sledge.BspEditor.Editing.Commands
     [CommandID("BspEditor:Links:SledgeWebsite")]
     public class OpenSledgeWebsite : ICommand
     {
-        public string Name { get; set; } = "Sledge Website";
-        public string Details { get; set; } = "Go to the Sledge website";
+        public string Name { get; set; } = "Hammertime repository";
+        public string Details { get; set; } = "Go to the Hammertime repository";
 
         public bool IsInContext(IContext context)
         {
@@ -23,7 +23,7 @@ namespace Sledge.BspEditor.Editing.Commands
 
         public async Task Invoke(IContext context, CommandParameters parameters)
         {
-            System.Diagnostics.Process.Start("http://sledge-editor.com/");
+            System.Diagnostics.Process.Start( new System.Diagnostics.ProcessStartInfo { FileName = "https://github.com/Duude92/hammertime", UseShellExecute = true });
         }
     }
 }

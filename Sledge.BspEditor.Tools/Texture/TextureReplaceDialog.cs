@@ -309,7 +309,7 @@ namespace Sledge.BspEditor.Tools.Texture
             {
                 using (var tp = tc.GetStreamSource())
                 {
-                    var bmp = await tp.GetImage(text, 128, 128);
+                    var bmp = await tp.GetProcessedImage(text, 128, 128);
                     image.SizeMode = bmp.Width > image.Width || bmp.Height > image.Height
                         ? PictureBoxSizeMode.Zoom
                         : PictureBoxSizeMode.CenterImage;

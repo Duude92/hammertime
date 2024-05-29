@@ -45,12 +45,12 @@ namespace Sledge.QuickForms
                 AutoSizeMode = AutoSizeMode.GrowOnly,
 	            FlowDirection = FlowDirection.TopDown,
 	            Location = new Point(5, 5),
-	            Size = new Size(ClientSize.Width - 10, 10)
+	            Size = new Size(ClientSize.Width, 10)
 	        };
 	        _layoutSizerPanel = new Panel
 	        {
                 AutoSize = false,
-                Height = 1,
+                Height = 2,
                 Width = ClientSize.Width - 12,
                 Margin = Padding.Empty,
                 Padding = Padding.Empty
@@ -70,15 +70,23 @@ namespace Sledge.QuickForms
         {
             if (UseShortcutKeys)
             {
+                Func<Button, bool> searchFunc = null;
                 if (e.KeyCode == Keys.Enter)
                 {
-                    var ok = Controls.OfType<Button>().FirstOrDefault(x => x.DialogResult == DialogResult.OK || x.DialogResult == DialogResult.Yes);
-                    ok?.PerformClick();
+                    searchFunc = value => value.DialogResult == DialogResult.OK || value.DialogResult == DialogResult.Yes;
                 }
                 else if (e.KeyCode == Keys.Escape)
                 {
-                    var cancel = Controls.OfType<Button>().FirstOrDefault(x => x.DialogResult == DialogResult.Cancel || x.DialogResult == DialogResult.No);
-                    cancel?.PerformClick();
+					searchFunc = value => value.DialogResult == DialogResult.Cancel || value.DialogResult == DialogResult.No;
+				}
+                if (searchFunc != null)
+                {
+                    var btn = Controls.OfType<Button>().FirstOrDefault(searchFunc);
+                    if (btn == null)
+                    {
+                        btn = _flpLayout.Controls.OfType<QuickFormButtonSet>().FirstOrDefault()?.Controls.OfType<Button>().FirstOrDefault(searchFunc);
+                    }
+                    btn?.PerformClick();
                 }
             }
             base.OnKeyDown(e);
@@ -294,7 +302,7 @@ namespace Sledge.QuickForms
 	    public string String(string name)
 		{
 			var c = GetItem(name);
-			if (c != null) return c.Text;
+			if (c != null) return c.Value as string;
 			throw new Exception("Control " + name + " not found!");
 		}
 

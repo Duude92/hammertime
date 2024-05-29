@@ -11,21 +11,21 @@
         }
     },
     "ShellSetup": {
-        "Title": "Sledge Editor"
+        "Title": "HammerTime Editor"
     },
     "Update": {
         "UpdaterForm": {
             "Title": "Update Available!",
-            "UpdateAvailable": "A new version of Sledge is available!\nWould you like to download it now?",
+            "UpdateAvailable": "A new version of HammerTime is available!\nWould you like to download it now?",
             "Downloading": "Downloading..."
         },
         "CheckForUpdates": {
             "Name": "Check for updates",
             "Details": "Check online for updates",
             "NoUpdatesTitle": "No updates found",
-            "NoUpdatesMessage": "This version of Sledge is currently up-to-date.",
+            "NoUpdatesMessage": "This version of HammerTime is currently up-to-date.",
             "UpdateErrorTitle": "Update error",
-            "UpdateErrorMessage": "There was a problem downloading the update details, please try again later or visit the Sledge website to check the latest version."
+            "UpdateErrorMessage": "There was a problem downloading the update details, please try again later or visit the HammerTime github release page to check the latest version."
         },
         "UpdateChecker": {
             "UpdateDownloadedTitle": "Update ready to install",

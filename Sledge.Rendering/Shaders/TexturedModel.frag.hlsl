@@ -2,11 +2,11 @@ struct FragmentIn
 {
     float4 fPosition : SV_Position;
     float4 fNormal : NORMAL0;
-    float2 fTexture : TEXCOORD0;
+    float3 fTexture : TEXCOORD0;
     uint1 fBone : POSITION1;
 };
 
-Texture2D Texture;
+Texture2DArray Texture;
 SamplerState Sampler;
 
 float4 main(FragmentIn input) : SV_Target0

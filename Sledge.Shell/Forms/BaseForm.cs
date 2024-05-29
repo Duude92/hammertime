@@ -4,10 +4,10 @@ using Message = System.Windows.Forms.Message;
 
 namespace Sledge.Shell.Forms
 {
-    /// <summary>
-    /// A base form that any hotkey-aware form should inherit from.
-    /// </summary>
-    public class BaseForm : Form
+	/// <summary>
+	/// A base form that any hotkey-aware form should inherit from.
+	/// </summary>
+	public class BaseForm : Form
     {
         public BaseForm()
         {
@@ -38,7 +38,7 @@ namespace Sledge.Shell.Forms
 
         protected virtual bool CheckIgnoreHotkey(Control source, Keys keyData)
         {
-            if (source is TextBox)
+            if (source is TextBox || source is RichTextBox)
             {
                 return IsTextBoxKey(keyData);
             }
@@ -75,5 +75,5 @@ namespace Sledge.Shell.Forms
 
             return false;
         }
-    }
+	}
 }

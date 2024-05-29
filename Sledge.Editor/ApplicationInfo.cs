@@ -8,7 +8,7 @@ namespace Sledge.Editor
     [Export(typeof(IApplicationInfo))]
     public class ApplicationInfo : IApplicationInfo
     {
-        private string Name => "Sledge";
+        private string Name => "Hammertime";
 
         public string GetApplicationSettingsFolder(string subfolder)
         {

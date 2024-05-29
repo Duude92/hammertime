@@ -87,6 +87,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Selection
                 foreach (var solid in _selectedSolids.Where(x => x.IsDirty))
                 {
                     tran.Add(new RemoveMapObjectData(solid.Real.ID, solid.Real.Faces));
+                    //TODO:should validate solid with polyhedron??
                     tran.Add(new AddMapObjectData(solid.Real.ID, solid.Copy.Faces.Select(x => x.ToFace(document.Map.NumberGenerator))));
                     solid.Reset();
                 }

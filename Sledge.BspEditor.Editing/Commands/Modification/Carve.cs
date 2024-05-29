@@ -51,7 +51,7 @@ namespace Sledge.BspEditor.Editing.Commands.Modification
             var carvees = document.Map.Root
                 .Find(x => x is Solid && carvers.Any(c => x.BoundingBox.IntersectsWith(c.BoundingBox)))
                 .OfType<Solid>()
-                .Where(x => !carvers.Contains(x));
+                .Where(x => !carvers.Contains(x)).Where(x=>!x.IsHidden());
 
             // Perform the carve
             var tns = CarveObjects(document, carvers, carvees);
@@ -136,7 +136,7 @@ namespace Sledge.BspEditor.Editing.Commands.Modification
                 }
                 split = true;
 
-                if (front != null)
+                if (front != null && front.IsValid())
                 {
                     // Retain the front solid
                     if (solid.IsSelected) front.IsSelected = true;

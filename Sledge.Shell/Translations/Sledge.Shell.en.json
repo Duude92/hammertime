@@ -1,8 +1,8 @@
 ﻿{
     "@Meta": {
-        "Base": "Sledge.Shell", 
+        "Base": "Sledge.Shell",
         "Language": "en",
-        "LanguageDescription":  "English",
+        "LanguageDescription": "English",
         "Inherit": ""
     },
     "@Settings": {
@@ -21,12 +21,13 @@
             "AutosaveDirectory": "Directory to save to (if not the document directory)",
             "OnlySaveIfChanged": "Only autosave if the document has unsaved changes",
             "SaveDocumentOnAutosave": "Also save the document's main file when autosaving (automatic Ctrl+S)"
-        }
+        },
+        "OpenLastFiles": "Open latest documents on startup"
     },
     "Commands": {
         "NewFile": {
             "Name": "New",
-            "Details": "Create a new document." 
+            "Details": "Create a new document."
         },
         "OpenFile": {
             "Name": "Open...",
@@ -78,7 +79,7 @@
             "View": "View",
             "Help": "Help",
             "Tools": "Tools"
-        } 
+        }
     },
     "Forms": {
         "Shell": {

@@ -4,6 +4,7 @@ using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Environment;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapData;
@@ -15,7 +16,7 @@ using Sledge.Common.Transport;
 namespace Sledge.BspEditor.Providers
 {
     [Export(typeof(IBspSourceProvider))]
-    public class NativeBspSourceProvider : IBspSourceProvider
+	public class NativeBspSourceProvider : IBspSourceProvider
     {
         private readonly SerialisedObjectFormatter _formatter;
         private readonly MapElementFactory _factory;
@@ -42,7 +43,9 @@ namespace Sledge.BspEditor.Providers
             new FileExtensionInfo("Sledge map format", ".smf"), 
         };
 
-        public async Task<BspFileLoadResult> Load(Stream stream, IEnvironment environment)
+		public bool CanSave => true;
+
+		public async Task<BspFileLoadResult> Load(Stream stream, IEnvironment environment)
         {
             return await Task.Factory.StartNew(() =>
             {
@@ -68,7 +71,7 @@ namespace Sledge.BspEditor.Providers
             });
         }
         
-        public Task Save(Stream stream, Map map)
+        public Task Save(Stream stream, Map map, MapDocument document = null)
         {
             return Task.Factory.StartNew(() =>
             {

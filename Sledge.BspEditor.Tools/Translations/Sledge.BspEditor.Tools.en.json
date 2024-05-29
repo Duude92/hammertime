@@ -2,7 +2,7 @@
     "@Meta": {
         "Base": "Sledge.BspEditor.Tools",
         "Language": "en",
-        "LanguageDescription":  "English",
+        "LanguageDescription": "English",
         "Inherit": ""
     },
     "@Settings": {
@@ -10,6 +10,7 @@
         "@Group.Tools/Brush": "Brush tool",
         "@Group.Tools/Entity": "Entity tool",
         "@Group.Tools/Selection": "Selection tool",
+        "@Group.Tools/Plugins": "Plugins",
         "BrushTool": {
             "SelectionBoxBackgroundOpacity": "Selection box background opacity",
             "SelectCreatedBrush": "Select brush on creation",
@@ -31,6 +32,9 @@
             "SelectionBoxOnlySelectsByCenterHandles": "Selection box only selects by center handles",
             "SelectionClickCycles": "Clicking a selection cycles through transform modes",
             "KeepVisgroupsWhenCloning": "Keep visgroups when cloning"
+        },
+        "Plugins": {
+            "IncludeDecompilerTool": "Use decompiler tool? (requires editor to restart)"
         }
     },
     "MenuDataProvider": {
@@ -87,7 +91,7 @@
             "TextBrush": {
                 "Name": "Text",
                 "Font": "Font",
-                "AliasingFactor": "Aliasing factor" ,
+                "AliasingFactor": "Aliasing factor",
                 "EnteredText": "Enter text here",
                 "Text": "Text"
             },
@@ -146,7 +150,7 @@
             "Name": "Grid snapping",
             "Details": "Toggle grid snapping"
         }
-    }, 
+    },
     "Selection": {
         "SelectTool": {
             "Align": "Align to...",
@@ -251,7 +255,7 @@
             "Title": "Texture",
             "Apply": "Apply",
             "Browse": "Browse...",
-            "Replace": "Replace..." 
+            "Replace": "Replace..."
         },
         "TextureToolSidebarPanel": {
             "Title": "Texture Power Tools",
@@ -263,7 +267,7 @@
             "FitToMultipleTiles": "Fit to multiple tiles",
             "TimesToTile": "Times to tile on face:",
             "Fit": "Fit"
-        } 
+        }
     },
     "Vertex": {
         "Tools": {
@@ -306,7 +310,7 @@
                 "BevelBy": "Bevel by",
                 "Poke": "Poke",
                 "Bevel": "Bevel"
-            } 
+            }
         },
         "Errors": {
             "BackwardsFace": "Backwards face",
@@ -315,5 +319,22 @@
             "NonPlanarVertices": "Non-planar vertices",
             "OverlappingVertices": "Overlapping vertices"
         }
-    } 
+    },
+    "Prefab": {
+        "PrefabSidebarPanel": {
+            "CreatePrefabButton": "Create Prefab",
+            "NewPrefabButton": "Save as new prefab",
+            "CreateLibButton": "Create library",
+            "NewPrefabPlaceholder": "New prefab name",
+            "NewLibPlaceholder": "New Library name"
+        }
+    },
+
+    "PropExporter": {
+        "PropExporterCommand": {
+            "Name": "Create mdl prop",
+            "Description": "Create prop from selection"
+        }
+    }
+
 }

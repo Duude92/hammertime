@@ -15,5 +15,5 @@ namespace Sledge.BspEditor.Tools.Vertex.Selection
         {
             Faces = new ThreadSafeList<MutableFace>(solid.Faces.Select(x => new MutableFace(x)));
         }
-    }
+	}
 }

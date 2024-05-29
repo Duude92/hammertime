@@ -31,5 +31,6 @@ namespace Sledge.Common.Shell.Settings
         /// </summary>
         /// <param name="store">The store to save into</param>
         void StoreValues(ISettingsStore store);
+        bool ValuesLoaded { get; }
     }
 }

@@ -25,10 +25,18 @@ namespace Sledge.BspEditor.Rendering.Converters
             _converters = converters;
             _groupConverters = groupConverters;
         }
+        public async Task ConvertSky(MapDocument document, SceneBuilder builder, ResourceCollector resourceCollector)
+        {
+			var converter = _converters.FirstOrDefault(x=>x.Value is SkyboxConverter).Value;
+            if (converter == null) return;
+            var buffer = builder.GetBufferForGroup(0);
+            converter.Convert(buffer, document, null, resourceCollector);
+		}
 
         public async Task Convert(MapDocument document, SceneBuilder builder, IEnumerable<IMapObject> affected, ResourceCollector resourceCollector)
         {
             var objs = document.Map.Root.FindAll();
+
             if (affected != null)
             {
                 var groups = affected.Select(x => x.ID / 200).ToHashSet();
@@ -51,7 +59,7 @@ namespace Sledge.BspEditor.Rendering.Converters
 
                 foreach (var gc in groupConverters)
                 {
-                    gc.Convert(buffer, document, g, collector);
+                    await gc.Convert(buffer, document, g, collector);
                 }
 
                 foreach (var obj in g)

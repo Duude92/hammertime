@@ -138,8 +138,46 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
         {
             Vertices.Transform(x => Vector3.Transform(x, matrix));
         }
+		public Vector3? GetIntersectionPoint(Line line, bool ignoreDirection = false)
+		{
+			if (Vertices.Count < 3) return null;
 
-        public Polygon ToPolygon()
+			var plane = Plane;
+			var isect = plane.GetIntersectionPoint(line, ignoreDirection);
+			if (isect == null) return null;
+
+			var intersect = isect.Value;
+
+			var vectors = Vertices;
+
+			// http://paulbourke.net/geometry/insidepoly/
+
+			// The angle sum will be 2 * PI if the point is inside the face
+			double sum = 0;
+			for (var i = 0; i < vectors.Count; i++)
+			{
+				var i1 = i;
+				var i2 = (i + 1) % vectors.Count;
+
+				// Translate the vertices so that the intersect point is on the origin
+				var v1 = vectors[i1] - intersect;
+				var v2 = vectors[i2] - intersect;
+
+				var m1 = v1.Length();
+				var m2 = v2.Length();
+				var nom = m1 * m2;
+				if (nom < 0.001f)
+				{
+					// intersection is at a vertex
+					return intersect;
+				}
+				sum += Math.Acos(v1.Dot(v2) / nom);
+			}
+
+			var delta = Math.Abs(sum - Math.PI * 2);
+			return (delta < 0.001d) ? intersect : (Vector3?)null;
+		}
+		public Polygon ToPolygon()
         {
             return new Polygon(Vertices);
         }

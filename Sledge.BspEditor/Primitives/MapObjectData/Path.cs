@@ -15,7 +15,7 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
         public string Name { get; set; }
         public string Type { get; set; }
         public PathDirection Direction { get; set; }
-        public List<PathNode> Nodes { get; private set; }
+        public List<PathNode> Nodes { get; set; }
 
         public Path()
         {
@@ -90,7 +90,7 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
             public Vector3 Position { get; set; }
             public int ID { get; set; }
             public string Name { get; set; }
-            public Dictionary<string, string> Properties { get; private set; }
+            public Dictionary<string, string> Properties { get; set; }
 
             public PathNode()
             {

@@ -3,7 +3,7 @@
 # MSBuild
 $vswhere = [System.Environment]::ExpandEnvironmentVariables("%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe")
 $vspath = & $vswhere -latest -requires Microsoft.Component.MSBuild -property installationPath
-$msbuild = join-path $vspath 'MSBuild\15.0\Bin\MSBuild.exe'
+$msbuild = join-path $vspath 'MSBuild\Current\Bin\MSBuild.exe'
 
 # 7-zip
 if (Test-Path 'HKLM:\SOFTWARE\7-Zip') {
@@ -41,7 +41,7 @@ $content | Add-Content $log
 
 # Build the project
 echo 'Building Solution...'
-(& $msbuild '../Sledge.sln' '/p:Configuration=Release' "/p:OutputPath=$outputPath") | Add-Content $log
+(& $msbuild '../Hammertime.sln' '/p:Configuration=Release' "/p:OutputPath=$outputPath") | Add-Content $log
 
 #(& del '.\Out\Build\*.pdb') | Add-Content $log
 (& del '.\Out\Build\*.xml') | Add-Content $log

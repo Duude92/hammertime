@@ -100,8 +100,12 @@ namespace Sledge.Providers.Texture.Spr
                 return bitmap;
             }
         }
+		public Task<Bitmap> GetRawImage(string item, int maxWidth, int maxHeight)
+		{
+			return GetProcessedImage(item, maxWidth, maxHeight);
+		}
 
-        public async Task<Bitmap> GetImage(string item, int maxWidth, int maxHeight)
+		public async Task<Bitmap> GetProcessedImage(string item, int maxWidth, int maxHeight)
         {
             var file = _file.TraversePath(item);
             if (file == null || !file.Exists) return null;
