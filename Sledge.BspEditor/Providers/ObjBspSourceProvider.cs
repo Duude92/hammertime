@@ -15,6 +15,7 @@ using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common;
 using Sledge.Common.Shell.Documents;
 using Sledge.DataStructures.Geometric;
+using Veldrid.MetalBindings;
 using Plane = Sledge.DataStructures.Geometric.Plane;
 
 namespace Sledge.BspEditor.Providers
@@ -362,15 +363,23 @@ namespace Sledge.BspEditor.Providers
             writer.WriteLine("# Scale: 1");
             writer.WriteLine();
 
-            foreach (var solid in map.Root.Find(x => x is Solid).OfType<Solid>())
+            var solids = map.Root.Find(x => x is Solid).OfType<Solid>();
+
+			foreach (var solid in solids)
             {
-                writer.Write("g solid_");
+                writer.Write("o solid_");
                 writer.Write(solid.ID);
                 writer.WriteLine();
 
                 foreach (var face in solid.Faces)
                 {
-                    foreach (var v in face.Vertices)
+					writer.Write("g mtl_");
+					writer.Write(solid.ID);
+					writer.WriteLine();
+					writer.Write($"usemtl {face.Texture.Name}");
+					writer.WriteLine();
+
+					foreach (var v in face.Vertices)
                     {
                         writer.Write("v ");
                         writer.Write(v.X.ToString("0.0000", CultureInfo.InvariantCulture));
