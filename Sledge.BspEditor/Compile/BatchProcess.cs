@@ -19,15 +19,20 @@ namespace Sledge.BspEditor.Compile
         public string WorkingDirectory { get; set; } = "{WorkingDirectory}";
         public bool InterceptOutput { get; set; } = true;
         public override BatchStepType StepType { get; }
+        private Process _process;
+        private bool _continue = true;
 
         public BatchProcess(BatchStepType stepType, string process, string arguments)
         {
             Process = process;
             Arguments = arguments;
             StepType = stepType;
-        }
-        
-        public override async Task Run(Batch batch, MapDocument document)
+            Oy.Subscribe("Compile:Interrupt", () => { if (_process != null) _process.Close(); _continue = false; });
+
+
+		}
+
+		public override async Task Run(Batch batch, MapDocument document)
         {
             var pcs = Process;
             var args = Arguments;
@@ -57,6 +62,7 @@ namespace Sledge.BspEditor.Compile
             }
 
             await Oy.Publish("Compile:Information", $"{pcs} {args}\r\n");
+            if (!_continue) return;
 
             var process = new Process
             {
@@ -70,9 +76,9 @@ namespace Sledge.BspEditor.Compile
                 },
                 EnableRaisingEvents = true
             };
-
-            // Use a task to signal process completion
-            var tcs = new TaskCompletionSource<bool>();
+			_process = process;
+			// Use a task to signal process completion
+			var tcs = new TaskCompletionSource<bool>();
             process.Exited += (s, e) =>
             {
                 tcs.SetResult(true);

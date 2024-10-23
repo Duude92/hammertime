@@ -34,9 +34,10 @@ namespace Sledge.BspEditor.Editing.Components
         {
             e.Cancel = true;
             Oy.Publish("Context:Remove", new ContextInfo("BspEditor:SelectionDetails"));
-        }
+			this.Owner.Focus();
+		}
 
-        public bool IsInContext(IContext context)
+		public bool IsInContext(IContext context)
         {
             return context.HasAny("BspEditor:SelectionDetails");
         }

@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0-windows7.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Translations\HammerTime.Formats.en.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Translations\HammerTime.Formats.en.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Sledge.Formats" Version="1.2.4" />
+    <PackageReference Include="Sledge.Formats.Bsp" Version="1.0.15" />
+    <PackageReference Include="Sledge.Formats.Map" Version="1.2.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Sledge.BspEditor\Sledge.BspEditor.csproj">
+      <Private>True</Private>
+    </ProjectReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Sledge.Formats.Map">
+      <HintPath>..\Resources\Sledge.Formats.Map.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

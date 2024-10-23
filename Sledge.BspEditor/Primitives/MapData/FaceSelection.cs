@@ -9,22 +9,24 @@ using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Transport;
 using System.Collections.Concurrent;
+using Sledge.Common.Threading;
+
 namespace Sledge.BspEditor.Primitives.MapData
 {
     public class FaceSelection : BlockingCollection<Face>, IMapData, IEnumerable<Face>
     {
         public bool AffectsRendering => false;
 
-        private readonly Dictionary<IMapObject, HashSet<long>> _selectedFaces;
+        private readonly ConcurrentDictionary<IMapObject, HashSet<long>> _selectedFaces;
 
         public FaceSelection()
         {
-            _selectedFaces = new Dictionary<IMapObject, HashSet<long>>();
+            _selectedFaces = new ConcurrentDictionary<IMapObject, HashSet<long>>();
         }
 
         public FaceSelection(SerialisedObject obj)
         {
-            _selectedFaces = new Dictionary<IMapObject, HashSet<long>>();
+            _selectedFaces = new ConcurrentDictionary<IMapObject, HashSet<long>>();
         }
 
         [Export(typeof(IMapElementFormatter))]
@@ -38,7 +40,8 @@ namespace Sledge.BspEditor.Primitives.MapData
             if (faces.Length == 0) return;
             if (!_selectedFaces.ContainsKey(parent))
             {
-                _selectedFaces.Add(parent, new HashSet<long>());
+                while (_selectedFaces.TryAdd(parent, new HashSet<long>())) ;
+                //_selectedFaces.Add(parent, new HashSet<long>());
             }
             _selectedFaces[parent].UnionWith(faces.Select(x => x.ID));
         }
@@ -49,7 +52,8 @@ namespace Sledge.BspEditor.Primitives.MapData
             _selectedFaces[parent].ExceptWith(faces.Select(x => x.ID));
             if (_selectedFaces[parent].Count == 0)
             {
-                _selectedFaces.Remove(parent);
+                while(_selectedFaces.TryRemove(parent, out var _)) ;
+             //   _selectedFaces.Remove(parent);
             }
         }
         public void Clear()
@@ -67,7 +71,8 @@ namespace Sledge.BspEditor.Primitives.MapData
             var c = new FaceSelection();
             foreach (var kv in _selectedFaces)
             {
-                c._selectedFaces.Add(kv.Key, new HashSet<long>(kv.Value));
+                while(c._selectedFaces.TryAdd(kv.Key, new HashSet<long>(kv.Value))) ;
+             //   c._selectedFaces.Add(kv.Key, new HashSet<long>(kv.Value));
             }
             return c;
         }

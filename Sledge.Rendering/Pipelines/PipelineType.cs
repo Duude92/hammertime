@@ -2,6 +2,7 @@
 {
     public enum PipelineType
     {
+        Skybox,
         Wireframe,
 
         TexturedOpaque,

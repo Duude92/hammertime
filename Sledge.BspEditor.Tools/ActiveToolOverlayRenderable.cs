@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Linq;
 using System.Numerics;
+using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Rendering.Dynamic;
@@ -11,6 +14,7 @@ using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Overlay;
 using Sledge.Rendering.Resources;
 using Sledge.Rendering.Viewports;
+using Sledge.Shell.Registers;
 
 namespace Sledge.BspEditor.Tools
 {
@@ -21,11 +25,15 @@ namespace Sledge.BspEditor.Tools
     {
         private readonly WeakReference<BaseTool> _activeTool = new WeakReference<BaseTool>(null);
         private BaseTool ActiveTool => _activeTool.TryGetTarget(out var t) ? t : null;
+		[ImportMany] private IEnumerable<Lazy<ITool>> _tools;
+        private IEnumerable<BaseTool> _components;
 
-        public Task OnStartup()
+
+		public Task OnStartup()
         {
             Oy.Subscribe<ITool>("Tool:Activated", ToolActivated);
-            return Task.CompletedTask;
+            _components = _tools.Where(t => t.Value is BaseTool).Select(t => t.Value as BaseTool);
+			return Task.CompletedTask;
         }
 
         private Task ToolActivated(ITool tool)
@@ -36,17 +44,39 @@ namespace Sledge.BspEditor.Tools
 
         public void Render(BufferBuilder builder, ResourceCollector resourceCollector)
         {
-            ActiveTool?.Render(builder, resourceCollector);
+            foreach(var tool in _components)
+            {
+                if(tool.RenderedByDefault || tool==ActiveTool)
+                {
+					tool?.Render(builder, resourceCollector);
+
+				}
+			}
+            //ActiveTool?.Render(builder, resourceCollector);
         }
 
         public void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, I2DRenderer im)
         {
-            ActiveTool?.Render(viewport, camera, worldMin, worldMax, im);
+			foreach (var tool in _components)
+			{
+				if (tool.RenderedByDefault || tool == ActiveTool)
+				{
+
+			tool?.Render(viewport, camera, worldMin, worldMax, im);
+				}
+			}
         }
 
         public void Render(IViewport viewport, PerspectiveCamera camera, I2DRenderer im)
         {
-            ActiveTool?.Render(viewport, camera, im);
+			foreach (var tool in _components)
+			{
+				if (tool.RenderedByDefault || tool == ActiveTool)
+				{
+
+					tool?.Render(viewport, camera, im);
+				}
+			}
         }
     }
 }

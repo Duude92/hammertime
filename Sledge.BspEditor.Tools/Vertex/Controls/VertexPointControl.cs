@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Tools.Vertex.Tools;
 using Sledge.Common.Easings;
+using Sledge.Common.Shell.Commands;
 using Sledge.Common.Translations;
 using Sledge.Shell;
 
@@ -45,10 +46,10 @@ namespace Sledge.BspEditor.Tools.Vertex.Controls
 
         private void SplitButtonClicked(object sender, EventArgs e)
         {
-            Oy.Publish("VertexPointTool:Split", string.Empty);
-        }
+			Oy.Publish("Command:Run", new CommandMessage("BspEditor:VertexSplitEdge"));
+		}
 
-        private void MergeButtonClicked(object sender, EventArgs e)
+		private void MergeButtonClicked(object sender, EventArgs e)
         {
             Oy.Publish("VertexPointTool:Merge", string.Empty);
         }

@@ -23,7 +23,7 @@ namespace Sledge.Providers.Texture.Wad
             return _stream.HasEntry(item);
         }
 
-        public async Task<Bitmap> GetImage(string item, int maxWidth, int maxHeight)
+        public async Task<Bitmap> GetProcessedImage(string item, int maxWidth, int maxHeight)
         {
             var entry = _stream.GetEntry(item);
             if (entry == null) return null;
@@ -37,7 +37,21 @@ namespace Sledge.Providers.Texture.Wad
             });
         }
 
-        private static Bitmap PostProcessBitmap(string packageName, string name, Bitmap bmp)
+		public async Task<Bitmap> GetRawImage(string item, int maxWidth, int maxHeight)
+		{
+			var entry = _stream.GetEntry(item);
+			if (entry == null) return null;
+
+			return await Task.Factory.StartNew(() =>
+			{
+				using (var s = _stream.OpenEntry(entry))
+				{
+					return new Bitmap(s);
+				}
+			});
+		}
+
+		private static Bitmap PostProcessBitmap(string packageName, string name, Bitmap bmp)
         {
             // Transparent textures are named like: {Name
             if (!name.StartsWith("{")) return bmp;
@@ -94,5 +108,7 @@ namespace Sledge.Providers.Texture.Wad
         {
             _stream.Dispose();
         }
-    }
+
+
+	}
 }

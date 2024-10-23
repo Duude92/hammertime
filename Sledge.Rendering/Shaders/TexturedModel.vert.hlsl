@@ -2,7 +2,7 @@ struct VertexIn
 {
     float3 Position : POSITION0;
     float3 Normal : NORMAL0;
-    float2 Texture : TEXCOORD0;
+    float3 Texture : TEXCOORD0;
     uint1 Bone : POSITION1;
 };
 
@@ -10,7 +10,7 @@ struct FragmentIn
 {
     float4 fPosition : SV_Position;
     float4 fNormal : NORMAL0;
-    float2 fTexture : TEXCOORD0;
+    float3 fTexture : TEXCOORD0;
     uint1 fBone : POSITION1;
 };
 

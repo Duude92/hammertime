@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Windows.Forms;
@@ -22,6 +23,7 @@ namespace Sledge.Shell.Forms
             OperatingSystem.Text = info.OperatingSystem;
             SledgeVersion.Text = info.ApplicationVersion;
             FullError.Text = info.FullStackTrace;
+            applicationBranch.Text = info.ApplicationBranch;
         }
 
         private void SubmitButtonClicked(object sender, EventArgs e)
@@ -35,19 +37,18 @@ namespace Sledge.Shell.Forms
             try
             {
                 Info.UserEnteredInformation = InfoTextBox.Text;
-                using (var client = new WebClient())
-                {
-                    var values = new NameValueCollection();
-                    values["Message"] = Info.Message;
-                    values["Runtime"] = Info.RuntimeVersion;
-                    values["OS"] = Info.OperatingSystem;
-                    values["Version"] = Info.ApplicationVersion;
-                    values["StackTrace"] = Info.FullStackTrace;
-                    values["UserInfo"] = Info.UserEnteredInformation;
-                    values["Source"] = Info.Source;
-                    values["Date"] = Info.Date.ToUniversalTime().ToString("yyyy-MM-ddThh:mm:ssZ");
-                    client.UploadValues("http://bugs.sledge-editor.com/Bug/AutoSubmit", "POST", values);
-                }
+                //using (var client = new WebClient())
+                //{
+                //    var values = new NameValueCollection();
+                //    values["Message"] = Info.Message;
+                //    values["Runtime"] = Info.RuntimeVersion;
+                //    values["OS"] = Info.OperatingSystem;
+                //    values["Version"] = Info.ApplicationVersion;
+                //    values["StackTrace"] = Info.FullStackTrace;
+                //    values["UserInfo"] = Info.UserEnteredInformation;
+                //    values["Source"] = Info.Source;
+                //    values["Date"] = Info.Date.ToUniversalTime().ToString("yyyy-MM-ddThh:mm:ssZ");
+                //}
             }
             catch (Exception ex)
             {
@@ -70,6 +71,7 @@ namespace Sledge.Shell.Forms
             public DateTime Date { get; set; }
             public string InformationMessage { get; set; }
             public string UserEnteredInformation { get; set; }
+            public string ApplicationBranch { get; set; }
 
             public string Source => Exception.Source;
 
@@ -94,6 +96,9 @@ namespace Sledge.Shell.Forms
                 InformationMessage = info;
                 ApplicationVersion = FileVersionInfo.GetVersionInfo(typeof(ExceptionWindow).Assembly.Location).FileVersion;
                 // ApplicationVersion = FileVersionInfo.GetVersionInfo(exception.TargetSite?.DeclaringType?.Assembly.Location ?? typeof(ExceptionWindow).Assembly.Location).FileVersion;
+                var buildInfo = GetBuildInfo();
+                ApplicationBranch = $"{buildInfo.Tag} -- {buildInfo.BuildTime}";
+
                 OperatingSystem = System.Environment.OSVersion.VersionString;
 
                 var list = new List<Exception>();
@@ -110,6 +115,24 @@ namespace Sledge.Shell.Forms
                 }
                 FullStackTrace = FullStackTrace.Trim();
             }
-        }
+			private BuildInfo GetBuildInfo()
+			{
+				var path = "./build";
+				if (!File.Exists(path)) return new BuildInfo { BuildTime = new DateTime(), Tag = "latest" };
+				using (TextReader reader = new StreamReader(path))
+				{
+					return new BuildInfo
+					{
+						BuildTime = DateTime.ParseExact(reader.ReadLine(), "yyyy-MM-dd HH:mm", null),
+						Tag = reader.ReadLine(),
+					};
+				}
+			}
+			private class BuildInfo
+			{
+				public string Tag { get; set; }
+				public DateTime BuildTime { get; set; }
+			}
+		}
     }
 }

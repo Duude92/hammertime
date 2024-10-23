@@ -31,7 +31,10 @@ namespace Sledge.BspEditor.Tools
             View3D,
             Both
         }
-
+        /// <summary>
+        /// To render tool by default, without activating it
+        /// </summary>
+        public bool RenderedByDefault = false;
         public Image Icon => GetIcon();
         public string Name => GetName();
 
@@ -168,6 +171,11 @@ namespace Sledge.BspEditor.Tools
         public virtual Task ToolSelected()
         {
             _subscriptions = Subscribe().ToList();
+            return Task.CompletedTask;
+        }
+
+        public virtual Task PreToolDeselect()
+        {
             return Task.CompletedTask;
         }
 

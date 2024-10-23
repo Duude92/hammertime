@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Commands;
 using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Editing.Components.Properties.Tabs;
 using Sledge.BspEditor.Editing.Properties;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations.Selection;
@@ -121,8 +122,17 @@ namespace Sledge.BspEditor.Editing.Commands
                     }
                 };
                 ops.Add(new Attach(document.Map.Root.ID, existing));
-            }
-            else
+				var properties = defaultEntityClass.Properties.Select(x => (x.Name ?? "").ToLower());
+				foreach (var property in properties)
+				{
+					var newKey = defaultEntityClass.Properties.FirstOrDefault(x => (x.Name ?? "").ToLower() == property);
+
+                    var value = ClassInfoTab.GetDefaultOption(newKey);
+
+					existing.EntityData.Properties.Add(property, value);
+				}
+			}
+			else
             {
                 // If the entity is a descendant of the selection, it would cause havok
                 ops.Add(new Detatch(existing.Hierarchy.Parent.ID, existing));

@@ -20,248 +20,276 @@
             base.Dispose(disposing);
         }
 
-        #region Windows Form Designer generated code
+		#region Windows Form Designer generated code
 
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
-        /// </summary>
-        private void InitializeComponent()
-        {
-            this.button1 = new System.Windows.Forms.Button();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.VersionLabel = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.LTLink = new System.Windows.Forms.LinkLabel();
-            this.label3 = new System.Windows.Forms.Label();
-            this.GithubLink = new System.Windows.Forms.LinkLabel();
-            this.GPLLink = new System.Windows.Forms.LinkLabel();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
-            this.label9 = new System.Windows.Forms.Label();
-            this.TWHLLink = new System.Windows.Forms.LinkLabel();
-            this.label10 = new System.Windows.Forms.Label();
-            this.AJLink = new System.Windows.Forms.LinkLabel();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            this.SuspendLayout();
-            // 
-            // button1
-            // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.button1.Location = new System.Drawing.Point(213, 278);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(131, 23);
-            this.button1.TabIndex = 1;
-            this.button1.Text = "Close";
-            this.button1.UseVisualStyleBackColor = true;
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Image = global::Sledge.BspEditor.Editing.Properties.Resources.Sledge_Large;
-            this.pictureBox1.Location = new System.Drawing.Point(12, 12);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(256, 256);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this.pictureBox1.TabIndex = 2;
-            this.pictureBox1.TabStop = false;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Georgia", 30F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(316, 12);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(134, 46);
-            this.label1.TabIndex = 3;
-            this.label1.Text = "Sledge";
-            // 
-            // VersionLabel
-            // 
-            this.VersionLabel.AutoSize = true;
-            this.VersionLabel.Location = new System.Drawing.Point(459, 38);
-            this.VersionLabel.Name = "VersionLabel";
-            this.VersionLabel.Size = new System.Drawing.Size(47, 13);
-            this.VersionLabel.TabIndex = 4;
-            this.VersionLabel.Text = "(version)";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(288, 79);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(137, 13);
-            this.label2.TabIndex = 5;
-            this.label2.Text = "Created by Daniel Walder - ";
-            // 
-            // LTLink
-            // 
-            this.LTLink.AutoSize = true;
-            this.LTLink.Location = new System.Drawing.Point(420, 79);
-            this.LTLink.Name = "LTLink";
-            this.LTLink.Size = new System.Drawing.Size(96, 13);
-            this.LTLink.TabIndex = 6;
-            this.LTLink.TabStop = true;
-            this.LTLink.Text = "logic-and-trick.com";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(286, 103);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(223, 13);
-            this.label3.TabIndex = 5;
-            this.label3.Text = "Open source software - licensed under BSD-3";
-            // 
-            // GithubLink
-            // 
-            this.GithubLink.AutoSize = true;
-            this.GithubLink.Location = new System.Drawing.Point(348, 124);
-            this.GithubLink.Name = "GithubLink";
-            this.GithubLink.Size = new System.Drawing.Size(169, 13);
-            this.GithubLink.TabIndex = 6;
-            this.GithubLink.TabStop = true;
-            this.GithubLink.Text = "github.com/LogicAndTrick/sledge";
-            // 
-            // GPLLink
-            // 
-            this.GPLLink.AutoSize = true;
-            this.GPLLink.Location = new System.Drawing.Point(348, 146);
-            this.GPLLink.Name = "GPLLink";
-            this.GPLLink.Size = new System.Drawing.Size(195, 13);
-            this.GPLLink.TabIndex = 6;
-            this.GPLLink.TabStop = true;
-            this.GPLLink.Text = "opensource.org/licenses/BSD-3-Clause";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(298, 124);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(44, 13);
-            this.label4.TabIndex = 5;
-            this.label4.Text = "Source:";
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(295, 146);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(47, 13);
-            this.label5.TabIndex = 5;
-            this.label5.Text = "License:";
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(285, 177);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(95, 13);
-            this.label6.TabIndex = 7;
-            this.label6.Text = "Special Thanks";
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(295, 197);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(215, 13);
-            this.label7.TabIndex = 8;
-            this.label7.Text = "Strider && Instant Mix (from TWHL) - Graphics";
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(295, 215);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(123, 13);
-            this.label8.TabIndex = 8;
-            this.label8.Text = "AJ Scarcella - Website - ";
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(295, 233);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(171, 13);
-            this.label9.TabIndex = 8;
-            this.label9.Text = "The members of TWHL - Testing - ";
-            // 
-            // TWHLLink
-            // 
-            this.TWHLLink.AutoSize = true;
-            this.TWHLLink.Location = new System.Drawing.Point(464, 233);
-            this.TWHLLink.Name = "TWHLLink";
-            this.TWHLLink.Size = new System.Drawing.Size(46, 13);
-            this.TWHLLink.TabIndex = 6;
-            this.TWHLLink.TabStop = true;
-            this.TWHLLink.Text = "twhl.info";
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(295, 251);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(231, 13);
-            this.label10.TabIndex = 8;
-            this.label10.Text = "...and everyone else in the modding community!";
-            // 
-            // AJLink
-            // 
-            this.AJLink.AutoSize = true;
-            this.AJLink.Location = new System.Drawing.Point(416, 215);
-            this.AJLink.Name = "AJLink";
-            this.AJLink.Size = new System.Drawing.Size(92, 13);
-            this.AJLink.TabIndex = 6;
-            this.AJLink.TabStop = true;
-            this.AJLink.Text = "scrub-studios.com";
-            // 
-            // AboutDialog
-            // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(560, 305);
-            this.Controls.Add(this.label10);
-            this.Controls.Add(this.label9);
-            this.Controls.Add(this.label8);
-            this.Controls.Add(this.label7);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.GPLLink);
-            this.Controls.Add(this.GithubLink);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.AJLink);
-            this.Controls.Add(this.TWHLLink);
-            this.Controls.Add(this.LTLink);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.VersionLabel);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.pictureBox1);
-            this.Controls.Add(this.button1);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.Name = "AboutDialog";
-            this.ShowIcon = false;
-            this.ShowInTaskbar = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "About Sledge";
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            this.ResumeLayout(false);
-            this.PerformLayout();
+		/// <summary>
+		/// Required method for Designer support - do not modify
+		/// the contents of this method with the code editor.
+		/// </summary>
+		private void InitializeComponent()
+		{
+			button1 = new System.Windows.Forms.Button();
+			pictureBox1 = new System.Windows.Forms.PictureBox();
+			label1 = new System.Windows.Forms.Label();
+			VersionLabel = new System.Windows.Forms.Label();
+			label2 = new System.Windows.Forms.Label();
+			LTLink = new System.Windows.Forms.LinkLabel();
+			label3 = new System.Windows.Forms.Label();
+			GithubLink = new System.Windows.Forms.LinkLabel();
+			GPLLink = new System.Windows.Forms.LinkLabel();
+			label4 = new System.Windows.Forms.Label();
+			label5 = new System.Windows.Forms.Label();
+			label6 = new System.Windows.Forms.Label();
+			label7 = new System.Windows.Forms.Label();
+			label8 = new System.Windows.Forms.Label();
+			label9 = new System.Windows.Forms.Label();
+			TWHLLink = new System.Windows.Forms.LinkLabel();
+			label10 = new System.Windows.Forms.Label();
+			AJLink = new System.Windows.Forms.LinkLabel();
+			label11 = new System.Windows.Forms.Label();
+			((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+			SuspendLayout();
+			// 
+			// button1
+			// 
+			button1.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			button1.DialogResult = System.Windows.Forms.DialogResult.OK;
+			button1.Location = new System.Drawing.Point(248, 321);
+			button1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			button1.Name = "button1";
+			button1.Size = new System.Drawing.Size(153, 27);
+			button1.TabIndex = 1;
+			button1.Text = "Close";
+			button1.UseVisualStyleBackColor = true;
+			// 
+			// pictureBox1
+			// 
+			pictureBox1.Image = Editing.Properties.Resources.sledge_large;
+			pictureBox1.Location = new System.Drawing.Point(14, 14);
+			pictureBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			pictureBox1.Name = "pictureBox1";
+			pictureBox1.Size = new System.Drawing.Size(256, 256);
+			pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+			pictureBox1.TabIndex = 2;
+			pictureBox1.TabStop = false;
+			// 
+			// label1
+			// 
+			label1.AutoSize = true;
+			label1.Font = new System.Drawing.Font("Georgia", 30F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			label1.Location = new System.Drawing.Point(288, 14);
+			label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			label1.Name = "label1";
+			label1.Size = new System.Drawing.Size(258, 46);
+			label1.TabIndex = 3;
+			label1.Text = "Hammertime";
+			// 
+			// VersionLabel
+			// 
+			VersionLabel.AutoSize = true;
+			VersionLabel.Location = new System.Drawing.Point(544, 44);
+			VersionLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			VersionLabel.Name = "VersionLabel";
+			VersionLabel.Size = new System.Drawing.Size(53, 15);
+			VersionLabel.TabIndex = 4;
+			VersionLabel.Text = "(version)";
+			// 
+			// label2
+			// 
+			label2.AutoSize = true;
+			label2.Location = new System.Drawing.Point(334, 91);
+			label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			label2.Name = "label2";
+			label2.Size = new System.Drawing.Size(151, 15);
+			label2.TabIndex = 5;
+			label2.Text = "Created by Daniel Walder - ";
+			// 
+			// LTLink
+			// 
+			LTLink.AutoSize = true;
+			LTLink.Location = new System.Drawing.Point(490, 91);
+			LTLink.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			LTLink.Name = "LTLink";
+			LTLink.Size = new System.Drawing.Size(113, 15);
+			LTLink.TabIndex = 6;
+			LTLink.TabStop = true;
+			LTLink.Text = "logic-and-trick.com";
+			// 
+			// label3
+			// 
+			label3.AutoSize = true;
+			label3.Location = new System.Drawing.Point(334, 119);
+			label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			label3.Name = "label3";
+			label3.Size = new System.Drawing.Size(245, 15);
+			label3.TabIndex = 5;
+			label3.Text = "Open source software - licensed under BSD-3";
+			// 
+			// GithubLink
+			// 
+			GithubLink.AutoSize = true;
+			GithubLink.Location = new System.Drawing.Point(406, 143);
+			GithubLink.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			GithubLink.Name = "GithubLink";
+			GithubLink.Size = new System.Drawing.Size(195, 15);
+			GithubLink.TabIndex = 6;
+			GithubLink.TabStop = true;
+			GithubLink.Text = "github.com/Duude92/hammertime";
+			// 
+			// GPLLink
+			// 
+			GPLLink.AutoSize = true;
+			GPLLink.Location = new System.Drawing.Point(406, 168);
+			GPLLink.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			GPLLink.Name = "GPLLink";
+			GPLLink.Size = new System.Drawing.Size(213, 15);
+			GPLLink.TabIndex = 6;
+			GPLLink.TabStop = true;
+			GPLLink.Text = "opensource.org/licenses/BSD-3-Clause";
+			// 
+			// label4
+			// 
+			label4.AutoSize = true;
+			label4.Location = new System.Drawing.Point(344, 143);
+			label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			label4.Name = "label4";
+			label4.Size = new System.Drawing.Size(46, 15);
+			label4.TabIndex = 5;
+			label4.Text = "Source:";
+			// 
+			// label5
+			// 
+			label5.AutoSize = true;
+			label5.Location = new System.Drawing.Point(344, 168);
+			label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			label5.Name = "label5";
+			label5.Size = new System.Drawing.Size(49, 15);
+			label5.TabIndex = 5;
+			label5.Text = "License:";
+			// 
+			// label6
+			// 
+			label6.AutoSize = true;
+			label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+			label6.Location = new System.Drawing.Point(332, 204);
+			label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			label6.Name = "label6";
+			label6.Size = new System.Drawing.Size(95, 13);
+			label6.TabIndex = 7;
+			label6.Text = "Special Thanks";
+			// 
+			// label7
+			// 
+			label7.AutoSize = true;
+			label7.Location = new System.Drawing.Point(344, 227);
+			label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			label7.Name = "label7";
+			label7.Size = new System.Drawing.Size(245, 15);
+			label7.TabIndex = 8;
+			label7.Text = "Strider && Instant Mix (from TWHL) - Graphics";
+			// 
+			// label8
+			// 
+			label8.AutoSize = true;
+			label8.Location = new System.Drawing.Point(344, 248);
+			label8.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			label8.Name = "label8";
+			label8.Size = new System.Drawing.Size(133, 15);
+			label8.TabIndex = 8;
+			label8.Text = "AJ Scarcella - Website - ";
+			// 
+			// label9
+			// 
+			label9.AutoSize = true;
+			label9.Location = new System.Drawing.Point(344, 269);
+			label9.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			label9.Name = "label9";
+			label9.Size = new System.Drawing.Size(187, 15);
+			label9.TabIndex = 8;
+			label9.Text = "The members of TWHL - Testing - ";
+			// 
+			// TWHLLink
+			// 
+			TWHLLink.AutoSize = true;
+			TWHLLink.Location = new System.Drawing.Point(541, 269);
+			TWHLLink.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			TWHLLink.Name = "TWHLLink";
+			TWHLLink.Size = new System.Drawing.Size(54, 15);
+			TWHLLink.TabIndex = 6;
+			TWHLLink.TabStop = true;
+			TWHLLink.Text = "twhl.info";
+			// 
+			// label10
+			// 
+			label10.AutoSize = true;
+			label10.Location = new System.Drawing.Point(344, 290);
+			label10.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			label10.Name = "label10";
+			label10.Size = new System.Drawing.Size(263, 15);
+			label10.TabIndex = 8;
+			label10.Text = "...and everyone else in the modding community!";
+			// 
+			// AJLink
+			// 
+			AJLink.AutoSize = true;
+			AJLink.Location = new System.Drawing.Point(485, 248);
+			AJLink.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			AJLink.Name = "AJLink";
+			AJLink.Size = new System.Drawing.Size(106, 15);
+			AJLink.TabIndex = 6;
+			AJLink.TabStop = true;
+			AJLink.Text = "scrub-studios.com";
+			// 
+			// label11
+			// 
+			label11.AutoSize = true;
+			label11.Location = new System.Drawing.Point(334, 66);
+			label11.Name = "label11";
+			label11.Size = new System.Drawing.Size(313, 15);
+			label11.TabIndex = 9;
+			label11.Text = "Hammertime fixes and new features by Yurii Hladyshenko";
+			// 
+			// AboutDialog
+			// 
+			AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+			AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			ClientSize = new System.Drawing.Size(653, 352);
+			Controls.Add(label11);
+			Controls.Add(label10);
+			Controls.Add(label9);
+			Controls.Add(label8);
+			Controls.Add(label7);
+			Controls.Add(label6);
+			Controls.Add(GPLLink);
+			Controls.Add(GithubLink);
+			Controls.Add(label3);
+			Controls.Add(AJLink);
+			Controls.Add(TWHLLink);
+			Controls.Add(LTLink);
+			Controls.Add(label5);
+			Controls.Add(label4);
+			Controls.Add(label2);
+			Controls.Add(VersionLabel);
+			Controls.Add(label1);
+			Controls.Add(pictureBox1);
+			Controls.Add(button1);
+			FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+			Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			MaximizeBox = false;
+			MinimizeBox = false;
+			Name = "AboutDialog";
+			ShowIcon = false;
+			ShowInTaskbar = false;
+			StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+			Text = "About Hammertime";
+			((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+			ResumeLayout(false);
+			PerformLayout();
+		}
 
-        }
+		#endregion
 
-        #endregion
-
-        private System.Windows.Forms.Button button1;
+		private System.Windows.Forms.Button button1;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label VersionLabel;
@@ -279,5 +307,6 @@
         private System.Windows.Forms.LinkLabel TWHLLink;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.LinkLabel AJLink;
-    }
+		private System.Windows.Forms.Label label11;
+	}
 }

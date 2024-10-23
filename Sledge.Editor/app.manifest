@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1">
 
-  <assemblyIdentity version="1.0.0.0" name="Sledge Editor" />
+  <assemblyIdentity version="1.0.0.0" name="Hammertime Editor" />
   
-  <description>Sledge Editor</description>
+  <description>Hammertime Editor</description>
   
   <trustInfo xmlns="urn:schemas-microsoft-com:asm.v2">
     <security>
@@ -21,13 +21,11 @@
        DPIs. Windows Presentation Foundation (WPF) applications are automatically DPI-aware and do not need 
        to opt in. Windows Forms applications targeting .NET Framework 4.6 that opt into this setting, should 
        also set the 'EnableWindowsFormsHighDpiAutoResizing' setting to 'true' in their app.config. -->
-  <!--
   <application xmlns="urn:schemas-microsoft-com:asm.v3">
     <windowsSettings>
       <dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true</dpiAware>
     </windowsSettings>
   </application>
-  -->
 
   <!-- Enable themes for Windows common controls and dialogs (Windows XP and later) -->
   <dependency>
@@ -35,5 +33,4 @@
       <assemblyIdentity type="win32" name="Microsoft.Windows.Common-Controls" version="6.0.0.0" processorArchitecture="*" publicKeyToken="6595b64144ccf1df" language="*" />
     </dependentAssembly>
   </dependency>
-
 </assembly>

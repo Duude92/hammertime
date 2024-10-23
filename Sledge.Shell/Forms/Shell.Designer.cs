@@ -215,7 +215,7 @@ namespace Sledge.Shell.Forms
 			this.Controls.Add(this.MenuStrip);
 			this.MainMenuStrip = this.MenuStrip;
 			this.Name = "Shell";
-			this.Text = "Sledge Shell";
+			this.Text = "Hammertime Shell";
 			this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
 			this.ToolStripContainer.ContentPanel.ResumeLayout(false);
 			this.ToolStripContainer.LeftToolStripPanel.ResumeLayout(false);

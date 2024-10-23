@@ -23,7 +23,7 @@ namespace Sledge.Providers.Texture
             return true;
         }
 
-        public Task<Bitmap> GetImage(string item, int maxWidth, int maxHeight)
+        public Task<Bitmap> GetProcessedImage(string item, int maxWidth, int maxHeight)
         {
             return Task.Factory.StartNew(() =>
             {
@@ -33,8 +33,12 @@ namespace Sledge.Providers.Texture
                 }
             });
         }
+		public Task<Bitmap> GetRawImage(string item, int maxWidth, int maxHeight)
+		{
+			return GetProcessedImage(item, maxWidth, maxHeight);
+		}
 
-        public void Dispose()
+		public void Dispose()
         {
 
         }

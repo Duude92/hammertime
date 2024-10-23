@@ -1,0 +1,30 @@
+﻿{
+  "@Meta": {
+    "Base": "HammerTime.Formats",
+    "Language": "en",
+    "LanguageDescription": "English",
+    "Inherit": ""
+  },
+  "@Settings": {
+
+  },
+  "Commands": {
+    "DecompileTool": {
+      "Name": "Decompile Tool",
+      "Details": "Tool to decompile BSP maps"
+    }
+  },
+  "Components": {
+    "DecompileOptions": {
+      "OpenButton": "Open BSP",
+      "BrushOptimizationText": "Brush optimization:",
+      "DecompileStrategyText": "Decompilation strategy:",
+      "GenerateOriginBrush": "Always generate origin brush",
+      "MergeBrushes": "Merge brushes",
+      "ApplyNull": "Apply Null to generated faces",
+      "IncludeLiquids": "Include Liquids",
+      "WildcardTex": "Trigger Entity wildcard:",
+      "CancelButton": "Cancel"
+    }
+  }
+}

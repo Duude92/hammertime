@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using LogicAndTrick.Oy;
 using Sledge.Common.Logging;
 using Sledge.Common.Shell.Components;
@@ -18,6 +20,7 @@ namespace Sledge.Shell.Registers
     {
         [Import] private Forms.Shell _shell;
         [ImportMany] private IEnumerable<Lazy<IDialog>> _dialogs;
+        private static DialogRegister _instance;
 
         public async Task OnStartup()
         {
@@ -36,10 +39,12 @@ namespace Sledge.Shell.Registers
 
         public DialogRegister()
         {
+            _instance = this;
             _components = new List<IDialog>();
         }
+        public static bool IsAnyDialogFocused() => _instance._components.Where(x=>x.Visible).OfType<Form>().Where(f=>f.ContainsFocus).Any();
 
-        private Task ContextChanged(IContext context)
+		private Task ContextChanged(IContext context)
         {
             _shell.InvokeLater(() =>
             {

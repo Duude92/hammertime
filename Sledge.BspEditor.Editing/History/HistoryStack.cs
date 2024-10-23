@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Primitives;
@@ -19,7 +20,7 @@ namespace Sledge.BspEditor.Editing.History
         public HistoryStack(int maximumSize)
         {
             _items = new List<IOperation>();
-            _maximumSize = maximumSize;
+            _maximumSize = Math.Max(1, maximumSize);
             _currentIndex = -1;
         }
 

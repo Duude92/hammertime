@@ -49,7 +49,8 @@ namespace Sledge.Shell.Components
         }
 
         public string Name => "Sledge.Shell.RecentFilesMenuItemProvider";
-        public IEnumerable<SettingKey> GetKeys()
+        public bool ValuesLoaded { get; private set; } = false;
+		public IEnumerable<SettingKey> GetKeys()
         {
             yield break;
         }
@@ -60,6 +61,7 @@ namespace Sledge.Shell.Components
             _recentFiles.Clear();
             _recentFiles.AddRange(list);
             MenuItemsChanged?.Invoke(this, EventArgs.Empty);
+            ValuesLoaded = true;
         }
 
         public void StoreValues(ISettingsStore store)
