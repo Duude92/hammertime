@@ -20,9 +20,8 @@ using System.Windows.Forms;
 using Sledge.BspEditor.Environment.Goldsource;
 using Sledge.Common.Shell.Settings;
 using System.IO;
-using Sledge.QuickForms;
-using System.Threading.Channels;
 using Sledge.Common.Translations;
+using Box = Sledge.DataStructures.Geometric.Box;
 
 namespace Sledge.BspEditor.Tools.PropExporter
 {
@@ -43,6 +42,7 @@ namespace Sledge.BspEditor.Tools.PropExporter
 		{
 			"null",
 			"sky",
+			"origin"
 		};
 
 		protected async override Task Invoke(MapDocument document, CommandParameters parameters)
@@ -61,7 +61,23 @@ namespace Sledge.BspEditor.Tools.PropExporter
 			lastPath = Path.GetDirectoryName(path);
 			var selection = document.Selection;
 			MdlFile model = new MdlFile();
-			var bb = selection.GetSelectionBoundingBox();
+			Box bb = null;
+
+			var selectedSolids = selection.Select(x => x as Solid);
+			Solid originSolid = null;
+			foreach (var solid in selectedSolids)
+			{
+				originSolid = solid.Faces.Where(x => x.Texture.Name.ToLower().Equals("origin")).Count() > 0 ? solid : null;
+			}
+
+			if (originSolid != null)
+				bb = originSolid.BoundingBox;
+
+			if (bb == null)
+			{
+				bb = selection.GetSelectionBoundingBox();
+			}
+
 			var matrix = Matrix4x4.CreateTranslation(-bb.Center);
 			var transaction = new Transaction(new Transform(matrix, selection.GetSelectedParents()));
 			transaction.Add(new TransformTexturesUniform(matrix, selection.GetSelectedParents().SelectMany(p => p.FindAll())));
