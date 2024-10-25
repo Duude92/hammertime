@@ -63,12 +63,7 @@ namespace Sledge.BspEditor.Tools.PropExporter
 			MdlFile model = new MdlFile();
 			Box bb = null;
 
-			var selectedSolids = selection.Select(x => x as Solid);
-			Solid originSolid = null;
-			foreach (var solid in selectedSolids)
-			{
-				originSolid = solid.Faces.Where(x => x.Texture.Name.ToLower().Equals("origin")).Count() > 0 ? solid : null;
-			}
+			var originSolid = selection.OfType<Solid>().FirstOrDefault(s=>s.Faces.Where(x => x.Texture.Name.ToLower().Equals("origin")).Count() > 0);
 
 			if (originSolid != null)
 				bb = originSolid.BoundingBox;
