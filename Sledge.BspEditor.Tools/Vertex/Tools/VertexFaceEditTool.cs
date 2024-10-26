@@ -48,8 +48,16 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
             yield return Oy.Subscribe<string>("VertexTool:DeselectAll", _ => ClearSelection());
             yield return Oy.Subscribe<int>("VertexEditFaceTool:Poke", v => Poke(v));
             yield return Oy.Subscribe<int>("VertexEditFaceTool:Bevel", v => Bevel(v));
-        }
-        
+            yield return Oy.Subscribe<int>("VertexEditFaceTool:Extrude", v => Extrude(v));
+		}
+        private void Extrude(int num)
+        {
+			foreach (var solidFace in _selectedFaces)
+			{
+				BevelFace(solidFace, num, false);
+			}
+			UpdateSolids(_selectedFaces.Select(x => x.Solid).ToList());
+		}
         private void Poke(int num)
         {
             foreach (var solidFace in _selectedFaces)
@@ -100,7 +108,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
             }
         }
 
-        private void BevelFace(SolidFace solidFace, int num)
+        private void BevelFace(SolidFace solidFace, int num, bool bevel = true)
         {
             var face = solidFace.Face;
             var solid = solidFace.Solid.Copy;
@@ -110,7 +118,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
 
             // Scale the face a bit and move it away by the bevel distance
             var origin = face.Origin;
-            face.Transform(Matrix4x4.CreateScale(Vector3.One * 0.9f, origin));
+            face.Transform(Matrix4x4.CreateScale(Vector3.One * (bevel?0.9f:1f), origin));
             face.Transform(Matrix4x4.CreateTranslation(face.Plane.Normal * num));
 
             var vertList = face.Vertices.ToList();
@@ -120,8 +128,19 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
             {
                 var startIndex = vertList.FindIndex(x => x.Position.EquivalentTo(edge.Start));
                 var endIndex = vertList.FindIndex(x => x.Position.EquivalentTo(edge.End));
-                var verts = new[] { vertexPositions[startIndex], vertexPositions[endIndex], edge.End, edge.Start };
-                var f = new MutableFace(verts, face.Texture.Clone());
+				var verts = new[] { vertexPositions[startIndex], vertexPositions[endIndex], edge.End, edge.Start };
+                var texture = face.Texture.Clone();
+                {
+                    var neighbouringFace = solid.Faces.FirstOrDefault(f =>
+                    f.Vertices.Where(v => v.Position == vertexPositions[startIndex]).Any() &&
+                    f.Vertices.Where(v => v.Position == vertexPositions[endIndex]).Any()
+                    );
+                    if(neighbouringFace != null)
+                    {
+                        texture = neighbouringFace.Texture.Clone();
+                    }
+				}
+                var f = new MutableFace(verts, texture);
                 solid.Faces.Add(f);
             }
         }
