@@ -8,6 +8,10 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Modification;
+using Sledge.BspEditor.Modification.Operations.Tree;
+using Sledge.BspEditor.Primitives.MapObjectData;
+using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.Resources;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Vertex.Controls;
@@ -22,7 +26,7 @@ using Sledge.Shell.Input;
 
 namespace Sledge.BspEditor.Tools.Vertex.Tools
 {
-    [AutoTranslate]
+	[AutoTranslate]
     [Export(typeof(VertexSubtool))]
     public class VertexFaceEditTool : VertexSubtool
     {
@@ -123,8 +127,16 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
 
             var vertList = face.Vertices.ToList();
 
-            // Create a face for each new edge -> old edge
-            foreach (var edge in face.GetEdges())
+			var document = GetDocument();
+			var solid1 = new Solid(document.Map.NumberGenerator.Next("MapObject"));
+            var solid1v = new VertexSolid(solid1);
+            var solid12 = solid1v.Copy;
+
+			var transaction = new Transaction();
+			transaction.Add(new Attach(document.Map.Root.ID, solid1v.Real));
+			MapDocumentOperation.Perform(document, transaction);
+			// Create a face for each new edge -> old edge
+			foreach (var edge in face.GetEdges())
             {
                 var startIndex = vertList.FindIndex(x => x.Position.EquivalentTo(edge.Start));
                 var endIndex = vertList.FindIndex(x => x.Position.EquivalentTo(edge.End));
@@ -140,10 +152,34 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
                         texture = neighbouringFace.Texture.Clone();
                     }
 				}
-                var f = new MutableFace(verts, texture);
-                solid.Faces.Add(f);
+                var f = new Face(document.Map.NumberGenerator.Next("Face"))
+                {
+                    Plane = new DataStructures.Geometric.Plane(verts[0], verts[1], verts[3]),
+                    Texture = texture
+                };
+                f.Vertices.AddRange(verts);
+                solid1.Data.Add(f);
+
             }
-        }
+            if(!bevel)
+            {
+                solid.Faces.Remove(face);
+
+                var tex = face.Texture.Clone();
+                tex.Name = "null";
+
+				var f = new MutableFace(vertexPositions, tex);
+
+
+                var fb = new MutableFace(vertexPositions.Reverse<Vector3>(), tex);
+
+                solid.Faces.Add(f);
+				solid1.Data.Add(fb.ToFace(document.Map.NumberGenerator));
+                solid1.Data.Add(face.ToFace(document.Map.NumberGenerator));
+                solid1v.IsDirty = true;
+			}
+            solid1.DescendantsChanged();
+		}
 
         #endregion
         
