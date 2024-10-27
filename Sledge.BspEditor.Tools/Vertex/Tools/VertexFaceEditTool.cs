@@ -130,6 +130,17 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
             var vertList = face.Vertices.ToList();
 
 			var document = GetDocument();
+
+			var parentGroup = solidFace.Solid.Real.Hierarchy.Parent as Group;
+            if(parentGroup == null)
+            {
+                parentGroup = new Group(document.Map.NumberGenerator.Next("MapObject"));
+                var groupTransaction = new Transaction(new Attach(solidFace.Solid.Real.Hierarchy.Parent.ID, parentGroup));
+                groupTransaction.Add(new Attach(parentGroup.ID, solidFace.Solid.Real));
+                MapDocumentOperation.Perform(document, groupTransaction);
+            }
+
+
 			var solid1 = new Solid(document.Map.NumberGenerator.Next("MapObject"));
             var solid1v = new VertexSolid(solid1);
             var solid12 = solid1v.Copy;
@@ -182,6 +193,8 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
                 solid1v.IsDirty = true;
 
                 transaction.Add(new Select(solid1));
+                transaction.Add(new Attach(parentGroup.ID, solid1));
+
 			}
             solid1.DescendantsChanged();
 			MapDocumentOperation.Perform(document, transaction);
