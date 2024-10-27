@@ -151,6 +151,8 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
                     if(neighbouringFace != null)
                     {
                         texture = neighbouringFace.Texture.Clone();
+                        if (neighbouringFace.Texture.Name.ToLower().Equals("null"))
+                            texture.Name = face.Texture.Name;
                     }
 				}
                 var f = new Face(document.Map.NumberGenerator.Next("Face"))
