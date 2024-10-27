@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
@@ -9,6 +10,7 @@ using System.Windows.Forms;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
+using Sledge.BspEditor.Modification.Operations.Selection;
 using Sledge.BspEditor.Modification.Operations.Tree;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
@@ -134,7 +136,6 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
 
 			var transaction = new Transaction();
 			transaction.Add(new Attach(document.Map.Root.ID, solid1v.Real));
-			MapDocumentOperation.Perform(document, transaction);
 			// Create a face for each new edge -> old edge
 			foreach (var edge in face.GetEdges())
             {
@@ -160,8 +161,8 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
                 f.Vertices.AddRange(verts);
                 solid1.Data.Add(f);
 
-            }
-            if(!bevel)
+			}
+			if (!bevel)
             {
                 solid.Faces.Remove(face);
 
@@ -177,15 +178,18 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
 				solid1.Data.Add(fb.ToFace(document.Map.NumberGenerator));
                 solid1.Data.Add(face.ToFace(document.Map.NumberGenerator));
                 solid1v.IsDirty = true;
+
+                transaction.Add(new Select(solid1));
 			}
             solid1.DescendantsChanged();
+			MapDocumentOperation.Perform(document, transaction);
 		}
 
-        #endregion
-        
-        #region 3D interaction
-        
-        private Vector3? GetIntersectionPoint(MutableFace face, Line line)
+		#endregion
+
+		#region 3D interaction
+
+		private Vector3? GetIntersectionPoint(MutableFace face, Line line)
         {
             return new Polygon(face.Vertices.Select(x => x.Position)).GetIntersectionPoint(line);
         }
