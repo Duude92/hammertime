@@ -153,8 +153,8 @@ namespace Sledge.BspEditor.Editing.Components
 			var doc = _context.Get<MapDocument>("ActiveDocument");
 			if (doc == null) return;
 
-			var selection = doc.Selection.GetSelectedParents().LastOrDefault(x => x is Entity);
-			SetSelected(new[] { selection });
+			var selection = doc.Selection.OfType<Entity>();
+			SetSelected(selection);
 		}
 
 		private async Task DocumentChanged(Change change)
@@ -169,7 +169,7 @@ namespace Sledge.BspEditor.Editing.Components
 
 		private IEnumerable<Entity> GetSelected()
 		{
-			return EntityList.SelectedItems.Count == 0 ? null : (EntityList.SelectedItems.Cast<ListViewItem>().Select(x=>x.Tag as Entity));
+			return EntityList.SelectedItems.Count == 0 ? Array.Empty<Entity>() : (EntityList.SelectedItems.Cast<ListViewItem>().Select(x=>x.Tag as Entity));
 		}
 
 		private void SetSelected(IEnumerable<IMapObject> selection)
@@ -177,12 +177,15 @@ namespace Sledge.BspEditor.Editing.Components
 			this.InvokeLater(() =>
 			{
 				if (selection == null) return;
+				var items = EntityList.Items.OfType<ListViewItem>().Where(x => selection.Contains(x.Tag));//.FirstOrDefault(x => x.Tag == selection);
+				if (!items.Any()) return;
 
-				var item = EntityList.Items.OfType<ListViewItem>().FirstOrDefault(x => x.Tag == selection);
-				if (item == null) return;
-
-				item.Selected = true;
-				EntityList.EnsureVisible(EntityList.Items.IndexOf(item));
+				EntityList.SelectedItems.Clear();
+				foreach (var item in items)
+				{
+					item.Selected = true;
+				}
+				EntityList.EnsureVisible(EntityList.Items.IndexOf(items.First()));
 			});
 		}
 
@@ -191,7 +194,7 @@ namespace Sledge.BspEditor.Editing.Components
 			this.InvokeLater(() =>
 			{
 				EntityList.BeginUpdate();
-				var selected = GetSelected();
+				var selected = GetSelected().ToArray();
 				EntityList.ListViewItemSorter = null;
 				EntityList.Items.Clear();
 
