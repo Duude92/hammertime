@@ -17,6 +17,7 @@ using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Translations;
+using Sledge.DataStructures.Geometric;
 using Sledge.Shell;
 
 namespace Sledge.BspEditor.Editing.Components
@@ -153,7 +154,7 @@ namespace Sledge.BspEditor.Editing.Components
 			if (doc == null) return;
 
 			var selection = doc.Selection.GetSelectedParents().LastOrDefault(x => x is Entity);
-			SetSelected(selection);
+			SetSelected(new[] { selection });
 		}
 
 		private async Task DocumentChanged(Change change)
@@ -166,12 +167,12 @@ namespace Sledge.BspEditor.Editing.Components
 			}
 		}
 
-		private Entity GetSelected()
+		private IEnumerable<Entity> GetSelected()
 		{
-			return EntityList.SelectedItems.Count == 0 ? null : (Entity)EntityList.SelectedItems[0].Tag;
+			return EntityList.SelectedItems.Count == 0 ? null : (EntityList.SelectedItems.Cast<ListViewItem>().Select(x=>x.Tag as Entity));
 		}
 
-		private void SetSelected(IMapObject selection)
+		private void SetSelected(IEnumerable<IMapObject> selection)
 		{
 			this.InvokeLater(() =>
 			{
@@ -291,26 +292,30 @@ namespace Sledge.BspEditor.Editing.Components
 			SetSelected(GetSelected()); // Reset the scroll value
 		}
 
-		private async Task SelectEntity(Entity sel)
+		private async Task SelectEntity(IEnumerable<Entity> sel)
 		{
 			var doc = _context.Get<MapDocument>("ActiveDocument");
 			if (doc == null) return;
 
-			var currentSelection = doc.Selection.Except(sel.FindAll()).ToList();
+			var currentSelection = doc.Selection.Except(sel).ToList();
 			var tran = new Transaction(
 				new Deselect(currentSelection),
-				new Select(sel.FindAll())
+				new Select(sel)
 			);
 			await MapDocumentOperation.Perform(doc, tran);
 		}
-
+		public Box GetSelectionBoundingBox(IEnumerable<Entity> entities)
+		{
+			return !entities.Any() ? Box.Empty : new Box(entities.Select(x => x.BoundingBox).Where(x => x != null).DefaultIfEmpty(Box.Empty));
+		}
 		private void GoToSelectedEntity(object sender, EventArgs e)
 		{
 			var selected = GetSelected();
 			if (selected == null) return;
 			SelectEntity(selected);
-			Oy.Publish("MapDocument:Viewport:Focus2D", selected.BoundingBox);
-			Oy.Publish("MapDocument:Viewport:Focus3D", selected.BoundingBox);
+			var bb = GetSelectionBoundingBox(selected);
+			Oy.Publish("MapDocument:Viewport:Focus2D", bb);
+			Oy.Publish("MapDocument:Viewport:Focus3D", bb);
 		}
 
 		private void DeleteSelectedEntity(object sender, EventArgs e)
@@ -320,7 +325,7 @@ namespace Sledge.BspEditor.Editing.Components
 
 			var selected = GetSelected();
 			if (selected == null) return;
-			MapDocumentOperation.Perform(doc, new Detatch(selected.Hierarchy.Parent.ID, selected));
+			MapDocumentOperation.Perform(doc, new Detatch(selected.First().Hierarchy.Parent.ID, selected.ToArray()));
 		}
 
 		private void OpenEntityProperties(object sender, EventArgs e)
