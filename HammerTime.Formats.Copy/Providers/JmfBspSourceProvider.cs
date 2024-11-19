@@ -36,7 +36,7 @@ namespace HammerTime.Formats.Providers
 			new FileExtensionInfo("J.A.C.K. map formats", ".jmf", ".jmx"),
 		};
 
-		public bool CanSave => false;
+		public bool CanSave => true;
 
 		private static GameData _gameData;
 
@@ -71,20 +71,17 @@ namespace HammerTime.Formats.Providers
 
 		public Task Save(Stream stream,SledgePrimitives.Map map, MapDocument document = null)
 		{
-			throw new NotImplementedException();
-
 			return Task.Factory.StartNew(() =>
 			{
 
 				var jmf = new Sledge.Formats.Map.Formats.JackhammerJmfFormat();
 				MapFile mapFile = new MapFile();
 
-				List<Sledge.Formats.Map.Objects.MapObject> content = new List<Sledge.Formats.Map.Objects.MapObject>();
-
-
+				List<MapObject> content = new List<MapObject>();
+				MapFormats.Prefab.IsRmf = false;
 				foreach (var item in map.Root.Hierarchy)
 				{
-					//content.Add(MapObject.WriteMapObject(item));
+					content.Add(MapFormats.MapObject.WriteMapObject(item));
 				}
 
 				mapFile.Worldspawn.Children.AddRange(content);
