@@ -13,6 +13,7 @@ namespace Sledge.BspEditor.Primitives.MapData
 
         public bool TextureLock { get; set; } = true;
         public bool TextureScaleLock { get; set; }
+        public bool UVLock { get; set; }
 
         public TransformationFlags()
         {
@@ -22,6 +23,7 @@ namespace Sledge.BspEditor.Primitives.MapData
         {
             TextureLock = obj.Get<bool>("TextureLock");
             TextureScaleLock = obj.Get<bool>("TextureScaleLock");
+            UVLock = obj.Get<bool>("UVLock", true);
         }
 
         [Export(typeof(IMapElementFormatter))]
@@ -31,6 +33,7 @@ namespace Sledge.BspEditor.Primitives.MapData
         {
             info.AddValue("TextureLock", TextureLock);
             info.AddValue("TextureScaleLock", TextureScaleLock);
+            info.AddValue("UVLock", UVLock);
         }
 
         public SerialisedObject ToSerialisedObject()
@@ -38,6 +41,7 @@ namespace Sledge.BspEditor.Primitives.MapData
             var so = new SerialisedObject("TransformationFlags");
             so.Set("TextureLock", TextureLock);
             so.Set("TextureScaleLock", TextureScaleLock);
+            so.Set("UVLock", UVLock);
             return so;
         }
 
@@ -51,7 +55,8 @@ namespace Sledge.BspEditor.Primitives.MapData
             return new TransformationFlags
             {
                 TextureLock = TextureLock,
-                TextureScaleLock = TextureScaleLock
+                TextureScaleLock = TextureScaleLock,
+                UVLock = UVLock
             };
         }
     }
