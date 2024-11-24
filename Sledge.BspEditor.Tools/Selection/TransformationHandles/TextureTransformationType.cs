@@ -4,6 +4,7 @@
     {
         None,
         Uniform,
-        Scale
+        Scale,
+        Skew
     }
 }
