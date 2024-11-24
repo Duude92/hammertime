@@ -433,6 +433,16 @@ namespace Sledge.BspEditor.Editing.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Menu_UVLock {
+            get {
+                object obj = ResourceManager.GetObject("Menu_UVLock", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap sledge_large {
             get {
                 object obj = ResourceManager.GetObject("sledge_large", resourceCulture);
