@@ -791,6 +791,13 @@ namespace Sledge.BspEditor.Tools.Selection
 								t.Texture.TransformScale(transform);
 							}
 						}
+						else if (textureTransformationType == TextureTransformationType.Skew)
+						{
+							foreach (var t in mo.FindAll().SelectMany(x => x.Data.OfType<ITextured>()))
+							{
+								t.Texture.TransformSkew(transform);
+							}
+						}
 
 						// Check if we need to clear the visgroups
 						if (!KeepVisgroupsWhenCloning)
@@ -820,6 +827,10 @@ namespace Sledge.BspEditor.Tools.Selection
 				else if (textureTransformationType == TextureTransformationType.Scale)
 				{
 					transaction.Add(new TransformTexturesScale(transform, parents.SelectMany(p => p.FindAll())));
+				}
+				else if (textureTransformationType == TextureTransformationType.Skew)
+				{
+					transaction.Add(new TransformTexturesSkew(transform, parents.SelectMany(p => p.FindAll())));
 				}
 			}
 			return MapDocumentOperation.Perform(document, transaction);
