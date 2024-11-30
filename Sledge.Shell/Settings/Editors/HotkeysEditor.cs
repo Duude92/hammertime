@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using Sledge.Common.Shell.Hotkeys;
@@ -10,7 +11,7 @@ using Sledge.Shell.Registers;
 
 namespace Sledge.Shell.Settings.Editors
 {
-    public partial class HotkeysEditor : UserControl, ISettingEditor
+	public partial class HotkeysEditor : UserControl, ISettingEditor
     {
         public event EventHandler<SettingKey> OnValueChanged;
 
@@ -201,6 +202,19 @@ namespace Sledge.Shell.Settings.Editors
         private void UpdateFilter(object sender, EventArgs e)
         {
             UpdateHotkeyList();
-        }
-    }
+		}
+		public void UseDarkTheme(bool dark)
+        {
+			BackColor = dark ? Color.DimGray : SystemColors.Control;
+			ForeColor = dark ? SystemColors.Control : Color.Black;
+            HotkeyList.BackColor = BackColor;
+            HotkeyList.ForeColor = ForeColor;
+            foreach(Control c in HotkeyList.Controls)
+            {
+				c.BackColor = BackColor;
+				c.ForeColor = ForeColor;
+			}
+		}
+
+	}
 }

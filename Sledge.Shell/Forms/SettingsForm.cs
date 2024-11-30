@@ -26,8 +26,9 @@ namespace Sledge.Shell.Forms
 
         private Dictionary<ISettingsContainer, List<SettingKey>> _keys;
         private Dictionary<ISettingsContainer, JsonSettingsStore> _values;
+		private bool _darktheme;
 
-        public string Title
+		public string Title
         {
             get => Text;
             set => this.InvokeLater(() => Text = value);
@@ -159,7 +160,11 @@ namespace Sledge.Shell.Forms
                     foreach (var key in keys)
                     {
                         var editor = GetEditor(key);
-                        editor.Key = key;
+                        if(editor is HotkeysEditor hotkeysEditor)
+                        {
+							hotkeysEditor.UseDarkTheme(_darktheme);
+                        }
+						editor.Key = key;
                         editor.Label = _translations.Value.GetSetting($"{kv.Key.Name}.{key.Key}") ?? key.Key;
                         editor.Value = values.Get(key.Type, key.Key);
 
@@ -256,11 +261,9 @@ namespace Sledge.Shell.Forms
         }
 
 		public void UseDarkTheme(bool dark)
-		{
-            return;
-			throw new NotImplementedException();
+        {
+            _darktheme = dark;
 		}
-
 		private class GroupHolder
         {
             public string Key { get; set; }
