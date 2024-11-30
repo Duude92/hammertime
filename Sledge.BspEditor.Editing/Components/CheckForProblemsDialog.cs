@@ -262,12 +262,6 @@ namespace Sledge.BspEditor.Editing.Components
             Close();
         }
 
-		public void UseDarkTheme(bool dark)
-		{
-            return;
-			throw new NotImplementedException();
-		}
-
 		private class ProblemWrapper
         {
             public int Index { get; }

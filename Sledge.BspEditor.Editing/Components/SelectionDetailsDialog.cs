@@ -152,11 +152,5 @@ namespace Sledge.BspEditor.Editing.Components
 
             return text;
         }
-
-		public void UseDarkTheme(bool dark)
-		{
-            return;
-			throw new NotImplementedException();
-		}
 	}
 }

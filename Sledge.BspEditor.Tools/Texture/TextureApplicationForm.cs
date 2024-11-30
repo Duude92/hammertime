@@ -870,11 +870,5 @@ namespace Sledge.BspEditor.Tools.Texture
 		{
 			RotateFaceTexture(-90);
 		}
-
-		public void UseDarkTheme(bool dark)
-		{
-			return;
-			throw new NotImplementedException();
-		}
 	}
 }

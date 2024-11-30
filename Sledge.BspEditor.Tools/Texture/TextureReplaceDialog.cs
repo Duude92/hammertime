@@ -347,13 +347,6 @@ namespace Sledge.BspEditor.Tools.Texture
         {
             Close();
         }
-
-		public void UseDarkTheme(bool dark)
-		{
-            return;
-			throw new NotImplementedException();
-		}
-
 		private class TextureReplacement
         {
             public string Find { get; set; }

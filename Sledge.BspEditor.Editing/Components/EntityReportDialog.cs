@@ -342,11 +342,6 @@ namespace Sledge.BspEditor.Editing.Components
         {
             Close();
         }
-		public void UseDarkTheme(bool dark)
-		{
-			return;
-			throw new NotImplementedException();
-		}
 		private void EntityList_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			selectedEntityCount.Text = $"{EntityList.SelectedItems.Count}";
