@@ -72,6 +72,7 @@ namespace Sledge.Shell.Registers
 			{
 				ColorControlsRecursively((ContainerControl)component, _useDarkMode);
 			}
+			_instance._shell.UseDarkTheme(_useDarkMode);
 
 		}
 

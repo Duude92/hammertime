@@ -5,10 +5,8 @@ using System.ComponentModel.Composition;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Xml.Linq;
 using LogicAndTrick.Oy;
 using Sledge.Common.Shell.Documents;
 using Sledge.Common.Shell.Settings;
@@ -427,6 +425,11 @@ namespace Sledge.Shell.Forms
 		{
 			store.Set("OpenDocuments", _openDocuments?.ToArray());
 			store.Set("OpenLastFiles", _openLastFiles);
+		}
+
+		public void UseDarkTheme(bool darkTheme)
+		{
+			DocumentTabs.UseDarkMode(darkTheme);
 		}
 
 		private class LoadedDocument
