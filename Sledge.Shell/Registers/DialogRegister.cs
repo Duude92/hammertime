@@ -147,12 +147,15 @@ namespace Sledge.Shell.Registers
 
 		public string Name => "DialogRegister";
 
+		public bool ValuesLoaded { get; private set; } = false;
+
 		public DialogRegister()
 		{
 			_instance = this;
 			_components = new List<IDialog>();
 		}
 		public static bool IsAnyDialogOpened() => _instance._components.Where(x => x.Visible).Any();
+		public static bool IsAnyDialogFocused() => _instance._components.Where(x => x.Visible).OfType<Form>().Where(f => f.ContainsFocus).Any();
 
 		private Task ContextChanged(IContext context)
 		{
