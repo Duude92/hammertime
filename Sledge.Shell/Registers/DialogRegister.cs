@@ -85,27 +85,15 @@ namespace Sledge.Shell.Registers
 
 				if (childControl is Button button)
 				{
-					childControl.BackColor = darkMode ? Color.DimGray : Color.Transparent;
-					childControl.ForeColor = darkMode ? Color.White : Color.Black;
+					childControl.BackColor = darkMode ? Color.DimGray : SystemColors.Control;
+					childControl.ForeColor = darkMode ? SystemColors.Control : Color.Black;
 
 				}
 				else
 				{
-					childControl.BackColor = darkMode ? Color.DimGray : Color.White;
-					childControl.ForeColor = darkMode ? Color.White : Color.Black;
+					childControl.BackColor = darkMode ? Color.DimGray : SystemColors.Control;
+					childControl.ForeColor = darkMode ? SystemColors.Control : Color.Black;
 				}
-				//if (childControl is ListView list)
-				//{
-				//	foreach(ListViewItem item in list.Items)
-				//	{
-				//		item.BackColor = Color.DimGray;
-				//		item.ForeColor = Color.White;
-				//	}
-				//	continue;
-				//}
-
-
-
 
 			}
 			if (control is Form form)
@@ -117,11 +105,6 @@ namespace Sledge.Shell.Registers
 						DarkMode(form.Handle, darkMode);
 						if (control is IDialog)
 							((IDialog)control).UseDarkTheme(darkMode);
-						//foreach (ToolStripItem item in form.MainMenuStrip?.Items)
-						//{
-						//	item.BackColor = darkMode ? Color.DimGray : Color.White;
-						//	item.ForeColor = darkMode ? Color.White : Color.Black;
-						//}
 					}));
 				}
 				else
@@ -129,18 +112,18 @@ namespace Sledge.Shell.Registers
 					DarkMode(form.Handle, darkMode);
 					if (control is IDialog)
 						((IDialog)control).UseDarkTheme(darkMode);
-
+					if (form.MainMenuStrip == null) return;
 					foreach (ToolStripItem item in form.MainMenuStrip.Items)
 					{
-						item.BackColor = darkMode ? Color.DimGray : Color.White;
-						item.ForeColor = darkMode ? Color.White : Color.Black;
+						item.BackColor = darkMode ? Color.DimGray : SystemColors.Control;
+						item.ForeColor = darkMode ? SystemColors.Control : Color.Black;
 					}
 
 				}
 			}
 
-			control.BackColor = darkMode ? Color.DimGray : Color.White;
-			control.ForeColor = darkMode ? Color.White : Color.Black;
+			control.BackColor = darkMode ? Color.DimGray : SystemColors.Control;
+			control.ForeColor = darkMode ? SystemColors.Control : Color.Black;
 		}
 
 		private readonly List<IDialog> _components;
@@ -180,6 +163,7 @@ namespace Sledge.Shell.Registers
 
 			_useDarkMode = store.Get<Boolean>("UseDarkMode");
 			UseDarkMode();
+			ValuesLoaded = true;
 
 		}
 
