@@ -61,6 +61,7 @@ namespace Sledge.Shell.Registers
 		}
 		private void UseDarkMode()
 		{
+			Oy.Publish<bool>("Theme:Changed",_useDarkMode);
 			if (_shell.InvokeRequired)
 				_shell.Invoke(new Action(() =>
 					ColorControlsRecursively(_shell, _useDarkMode)
