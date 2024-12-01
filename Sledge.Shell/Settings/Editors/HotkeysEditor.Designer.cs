@@ -152,6 +152,7 @@
 			HotkeyList.View = System.Windows.Forms.View.Details;
 			HotkeyList.DrawColumnHeader += HotkeyList_DrawColumnHeader;
 			HotkeyList.DrawItem += HotkeyList_DrawItem;
+			HotkeyList.DrawSubItem += HotkeyList_DrawSubItem;
 			HotkeyList.SelectedIndexChanged += HotkeyListSelectionChanged;
 			HotkeyList.KeyDown += HotkeyListKeyDown;
 			// 

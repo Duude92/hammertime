@@ -73,8 +73,6 @@ namespace Sledge.Shell.Registers
 			{
 				ColorControlsRecursively((ContainerControl)component, _useDarkMode);
 			}
-			_instance._shell.UseDarkTheme(_useDarkMode);
-
 		}
 
 		public static void ColorControlsRecursively(Control control, bool darkMode)
@@ -114,13 +112,6 @@ namespace Sledge.Shell.Registers
 					DarkMode(form.Handle, darkMode);
 					if (control is IDialog)
 						((IDialog)control).UseDarkTheme(darkMode);
-					if (form.MainMenuStrip == null) return;
-					foreach (ToolStripItem item in form.MainMenuStrip.Items)
-					{
-						item.BackColor = darkMode ? Color.DimGray : SystemColors.Control;
-						item.ForeColor = darkMode ? SystemColors.Control : Color.Black;
-					}
-
 				}
 			}
 

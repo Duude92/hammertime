@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿
+using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 
@@ -30,8 +31,9 @@ namespace Sledge.Shell.Controls
             TabPages.Add(new TabPage("Tab 1") { ImageKey = "Dirty" });
             TabPages.Add("Tab 2");
             TabPages.Add("Tab 3");
-        }
-        public void UseDarkMode(bool darkTheme)
+			LogicAndTrick.Oy.Oy.Subscribe<bool>("Theme:Changed", (useDark) => UseDarkMode(useDark));
+		}
+		private void UseDarkMode(bool darkTheme)
         {
 			_backColor = darkTheme ? Color.DimGray : BackColor;
 			_foreColor = darkTheme ? ForeColor : Color.Black;

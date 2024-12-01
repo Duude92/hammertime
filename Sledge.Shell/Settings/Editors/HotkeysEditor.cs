@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using LogicAndTrick.Oy;
 using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Shell.Settings;
 using Sledge.Shell.Forms;
@@ -18,7 +19,7 @@ namespace Sledge.Shell.Settings.Editors
 		string ISettingEditor.Label { get; set; }
 
 		private HotkeyRegister.HotkeyBindings _bindings;
-		private bool _useDarkMode;
+		private static bool _useDarkMode;
 
 		public object Value
 		{
@@ -37,6 +38,8 @@ namespace Sledge.Shell.Settings.Editors
 		{
 			InitializeComponent();
 			Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
+			Oy.Subscribe<bool>("Theme:Changed", (useDark) => UseDarkTheme(useDark));
+
 		}
 
 		private void UpdateHotkeyList()
@@ -204,10 +207,11 @@ namespace Sledge.Shell.Settings.Editors
 		{
 			UpdateHotkeyList();
 		}
-		public void UseDarkTheme(bool dark)
+		private void UseDarkTheme(bool dark)
 		{
 			_useDarkMode = dark;
 			BackColor = dark ? Color.DimGray : SystemColors.Control;
+			ForeColor = Color.Black;
 			HotkeyList.BackColor = BackColor;
 			HotkeyList.ForeColor = ForeColor;
 
@@ -224,24 +228,35 @@ namespace Sledge.Shell.Settings.Editors
 			{
 				e.Graphics.FillRectangle(Brushes.DarkGray, e.Bounds);
 				e.Graphics.DrawRectangle(Pens.DimGray, e.Bounds);
-				e.DrawText();
 			}
+			e.DrawText();
 		}
 
 		private void HotkeyList_DrawItem(object sender, DrawListViewItemEventArgs e)
+		{
+			return;
+		}
+
+		private void HotkeyList_DrawSubItem(object sender, DrawListViewSubItemEventArgs e)
 		{
 			if (_useDarkMode)
 			{
 				e.Graphics.FillRectangle(Brushes.Gray, e.Bounds);
 				e.Graphics.DrawRectangle(Pens.DarkGray, e.Bounds);
-				e.DrawText();
-				if(e.Item.Selected)
+
+			}
+			if (e.Item.Selected)
+			{
+				if (_useDarkMode)
 				{
 					e.Graphics.FillRectangle(Brushes.DimGray, e.Bounds);
-					e.DrawText();
-
+				}
+				else
+				{
+					e.Graphics.FillRectangle(Brushes.DarkGray, e.Bounds);
 				}
 			}
+			e.DrawText();
 		}
 	}
 }

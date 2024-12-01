@@ -61,6 +61,7 @@ namespace Sledge.Shell.Registers
 
 			Oy.Subscribe<IContext>("Context:Changed", ContextChanged);
 			Oy.Subscribe<object>("Menu:Update", UpdateMenu);
+			Oy.Subscribe<bool>("Theme:Changed", (useDark) => _tree.UseDarkTheme = useDark);
 		}
 
 		private Task ContextChanged(IContext context)
@@ -134,6 +135,7 @@ namespace Sledge.Shell.Registers
 			private readonly IContext _context;
 			private readonly List<MenuSection> _declaredSections;
 			private readonly List<MenuGroup> _declaredGroups;
+			public bool UseDarkTheme;
 
 			/// <summary>
 			/// The toolstrip containing the toolbars
@@ -186,33 +188,35 @@ namespace Sledge.Shell.Registers
 					if (ts.ToolStrip.Items.Count > 0) ToolStrip.Join(ts.ToolStrip);
 				}
 				ToolStrip.EndInit();
-
-				ToolStrip.BackColor = System.Drawing.Color.DimGray;
-				ToolStrip.ForeColor = System.Drawing.Color.White;
-				foreach (Control item in ToolStrip.Controls)
+				if (UseDarkTheme)
 				{
-					item.BackColor = System.Drawing.Color.DimGray;
-					item.ForeColor = System.Drawing.Color.White;
-				}
-
-				MenuStrip.BackColor = System.Drawing.Color.DimGray;
-				MenuStrip.ForeColor = System.Drawing.Color.White;
-
-
-				foreach (ToolStripItem item in MenuStrip.Items)
-				{
-					item.BackColor = System.Drawing.Color.DimGray;
-					item.ForeColor = System.Drawing.Color.White;
-					
-					if (item is ToolStripDropDownItem dropDownItem)
+					ToolStrip.BackColor = System.Drawing.Color.DimGray;
+					ToolStrip.ForeColor = System.Drawing.Color.White;
+					foreach (Control item in ToolStrip.Controls)
 					{
+						item.BackColor = System.Drawing.Color.DimGray;
+						item.ForeColor = System.Drawing.Color.White;
+					}
 
-						foreach (ToolStripItem dropdownItem in dropDownItem.DropDownItems)
+					MenuStrip.BackColor = System.Drawing.Color.DimGray;
+					MenuStrip.ForeColor = System.Drawing.Color.White;
+
+
+					foreach (ToolStripItem item in MenuStrip.Items)
+					{
+						item.BackColor = System.Drawing.Color.DimGray;
+						item.ForeColor = System.Drawing.Color.White;
+
+						if (item is ToolStripDropDownItem dropDownItem)
 						{
-							dropdownItem.BackColor = Color.DimGray;
-							if (dropdownItem.Enabled)
+
+							foreach (ToolStripItem dropdownItem in dropDownItem.DropDownItems)
 							{
-								dropdownItem.ForeColor = Color.White;
+								dropdownItem.BackColor = Color.DimGray;
+								if (dropdownItem.Enabled)
+								{
+									dropdownItem.ForeColor = Color.White;
+								}
 							}
 						}
 					}

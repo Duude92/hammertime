@@ -63,23 +63,10 @@ namespace Sledge.BspEditor.Editing.Components.Properties
 		}
 		public void UseDarkTheme(bool dark)
 		{
-			//Action<Control> colorControls;
-			//colorControls = new Action<Control>((Control control) =>
-			//{
-			//	control.BackColor = System.Drawing.Color.DimGray;
-			//	control.ForeColor = System.Drawing.Color.White;
-			//	foreach (var item in control.Controls)
-			//	{
-			//		colorControls();
-			//	}
-			//});
-
 			foreach (var tab in _pages)
 			{
 				DialogRegister.ColorControlsRecursively(tab.Value, dark);
 			}
-
-
 		}
 
 		public string Title

@@ -427,10 +427,6 @@ namespace Sledge.Shell.Forms
 			store.Set("OpenLastFiles", _openLastFiles);
 		}
 
-		public void UseDarkTheme(bool darkTheme)
-		{
-			DocumentTabs.UseDarkMode(darkTheme);
-		}
 
 		private class LoadedDocument
 		{
