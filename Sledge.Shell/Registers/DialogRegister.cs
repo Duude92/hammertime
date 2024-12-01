@@ -80,12 +80,7 @@ namespace Sledge.Shell.Registers
 		{
 			foreach (Control childControl in control.Controls)
 			{
-
-
 				ColorControlsRecursively(childControl, darkMode);
-
-
-
 			}
 			if (control is Form form)
 			{
@@ -107,12 +102,12 @@ namespace Sledge.Shell.Registers
 			}
 			if (control is Button button)
 			{
-				control.BackColor = darkMode ? Color.DimGray : Button.DefaultBackColor;
+				control.BackColor = darkMode ? SystemColors.WindowFrame : Button.DefaultBackColor;
 				control.ForeColor = darkMode ? Button.DefaultBackColor : Color.Black;
 			}
 			else
 			{
-				control.BackColor = darkMode ? Color.DimGray : Control.DefaultBackColor;
+				control.BackColor = darkMode ? SystemColors.WindowFrame : Control.DefaultBackColor;
 				control.ForeColor = darkMode ? Control.DefaultBackColor : Color.Black;
 			}
 		}

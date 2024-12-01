@@ -210,15 +210,10 @@ namespace Sledge.Shell.Settings.Editors
 		public void UseDarkTheme(bool dark)
 		{
 			_useDarkMode = dark;
-			BackColor = dark ? Color.DimGray : DefaultBackColor;
-			HotkeyList.BackColor = BackColor;
-			HotkeyList.ForeColor = ForeColor;
 
-			foreach (Control c in HotkeyList.Controls)
-			{
-				c.BackColor = BackColor;
-				c.ForeColor = ForeColor;
-			}
+			HotkeyList.ForeColor = Color.Black;
+
+			DialogRegister.ColorControlsRecursively(this, dark);
 		}
 
 		private void HotkeyList_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
@@ -238,6 +233,8 @@ namespace Sledge.Shell.Settings.Editors
 
 		private void HotkeyList_DrawSubItem(object sender, DrawListViewSubItemEventArgs e)
 		{
+			HotkeyList.ForeColor = Color.Black;
+
 			if (_useDarkMode)
 			{
 				e.Graphics.FillRectangle(Brushes.Gray, e.Bounds);
