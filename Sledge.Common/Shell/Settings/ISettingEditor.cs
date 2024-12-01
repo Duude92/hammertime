@@ -31,5 +31,12 @@ namespace Sledge.Common.Shell.Settings
         /// Gets or sets the key for the setting. Editor hints should be applied when setting this value.
         /// </summary>
         SettingKey Key { get; set; }
-    }
+
+        /// <summary>
+        /// Sets dark theme to ISettingEditor if necessary
+        /// </summary>
+        /// <param name="dark"></param>
+        void UseDarkTheme(bool dark) { }
+
+	}
 }

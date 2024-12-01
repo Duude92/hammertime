@@ -207,11 +207,10 @@ namespace Sledge.Shell.Settings.Editors
 		{
 			UpdateHotkeyList();
 		}
-		private void UseDarkTheme(bool dark)
+		public void UseDarkTheme(bool dark)
 		{
 			_useDarkMode = dark;
-			BackColor = dark ? Color.DimGray : SystemColors.Control;
-			ForeColor = Color.Black;
+			BackColor = dark ? Color.DimGray : DefaultBackColor;
 			HotkeyList.BackColor = BackColor;
 			HotkeyList.ForeColor = ForeColor;
 

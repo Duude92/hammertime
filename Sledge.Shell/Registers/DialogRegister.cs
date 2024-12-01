@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -61,7 +62,7 @@ namespace Sledge.Shell.Registers
 		}
 		private void UseDarkMode()
 		{
-			Oy.Publish<bool>("Theme:Changed",_useDarkMode);
+			Oy.Publish<bool>("Theme:Changed", _useDarkMode);
 			if (_shell.InvokeRequired)
 				_shell.Invoke(new Action(() =>
 					ColorControlsRecursively(_shell, _useDarkMode)
@@ -83,17 +84,7 @@ namespace Sledge.Shell.Registers
 
 				ColorControlsRecursively(childControl, darkMode);
 
-				if (childControl is Button button)
-				{
-					childControl.BackColor = darkMode ? Color.DimGray : SystemColors.Control;
-					childControl.ForeColor = darkMode ? SystemColors.Control : Color.Black;
 
-				}
-				else
-				{
-					childControl.BackColor = darkMode ? Color.DimGray : SystemColors.Control;
-					childControl.ForeColor = darkMode ? SystemColors.Control : Color.Black;
-				}
 
 			}
 			if (control is Form form)
@@ -114,10 +105,18 @@ namespace Sledge.Shell.Registers
 						((IDialog)control).UseDarkTheme(darkMode);
 				}
 			}
-
-			control.BackColor = darkMode ? Color.DimGray : SystemColors.Control;
-			control.ForeColor = darkMode ? SystemColors.Control : Color.Black;
+			if (control is Button button)
+			{
+				control.BackColor = darkMode ? Color.DimGray : Button.DefaultBackColor;
+				control.ForeColor = darkMode ? Button.DefaultBackColor : Color.Black;
+			}
+			else
+			{
+				control.BackColor = darkMode ? Color.DimGray : Control.DefaultBackColor;
+				control.ForeColor = darkMode ? Control.DefaultBackColor : Color.Black;
+			}
 		}
+
 
 		private readonly List<IDialog> _components;
 

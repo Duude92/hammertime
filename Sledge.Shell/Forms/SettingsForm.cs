@@ -160,6 +160,7 @@ namespace Sledge.Shell.Forms
                     foreach (var key in keys)
                     {
                         var editor = GetEditor(key);
+                        editor.UseDarkTheme(_darktheme);
 						editor.Key = key;
                         editor.Label = _translations.Value.GetSetting($"{kv.Key.Name}.{key.Key}") ?? key.Key;
                         editor.Value = values.Get(key.Type, key.Key);
