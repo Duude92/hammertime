@@ -101,7 +101,7 @@ namespace Sledge.Shell.Registers
 			{
 				if (form.InvokeRequired)
 				{
-					form.Invoke(new Action(() =>
+					form.InvokeLater(new Action(() =>
 					{
 						DarkMode(form.Handle, darkMode);
 						if (control is IDialog)
