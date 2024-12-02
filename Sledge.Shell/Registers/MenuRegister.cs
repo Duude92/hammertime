@@ -135,7 +135,22 @@ namespace Sledge.Shell.Registers
 			private readonly IContext _context;
 			private readonly List<MenuSection> _declaredSections;
 			private readonly List<MenuGroup> _declaredGroups;
-			public bool UseDarkTheme;
+			private bool _useDarkTheme = false;
+			public bool UseDarkTheme
+			{
+				get => _useDarkTheme; set
+				{
+					_useDarkTheme = value;
+					if (value)
+					{
+						MenuStrip.Renderer = new CustomToolStripRenderer(SystemColors.ControlDarkDark, _backColor);
+						return;
+					}
+					MenuStrip.Renderer = null;
+				}
+			}
+			private Color _systemDarkBackColor = Color.FromArgb(50, 50, 50);
+			private Color _backColor = Color.FromArgb(70, 70, 70);
 
 			/// <summary>
 			/// The toolstrip containing the toolbars
@@ -161,6 +176,7 @@ namespace Sledge.Shell.Registers
 				ToolStrip = toolStrip;
 				RootNodes = new Dictionary<string, MenuTreeRoot>();
 				Clear();
+
 			}
 
 			public void ResetItems(IEnumerable<IMenuItem> items)
@@ -190,32 +206,31 @@ namespace Sledge.Shell.Registers
 				ToolStrip.EndInit();
 				if (UseDarkTheme)
 				{
-					ToolStrip.BackColor = System.Drawing.Color.DimGray;
+					ToolStrip.BackColor = _systemDarkBackColor;
 					ToolStrip.ForeColor = System.Drawing.Color.White;
 					foreach (Control item in ToolStrip.Controls)
 					{
-						item.BackColor = System.Drawing.Color.DimGray;
+						item.BackColor = _systemDarkBackColor;
 						item.ForeColor = System.Drawing.Color.White;
 					}
 
-					MenuStrip.BackColor = System.Drawing.Color.DimGray;
+					MenuStrip.BackColor = _systemDarkBackColor;
 					MenuStrip.ForeColor = System.Drawing.Color.White;
-
 
 					foreach (ToolStripItem item in MenuStrip.Items)
 					{
-						item.BackColor = System.Drawing.Color.DimGray;
-						item.ForeColor = System.Drawing.Color.White;
+						item.BackColor = _systemDarkBackColor;
+						item.ForeColor = Color.White;
 
 						if (item is ToolStripDropDownItem dropDownItem)
 						{
 
 							foreach (ToolStripItem dropdownItem in dropDownItem.DropDownItems)
 							{
-								dropdownItem.BackColor = Color.DimGray;
-								if (dropdownItem.Enabled)
+								dropdownItem.BackColor = _backColor;
+								if (!dropdownItem.Enabled)
 								{
-									dropdownItem.ForeColor = Color.White;
+									dropdownItem.ForeColor = Color.DimGray;
 								}
 							}
 						}
@@ -269,6 +284,130 @@ namespace Sledge.Shell.Registers
 				foreach (var node in RootNodes.Values)
 				{
 					node.Update();
+				}
+			}
+		}
+		public class CustomToolStripRenderer : ToolStripProfessionalRenderer
+		{
+			private readonly Color _pressedBackColor;
+			private readonly Color _backColor;
+
+			public CustomToolStripRenderer(Color pressedBackColor, Color backColor)
+			{
+				_pressedBackColor = pressedBackColor;
+				_backColor = backColor;
+			}
+			protected override void OnRenderItemBackground(ToolStripItemRenderEventArgs e)
+			{
+				//base.OnRenderItemBackground(e);
+				using (var brush = new SolidBrush(Color.Black)) // Example color
+				{
+					e.Graphics.FillRectangle(brush, e.Item.ContentRectangle);
+				}
+			}
+			protected override void OnRenderToolStripPanelBackground(ToolStripPanelRenderEventArgs e)
+			{
+				//using (var brush = new SolidBrush(Color.Black))
+				//{
+				//	e.Graphics.FillRectangle(brush, e.ToolStripPanel.ClientRectangle);
+				//	e.Graphics.DrawRectangle(SystemPens.Highlight, e.ToolStripPanel.ClientRectangle);
+				//}
+				base.OnRenderToolStripPanelBackground(e);
+
+			}
+			protected override void OnRenderToolStripBorder(ToolStripRenderEventArgs e)
+			{
+				if (e.ToolStrip is ToolStripDropDown)
+				{
+					// Custom border for the drop-down menu
+					using (var pen = new Pen(ControlPaint.Dark(_backColor), 1)) // Border color
+					{
+						e.Graphics.DrawRectangle(pen, new Rectangle(Point.Empty, e.ToolStrip.ClientSize - new Size(1, 1)));
+					}
+				}
+				else
+				{
+					base.OnRenderToolStripBorder(e);
+				}
+			}
+			protected override void OnRenderImageMargin(ToolStripRenderEventArgs e)
+			{
+				return;
+				//using (var pen = new Pen(Color.Gold, 1)) // Separator color
+				//{
+				//	int y = e.ToolStrip.ClientRectangle.Top + e.ToolStrip.ClientRectangle.Height / 2;
+				//	e.Graphics.DrawLine(pen, e.ToolStrip.ClientRectangle.Left, y, e.ToolStrip.ClientRectangle.Right, y);
+				//}
+				//base.OnRenderImageMargin(e);
+			}
+			protected override void OnRenderItemImage(ToolStripItemImageRenderEventArgs e)
+			{
+				//using (var pen = new Pen(Color.Purple, 1)) // Separator color
+				//{
+				//	int y = e.ToolStrip.ClientRectangle.Top + e.ToolStrip.ClientRectangle.Height / 2;
+				//	e.Graphics.DrawLine(pen, e.ToolStrip.ClientRectangle.Left, y, e.ToolStrip.ClientRectangle.Right, y);
+				//}
+				base.OnRenderItemImage(e);
+			}
+			protected override void OnRenderSeparator(ToolStripSeparatorRenderEventArgs e)
+			{
+
+				// Custom separator rendering
+				using (var pen = new Pen(ControlPaint.Dark(_backColor), 1)) // Separator color
+				{
+					int y = e.Item.ContentRectangle.Top + e.Item.ContentRectangle.Height / 2;
+					e.Graphics.DrawLine(pen, e.Item.ContentRectangle.Left, y, e.Item.ContentRectangle.Right, y);
+				}
+			}
+			protected override void OnRenderToolStripBackground(ToolStripRenderEventArgs e)
+			{
+				// Custom background for the entire drop-down
+				if (e.ToolStrip is ToolStripDropDown)
+				{
+					e.ToolStrip.BackColor = _backColor;
+					using (var brush = new SolidBrush(_backColor))
+					{
+						e.Graphics.FillRectangle(brush, e.ToolStrip.DisplayRectangle);
+						e.Graphics.DrawRectangle(SystemPens.ControlDarkDark, e.ToolStrip.ClientRectangle);
+					}
+				}
+				//else if (e.ToolStrip is ToolStripDropDownItem)
+				//{
+				//	using (var brush = new SolidBrush(Color.Yellow))
+				//	{
+				//		e.Graphics.FillRectangle(brush, e.AffectedBounds);
+				//	}
+				//}
+				else
+				{
+					base.OnRenderToolStripBackground(e);
+				}
+			}
+
+
+			protected override void OnRenderMenuItemBackground(ToolStripItemRenderEventArgs e)
+			{
+				// Check if the item is pressed or selected
+				if (e.Item.Pressed)
+				{
+					// Draw custom background for pressed state
+					using (var brush = new SolidBrush(_pressedBackColor))
+					{
+						e.Graphics.FillRectangle(brush, e.Item.ContentRectangle);
+					}
+				}
+				else if (e.Item.Selected)
+				{
+					// Draw custom background for selected state
+					using (var brush = new SolidBrush(Color.DimGray)) // Example color
+					{
+						e.Graphics.FillRectangle(brush, e.Item.ContentRectangle);
+					}
+				}
+				else
+				{
+					// Draw default background
+					base.OnRenderMenuItemBackground(e);
 				}
 			}
 		}
