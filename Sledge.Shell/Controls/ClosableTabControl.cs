@@ -35,9 +35,9 @@ namespace Sledge.Shell.Controls
 		}
 		private void UseDarkMode(bool darkTheme)
         {
-			_backColor = darkTheme ? Color.DimGray : BackColor;
+			_backColor = darkTheme ? Color.FromArgb(50, 50, 50) : BackColor;
 			_foreColor = darkTheme ? ForeColor : Color.Black;
-			_backTabColor = darkTheme ? Color.Gray : BackColor;
+			_backTabColor = darkTheme ? SystemColors.ControlDarkDark : BackColor;
 		}
         protected override void OnPaint(PaintEventArgs e)
         {

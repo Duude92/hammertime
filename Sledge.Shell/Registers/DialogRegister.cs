@@ -102,12 +102,19 @@ namespace Sledge.Shell.Registers
 			}
 			if (control is Button button)
 			{
-				control.BackColor = darkMode ? SystemColors.WindowFrame : Button.DefaultBackColor;
-				control.ForeColor = darkMode ? Button.DefaultBackColor : Color.Black;
+				control.BackColor = darkMode ? SystemColors.WindowFrame : SystemColors.ControlLight;
+				control.ForeColor = darkMode ? SystemColors.ButtonFace : Color.Black;
+				button.FlatStyle = FlatStyle.Flat;
+				button.FlatAppearance.BorderColor = darkMode ? SystemColors.ButtonShadow : SystemColors.ControlDarkDark;
+			}
+			else if (control is TreeView || control is ListView || control is TextBox)
+			{
+				control.BackColor = darkMode ? SystemColors.ControlDark : SystemColors.Window;
+				control.ForeColor = darkMode ? SystemColors.WindowText : Color.Black;
 			}
 			else
 			{
-				control.BackColor = darkMode ? SystemColors.WindowFrame : Control.DefaultBackColor;
+				control.BackColor = darkMode ? Color.FromArgb(50,50,50) : Control.DefaultBackColor;
 				control.ForeColor = darkMode ? Control.DefaultBackColor : Color.Black;
 			}
 		}

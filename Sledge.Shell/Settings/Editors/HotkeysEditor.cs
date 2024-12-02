@@ -218,6 +218,8 @@ namespace Sledge.Shell.Settings.Editors
 
 		private void HotkeyList_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
 		{
+			e.Graphics.DrawRectangle(Pens.LightGray, new Rectangle(new Point(e.Bounds.Location.X - 1, e.Bounds.Location.Y - 1), e.Bounds.Size));
+
 			if (_useDarkMode)
 			{
 				e.Graphics.FillRectangle(Brushes.DarkGray, e.Bounds);
@@ -239,7 +241,6 @@ namespace Sledge.Shell.Settings.Editors
 			{
 				e.Graphics.FillRectangle(Brushes.Gray, e.Bounds);
 				e.Graphics.DrawRectangle(Pens.DarkGray, e.Bounds);
-
 			}
 			if (e.Item.Selected)
 			{
