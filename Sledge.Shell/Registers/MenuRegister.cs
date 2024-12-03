@@ -291,6 +291,8 @@ namespace Sledge.Shell.Registers
 		{
 			private readonly Color _pressedBackColor;
 			private readonly Color _backColor;
+			private readonly Brush _dropDownEnabledColor = new SolidBrush(Color.Black);
+			private readonly Brush _dropDownDisabledColor = new SolidBrush(Color.Gray);
 
 			public CustomToolStripRenderer(Color pressedBackColor, Color backColor)
 			{
@@ -383,7 +385,54 @@ namespace Sledge.Shell.Registers
 					base.OnRenderToolStripBackground(e);
 				}
 			}
+			protected override void OnRenderItemText(ToolStripItemTextRenderEventArgs e)
+			{
+				if (e.Item.Owner is ToolStripDropDown) //Item is drop-down item
+				{
+					if (e.Item is ToolStripMenuItem menuItem)
+					{
+						if (!e.Item.Enabled)
+						{
 
+							e.Graphics.DrawString(menuItem.Text, e.TextFont, _dropDownDisabledColor, e.TextRectangle);
+						}
+						else
+						{
+							e.Graphics.DrawString(menuItem.Text, e.TextFont, _dropDownEnabledColor, e.TextRectangle);
+						}
+						if (!string.IsNullOrEmpty(menuItem.ShortcutKeyDisplayString)) //Item has shortcut
+						{
+							SizeF shortcutTextSize = e.Graphics.MeasureString(menuItem.ShortcutKeyDisplayString, e.TextFont);
+							float shortcutX = e.Item.ContentRectangle.Right - shortcutTextSize.Width - 10; // 10px padding from the right
+
+							RectangleF shortcutRect = new RectangleF(shortcutX, e.Item.ContentRectangle.Top, shortcutTextSize.Width, shortcutTextSize.Height);
+							if (e.Item.Enabled)
+							{
+
+								e.Graphics.DrawString(menuItem.ShortcutKeyDisplayString, e.TextFont, _dropDownEnabledColor, shortcutRect);
+								return;
+							}
+
+							e.Graphics.DrawString(menuItem.ShortcutKeyDisplayString, e.TextFont, _dropDownDisabledColor, shortcutRect);
+							return;
+						}
+					}
+
+				}
+				else if (e.Item.Owner is MenuStrip)
+				{
+					using (Brush textBrush = new SolidBrush(Color.White))
+					{
+						e.Graphics.DrawString(e.Text, e.TextFont, textBrush, e.TextRectangle);
+					}
+				}
+				else
+				{
+
+					base.OnRenderItemText(e);
+				}
+
+			}
 
 			protected override void OnRenderMenuItemBackground(ToolStripItemRenderEventArgs e)
 			{
