@@ -213,28 +213,6 @@ namespace Sledge.Shell.Registers
 						item.BackColor = _systemDarkBackColor;
 						item.ForeColor = System.Drawing.Color.White;
 					}
-
-					MenuStrip.BackColor = _systemDarkBackColor;
-					MenuStrip.ForeColor = System.Drawing.Color.White;
-
-					foreach (ToolStripItem item in MenuStrip.Items)
-					{
-						item.BackColor = _systemDarkBackColor;
-						item.ForeColor = Color.White;
-
-						if (item is ToolStripDropDownItem dropDownItem)
-						{
-
-							foreach (ToolStripItem dropdownItem in dropDownItem.DropDownItems)
-							{
-								dropdownItem.BackColor = _backColor;
-								if (!dropdownItem.Enabled)
-								{
-									dropdownItem.ForeColor = Color.DimGray;
-								}
-							}
-						}
-					}
 				}
 			}
 
