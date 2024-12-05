@@ -54,7 +54,7 @@ namespace Sledge.Shell.Forms
 
 			InitializeComponent();
 			InitializeShell();
-
+			this.Opacity = 0;
 		}
 
 		/// <summary>
@@ -130,7 +130,8 @@ namespace Sledge.Shell.Forms
 			_bootstrapper.Value.UIStartup();
 			_bootstrapper.Value.Startup()
 				.ContinueWith(_ => _bootstrapper.Value.Initialise())
-				.ContinueWith(_ => PostLoad());
+				.ContinueWith(_ => PostLoad())
+				.ContinueWith(_ => this.InvokeLater(()=> this.Opacity = 1));
 
 			// Set up bootstrapping for shutdown
 			Closing += DoClosing;
