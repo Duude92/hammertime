@@ -35,7 +35,7 @@ namespace Sledge.BspEditor.Environment
 			Log.Debug(nameof(TextureCollection), $"Reading textures from: {String.Join("; ", _packages.Select(x => x.Location))}");
 			if (duplicateTexturesWithLocations.Any())
 			{
-				Log.Warning(nameof(TextureCollection), $"Duplicating texture names: {String.Join(", ", duplicateTexturesWithLocations.Select(x=>x.Texture + "from (" +String.Join(", ", x.Packages)+")\n")) }");
+				Log.Warning(nameof(TextureCollection), $"Duplicating texture names: {String.Join(", ", duplicateTexturesWithLocations.Select(x=>x.Texture + " from (" +String.Join(", ", x.Packages)+")\n")) }");
 			}
 
 		}
