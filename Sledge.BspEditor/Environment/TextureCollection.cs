@@ -20,11 +20,27 @@ namespace Sledge.BspEditor.Environment
         {
             _packages = packages.ToList();
             _itemCache = new ConcurrentDictionary<string, TextureItem>(StringComparer.InvariantCultureIgnoreCase);
-            
-            Log.Debug(nameof(TextureCollection), $"Reading textures from: {String.Join("; ", _packages.Select(x => x.Location))}");
-        }
+			var duplicateTexturesWithLocations = _packages
+	.SelectMany(package => package.Textures.Select(texture => new { Texture = texture, Package = package.Location }))
+	.GroupBy(item => item.Texture)
+	.Where(group => group.Count() > 1)
+	.Select(group => new
+	{
+		Texture = group.Key,
+		Packages = group.Select(item => item.Package).Distinct().ToList()
+	})
+	.ToList();
 
-        public bool HasTexture(string name)
+
+			Log.Debug(nameof(TextureCollection), $"Reading textures from: {String.Join("; ", _packages.Select(x => x.Location))}");
+			if (duplicateTexturesWithLocations.Any())
+			{
+				Log.Warning(nameof(TextureCollection), $"Duplicating texture names: {String.Join(", ", duplicateTexturesWithLocations.Select(x=>x.Texture + "from (" +String.Join(", ", x.Packages)+")\n")) }");
+			}
+
+		}
+
+		public bool HasTexture(string name)
         {
             return Packages.Any(x => x.HasTexture(name));
         }
