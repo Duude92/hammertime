@@ -33,7 +33,7 @@ jobs:
       run: del ./bin/*.pdb
 # 2.0.7.2 for now, would change after some rebranding
     - name: Set app version
-      run:  
+      run: |
         $version = "${{ github.ref_name }}".TrimStart("v")
         Set-Content -Path ./Build/Sledge.Editor.New.Installer.nsi -Value ((Get-Content './Build/Sledge.Editor.New.Installer.nsi' -Raw) -replace "{version}", $version)
     - name: Build installer
