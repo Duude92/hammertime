@@ -52,5 +52,5 @@ jobs:
         prerelease: false
         files: |
             ./HammerTime.zip
-            ./Hammertime.Editor.${{ github.ref_name }}.exe
+            ./Hammertime.Editor.$version.exe
         automatic_release_tag: latest
