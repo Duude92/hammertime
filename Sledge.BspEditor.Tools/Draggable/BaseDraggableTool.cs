@@ -20,10 +20,6 @@ namespace Sledge.BspEditor.Tools.Draggable
         protected List<IDraggableState> States { get; }
 
         public IDraggable CurrentDraggable { get; private set; }
-        public void SetDraggable(IDraggable draggable)
-		{
-			CurrentDraggable = draggable;
-		}
 		private Vector3? _lastDragPoint;
 
         protected BaseDraggableTool()
@@ -190,8 +186,35 @@ namespace Sledge.BspEditor.Tools.Draggable
                 CurrentDraggable?.Highlight(document, viewport);
             }
         }
+		protected override void MouseMove(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
+		{
+			if (e.Dragging || e.Button == MouseButtons.Left) return;
+            var point = GetMouseIntersectionPoint(document, camera, new Vector3(e.X, e.Y, 0));
+            if (!point.HasValue) return;
+			IDraggable drag = null;
+			foreach (var state in States)
+			{
+				var drags = state.GetDraggables().ToList();
+				drags.Add(state);
+				foreach (var draggable in drags)
+				{
+					if (draggable.CanDrag(document, viewport, camera, e, point.Value))
+					{
+						drag = draggable;
+						break;
+					}
+				}
+				if (drag != null) break;
+			}
+			if (drag != CurrentDraggable)
+			{
+				CurrentDraggable?.Unhighlight(document, viewport);
+				CurrentDraggable = drag;
+				CurrentDraggable?.Highlight(document, viewport);
+			}
+		}
 
-        protected override void DragStart(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
+		protected override void DragStart(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
         {
             if (e.Button != MouseButtons.Left) return;
             if (CurrentDraggable == null) return;
