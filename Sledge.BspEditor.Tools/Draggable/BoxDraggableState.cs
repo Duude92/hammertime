@@ -91,8 +91,8 @@ namespace Sledge.BspEditor.Tools.Draggable
         {
             return true;
         }
-
-        public override void Highlight(MapDocument document, MapViewport viewport)
+        public override bool CanDrag(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e, Vector3 position) => true;
+		public override void Highlight(MapDocument document, MapViewport viewport)
         {
             //
         }

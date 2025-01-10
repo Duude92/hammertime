@@ -21,7 +21,8 @@ namespace Sledge.BspEditor.Tools.Draggable
         void MouseUp(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position);
         void Click(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position);
         bool CanDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position);
-        void Highlight(MapDocument document, MapViewport viewport);
+        bool CanDrag(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e, Vector3 position);
+		void Highlight(MapDocument document, MapViewport viewport);
         void Unhighlight(MapDocument document, MapViewport viewport);
         void StartDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position);
         void Drag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 lastPosition, Vector3 position);

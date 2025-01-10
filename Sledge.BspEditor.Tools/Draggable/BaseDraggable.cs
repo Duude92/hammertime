@@ -83,5 +83,7 @@ namespace Sledge.BspEditor.Tools.Draggable
 		public void MouseUp(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e, Vector3 position)
 		{
 		}
+
+        public virtual bool CanDrag(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e, Vector3 position) => false;
 	}
 }

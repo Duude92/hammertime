@@ -48,7 +48,8 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
         public void MouseUp(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position) { }
         public void Click(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position) { }
         public bool CanDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position) => false;
-        public void Highlight(MapDocument document, MapViewport viewport) { }
+        public bool CanDrag(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e, Vector3 position) => false;
+		public void Highlight(MapDocument document, MapViewport viewport) { }
         public void Unhighlight(MapDocument document, MapViewport viewport) { }
         public void StartDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position) { }
         public void Drag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 lastPosition, Vector3 position) { }
