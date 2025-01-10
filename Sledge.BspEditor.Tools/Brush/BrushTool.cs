@@ -9,7 +9,6 @@ using System.Windows.Forms;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
-using Sledge.BspEditor.Modification.Operations.Mutation;
 using Sledge.BspEditor.Modification.Operations.Selection;
 using Sledge.BspEditor.Modification.Operations.Tree;
 using Sledge.BspEditor.Primitives;
@@ -20,7 +19,6 @@ using Sledge.BspEditor.Rendering.Resources;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Draggable;
 using Sledge.BspEditor.Tools.Properties;
-using Sledge.BspEditor.Tools.Selection.TransformationHandles;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Hotkeys;
@@ -33,7 +31,6 @@ using Sledge.Rendering.Engine;
 using Sledge.Rendering.Pipelines;
 using Sledge.Rendering.Primitives;
 using Sledge.Rendering.Resources;
-using Sledge.Shell.Input;
 
 namespace Sledge.BspEditor.Tools.Brush
 {
@@ -94,6 +91,7 @@ namespace Sledge.BspEditor.Tools.Brush
 			box.FillColour = Color.FromArgb(_selectionBoxBackgroundOpacity, Color.Green);
 			box.State.Changed += BoxChanged;
 			States.Add(box);
+			this.Usage = ToolUsage.Both;
 		}
 
 		protected override IEnumerable<Subscription> Subscribe()
@@ -175,6 +173,76 @@ namespace Sledge.BspEditor.Tools.Brush
 		public override string GetName()
 		{
 			return "BrushTool";
+		}
+		private Vector3? GetMouseIntersectionPoint(MapDocument document, PerspectiveCamera camera, Vector3 screenPoint)
+		{
+
+			// Get the ray that is cast from the clicked point along the viewport frustrum
+			var (rs, re) = camera.CastRayFromScreen(screenPoint);
+			var ray = new Line(rs, re);
+
+			// Grab all the elements that intersect with the ray
+			var hit = document.Map.Root.GetIntersectionsForVisibleObjects(ray).FirstOrDefault();
+			return hit?.Intersection;
+		}
+		protected override void MouseDown(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
+		{
+			if (CurrentDraggable == null) return;
+
+			if (e.Button != MouseButtons.Left) return;
+
+			var intersection = GetMouseIntersectionPoint(document, camera, new Vector3(e.X, e.Y, 0));
+			if (!intersection.HasValue) return;
+
+
+			if (!e.Handled) CurrentDraggable.MouseDown(document, viewport, camera, e, intersection.Value);
+
+		}
+		protected override void MouseUp(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
+		{
+			if (CurrentDraggable == null) return;
+			var intersection = GetMouseIntersectionPoint(document, camera, new Vector3(e.X, e.Y, 0));
+			if (!intersection.HasValue) return;
+			//OnDraggableMouseUp(document, viewport, camera, e, intersection.Value, CurrentDraggable);
+			if (!e.Handled) CurrentDraggable.MouseUp(document, viewport, camera, e, intersection.Value);
+		}
+		Vector3? _lastDragPoint = null;
+		protected override void DragStart(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
+		{
+			if (e.Button != MouseButtons.Left) return;
+			if (CurrentDraggable == null) return;
+			var point = GetMouseIntersectionPoint(document, camera, new Vector3(e.X, e.Y, 0)  )  ;
+			if (!point.HasValue) return;
+
+			//OnDraggableDragStarted(document, viewport, camera, e, point, CurrentDraggable);
+			if (!e.Handled) CurrentDraggable.StartDrag(document, viewport, camera, e, point.Value);
+			_lastDragPoint = point;
+		}
+
+		protected override void DragMove(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
+		{
+			if (e.Button != MouseButtons.Left) return;
+			if (CurrentDraggable == null || !_lastDragPoint.HasValue) return;
+			var point = GetMouseIntersectionPoint(document, camera, new Vector3(e.X, e.Y, 0));
+			if (!point.HasValue) return;
+			var last = _lastDragPoint.Value;
+			//OnDraggableDragMoving(document, viewport, camera, e, last, point, CurrentDraggable);
+			if (!e.Handled) CurrentDraggable.Drag(document, viewport, camera, e, last, point.Value);
+			//if (!e.Handled) OnDraggableDragMoved(document, viewport, camera, e, last, point, CurrentDraggable);
+			_lastDragPoint = point;
+		}
+
+		protected override void DragEnd(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
+		{
+			if (e.Button != MouseButtons.Left) return;
+			if (CurrentDraggable == null) return;
+			var point = GetMouseIntersectionPoint(document, camera, new Vector3(e.X, e.Y, 0));
+
+			if (!point.HasValue) return;
+
+			//OnDraggableDragEnded(document, viewport, camera, e, point, CurrentDraggable);
+			if (!e.Handled) CurrentDraggable.EndDrag(document, viewport, camera, e, point.Value);
+			_lastDragPoint = null;
 		}
 
 		protected override void KeyDown(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
