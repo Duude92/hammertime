@@ -56,5 +56,5 @@ jobs:
         prerelease: false
         files: |
             ./HammerTime.zip
-            ./Hammertime.Editor.$env:version.exe
+            ./Hammertime.Editor.${{ env.version }}.exe
         automatic_release_tag: latest
