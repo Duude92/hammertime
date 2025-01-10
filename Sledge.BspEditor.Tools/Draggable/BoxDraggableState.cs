@@ -5,6 +5,8 @@ using System.Linq;
 using System.Numerics;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Grid;
+using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
@@ -124,7 +126,20 @@ namespace Sledge.BspEditor.Tools.Draggable
 			State.Action = BoxAction.Drawn;
 			State.End = Tool.SnapIfNeeded(position);
 			State.FixBounds();
+            FixStateThickness(document);
 			base.EndDrag(document, viewport, camera, e, position);
+		}
+        private void FixStateThickness(MapDocument document)
+        {
+            var dimensions = State.End - State.Start;
+			var gridData = document.Map.Data.GetOne<GridData>().Grid as SquareGrid;
+
+            State.End = new Vector3(
+                GetNewThickness(dimensions.X, State.End.X), 
+                GetNewThickness(dimensions.Y, State.End.Y), 
+                GetNewThickness(dimensions.Z, State.End.Z));
+
+			float GetNewThickness(float thickness, float endValue) => thickness == 0 ? endValue + gridData.Step : endValue;
 		}
 
 		public override void StartDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
