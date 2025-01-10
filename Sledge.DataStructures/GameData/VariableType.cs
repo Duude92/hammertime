@@ -40,6 +40,7 @@ namespace Sledge.DataStructures.GameData
         Sound,
         Sprite,
         String,
+        StringChoices,
         Studio,
         TargetDestination,
         TargetNameOrClass,

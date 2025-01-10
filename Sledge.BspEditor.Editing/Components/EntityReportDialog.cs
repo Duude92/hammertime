@@ -17,53 +17,54 @@ using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Translations;
+using Sledge.DataStructures.Geometric;
 using Sledge.Shell;
 
 namespace Sledge.BspEditor.Editing.Components
 {
-    [Export(typeof(IDialog))]
-    [AutoTranslate]
-    public partial class EntityReportDialog : Form, IDialog, IManualTranslate
-    {
-        [Import("Shell", typeof(Form))] private Lazy<Form> _parent;
-        [Import] private IContext _context;
+	[Export(typeof(IDialog))]
+	[AutoTranslate]
+	public partial class EntityReportDialog : Form, IDialog, IManualTranslate
+	{
+		[Import("Shell", typeof(Form))] private Lazy<Form> _parent;
+		[Import] private IContext _context;
 
-        private class ColumnComparer : IComparer
-        {
-            public int Column { get; set; }
-            public SortOrder SortOrder { get; set; }
+		private class ColumnComparer : IComparer
+		{
+			public int Column { get; set; }
+			public SortOrder SortOrder { get; set; }
 
-            public ColumnComparer(int column)
-            {
-                Column = column;
-                SortOrder = SortOrder.Ascending;
-            }
+			public ColumnComparer(int column)
+			{
+				Column = column;
+				SortOrder = SortOrder.Ascending;
+			}
 
-            public int Compare(object x, object y)
-            {
-                var i1 = (ListViewItem)x;
-                var i2 = (ListViewItem)y;
-                var compare = String.CompareOrdinal(i1.SubItems[Column].Text, i2.SubItems[Column].Text);
-                return SortOrder == SortOrder.Descending ? -compare : compare;
-            }
-        }
+			public int Compare(object x, object y)
+			{
+				var i1 = (ListViewItem)x;
+				var i2 = (ListViewItem)y;
+				var compare = String.CompareOrdinal(i1.SubItems[Column].Text, i2.SubItems[Column].Text);
+				return SortOrder == SortOrder.Descending ? -compare : compare;
+			}
+		}
 
-        private readonly ColumnComparer _sorter;
+		private readonly ColumnComparer _sorter;
 
-        private List<Subscription> _subscriptions;
+		private List<Subscription> _subscriptions;
 
-        public EntityReportDialog()
-        {
-            InitializeComponent();
+		public EntityReportDialog()
+		{
+			InitializeComponent();
 
-            _sorter = new ColumnComparer(0);
-            EntityList.ListViewItemSorter = _sorter;
-        }
+			_sorter = new ColumnComparer(0);
+			EntityList.ListViewItemSorter = _sorter;
+		}
 
         public void Translate(ITranslationStringProvider strings)
         {
-            CreateHandle();
-            var prefix = GetType().FullName;
+			if (Handle == null) CreateHandle();
+			var prefix = GetType().FullName;
             this.InvokeLater(() =>
             {
                 Text = strings.GetString(prefix, "Title");
@@ -87,250 +88,263 @@ namespace Sledge.BspEditor.Editing.Components
             });
         }
 
-        protected override void OnClosing(CancelEventArgs e)
-        {
-            e.Cancel = true;
-            Oy.Publish("Context:Remove", new ContextInfo("BspEditor:EntityReport"));
-        }
-
-	    protected override void OnMouseEnter(EventArgs e)
+		protected override void OnClosing(CancelEventArgs e)
 		{
-            Focus();
-            base.OnMouseEnter(e);
-        }
+			e.Cancel = true;
+			Oy.Publish("Context:Remove", new ContextInfo("BspEditor:EntityReport"));
+		}
 
-        public bool IsInContext(IContext context)
-        {
-            return context.HasAny("BspEditor:EntityReport");
-        }
+		protected override void OnMouseEnter(EventArgs e)
+		{
+			Focus();
+			base.OnMouseEnter(e);
+		}
 
-        public void SetVisible(IContext context, bool visible)
-        {
-            this.InvokeLater(() =>
-            {
-                if (visible)
-                {
-                    if (!Visible) Show(_parent.Value);
-                    Subscribe();
-                    ResetFilters(null, null);
-                }
-                else
-                {
-                    Hide();
-                    Unsubscribe();
-                }
-            });
-        }
+		public bool IsInContext(IContext context)
+		{
+			return context.HasAny("BspEditor:EntityReport");
+		}
 
-        private void Subscribe()
-        {
-            if (_subscriptions != null) return;
-            _subscriptions = new List<Subscription>
-            {
-                Oy.Subscribe<Change>("MapDocument:Changed", DocumentChanged),
-                Oy.Subscribe<MapDocument>("Document:Activated", DocumentActivated),
-                Oy.Subscribe<MapDocument>("MapDocument:SelectionChanged", SelectionChanged)
-            };
-        }
+		public void SetVisible(IContext context, bool visible)
+		{
+			this.InvokeLater(() =>
+			{
+				if (visible)
+				{
+					if (!Visible) Show(_parent.Value);
+					Subscribe();
+					ResetFilters(null, null);
+				}
+				else
+				{
+					Hide();
+					Unsubscribe();
+				}
+			});
+		}
 
-        private void Unsubscribe()
-        {
-            if (_subscriptions == null) return;
-            _subscriptions.ForEach(x => x.Dispose());
-            _subscriptions = null;
-        }
+		private void Subscribe()
+		{
+			if (_subscriptions != null) return;
+			_subscriptions = new List<Subscription>
+			{
+				Oy.Subscribe<Change>("MapDocument:Changed", DocumentChanged),
+				Oy.Subscribe<MapDocument>("Document:Activated", DocumentActivated),
+				Oy.Subscribe<MapDocument>("MapDocument:SelectionChanged", SelectionChanged)
+			};
+		}
 
-        public async Task DocumentActivated(MapDocument document)
-        {
-            FiltersChanged(null, null);
-        }
+		private void Unsubscribe()
+		{
+			if (_subscriptions == null) return;
+			_subscriptions.ForEach(x => x.Dispose());
+			_subscriptions = null;
+		}
 
-        public async Task SelectionChanged(MapDocument document)
-        {
-            if (!FollowSelection.Checked) return;
+		public async Task DocumentActivated(MapDocument document)
+		{
+			FiltersChanged(null, null);
+		}
 
-            var doc = _context.Get<MapDocument>("ActiveDocument");
-            if (doc == null) return;
+		public async Task SelectionChanged(MapDocument document)
+		{
+			if (!FollowSelection.Checked) return;
 
-            var selection = doc.Selection.GetSelectedParents().LastOrDefault(x => x is Entity);
-            SetSelected(selection);
-        }
+			var doc = _context.Get<MapDocument>("ActiveDocument");
+			if (doc == null) return;
 
-        private async Task DocumentChanged(Change change)
-        {
-            if (!change.HasObjectChanges) return;
+			var selection = doc.Selection.OfType<Entity>();
+			SetSelected(selection);
+		}
 
-            if (change.Added.Any(x => x is Entity) || change.Updated.Any(x => x is Entity) || change.Removed.Any(x => x is Entity))
-            {
-                FiltersChanged(null, null);
-            }
-        }
+		private async Task DocumentChanged(Change change)
+		{
+			if (!change.HasObjectChanges) return;
 
-        private Entity GetSelected()
-        {
-            return EntityList.SelectedItems.Count == 0 ? null : (Entity) EntityList.SelectedItems[0].Tag;
-        }
+			if (change.Added.Any(x => x is Entity) || change.Updated.Any(x => x is Entity) || change.Removed.Any(x => x is Entity))
+			{
+				FiltersChanged(null, null);
+			}
+		}
 
-        private void SetSelected(IMapObject selection)
-        {
-            this.InvokeLater(() =>
-            {
-                if (selection == null) return;
+		private IEnumerable<Entity> GetSelected()
+		{
+			return EntityList.SelectedItems.Count == 0 ? Array.Empty<Entity>() : (EntityList.SelectedItems.Cast<ListViewItem>().Select(x=>x.Tag as Entity));
+		}
 
-                var item = EntityList.Items.OfType<ListViewItem>().FirstOrDefault(x => x.Tag == selection);
-                if (item == null) return;
+		private void SetSelected(IEnumerable<IMapObject> selection)
+		{
+			this.InvokeLater(() =>
+			{
+				if (selection == null) return;
+				var items = EntityList.Items.OfType<ListViewItem>().Where(x => selection.Contains(x.Tag));//.FirstOrDefault(x => x.Tag == selection);
+				if (!items.Any()) return;
 
-                item.Selected = true;
-                EntityList.EnsureVisible(EntityList.Items.IndexOf(item));
-            });
-        }
+				EntityList.SelectedItems.Clear();
+				foreach (var item in items)
+				{
+					item.Selected = true;
+				}
+				EntityList.EnsureVisible(EntityList.Items.IndexOf(items.First()));
+			});
+		}
 
-        private void FiltersChanged(object sender, EventArgs e)
-        {
-            this.InvokeLater(() =>
-            {
-                EntityList.BeginUpdate();
-                var selected = GetSelected();
-                EntityList.ListViewItemSorter = null;
-                EntityList.Items.Clear();
+		private void FiltersChanged(object sender, EventArgs e)
+		{
+			this.InvokeLater(() =>
+			{
+				EntityList.BeginUpdate();
+				var selected = GetSelected().ToArray();
+				EntityList.ListViewItemSorter = null;
+				EntityList.Items.Clear();
 
-                var doc = _context.Get<MapDocument>("ActiveDocument");
-                if (doc != null)
-                {
-                    var items = doc.Map.Root
-                        .Find(x => x is Entity)
-                        .OfType<Entity>()
-                        .Where(DoFilters)
-                        .Select(GetListItem)
-                        .ToArray();
-                    EntityList.Items.AddRange(items);
+				var doc = _context.Get<MapDocument>("ActiveDocument");
+				if (doc != null)
+				{
+					var items = doc.Map.Root
+						.Find(x => x is Entity)
+						.OfType<Entity>()
+						.Where(DoFilters)
+						.Select(GetListItem)
+						.ToArray();
+					EntityList.Items.AddRange(items);
 
-                    EntityList.ListViewItemSorter = _sorter;
-                    EntityList.Sort();
-                    SetSelected(selected);
-                }
+					EntityList.ListViewItemSorter = _sorter;
+					EntityList.Sort();
+					SetSelected(selected);
+					totalEntityCount.Text = $"{items.Length}";
+				}
 
-                EntityList.EndUpdate();
-            });
-        }
+				EntityList.EndUpdate();
+			});
+		}
 
-        private ListViewItem GetListItem(Entity entity)
-        {
-            var targetname = entity.EntityData.Properties.FirstOrDefault(x => x.Key.ToLower() == "targetname");
-            return new ListViewItem(new[]
-                                        {
-                                            entity.EntityData.Name,
-                                            targetname.Value ?? ""
-                                        }) {Tag = entity};
-        }
+		private ListViewItem GetListItem(Entity entity)
+		{
+			var targetname = entity.EntityData.Properties.FirstOrDefault(x => x.Key.ToLower() == "targetname");
+			return new ListViewItem(new[]
+										{
+											entity.EntityData.Name,
+											targetname.Value ?? ""
+										})
+			{ Tag = entity };
+		}
 
-        private bool DoFilters(Entity ent)
-        {
-            var hasChildren = ent.Hierarchy.HasChildren;
+		private bool DoFilters(Entity ent)
+		{
+			var hasChildren = ent.Hierarchy.HasChildren;
 
-            if (hasChildren && TypePoint.Checked) return false;
-            if (!hasChildren && TypeBrush.Checked) return false;
-            if (!IncludeHidden.Checked)
-            {
-                if (ent.Data.OfType<IObjectVisibility>().Any(x => x.IsHidden)) return false;
-            }
+			if (hasChildren && TypePoint.Checked) return false;
+			if (!hasChildren && TypeBrush.Checked) return false;
+			if (!IncludeHidden.Checked)
+			{
+				if (ent.Data.OfType<IObjectVisibility>().Any(x => x.IsHidden)) return false;
+			}
 
-            var classFilter = FilterClass.Text.ToUpperInvariant();
-            var exactClass = FilterClassExact.Checked;
-            var keyFilter = FilterKey.Text.ToUpperInvariant();
-            var valueFilter = FilterValue.Text.ToUpperInvariant();
-            var exactKeyValue = FilterKeyValueExact.Checked;
+			var classFilter = FilterClass.Text.ToUpperInvariant();
+			var exactClass = FilterClassExact.Checked;
+			var keyFilter = FilterKey.Text.ToUpperInvariant();
+			var valueFilter = FilterValue.Text.ToUpperInvariant();
+			var exactKeyValue = FilterKeyValueExact.Checked;
 
-            if (!String.IsNullOrWhiteSpace(classFilter))
-            {
-                var name = (ent.EntityData.Name ?? "").ToUpperInvariant();
-                if (exactClass && name != classFilter) return false;
-                if (!exactClass && !name.Contains(classFilter)) return false;
-            }
+			if (!String.IsNullOrWhiteSpace(classFilter))
+			{
+				var name = (ent.EntityData.Name ?? "").ToUpperInvariant();
+				if (exactClass && name != classFilter) return false;
+				if (!exactClass && !name.Contains(classFilter)) return false;
+			}
 
-            if (!String.IsNullOrWhiteSpace(keyFilter))
-            {
-                if (ent.EntityData.Properties.All(x => x.Key.ToUpperInvariant() != keyFilter)) return false;
-                var prop = ent.EntityData.Properties.FirstOrDefault(x => x.Key.ToUpperInvariant() == keyFilter);
-                var val = prop.Value.ToUpperInvariant();
-                if (exactKeyValue && val != valueFilter) return false;
-                if (!exactKeyValue && !val.Contains(valueFilter)) return false;
-            }
+			if (!String.IsNullOrWhiteSpace(keyFilter))
+			{
+				if (ent.EntityData.Properties.All(x => x.Key.ToUpperInvariant() != keyFilter)) return false;
+				var prop = ent.EntityData.Properties.FirstOrDefault(x => x.Key.ToUpperInvariant() == keyFilter);
+				var val = prop.Value.ToUpperInvariant();
+				if (exactKeyValue && val != valueFilter) return false;
+				if (!exactKeyValue && !val.Contains(valueFilter)) return false;
+			}
 
-            return true;
-        }
+			return true;
+		}
 
-        private void ResetFilters(object sender, EventArgs e)
-        {
-            TypeAll.Checked = true;
-            IncludeHidden.Checked = true;
-            FilterKeyValueExact.Checked = false;
-            FilterClassExact.Checked = false;
-            FilterKey.Text = "";
-            FilterValue.Text = "";
-            FilterClass.Text = "";
-            FiltersChanged(null, null);
-        }
+		private void ResetFilters(object sender, EventArgs e)
+		{
+			TypeAll.Checked = true;
+			IncludeHidden.Checked = true;
+			FilterKeyValueExact.Checked = false;
+			FilterClassExact.Checked = false;
+			FilterKey.Text = "";
+			FilterValue.Text = "";
+			FilterClass.Text = "";
+			FiltersChanged(null, null);
+		}
 
-        private void SortByColumn(object sender, ColumnClickEventArgs e)
-        {
-            if (_sorter.Column == e.Column)
-            {
-                _sorter.SortOrder = _sorter.SortOrder == SortOrder.Descending
-                                        ? SortOrder.Ascending
-                                        : SortOrder.Descending;
-            }
-            else
-            {
-                _sorter.Column = e.Column;
-                _sorter.SortOrder = SortOrder.Ascending;
-            }
-            EntityList.Sort();
-            SetSelected(GetSelected()); // Reset the scroll value
-        }
+		private void SortByColumn(object sender, ColumnClickEventArgs e)
+		{
+			if (_sorter.Column == e.Column)
+			{
+				_sorter.SortOrder = _sorter.SortOrder == SortOrder.Descending
+										? SortOrder.Ascending
+										: SortOrder.Descending;
+			}
+			else
+			{
+				_sorter.Column = e.Column;
+				_sorter.SortOrder = SortOrder.Ascending;
+			}
+			EntityList.Sort();
+			SetSelected(GetSelected()); // Reset the scroll value
+		}
 
-        private async Task SelectEntity(Entity sel)
-        {
-            var doc = _context.Get<MapDocument>("ActiveDocument");
-            if (doc == null) return;
+		private async Task SelectEntity(IEnumerable<Entity> sel)
+		{
+			var doc = _context.Get<MapDocument>("ActiveDocument");
+			if (doc == null) return;
 
-            var currentSelection = doc.Selection.Except(sel.FindAll()).ToList();
-            var tran = new Transaction(
-                new Deselect(currentSelection),
-                new Select(sel.FindAll())
-            );
-            await MapDocumentOperation.Perform(doc, tran);
-        }
+			var currentSelection = doc.Selection.Except(sel).ToList();
+			var tran = new Transaction(
+				new Deselect(currentSelection),
+				new Select(sel)
+			);
+			await MapDocumentOperation.Perform(doc, tran);
+		}
+		public Box GetSelectionBoundingBox(IEnumerable<Entity> entities)
+		{
+			return !entities.Any() ? Box.Empty : new Box(entities.Select(x => x.BoundingBox).Where(x => x != null).DefaultIfEmpty(Box.Empty));
+		}
+		private void GoToSelectedEntity(object sender, EventArgs e)
+		{
+			var selected = GetSelected();
+			if (selected == null) return;
+			SelectEntity(selected);
+			var bb = GetSelectionBoundingBox(selected);
+			Oy.Publish("MapDocument:Viewport:Focus2D", bb);
+			Oy.Publish("MapDocument:Viewport:Focus3D", bb);
+		}
 
-        private void GoToSelectedEntity(object sender, EventArgs e)
-        {
-            var selected = GetSelected();
-            if (selected == null) return;
-            SelectEntity(selected);
-            Oy.Publish("MapDocument:Viewport:Focus2D", selected.BoundingBox);
-            Oy.Publish("MapDocument:Viewport:Focus3D", selected.BoundingBox);
-        }
+		private void DeleteSelectedEntity(object sender, EventArgs e)
+		{
+			var doc = _context.Get<MapDocument>("ActiveDocument");
+			if (doc == null) return;
 
-        private void DeleteSelectedEntity(object sender, EventArgs e)
-        {
-            var doc = _context.Get<MapDocument>("ActiveDocument");
-            if (doc == null) return;
+			var selected = GetSelected();
+			if (selected == null) return;
+			MapDocumentOperation.Perform(doc, new Detatch(selected.First().Hierarchy.Parent.ID, selected.ToArray()));
+		}
 
-            var selected = GetSelected();
-            if (selected == null) return;
-            MapDocumentOperation.Perform(doc, new Detatch(selected.Hierarchy.Parent.ID, selected));
-        }
-
-        private void OpenEntityProperties(object sender, EventArgs e)
-        {
-            var selected = GetSelected();
-            if (selected == null) return;
-            SelectEntity(selected).ContinueWith(_ => Oy.Publish("Command:Run", new CommandMessage("BspEditor:Map:Properties")));
-        }
+		private void OpenEntityProperties(object sender, EventArgs e)
+		{
+			var selected = GetSelected();
+			if (selected == null) return;
+			SelectEntity(selected).ContinueWith(_ => Oy.Publish("Command:Run", new CommandMessage("BspEditor:Map:Properties")));
+		}
 
         private void CloseButtonClicked(object sender, EventArgs e)
         {
             Close();
         }
-    }
+		private void EntityList_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			selectedEntityCount.Text = $"{EntityList.SelectedItems.Count}";
+		}
+	}
 }

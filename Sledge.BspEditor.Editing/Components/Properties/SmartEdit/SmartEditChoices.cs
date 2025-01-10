@@ -50,8 +50,9 @@ namespace Sledge.BspEditor.Editing.Components.Properties.SmartEdit
             {
                 return Property.Options.OrderBy(x => int.Parse(x.Key));
             }
-            return Property.Options.OrderBy(x => x.Key.ToLowerInvariant());
-        }
+            var emptyExist = Property.Options.FirstOrDefault(x => String.IsNullOrEmpty(x.Key)) != null;
+			return Property.Options.DistinctBy(x => x.Key).Where(x => x.Key != "0" || (x.Key == "0" && !emptyExist)).OrderBy(x => x.Key.ToLowerInvariant());
+		}
 
         protected override void OnSetProperty(MapDocument document)
         {

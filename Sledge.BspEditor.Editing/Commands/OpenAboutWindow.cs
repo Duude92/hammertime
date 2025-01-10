@@ -14,7 +14,7 @@ namespace Sledge.BspEditor.Editing.Commands
     [CommandID("BspEditor:Help:About")]
     public class OpenAboutWindow : ICommand
     {
-        public string Name { get; set; } = "About Sledge";
+        public string Name { get; set; } = "About Hammertime";
         public string Details { get; set; } = "View information about this application";
 
         public bool IsInContext(IContext context)

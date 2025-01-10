@@ -5,7 +5,7 @@ using Sledge.DataStructures.Geometric;
 
 namespace Sledge.BspEditor.Primitives
 {
-    [Serializable]
+	[Serializable]
     public class Texture : ISerializable
     {
         public string Name { get; set; }
@@ -151,6 +151,46 @@ namespace Sledge.BspEditor.Primitives
 
             if (Math.Abs(deltaU) > 0.001f) XScale *= deltaU;
             if (Math.Abs(deltaV) > 0.001f) YScale *= deltaV;
+        }
+
+		/// <summary>
+		/// Skew this texture.
+		/// All vertices in the texture must remain unchanged relative to each
+		/// other for this transformation to be valid.
+		/// </summary>
+		/// <param name="matrix">The matrix to transform the texture by</param>
+		public void TransformSkew(Matrix4x4 matrix)
+		{
+            var transformU = Vector3.Transform(UAxis, matrix);
+            var transformV = Vector3.Transform(VAxis, matrix);
+
+			var deltaU = transformU - UAxis;
+			var deltaV = transformV - VAxis;
+
+
+			matrix = Matrix4x4.Transpose(matrix);
+
+            Matrix4x4.Invert(matrix, out matrix);
+            
+			var transformedU = Vector3.Transform(UAxis, matrix);
+			var transformedV = Vector3.Transform(VAxis, matrix);
+			var transformedOrigin = Vector3.Transform(Vector3.Zero, matrix);
+
+
+			UAxis = (transformedU - transformedOrigin).Normalise();
+			VAxis = (transformedV - transformedOrigin).Normalise();
+
+			var scaleU = (transformedU - transformedOrigin).Length();
+			var scaleV = (transformedV - transformedOrigin).Length();
+
+			if (Math.Abs(scaleU) > 0.001f)
+				XScale += 1-scaleU;
+			if (Math.Abs(scaleV) > 0.001f)
+				YScale += 1-scaleV;
+
+            //FIXME: Shifts are inconsistent, learn more math!
+            XShift += deltaU.Dot(transformedU) + (deltaU.Dot(UAxis) / XScale);
+            YShift += deltaV.Dot(transformedV) + (deltaV.Dot(VAxis) / YScale);
         }
     }
 }

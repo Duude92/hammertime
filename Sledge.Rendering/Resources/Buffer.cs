@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using Veldrid;
 
 namespace Sledge.Rendering.Resources
@@ -30,7 +31,7 @@ namespace Sledge.Rendering.Resources
             cl.SetIndexBuffer(IndexBuffer, IndexFormat.UInt32);
         }
         
-        public void Update<T>(IEnumerable<T> vertices, IEnumerable<uint> indices) where T : struct
+        public void Update<T>(IEnumerable<T> vertices, IEnumerable<uint> indices) where T : unmanaged
         {
             var verts = vertices.ToArray();
             var index = indices.ToArray();
@@ -52,9 +53,23 @@ namespace Sledge.Rendering.Resources
             }
 
             _created = true;
-            
-            _device.UpdateBuffer(VertexBuffer, 0, verts);
-            _device.UpdateBuffer(IndexBuffer, 0, index);
+
+			//_device.UpdateBuffer(VertexBuffer, 0, verts);
+			// Pin the array to get a pointer to the first element
+			GCHandle handle = GCHandle.Alloc(verts, GCHandleType.Pinned);
+			try
+			{
+				IntPtr ptr = (IntPtr)(handle.AddrOfPinnedObject().ToInt64());
+
+				// Update the buffer using the pointer
+				_device.UpdateBuffer(VertexBuffer, 0, ptr, vsize);
+			}
+			finally
+			{
+				handle.Free();
+			}
+
+			_device.UpdateBuffer(IndexBuffer, 0, index);
 
             VertexCount = verts.Length;
             IndexCount = index.Length;

@@ -62,8 +62,17 @@ namespace Sledge.BspEditor.Components
         {
             Ring.Clear();
         }
+        public void Push(string text)
+        {
+			while (Ring.Count > SizeOfClipboardRing - 1) Ring.RemoveAt(0);
+			Ring.Add(new ClipboardEntry("text", text));
 
-        public void Push(IEnumerable<IMapObject> copiedObjects)
+			System.Windows.Forms.Clipboard.SetText(text);
+
+			Oy.Publish("BspEditor:ClipboardChanged", this);
+		}
+
+		public void Push(IEnumerable<IMapObject> copiedObjects)
         {
             // Remove extra entries if required
             while (Ring.Count > SizeOfClipboardRing - 1) Ring.RemoveAt(0);
@@ -93,8 +102,15 @@ namespace Sledge.BspEditor.Components
         {
             return new List<ClipboardEntry>(Ring);
         }
+        public string GetPastedText(MapDocument document)
+        {
+			if (!System.Windows.Forms.Clipboard.ContainsText()) return null;
 
-        public IEnumerable<IMapObject> GetPastedContent(MapDocument document)
+			var str = System.Windows.Forms.Clipboard.GetText();
+            return str;
+		}
+
+		public IEnumerable<IMapObject> GetPastedContent(MapDocument document)
         {
             return GetPastedContent(document, (d, o) => o);
         }

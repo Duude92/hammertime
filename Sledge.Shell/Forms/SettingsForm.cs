@@ -17,7 +17,7 @@ namespace Sledge.Shell.Forms
 {
     [Export(typeof(IDialog))]
     [AutoTranslate]
-    public partial class SettingsForm : Form, IDialog
+	public partial class SettingsForm : Form, IDialog
     {
         private readonly IEnumerable<Lazy<ISettingEditorFactory>> _editorFactories;
         private readonly IEnumerable<Lazy<ISettingsContainer>> _settingsContainers;
@@ -26,8 +26,9 @@ namespace Sledge.Shell.Forms
 
         private Dictionary<ISettingsContainer, List<SettingKey>> _keys;
         private Dictionary<ISettingsContainer, JsonSettingsStore> _values;
+		private bool _darktheme;
 
-        public string Title
+		public string Title
         {
             get => Text;
             set => this.InvokeLater(() => Text = value);
@@ -88,7 +89,8 @@ namespace Sledge.Shell.Forms
         {
             e.Cancel = true;
             Oy.Publish("Context:Remove", new ContextInfo("SettingsForm"));
-        }
+            this.Owner.Focus();
+		}
 
         private void LoadGroupList()
         {
@@ -158,7 +160,8 @@ namespace Sledge.Shell.Forms
                     foreach (var key in keys)
                     {
                         var editor = GetEditor(key);
-                        editor.Key = key;
+                        editor.UseDarkTheme(_darktheme);
+						editor.Key = key;
                         editor.Label = _translations.Value.GetSetting($"{kv.Key.Name}.{key.Key}") ?? key.Key;
                         editor.Value = values.Get(key.Type, key.Key);
 
@@ -243,7 +246,7 @@ namespace Sledge.Shell.Forms
             {
                 kv.Key.LoadValues(kv.Value);
             }
-
+            Oy.Publish("SettingPreChanged");
             Oy.Publish("Settings:Save");
             Oy.Publish("SettingsChanged", new object());
             Close();
@@ -254,7 +257,11 @@ namespace Sledge.Shell.Forms
             Close();
         }
 
-        private class GroupHolder
+		public void UseDarkTheme(bool dark)
+        {
+            _darktheme = dark;
+		}
+		private class GroupHolder
         {
             public string Key { get; set; }
             public string Label { get; set; }

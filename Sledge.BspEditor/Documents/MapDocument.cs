@@ -49,7 +49,7 @@ namespace Sledge.BspEditor.Documents
         /// <summary>
         /// The environment for this document
         /// </summary>
-        public IEnvironment Environment { get; }
+        public IEnvironment Environment { get; set; }
 
         private readonly List<Subscription> _subscriptions;
 

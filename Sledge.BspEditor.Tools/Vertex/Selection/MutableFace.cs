@@ -23,10 +23,24 @@ namespace Sledge.BspEditor.Tools.Vertex.Selection
             Texture = face.Texture.Clone();
         }
 
-        public MutableFace(IEnumerable<Vector3> vertices, Primitives.Texture texture)
+		public Polygon ToPolygon()
+		{
+			return new Polygon(Vertices.Select(x=>x.Position));
+		}
+
+		public MutableFace(IEnumerable<Vector3> vertices, Primitives.Texture texture)
         {
             Vertices = new ThreadSafeList<MutableVertex>(vertices.Select(x => new MutableVertex(x)));
             Texture = texture;
+        }        
+        public MutableFace(IEnumerable<MutableVertex> vertices, Primitives.Texture texture)
+        {
+            Vertices = new ThreadSafeList<MutableVertex>(vertices);
+            Texture = texture;
+        }
+        public IEnumerable<Vector3> GetVertices()
+        {
+            return Vertices.Select(x => x.Position);
         }
 
         public void Transform(Matrix4x4 matrix)

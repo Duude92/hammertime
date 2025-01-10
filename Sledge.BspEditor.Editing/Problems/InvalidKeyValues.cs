@@ -36,7 +36,9 @@ namespace Sledge.BspEditor.Editing.Problems
         private IEnumerable<string> GetInvalidKeys(GameData gamedata, EntityData data)
         {
             // Multimanagers require invalid key/values to work, exclude them from the search
-            if (string.Equals(data.Name, "multi_manager", StringComparison.CurrentCultureIgnoreCase)) return new string[0];
+            // Ignore worldspawn, Sledge has own key 'wad' that is throws errors 'InvalidKeys'
+            if (string.Equals(data.Name, "multi_manager", StringComparison.CurrentCultureIgnoreCase)
+                || string.Equals(data.Name, "worldspawn", StringComparison.CurrentCultureIgnoreCase)) return new string[0];
 
             var cls = gamedata.GetClass(data.Name);
             if (cls == null) return new string[0];

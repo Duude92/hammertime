@@ -115,8 +115,8 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
 
         public TextureTransformationType GetTextureTransformationType(MapDocument doc)
         {
-            // Never transform textures on skew
-            return TextureTransformationType.None;
-        }
-    }
+			var tl = doc.Map.Data.GetOne<TransformationFlags>() ?? new TransformationFlags();
+			return !tl.UVLock ? TextureTransformationType.None : TextureTransformationType.Skew;
+		}
+	}
 }

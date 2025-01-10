@@ -47,7 +47,7 @@ namespace Sledge.Rendering.Renderables
 
         public void Render(RenderContext context, IPipeline pipeline, IViewport viewport, CommandList cl)
         {
-            if (HasTransparency) return;
+            //if (HasTransparency) return;
             cl.SetVertexBuffer(0, _buffer.VertexBuffer);
             cl.SetIndexBuffer(_buffer.IndexBuffer, IndexFormat.UInt32);
             Draw(pipeline, viewport, cl);

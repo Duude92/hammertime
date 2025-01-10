@@ -5,8 +5,10 @@ using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations;
 using Sledge.BspEditor.Primitives.MapData;
+using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Tools.Properties;
 using Sledge.Common.Shell.Commands;
+using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Shell.Menu;
 using Sledge.Common.Translations;
@@ -19,11 +21,21 @@ namespace Sledge.BspEditor.Tools.Selection
     [MenuItem("Map", "", "Grouping", "B")]
     [MenuImage(typeof(Resources), nameof(Resources.Menu_IgnoreGrouping))]
     [AutoTranslate]
-    public class ToggleIgnoreGroupingCommand : BaseCommand
+    public class ToggleIgnoreGroupingCommand : BaseCommand, IMenuItemExtendedProperties
     {
         public override string Name { get; set; } = "Ignore grouping";
         public override string Details { get; set; } = "Toggle ignore grouping on and off";
-        protected override Task Invoke(MapDocument document, CommandParameters parameters)
+
+        public bool IsToggle => true;
+
+		public bool GetToggleState(IContext context)
+		{
+			if (!context.TryGet("ActiveDocument", out MapDocument doc)) return false;
+			var tf = doc.Map.Data.GetOne<SelectionOptions>() ?? new SelectionOptions();
+			return tf.IgnoreGrouping;
+		}
+
+		protected override Task Invoke(MapDocument document, CommandParameters parameters)
         {
             var opt = document.Map.Data.GetOne<SelectionOptions>() ?? new SelectionOptions();
             opt.IgnoreGrouping = !opt.IgnoreGrouping;

@@ -183,6 +183,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
             {
                 var left = Control.MouseButtons.HasFlag(MouseButtons.Left);
                 var right = Control.MouseButtons.HasFlag(MouseButtons.Right);
+                var mid = Control.MouseButtons.HasFlag(MouseButtons.Middle);
 
                 var activeTool = _context.Get<ITool>("ActiveTool");
                 if (activeTool != null && activeTool.GetType().Name == "CameraTool")
@@ -193,7 +194,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
                 {
                     var space = KeyboardState.IsKeyDown(Keys.Space);
                     var req = CameraNavigationViewportSettings.Camera3DPanRequiresMouseClick;
-                    FreeLook = space && (!req || left || right);
+                    FreeLook = (space && (!req || left || right))||(mid);
                 }
             }
 
@@ -310,7 +311,13 @@ namespace Sledge.BspEditor.Rendering.Viewport
 
         public void MouseDown(ViewportEvent e)
         {
-            if (FreeLook && KeyboardState.IsKeyDown(Keys.Space)) e.Handled = true;
+			if (e.Button == MouseButtons.Middle)
+			{
+                FreeLook = true;
+				PositionKnown = false;
+			}
+
+			if (FreeLook && KeyboardState.IsKeyDown(Keys.Space)) e.Handled = true;
             SetFreeLook();
         }
 

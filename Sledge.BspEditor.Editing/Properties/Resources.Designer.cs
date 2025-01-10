@@ -19,7 +19,7 @@ namespace Sledge.BspEditor.Editing.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -143,6 +143,16 @@ namespace Sledge.BspEditor.Editing.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Menu_GoToBrushEntityID {
+            get {
+                object obj = ResourceManager.GetObject("Menu_GoToBrushEntityID", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Menu_GoToBrushID {
             get {
                 object obj = ResourceManager.GetObject("Menu_GoToBrushID", resourceCulture);
@@ -156,6 +166,16 @@ namespace Sledge.BspEditor.Editing.Properties {
         internal static System.Drawing.Bitmap Menu_GoToCoordinates {
             get {
                 object obj = ResourceManager.GetObject("Menu_GoToCoordinates", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Menu_HideClipTextures {
+            get {
+                object obj = ResourceManager.GetObject("Menu_HideClipTextures", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -196,6 +216,16 @@ namespace Sledge.BspEditor.Editing.Properties {
         internal static System.Drawing.Bitmap Menu_Hollow {
             get {
                 object obj = ResourceManager.GetObject("Menu_Hollow", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Menu_Interrupt {
+            get {
+                object obj = ResourceManager.GetObject("Menu_Interrupt", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -403,9 +433,19 @@ namespace Sledge.BspEditor.Editing.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Sledge_Large {
+        internal static System.Drawing.Bitmap Menu_UVLock {
             get {
-                object obj = ResourceManager.GetObject("Sledge_Large", resourceCulture);
+                object obj = ResourceManager.GetObject("Menu_UVLock", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap sledge_large {
+            get {
+                object obj = ResourceManager.GetObject("sledge_large", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

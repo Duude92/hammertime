@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.Composition;
+﻿using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Commands;
@@ -30,7 +31,15 @@ namespace Sledge.BspEditor.Editing.Commands.Quick
         {
             var transaction = new Transaction();
 
-            foreach (var mo in document.Map.Root.FindAll().Except(document.Selection).Where(x => !(x is Root)).ToList())
+            var prepareList = document.Map.Root.FindAll().Except(document.Selection);
+            var excludeList = document.Selection.Aggregate(new List<IMapObject>(),(total,next) => { total.AddRange(next.Hierarchy.GetParentList()); return total; });
+
+
+            prepareList = prepareList.Except(excludeList);
+
+
+			foreach (var mo in prepareList.Where(x => !(x is Root)).ToList())
+			//foreach (var mo in document.Map.Root.FindAll().Except(document.Selection).Where(x => !(x is Root)).ToList())
             {
                 var ex = mo.Data.GetOne<QuickHidden>();
                 if (ex != null) transaction.Add(new RemoveMapObjectData(mo.ID, ex));

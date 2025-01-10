@@ -34,9 +34,10 @@ namespace Sledge.BspEditor.Editing.Components
         {
             e.Cancel = true;
             Oy.Publish("Context:Remove", new ContextInfo("BspEditor:SelectionDetails"));
-        }
+			this.Owner.Focus();
+		}
 
-        public bool IsInContext(IContext context)
+		public bool IsInContext(IContext context)
         {
             return context.HasAny("BspEditor:SelectionDetails");
         }
@@ -61,7 +62,7 @@ namespace Sledge.BspEditor.Editing.Components
 
         public void Translate(ITranslationStringProvider strings)
         {
-            CreateHandle();
+            if(Handle == null) CreateHandle();
             var prefix = GetType().FullName;
             this.InvokeLater(() =>
             {
@@ -151,5 +152,5 @@ namespace Sledge.BspEditor.Editing.Components
 
             return text;
         }
-    }
+	}
 }

@@ -97,7 +97,7 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
         {
             var tl = doc.Map.Data.GetOne<TransformationFlags>() ?? new TransformationFlags();
             if (Handle == ResizeHandle.Center && tl.TextureLock) return TextureTransformationType.Uniform;
-            if (Handle != ResizeHandle.Center && tl.TextureScaleLock) return TextureTransformationType.Scale;
+            if (Handle != ResizeHandle.Center && (tl.TextureScaleLock || tl.UVLock)) return TextureTransformationType.Scale;
             return TextureTransformationType.None;
         }
 

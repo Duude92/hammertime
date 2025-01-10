@@ -49,7 +49,8 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
                 if (cls.Properties.Any(x => String.Equals(x.Name, "scale", StringComparison.CurrentCultureIgnoreCase)))
                 {
                     scale = entity.EntityData.Get<float>("scale", 1);
-                    if (scale <= 0.1f) scale = 1;
+                    //I don't know why is that necessary, or not, so I'll just comment this since scales less .1 works fine (seems like that)
+                    //if (scale <= 0.1f) scale = 1;
                 }
 
                 var colProp = cls.Properties.FirstOrDefault(x => x.VariableType == VariableType.Color255 || x.VariableType == VariableType.Color1);

@@ -47,8 +47,22 @@ namespace Sledge.BspEditor.Tools.Draggable
         {
             OnDragEnded();
         }
-        
-        public virtual void MouseDown(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
+		public virtual void StartDrag(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e, Vector3 position)
+		{
+			OnDragStarted();
+		}
+
+		public virtual void Drag(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e, Vector3 lastPosition, Vector3 position)
+		{
+			OnDragMoved();
+		}
+
+		public virtual void EndDrag(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e, Vector3 position)
+		{
+			OnDragEnded();
+		}
+
+		public virtual void MouseDown(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
         {
 
         }
@@ -65,5 +79,11 @@ namespace Sledge.BspEditor.Tools.Draggable
         public abstract void Render(MapDocument document, BufferBuilder builder);
         public abstract void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, I2DRenderer im);
         public abstract void Render(IViewport viewport, PerspectiveCamera camera, I2DRenderer im);
-    }
+
+		public void MouseUp(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e, Vector3 position)
+		{
+		}
+
+        public virtual bool CanDrag(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e, Vector3 position) => false;
+	}
 }

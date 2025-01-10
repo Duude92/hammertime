@@ -121,6 +121,17 @@ namespace Sledge.BspEditor.Primitives.MapObjects
             _descendants.Clear();
             _children.Clear();
         }
+        public IEnumerable<IMapObject> GetParentList()
+        {
+            var parentList = new List<IMapObject>();
+            var parent = _parent;
+            while(parent != null)
+            {
+                parentList.Add(parent);
+                parent = parent.Hierarchy._parent;
+            }
+            return parentList;
+        }
 
         public IEnumerator<IMapObject> GetEnumerator()
         {

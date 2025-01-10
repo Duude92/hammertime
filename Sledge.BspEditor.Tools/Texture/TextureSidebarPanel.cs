@@ -129,7 +129,7 @@ namespace Sledge.BspEditor.Tools.Texture
                 {
                     using (var ss = tc.GetStreamSource())
                     {
-                        bmp = await ss.GetImage(selection, 256, 256);
+                        bmp = await ss.GetProcessedImage(selection, 256, 256);
                     }
                 }
             }

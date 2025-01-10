@@ -108,7 +108,7 @@ namespace Sledge.BspEditor.Tools.Texture
 
 		public void Translate(ITranslationStringProvider strings)
 		{
-			CreateHandle();
+			if(Handle == null) CreateHandle();
 			var prefix = GetType().FullName;
 			this.InvokeLater(() =>
 			{
@@ -465,7 +465,7 @@ namespace Sledge.BspEditor.Tools.Texture
 
 		private Dictionary<Face, Primitives.Texture> _memoTextures;
 
-		private void ApplyPropertyChanges(bool trivial)
+		private async void ApplyPropertyChanges(bool trivial)
 		{
 			var edit = new Transaction();
 
@@ -516,13 +516,13 @@ namespace Sledge.BspEditor.Tools.Texture
 				_memoTextures = null;
 			}
 
-			MapDocumentOperation.Perform(Document, edit);
+			await MapDocumentOperation.Perform(Document, edit);
 		}
 
-		private void ApplyButtonClicked(object sender, EventArgs e)
+		private async void ApplyButtonClicked(object sender, EventArgs e)
 		{
 			var item = GetFirstSelectedTexture();
-			ApplyTexture(item);
+			await ApplyTexture(item);
 		}
 
 		private async Task ApplyChanges(Func<IMapObject, Face, Task<bool>> apply)
@@ -604,9 +604,9 @@ namespace Sledge.BspEditor.Tools.Texture
 			PropertiesChanged();
 		}
 
-		private void JustifyTopClicked(object sender, EventArgs e)
+		private async void JustifyTopClicked(object sender, EventArgs e)
 		{
-			Justify(BoxAlignMode.Top, false);
+			await Justify(BoxAlignMode.Top, false);
 		}
 
 		private async Task Justify(BoxAlignMode mode, bool fit)
@@ -632,37 +632,37 @@ namespace Sledge.BspEditor.Tools.Texture
 			});
 		}
 
-		private void JustifyLeftClicked(object sender, EventArgs e)
+		private async void JustifyLeftClicked(object sender, EventArgs e)
 		{
-			Justify(BoxAlignMode.Left, false);
+			await Justify(BoxAlignMode.Left, false);
 		}
 
-		private void JustifyCenterClicked(object sender, EventArgs e)
+		private async void JustifyCenterClicked(object sender, EventArgs e)
 		{
-			Justify(BoxAlignMode.Center, false);
+			await Justify(BoxAlignMode.Center, false);
 		}
 
-		private void JustifyRightClicked(object sender, EventArgs e)
+		private async void JustifyRightClicked(object sender, EventArgs e)
 		{
-			Justify(BoxAlignMode.Right, false);
+			await Justify(BoxAlignMode.Right, false);
 		}
 
-		private void JustifyBottomClicked(object sender, EventArgs e)
+		private async void JustifyBottomClicked(object sender, EventArgs e)
 		{
-			Justify(BoxAlignMode.Bottom, false);
+			await Justify(BoxAlignMode.Bottom, false);
 		}
 
-		private void JustifyFitClicked(object sender, EventArgs e)
+		private async void JustifyFitClicked(object sender, EventArgs e)
 		{
-			Justify(BoxAlignMode.Center, true);
+			await Justify(BoxAlignMode.Center, true);
 		}
 
-		private void HideMaskCheckboxToggled(object sender, EventArgs e)
+		private async void HideMaskCheckboxToggled(object sender, EventArgs e)
 		{
 			if (_freeze) return;
 			var data = Document.Map.Data.GetOne<HideFaceMask>() ?? new HideFaceMask();
 			data = new HideFaceMask { Hidden = !data.Hidden };
-			MapDocumentOperation.Perform(Document, new TrivialOperation(x => x.Map.Data.Replace(data), x => x.Update(data)));
+			await MapDocumentOperation.Perform(Document, new TrivialOperation(x => x.Map.Data.Replace(data), x => x.Update(data)));
 		}
 
 		private void RecentFilterTextChanged(object sender, EventArgs e)
@@ -671,18 +671,18 @@ namespace Sledge.BspEditor.Tools.Texture
 			UpdateRecentTextureList();
 		}
 
-		private void AlignToWorldClicked(object sender, EventArgs e)
+		private async void AlignToWorldClicked(object sender, EventArgs e)
 		{
-			ApplyChanges((mo, f) =>
+			await ApplyChanges((mo, f) =>
 			{
 				f.Texture.AlignToNormal(f.Plane.GetClosestAxisToNormal());
 				return Task.FromResult(true);
 			});
 		}
 
-		private void AlignToFaceClicked(object sender, EventArgs e)
+		private async void AlignToFaceClicked(object sender, EventArgs e)
 		{
-			ApplyChanges((mo, f) =>
+			await ApplyChanges((mo, f) =>
 			{
 				f.Texture.AlignToNormal(f.Plane.Normal);
 				return Task.FromResult(true);
@@ -694,9 +694,9 @@ namespace Sledge.BspEditor.Tools.Texture
 			Oy.Publish("Command:Run", new CommandMessage("BspEditor:BrowseActiveTexture"));
 		}
 
-		private void TexturesListTextureSelected(object sender, string item)
+		private async void TexturesListTextureSelected(object sender, string item)
 		{
-			ApplyTexture(item);
+			await ApplyTexture(item);
 		}
 
 		private void TreatAsOneCheckboxToggled(object sender, EventArgs e)
@@ -722,6 +722,7 @@ namespace Sledge.BspEditor.Tools.Texture
 				e.Cancel = true;
 				Oy.Publish("ActivateTool", "SelectTool");
 			}
+			this.Owner.Focus();
 		}
 
 		private void FocusTextInControl(object sender, EventArgs e)
@@ -845,12 +846,12 @@ namespace Sledge.BspEditor.Tools.Texture
 			});
 		}
 
-		private void RRightButton_Click(object sender, EventArgs e)
+		private async void RRightButton_Click(object sender, EventArgs e)
 		{
-			RotateFaceTexture(90);
+			await RotateFaceTexture(90);
 		}
 
-		private void RotateFaceTexture(float degree)
+		private async Task RotateFaceTexture(float degree)
 		{
 			var faces = GetFaceSelection();
 			_currentTextureProperties.Rotation += degree;
@@ -858,7 +859,7 @@ namespace Sledge.BspEditor.Tools.Texture
 			{
 				face.Texture.SetRotation(face.Texture.Rotation + degree);
 			}
-			ApplyChanges((mo, f) =>
+			await ApplyChanges((mo, f) =>
 			{
 				ApplyFaceValues(f);
 				return Task.FromResult(true);

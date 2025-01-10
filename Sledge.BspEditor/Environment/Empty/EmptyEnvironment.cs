@@ -60,5 +60,6 @@ namespace Sledge.BspEditor.Environment.Empty
         public string DefaultBrushEntity => "";
         public string DefaultPointEntity => "";
         public decimal DefaultTextureScale => 1;
-    }
+        public float DefaultGridSize => 16;
+	}
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
@@ -8,6 +9,11 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Modification;
+using Sledge.BspEditor.Modification.Operations.Selection;
+using Sledge.BspEditor.Modification.Operations.Tree;
+using Sledge.BspEditor.Primitives.MapObjectData;
+using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.Resources;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Vertex.Controls;
@@ -22,7 +28,7 @@ using Sledge.Shell.Input;
 
 namespace Sledge.BspEditor.Tools.Vertex.Tools
 {
-    [AutoTranslate]
+	[AutoTranslate]
     [Export(typeof(VertexSubtool))]
     public class VertexFaceEditTool : VertexSubtool
     {
@@ -48,8 +54,16 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
             yield return Oy.Subscribe<string>("VertexTool:DeselectAll", _ => ClearSelection());
             yield return Oy.Subscribe<int>("VertexEditFaceTool:Poke", v => Poke(v));
             yield return Oy.Subscribe<int>("VertexEditFaceTool:Bevel", v => Bevel(v));
-        }
-        
+            yield return Oy.Subscribe<int>("VertexEditFaceTool:Extrude", v => Extrude(v));
+		}
+        private void Extrude(int num)
+        {
+			foreach (var solidFace in _selectedFaces)
+			{
+				BevelFace(solidFace, num, false);
+			}
+			UpdateSolids(_selectedFaces.Select(x => x.Solid).ToList());
+		}
         private void Poke(int num)
         {
             foreach (var solidFace in _selectedFaces)
@@ -100,7 +114,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
             }
         }
 
-        private void BevelFace(SolidFace solidFace, int num)
+        private void BevelFace(SolidFace solidFace, int num, bool bevel = true)
         {
             var face = solidFace.Face;
             var solid = solidFace.Solid.Copy;
@@ -110,27 +124,87 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
 
             // Scale the face a bit and move it away by the bevel distance
             var origin = face.Origin;
-            face.Transform(Matrix4x4.CreateScale(Vector3.One * 0.9f, origin));
+            face.Transform(Matrix4x4.CreateScale(Vector3.One * (bevel?0.9f:1f), origin));
             face.Transform(Matrix4x4.CreateTranslation(face.Plane.Normal * num));
 
             var vertList = face.Vertices.ToList();
 
-            // Create a face for each new edge -> old edge
-            foreach (var edge in face.GetEdges())
+			var document = GetDocument();
+
+			var parentGroup = solidFace.Solid.Real.Hierarchy.Parent as Group;
+            if(parentGroup == null)
+            {
+                parentGroup = new Group(document.Map.NumberGenerator.Next("MapObject"));
+                var groupTransaction = new Transaction(new Attach(solidFace.Solid.Real.Hierarchy.Parent.ID, parentGroup));
+                groupTransaction.Add(new Attach(parentGroup.ID, solidFace.Solid.Real));
+                MapDocumentOperation.Perform(document, groupTransaction);
+            }
+
+
+			var solid1 = new Solid(document.Map.NumberGenerator.Next("MapObject"));
+            var solid1v = new VertexSolid(solid1);
+            var solid12 = solid1v.Copy;
+
+			var transaction = new Transaction();
+			transaction.Add(new Attach(document.Map.Root.ID, solid1v.Real));
+			// Create a face for each new edge -> old edge
+			foreach (var edge in face.GetEdges())
             {
                 var startIndex = vertList.FindIndex(x => x.Position.EquivalentTo(edge.Start));
                 var endIndex = vertList.FindIndex(x => x.Position.EquivalentTo(edge.End));
-                var verts = new[] { vertexPositions[startIndex], vertexPositions[endIndex], edge.End, edge.Start };
-                var f = new MutableFace(verts, face.Texture.Clone());
-                solid.Faces.Add(f);
-            }
-        }
+				var verts = new[] { vertexPositions[startIndex], vertexPositions[endIndex], edge.End, edge.Start };
+                var texture = face.Texture.Clone();
+                {
+                    var neighbouringFace = solid.Faces.FirstOrDefault(f =>
+                    f.Vertices.Where(v => v.Position == vertexPositions[startIndex]).Any() &&
+                    f.Vertices.Where(v => v.Position == vertexPositions[endIndex]).Any()
+                    );
+                    if(neighbouringFace != null)
+                    {
+                        texture = neighbouringFace.Texture.Clone();
+                        if (neighbouringFace.Texture.Name.ToLower().Equals("null"))
+                            texture.Name = face.Texture.Name;
+                    }
+				}
+                var f = new Face(document.Map.NumberGenerator.Next("Face"))
+                {
+                    Plane = new DataStructures.Geometric.Plane(verts[0], verts[1], verts[3]),
+                    Texture = texture
+                };
+                f.Vertices.AddRange(verts);
+                solid1.Data.Add(f);
 
-        #endregion
-        
-        #region 3D interaction
-        
-        private Vector3? GetIntersectionPoint(MutableFace face, Line line)
+			}
+			if (!bevel)
+            {
+                solid.Faces.Remove(face);
+
+                var tex = face.Texture.Clone();
+                tex.Name = "null";
+
+				var f = new MutableFace(vertexPositions, tex);
+
+
+                var fb = new MutableFace(vertexPositions.Reverse<Vector3>(), tex);
+
+                solid.Faces.Add(f);
+				solid1.Data.Add(fb.ToFace(document.Map.NumberGenerator));
+                solid1.Data.Add(face.ToFace(document.Map.NumberGenerator));
+                solid1v.IsDirty = true;
+
+                transaction.Add(new Select(solid1));
+                transaction.Add(new Attach(parentGroup.ID, solid1));
+
+			}
+            solid1.DescendantsChanged();
+			MapDocumentOperation.Perform(document, transaction);
+		}
+
+		#endregion
+
+		#region 3D interaction
+
+		private Vector3? GetIntersectionPoint(MutableFace face, Line line)
         {
             return new Polygon(face.Vertices.Select(x => x.Position)).GetIntersectionPoint(line);
         }

@@ -39,8 +39,13 @@ namespace Sledge.BspEditor.Environment.Goldsource
                     return false;
             }
         }
+		public override bool IsClipTexture(string name)
+		{
+            if(String.IsNullOrEmpty(name)) return false;
+            return name.ToLower().StartsWith("clip") ? true : false;
+		}
 
-        public override float GetOpacity(string name)
+		public override float GetOpacity(string name)
         {
             switch (name?.ToLower())
             {

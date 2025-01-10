@@ -72,8 +72,13 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
                 return defaultValue;
             }
         }
+        public string GetStringProperty(string key, string defaultValue)
+        {
+			if (!Properties.ContainsKey(key)) return defaultValue;
+            return Properties[key];
+		}
 
-        public void Set<T>(string key, T value)
+		public void Set<T>(string key, T value)
         {
             var conv = TypeDescriptor.GetConverter(typeof(T));
             var v = conv.ConvertToString(null, CultureInfo.InvariantCulture, value);

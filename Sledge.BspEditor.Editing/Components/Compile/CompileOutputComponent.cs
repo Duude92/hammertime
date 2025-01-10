@@ -29,8 +29,15 @@ namespace Sledge.BspEditor.Editing.Components.Compile
 
         private BufferQueue<Output> _buffer;
         private readonly Subject<int> _queue;
-
-        public CompileOutputComponent()
+		// Handle the Copy operation
+		private void CopyMenuItem_Click(object sender, EventArgs e)
+		{
+			if (_control.SelectionLength > 0)
+			{
+				Clipboard.SetText(_control.SelectedText);
+			}
+		}
+		public CompileOutputComponent()
         {
             _control = new RichTextBox
             {
@@ -42,8 +49,16 @@ namespace Sledge.BspEditor.Editing.Components.Compile
                 WordWrap = false,
                 ReadOnly = true
             };
+			ContextMenuStrip contextMenu = new ContextMenuStrip();
+			ToolStripMenuItem copyMenuItem = new ToolStripMenuItem("Copy");
+			copyMenuItem.Click += CopyMenuItem_Click;
+			contextMenu.Items.Add(copyMenuItem);
 
-            _buffer = new BufferQueue<Output>();
+			// Set the context menu for the RichTextBox
+			_control.ContextMenuStrip = contextMenu;
+
+
+			_buffer = new BufferQueue<Output>();
 
             Oy.Subscribe<Batch>("Compile:Started", async b =>
             {

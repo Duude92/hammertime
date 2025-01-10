@@ -54,8 +54,8 @@ namespace Sledge.BspEditor.Editing.Components
 
         public void Translate(ITranslationStringProvider strings)
         {
-            CreateHandle();
-            var prefix = GetType().FullName;
+			if (Handle == null) CreateHandle();
+			var prefix = GetType().FullName;
             this.InvokeLater(() =>
             {
                 Text = strings.GetString(prefix, "Title");
@@ -262,7 +262,7 @@ namespace Sledge.BspEditor.Editing.Components
             Close();
         }
 
-        private class ProblemWrapper
+		private class ProblemWrapper
         {
             public int Index { get; }
             public MapDocument Document { get; set; }

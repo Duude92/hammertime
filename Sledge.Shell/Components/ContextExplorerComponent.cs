@@ -8,6 +8,7 @@ using LogicAndTrick.Oy;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Translations;
+using MethodInvoker = System.Windows.Forms.MethodInvoker;
 
 namespace Sledge.Shell.Components
 {

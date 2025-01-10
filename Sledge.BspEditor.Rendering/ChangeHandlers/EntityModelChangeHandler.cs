@@ -128,7 +128,7 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
             {
                 details.Name = studio.Values[0].Trim();
             }
-            else
+            
             {
                 // Find the first property that is a studio type, or has a name of "model"...
                 var prop = cls.Properties.FirstOrDefault(x => x.VariableType == VariableType.Studio) ??
@@ -136,7 +136,7 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
                 if (prop != null)
                 {
                     var val = entity.EntityData.Get(prop.Name, prop.DefaultValue);
-                    if (!String.IsNullOrWhiteSpace(val)) details.Name = val;
+                    if (!String.IsNullOrWhiteSpace(val)&& !String.IsNullOrEmpty(val)) details.Name = val;
                 }
             }
 

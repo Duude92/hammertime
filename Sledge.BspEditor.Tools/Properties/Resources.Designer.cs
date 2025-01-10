@@ -19,7 +19,7 @@ namespace Sledge.BspEditor.Tools.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -193,6 +193,26 @@ namespace Sledge.BspEditor.Tools.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Tool_Path {
+            get {
+                object obj = ResourceManager.GetObject("Tool_Path", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Tool_Prefab {
+            get {
+                object obj = ResourceManager.GetObject("Tool_Prefab", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Tool_Select {
             get {
                 object obj = ResourceManager.GetObject("Tool_Select", resourceCulture);
@@ -226,6 +246,16 @@ namespace Sledge.BspEditor.Tools.Properties {
         internal static System.Drawing.Bitmap Tool_VM {
             get {
                 object obj = ResourceManager.GetObject("Tool_VM", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Tool_Wrap {
+            get {
+                object obj = ResourceManager.GetObject("Tool_Wrap", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

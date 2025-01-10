@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
+using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Environment;
 using Sledge.BspEditor.Grid;
 using Sledge.BspEditor.Primitives;
@@ -54,7 +55,9 @@ namespace Sledge.BspEditor.Providers
             new FileExtensionInfo("Valve map format", ".vmf", ".vmx"), 
         };
 
-        public async Task<BspFileLoadResult> Load(Stream stream, IEnvironment environment)
+		public bool CanSave => true;
+
+		public async Task<BspFileLoadResult> Load(Stream stream, IEnvironment environment)
         {
             var task = await Task.Factory.StartNew(async () =>
             {
@@ -268,7 +271,7 @@ namespace Sledge.BspEditor.Providers
 
         #endregion
 
-        public Task Save(Stream stream, Map map)
+        public Task Save(Stream stream, Map map, MapDocument document = null)
         {
             return Task.Factory.StartNew(() =>
             {

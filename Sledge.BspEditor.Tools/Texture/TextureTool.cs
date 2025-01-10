@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Numerics;
@@ -61,7 +62,7 @@ namespace Sledge.BspEditor.Tools.Texture
             {
                 fs = new FaceSelection();
                 document.Map.Data.Add(fs);
-            }
+			}
             return fs;
         }
 
@@ -280,6 +281,8 @@ namespace Sledge.BspEditor.Tools.Texture
         {
             base.Render(document, builder, resourceCollector);
 
+            //TODO: Selection could be changed during render process
+
             var sel = GetSelection(document);
             if (sel.IsEmpty) return;
 
@@ -290,10 +293,11 @@ namespace Sledge.BspEditor.Tools.Texture
             var hideFaceMask = ShouldHideFaceMask;
             var selectionColour = Color.FromArgb(32, Color.Red).ToVector4();
 
+
             // Add selection highlights
             if (!hideFaceMask)
             {
-                foreach (var face in sel.ToList())
+                foreach (var face in sel)
                 {
                     var indOffs = indices.Count;
                     var offs = verts.Count;
@@ -324,7 +328,7 @@ namespace Sledge.BspEditor.Tools.Texture
             var uAxisColour = Color.Yellow.ToVector4();
             var vAxisColour = Color.Lime.ToVector4();
             var wfIndOffs = indices.Count;
-            foreach (var face in sel.ToList())
+            foreach (var face in sel)
             {
                 var offs = verts.Count;
 

@@ -1,97 +1,124 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Sledge.DataStructures.Geometric.Precision
 {
-    /// <summary>
-    /// Represents a convex polyhedron with at least 4 sides. Uses high-precision value types.
-    /// </summary>
-    public class Polyhedron
-    {
-        public IReadOnlyList<Polygon> Polygons { get; }
+	/// <summary>
+	/// Represents a convex polyhedron with at least 4 sides. Uses high-precision value types.
+	/// </summary>
+	public class Polyhedron
+	{
+		public IReadOnlyList<Polygon> Polygons { get; }
 
-        public Vector3 Origin => Polygons.Aggregate(Vector3.Zero, (x, y) => x + y.Origin) / Polygons.Count;
+		public Vector3 Origin => Polygons.Aggregate(Vector3.Zero, (x, y) => x + y.Origin) / Polygons.Count;
 
-        /// <summary>
-        /// Creates a polyhedron from a list of polygons which are assumed to be valid.
-        /// </summary>
-        public Polyhedron(IEnumerable<Polygon> polygons)
-        {
-            Polygons = polygons.ToList();
-        }
+		/// <summary>
+		/// Creates a polyhedron from a list of polygons which are assumed to be valid.
+		/// </summary>
+		public Polyhedron(IEnumerable<Polygon> polygons)
+		{
+			Polygons = polygons.ToList();
+		}
 
-        /// <summary>
-        /// Creates a polyhedron by intersecting a set of at least 4 planes.
-        /// </summary>
-        public Polyhedron(IEnumerable<Plane> planes)
-        {
-            var polygons = new List<Polygon>();
-            
-            var list = planes.ToList();
-            for (var i = 0; i < list.Count; i++)
-            {
-                // Split the polygon by all the other planes
-                var poly = new Polygon(list[i]);
-                for (var j = 0; j < list.Count; j++)
-                {
-                    if (i != j && poly.Split(list[j], out var back, out _))
-                    {
-                        poly = back;
-                    }
-                }
-                polygons.Add(poly);
-            }
+		/// <summary>
+		/// Creates a polyhedron by intersecting a set of at least 4 planes.
+		/// </summary>
+		public Polyhedron(IEnumerable<Plane> planes)
+		{
+			var polygons = new List<Polygon>();
 
-            // Ensure all the faces point outwards
-            var origin = polygons.Aggregate(Vector3.Zero, (x, y) => x + y.Origin) / polygons.Count;
-            for (var i = 0; i < polygons.Count; i++)
-            {
-                var face = polygons[i];
-                if (face.Plane.OnPlane(origin) >= 0) polygons[i] = new Polygon(face.Vertices.Reverse());
-            }
+			var list = planes.ToList();
+			for (var i = 0; i < list.Count; i++)
+			{
+				// Split the polygon by all the other planes
+				var poly = new Polygon(list[i]);
+				for (var j = 0; j < list.Count; j++)
+				{
+					if (i != j && poly.Split(list[j], out var back, out _))
+					{
+						poly = back;
+					}
+				}
+				polygons.Add(poly);
+			}
 
-            Polygons = polygons;
-        }
+			var polys = new List<Polygon>();
 
-        /// <summary>
-        /// Splits this polyhedron into two polyhedron by intersecting against a plane.
-        /// </summary>
-        /// <param name="plane">The splitting plane</param>
-        /// <param name="back">The back side of the polyhedron</param>
-        /// <param name="front">The front side of the polyhedron</param>
-        /// <returns>True if the plane splits the polyhedron, false if the plane doesn't intersect</returns>
-        public bool Split(Plane plane, out Polyhedron back, out Polyhedron front)
-        {
-            back = front = null;
+			foreach (var poly in polygons)
+			{
+				int vertexNeighbours = 0;
 
-            // Check that this solid actually spans the plane
-            var classify = Polygons.Select(x => x.ClassifyAgainstPlane(plane)).Distinct().ToList();
-            if (classify.All(x => x != PlaneClassification.Spanning))
-            {
-                if (classify.Any(x => x == PlaneClassification.Back)) back = this;
-                else if (classify.Any(x => x == PlaneClassification.Front)) front = this;
-                return false;
-            }
+				foreach (var vertex1 in poly.Vertices)
+				{ 
+				int edgeCount = 0;
+					foreach (var poly2 in polygons)
+					{
+						if (poly != poly2)
+						{
+							foreach (var vertex2 in poly2.Vertices)
+							{
+								if (vertex1.EquivalentTo( vertex2)) edgeCount++;
+							}
+						}
+					}
+					if (edgeCount > 1) vertexNeighbours++; //it have to hade at least 3 edges
+				}
+				if(vertexNeighbours == poly.Vertices.Count)
+					polys.Add(poly);
+			}
+			polygons = polys;
 
-            var backPlanes = new List<Plane> { plane };
-            var frontPlanes = new List<Plane> { new Plane(-plane.Normal, -plane.DistanceFromOrigin) };
+			// Ensure all the faces point outwards
+			var origin = polygons.Aggregate(Vector3.Zero, (x, y) => x + y.Origin) / polygons.Count;
+			for (var i = 0; i < polygons.Count; i++)
+			{
+				var face = polygons[i];
+				if (face.Plane.OnPlane(origin) >= 0) polygons[i] = new Polygon(face.Vertices.Reverse());
+			}
 
-            foreach (var face in Polygons)
-            {
-                var classification = face.ClassifyAgainstPlane(plane);
-                if (classification != PlaneClassification.Back) frontPlanes.Add(face.Plane);
-                if (classification != PlaneClassification.Front) backPlanes.Add(face.Plane);
-            }
+			Polygons = polygons;
+		}
 
-            back = new Polyhedron(backPlanes);
-            front = new Polyhedron(frontPlanes);
-            
-            return true;
-        }
+		/// <summary>
+		/// Splits this polyhedron into two polyhedron by intersecting against a plane.
+		/// </summary>
+		/// <param name="plane">The splitting plane</param>
+		/// <param name="back">The back side of the polyhedron</param>
+		/// <param name="front">The front side of the polyhedron</param>
+		/// <returns>True if the plane splits the polyhedron, false if the plane doesn't intersect</returns>
+		public bool Split(Plane plane, out Polyhedron back, out Polyhedron front)
+		{
+			back = front = null;
 
-        public Geometric.Polyhedron ToStandardPolyhedron()
-        {
-            return new Geometric.Polyhedron(Polygons.Select(x => x.ToStandardPolygon()));
-        }
-    }
+			// Check that this solid actually spans the plane
+			var classify = Polygons.Select(x => x.ClassifyAgainstPlane(plane)).Distinct().ToList();
+			if (classify.All(x => x != PlaneClassification.Spanning))
+			{
+				if (classify.Any(x => x == PlaneClassification.Back)) back = this;
+				else if (classify.Any(x => x == PlaneClassification.Front)) front = this;
+				return false;
+			}
+
+			var backPlanes = new List<Plane> { plane };
+			var frontPlanes = new List<Plane> { new Plane(-plane.Normal, -plane.DistanceFromOrigin) };
+
+			foreach (var face in Polygons)
+			{
+				var classification = face.ClassifyAgainstPlane(plane);
+				if (classification != PlaneClassification.Back) frontPlanes.Add(face.Plane);
+				if (classification != PlaneClassification.Front) backPlanes.Add(face.Plane);
+			}
+
+			back = new Polyhedron(backPlanes);
+			front = new Polyhedron(frontPlanes);
+
+			return true;
+		}
+
+		public Geometric.Polyhedron ToStandardPolyhedron()
+		{
+			return new Geometric.Polyhedron(Polygons.Select(x => x.ToStandardPolygon()));
+		}
+	}
 }

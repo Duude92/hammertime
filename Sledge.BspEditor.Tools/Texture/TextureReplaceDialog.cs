@@ -79,7 +79,7 @@ namespace Sledge.BspEditor.Tools.Texture
 
         public void Translate(ITranslationStringProvider strings)
         {
-            CreateHandle();
+            if(Handle == null) CreateHandle();
             var prefix = GetType().FullName;
             this.InvokeLater(() =>
             {
@@ -309,7 +309,7 @@ namespace Sledge.BspEditor.Tools.Texture
             {
                 using (var tp = tc.GetStreamSource())
                 {
-                    var bmp = await tp.GetImage(text, 128, 128);
+                    var bmp = await tp.GetProcessedImage(text, 128, 128);
                     image.SizeMode = bmp.Width > image.Width || bmp.Height > image.Height
                         ? PictureBoxSizeMode.Zoom
                         : PictureBoxSizeMode.CenterImage;
@@ -347,8 +347,7 @@ namespace Sledge.BspEditor.Tools.Texture
         {
             Close();
         }
-
-        private class TextureReplacement
+		private class TextureReplacement
         {
             public string Find { get; set; }
             public string Replace { get; set; }

@@ -13,6 +13,7 @@ namespace Sledge.BspEditor.Environment.Empty
         public override IEnumerable<string> GetDecalTextures() => new string[0];
         public override IEnumerable<string> GetSpriteTextures() => new string[0];
         public override bool IsNullTexture(string name) => false;
-        public override float GetOpacity(string name) => 1;
+        public override bool IsClipTexture(string name) => false;
+		public override float GetOpacity(string name) => 1;
     }
 }
