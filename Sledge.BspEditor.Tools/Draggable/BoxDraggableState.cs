@@ -99,8 +99,35 @@ namespace Sledge.BspEditor.Tools.Draggable
         {
             //
         }
+		public override void StartDrag(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e, Vector3 position)
+		{
+			State.Viewport = viewport;
+			State.Action = BoxAction.Drawing;
+			State.OrigStart = State.Start;
+			State.OrigEnd = State.End;
+			var st = RememberedDimensions == null ? Vector3.Zero : RememberedDimensions.Start * Vector3.UnitY;
+			var wid = RememberedDimensions == null ? Vector3.Zero : (RememberedDimensions.End - RememberedDimensions.Start) * Vector3.UnitY;
+			State.Start = Tool.SnapIfNeeded((position) + st);
+			State.End = State.Start + wid;
+			base.StartDrag(document, viewport, camera, e, position);
+		}
+		public override void Drag(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e, Vector3 lastPosition, Vector3 position)
+		{
+			State.End = (position);
 
-        public override void StartDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
+			base.Drag(document, viewport, camera, e, lastPosition, position);
+		}
+
+		public override void EndDrag(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e, Vector3 position)
+		{
+			State.Viewport = null;
+			State.Action = BoxAction.Drawn;
+			State.End = Tool.SnapIfNeeded(position);
+			State.FixBounds();
+			base.EndDrag(document, viewport, camera, e, position);
+		}
+
+		public override void StartDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
         {
             State.Viewport = viewport;
             State.Action = BoxAction.Drawing;
