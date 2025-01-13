@@ -1,0 +1,19 @@
+{
+  "@Meta": {
+    "Base": "HammerTime.Formats",
+    "Language": "zh_cn",
+    "LanguageDescription": "中文（简体）/ Simplified Chinese",
+    "Inherit": "en"
+  },
+  "Commands.DecompileTool.Name": "反编译工具",
+  "Commands.DecompileTool.Details": "用于反编译 BSP 地图的工具",
+  "Components.DecompileOptions.OpenButton": "打开 BSP",
+  "Components.DecompileOptions.BrushOptimizationText": "刷子优化：",
+  "Components.DecompileOptions.DecompileStrategyText": "反编译策略：",
+  "Components.DecompileOptions.GenerateOriginBrush": "始终生成原点刷子",
+  "Components.DecompileOptions.MergeBrushes": "合并刷子",
+  "Components.DecompileOptions.ApplyNull": "对生成的面应用空值",
+  "Components.DecompileOptions.IncludeLiquids": "包含液体",
+  "Components.DecompileOptions.WildcardTex": "触发器实体通配符：",
+  "Components.DecompileOptions.CancelButton": "取消"
+}
