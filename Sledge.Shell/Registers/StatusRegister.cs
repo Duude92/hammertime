@@ -44,7 +44,7 @@ namespace Sledge.Shell.Registers
         {
             var si = new StatusBarItem(item);
             _items.Add(si);
-            _shell.StatusStrip.Items.Add(si.Label);
+            _shell.InvokeLater(() => _shell.StatusStrip.Items.Add(si.Label));
         }
 
         private Task ContextChanged(IContext context)
