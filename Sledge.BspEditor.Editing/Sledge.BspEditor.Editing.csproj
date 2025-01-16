@@ -50,6 +50,7 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Resources\Menu_Interrupt.png" />
+    <None Remove="Translations\Sledge.BspEditor.Editing.zh_cn.json" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Sledge.Formats.Map">
@@ -161,6 +162,9 @@
     <Content Include="Resources\Menu_UnloadPointfile.png" />
     <Content Include="Translations\Sledge.BspEditor.Editing.en.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Translations\Sledge.BspEditor.Editing.zh_cn.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="Specifications\Goldsource.vdf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

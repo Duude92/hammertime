@@ -51,6 +51,7 @@
   <ItemGroup>
     <None Remove="Resources\Tool_Path.png" />
     <None Remove="Resources\Tool_Prefab.png" />
+    <None Remove="Translations\Sledge.BspEditor.Tools.zh_cn.json" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Sledge.Formats.Map">
@@ -112,6 +113,9 @@
     <Content Include="Resources\Menu_ReplaceTextures.png" />
     <Content Include="Resources\Tool_Path.png" />
     <Content Include="Resources\Tool_Prefab.png" />
+    <Content Include="Translations\Sledge.BspEditor.Tools.zh_cn.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Resources\Tool_Wrap.png" />
     <Content Include="Resources\Tool_VM.png" />
     <Content Include="Translations\Sledge.BspEditor.Tools.en.json">

@@ -6,11 +6,15 @@
 
   <ItemGroup>
     <None Remove="Translations\HammerTime.Formats.en.json" />
+    <None Remove="Translations\HammerTime.Formats.zh_cn.json" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="Translations\HammerTime.Formats.en.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Translations\HammerTime.Formats.zh_cn.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 
