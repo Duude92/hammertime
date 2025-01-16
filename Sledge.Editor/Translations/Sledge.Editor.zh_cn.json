@@ -1,0 +1,23 @@
+{
+  "@Meta": {
+    "Base": "Sledge.Editor",
+    "Language": "zh_cn",
+    "LanguageDescription": "中文（简体）/ Simplified Chinese",
+    "Inherit": "en"
+  },
+  "@Settings": {
+    "UpdateChecker.CheckForUpdates": "启动时检查更新"
+  },
+  "ShellSetup.Title": "HammerTime 编辑器",
+  "Update.UpdaterForm.Title": "有可用更新！",
+  "Update.UpdaterForm.UpdateAvailable": "HammerTime 有新版本可用！\n您现在想下载吗？",
+  "Update.UpdaterForm.Downloading": "正在下载...",
+  "Update.CheckForUpdates.Name": "检查更新",
+  "Update.CheckForUpdates.Details": "在线检查更新",
+  "Update.CheckForUpdates.NoUpdatesTitle": "未发现更新",
+  "Update.CheckForUpdates.NoUpdatesMessage": "此版本的 HammerTime 已是最新。",
+  "Update.CheckForUpdates.UpdateErrorTitle": "更新错误",
+  "Update.CheckForUpdates.UpdateErrorMessage": "下载更新详情时遇到问题，请稍后再试或访问 HammerTime GitHub 发布页面查看最新版本。",
+  "Update.UpdateChecker.UpdateDownloadedTitle": "更新已准备好安装",
+  "Update.UpdateChecker.UpdateDownloadedMessage": "更新已下载，您现在想安装吗？选择“否”将在稍后安装。"
+}
