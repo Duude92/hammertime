@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations.Tree;
+using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Properties;
 using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Hotkeys;
@@ -12,7 +13,7 @@ using Sledge.Common.Translations;
 
 namespace Sledge.BspEditor.Commands.Grouping
 {
-    [AutoTranslate]
+	[AutoTranslate]
     [Export(typeof(ICommand))]
     [CommandID("BspEditor:Edit:Ungroup")]
     [DefaultHotkey("Ctrl+U")]
@@ -37,7 +38,29 @@ namespace Sledge.BspEditor.Commands.Grouping
                     tns.Add(new Detatch(grp.Hierarchy.Parent.ID, grp));
                 }
                 await MapDocumentOperation.Perform(document, tns);
+                return;
             }
-        }
+            var solids = document.Selection.GetSelectedParents().OfType<Primitives.MapObjects.Solid>().ToList();
+            if(solids.Count > 0)
+            {
+				var tns = new Transaction();
+				foreach (var solid in solids)
+				{
+                    tns = DetachRecursively(tns, solid);
+				}
+				await MapDocumentOperation.Perform(document, tns);
+			}
+
+            Transaction DetachRecursively(Transaction transaction, IMapObject mapObject)
+            {
+				transaction.Add(new Detatch(mapObject.Hierarchy.Parent.ID, mapObject));
+				transaction.Add(new Attach(document.Map.Root.ID, mapObject));
+				foreach (var obj in mapObject.Hierarchy)
+				{
+                    return DetachRecursively(transaction, obj);
+				}
+                return transaction;
+			}
+		}
     }
 }
