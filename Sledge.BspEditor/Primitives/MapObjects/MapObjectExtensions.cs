@@ -195,10 +195,20 @@ namespace Sledge.BspEditor.Primitives.MapObjects
 		{
 			return obj.Collect(
 				// Always traverse the root, otherwise only traverse visible parent objects
-				x => x is Root || (!x.IsHidden() && x.BoundingBox != null && x.BoundingBox.IntersectsWith(line)),
+				x => x is Root || (!x.IsHidden() && x.BoundingBox != null && (x.BoundingBox.IntersectsWith(line) || x.IntersectRecursively(line) )),
 				// Include the item only if it's a leaf node
-				x => x.Hierarchy.Parent != null && !x.Hierarchy.HasChildren
+				x => x.Hierarchy.Parent != null /*&& !x.Hierarchy.HasChildren*/
 			);
+		}
+
+		public static bool IntersectRecursively(this IMapObject obj, Line line)
+		{
+			if (obj.BoundingBox.IntersectsWith(line)) return true;
+			foreach(var ch in obj.Hierarchy)
+			{
+				if(ch.IntersectRecursively(line)) return true;
+			}
+			return false;
 		}
 
 		[Flags]
@@ -258,6 +268,7 @@ namespace Sledge.BspEditor.Primitives.MapObjects
 		/// <returns>A list of child objects with their corresponding intersection points</returns>
 		public static IEnumerable<MapObjectIntersection> GetIntersectionsForVisibleObjects(this IMapObject obj, Line line, IgnoreOptions ignoreOptions = IgnoreOptions.None)
 		{
+			var a = obj.GetBoudingBoxIntersectionsForVisibleObjects(line);
 			return obj.GetBoudingBoxIntersectionsForVisibleObjects(line)
 				// Get the intersection points
 				.Select(x => new { Item = x, Intersection = x.GetIntersectionPoint(line, ignoreOptions) })
