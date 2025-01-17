@@ -396,7 +396,7 @@ namespace Sledge.BspEditor.Tools.Selection
 		private static IEnumerable<IMapObject> NormaliseSelection(IEnumerable<IMapObject> objects, bool ignoreGrouping)
 		{
 			return ignoreGrouping
-					   ? objects.Where(x => !x.Hierarchy.HasChildren)
+					   ? /*objects.Where(x => !x.Hierarchy.HasChildren)*/ objects
 					   : objects.Select(x => x.FindTopmostParent(y => y is Group || y is Primitives.MapObjects.Entity) ?? x).Distinct().SelectMany(x => x.FindAll());
 		}
 
