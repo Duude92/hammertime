@@ -86,7 +86,7 @@ namespace Sledge.BspEditor.Tools.Brush
 
 		public BrushTool()
 		{
-			box = new BoxDraggableState(this);
+			box = new BoxDraggableState(this, true);
 			box.BoxColour = Color.Turquoise;
 			box.FillColour = Color.FromArgb(_selectionBoxBackgroundOpacity, Color.Green);
 			box.State.Changed += BoxChanged;

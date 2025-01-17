@@ -25,7 +25,10 @@ namespace Sledge.BspEditor.Tools.Draggable
         public Color BoxColour { get; set; }
         public Color FillColour { get; set; }
         public Box RememberedDimensions { get; set; }
-        internal BoxState State { get; set; }
+
+		private bool _canDragInPerspective;
+
+		internal BoxState State { get; set; }
 
         public bool RenderBoxText { get; set; } = true;
         public bool RenderBox { get; set; } = true;
@@ -34,7 +37,7 @@ namespace Sledge.BspEditor.Tools.Draggable
 
         public override Vector3 Origin => (State.Start + State.End) / 2;
 
-        public BoxDraggableState(BaseDraggableTool tool)
+        public BoxDraggableState(BaseDraggableTool tool, bool canDragInPerspective = false)
         {
             Tool = tool;
             State = new BoxState();
@@ -42,7 +45,9 @@ namespace Sledge.BspEditor.Tools.Draggable
 
             RememberedDimensions = null;
 
-            CreateBoxHandles();
+            _canDragInPerspective = canDragInPerspective;
+
+			CreateBoxHandles();
         }
 
         private void BoxStateChanged(object sender, EventArgs e)
@@ -91,7 +96,7 @@ namespace Sledge.BspEditor.Tools.Draggable
         {
             return true;
         }
-        public override bool CanDrag(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e, Vector3 position) => true;
+        public override bool CanDrag(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e, Vector3 position) => _canDragInPerspective;
 		public override void Highlight(MapDocument document, MapViewport viewport)
         {
             //
