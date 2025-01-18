@@ -240,7 +240,7 @@
   "Components.MapInformationDialog.Solids": "实体",
   "Components.MapInformationDialog.Faces": "面",
   "Components.MapInformationDialog.PointEntities": "点实体",
-  "Components.MapInformationDialog.SolidEntities": "实体实体",
+  "Components.MapInformationDialog.SolidEntities": "固体实体",
   "Components.MapInformationDialog.UniqueTextures": "唯一纹理",
   "Components.MapInformationDialog.TextureMemory": "纹理内存",
   "Components.MapInformationDialog.TexturePackagesUsed": "使用的纹理包",
