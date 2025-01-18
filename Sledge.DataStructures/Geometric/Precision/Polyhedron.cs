@@ -58,7 +58,7 @@ namespace Sledge.DataStructures.Geometric.Precision
 						{
 							foreach (var vertex2 in poly2.Vertices)
 							{
-								if (vertex1.EquivalentTo( vertex2)) edgeCount++;
+								if (vertex1.EquivalentTo( vertex2, 0.002)) edgeCount++;
 							}
 						}
 					}
