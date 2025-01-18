@@ -31,12 +31,14 @@ jobs:
       run: cp "./Resources/prefabs" "./bin" -r
     - name: Cleaning output symbols
       run: del ./bin/*.pdb
-# 2.0.7.2 for now, would change after some rebranding
     - name: Extract version from tag
       id: version
       run: |
         $version = "${{ github.ref_name }}".TrimStart("v")
         echo "version=$version" >> $env:GITHUB_ENV
+    - name: Set assembly version
+      run: |
+        SetVersionNumberConsole.ps1 -ver $env:version
     - name: Set app version
       run: |
         Set-Content -Path ./Build/Sledge.Editor.New.Installer.nsi -Value ((Get-Content './Build/Sledge.Editor.New.Installer.nsi' -Raw) -replace "{version}", "$env:version")
