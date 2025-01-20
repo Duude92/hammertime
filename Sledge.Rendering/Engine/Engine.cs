@@ -301,6 +301,12 @@ namespace Sledge.Rendering.Engine
 				lo.Pipeline.Render(Context, renderTarget, _commandList, lo.Renderable, lo.Location);
 			}
 
+			foreach (var pipeline in transparentPipelines)
+			{
+				if (pipeline.Type == PipelineType.BillboardAlpha)
+					pipeline.Render(Context, renderTarget, _commandList, Scene.GetRenderables(pipeline, renderTarget));
+			}
+
 			foreach (var overlay in _pipelines[PipelineGroup.Overlay])
 			{
 				overlay.SetupFrame(Context, renderTarget);
