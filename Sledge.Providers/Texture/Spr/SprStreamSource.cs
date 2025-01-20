@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -23,11 +24,12 @@ namespace Sledge.Providers.Texture.Spr
             return _file.TraversePath(item) != null;
         }
 
-        private static Bitmap Parse(Stream stream)
+        private static ICollection<Bitmap> Parse(Stream stream)
         {
             // Sprite file spec taken from the spritegen source in the Half-Life SDK.
             using (var br = new BinaryReader(stream))
             {
+                var bitmaps = new List<Bitmap>();
                 var idst = br.ReadFixedLengthString(Encoding.ASCII, 4);
                 if (idst != "IDSP") return null;
                 var version = br.ReadInt32();
@@ -53,6 +55,8 @@ namespace Sledge.Providers.Texture.Spr
                     colours[i] = Color.FromArgb(255, r, g, b);
                 }
 
+                for (int j = 0; j < numframes; j++)
+                {
                 // Only read the first frame.
                 var frametype = br.ReadInt32();
                 if (frametype != 0)
@@ -60,52 +64,50 @@ namespace Sledge.Providers.Texture.Spr
                     var num = br.ReadInt32();
                     var intervals = br.ReadSingleArray(num);
                 }
-                var originX = br.ReadInt32();
-                var originY = br.ReadInt32();
-                var framewidth = br.ReadInt32();
-                var frameheight = br.ReadInt32();
-                var pixels = br.ReadBytes(framewidth * frameheight);
+                    //newloop
+                    var originX = br.ReadInt32();
+                    var originY = br.ReadInt32();
+                    var framewidth = br.ReadInt32();
+                    var frameheight = br.ReadInt32();
+                    var pixels = br.ReadBytes(framewidth * frameheight);
 
-                var bitmap = new Bitmap(framewidth, frameheight, PixelFormat.Format8bppIndexed);
+                    var bitmap = new Bitmap(framewidth, frameheight, PixelFormat.Format8bppIndexed);
 
-                // Pre-process the palette
-                var pal = bitmap.Palette;
-                var last = colours[255];
-                for (var i = 0; i < paletteSize; i++)
-                {
-                    var c = colours[i];
-                    if (texFormat == SpriteRenderMode.Additive)
+                    // Pre-process the palette
+                    var pal = bitmap.Palette;
+                    var last = colours[255];
+                    for (var i = 0; i < paletteSize; i++)
                     {
-                        var a = (int)((c.R + c.G + c.B) / 3f);
-                        c = Color.FromArgb(a, c);
+                        var c = colours[i];
+                        if (texFormat == SpriteRenderMode.Additive)
+                        {
+                            var a = (int)((c.R + c.G + c.B) / 3f);
+                            c = Color.FromArgb(a, c);
+                        }
+                        else if (texFormat == SpriteRenderMode.IndexAlpha && i < 255)
+                        {
+                            var a = (int)((c.R + c.G + c.B) / 3f);
+                            c = Color.FromArgb(a, last);
+                        }
+                        pal.Entries[i] = c;
                     }
-                    else if (texFormat == SpriteRenderMode.IndexAlpha && i < 255)
+                    if (texFormat == SpriteRenderMode.AlphaTest)
                     {
-                        var a = (int)((c.R + c.G + c.B) / 3f);
-                        c = Color.FromArgb(a, last);
+                        pal.Entries[255] = Color.FromArgb(0, 0, 0, 0);
                     }
-                    pal.Entries[i] = c;
-                }
-                if (texFormat == SpriteRenderMode.AlphaTest)
-                {
-                    pal.Entries[255] = Color.FromArgb(0, 0, 0, 0);
-                }
-                bitmap.Palette = pal;
+                    bitmap.Palette = pal;
 
-                // Set the pixel data
-                var data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadWrite, bitmap.PixelFormat);
-                Marshal.Copy(pixels, 0, data.Scan0, data.Width * data.Height);
-                bitmap.UnlockBits(data);
+                    // Set the pixel data
+                    var data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadWrite, bitmap.PixelFormat);
+                    Marshal.Copy(pixels, 0, data.Scan0, data.Width * data.Height);
+                    bitmap.UnlockBits(data);
+                    bitmaps.Add(bitmap);
+                }
 
-                return bitmap;
+                return bitmaps;
             }
         }
-		public Task<Bitmap> GetRawImage(string item, int maxWidth, int maxHeight)
-		{
-			return GetProcessedImage(item, maxWidth, maxHeight);
-		}
-
-		public async Task<Bitmap> GetProcessedImage(string item, int maxWidth, int maxHeight)
+        public async Task<ICollection<Bitmap>> GetImage(string item, int maxWidth, int maxHeight)
         {
             var file = _file.TraversePath(item);
             if (file == null || !file.Exists) return null;
