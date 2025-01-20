@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
@@ -425,10 +426,10 @@ namespace Sledge.BspEditor.Tools.Texture
             ControlInvalidated();
         }
 
-        private Task<Bitmap> GetTextureBitmap(string name, int maxWidth, int maxHeight)
+        private Task<ICollection<Bitmap>> GetTextureBitmap(string name, int maxWidth, int maxHeight)
         {
-            if (_streamSource == null) return Task.FromResult<Bitmap>(null);
-            return _streamSource.GetProcessedImage(name, maxWidth, maxHeight);
+            if (_streamSource == null) return Task.FromResult<ICollection<Bitmap>>(null);
+            return _streamSource.GetImage(name, maxWidth, maxHeight);
         }
 
         private void UpdateTextureList()
@@ -554,8 +555,8 @@ namespace Sledge.BspEditor.Tools.Texture
         /// </summary>
         private class TextureControl : IDisposable
         {
-            private readonly Func<string, int, int, Task<Bitmap>> _getTextureBitmap;
-            private Task<Bitmap> _bitmapTask;
+            private readonly Func<string, int, int, Task<ICollection<Bitmap>>> _getTextureBitmap;
+            private Task<ICollection<Bitmap>> _bitmapTask;
 
             private readonly Action _invalidated;
 
@@ -605,7 +606,7 @@ namespace Sledge.BspEditor.Tools.Texture
                 Size = new Size(imageWidth + Padding * 2, imageHeight + Padding * 2 + FontHeight);
             }
 
-            public TextureControl(string textureName, Func<string, int, int, Task<Bitmap>> getTextureBitmap, Action invalidated)
+            public TextureControl(string textureName, Func<string, int, int, Task<ICollection<Bitmap>>> getTextureBitmap, Action invalidated)
             {
                 _getTextureBitmap = getTextureBitmap;
                 _invalidated = invalidated;
@@ -638,7 +639,7 @@ namespace Sledge.BspEditor.Tools.Texture
                 // Draw the image (if it's loaded)
                 if (_bitmapTask != null && _bitmapTask.IsCompleted)
                 {
-                    var img = _bitmapTask.Result;
+                    var img = _bitmapTask.Result.First();
                     if (img != null)
                     {
                         DrawImage(g, img, x + Padding, y + Padding, Size.Width - Padding * 2, Size.Height - Padding * 2 - FontHeight);
@@ -670,16 +671,30 @@ namespace Sledge.BspEditor.Tools.Texture
                 Release();
             }
 
-            /// <summary>
-            /// Release the bitmap held by this control, but ensure it can be re-created if required.
-            /// </summary>
-            public void Release()
+			/// <summary>
+			/// Release the bitmap held by this control, but ensure it can be re-created if required.
+			/// </summary>
+			public void Release()
             {
-                _bitmapTask?.ContinueWith(x =>
+				_bitmapTask?.ContinueWith<ICollection<Bitmap>>(task =>
                 {
-                    x.Result?.Dispose();
-                    x.Dispose();
-                });
+					ICollection<Bitmap> bitmaps = task.Result;
+                    if (bitmaps != null)
+                    {
+                        foreach (var bitmap in bitmaps)
+                        {
+                            bitmap.Dispose();
+                        }
+						// Dispose the collection if needed (depends on the actual type of the collection)
+						if (bitmaps is IDisposable disposableCollection)
+						{
+							disposableCollection.Dispose();
+						}
+					}
+                    task.Dispose ();
+
+                    return bitmaps;
+                }, TaskScheduler.FromCurrentSynchronizationContext());
                 _bitmapTask = null;
             }
         }

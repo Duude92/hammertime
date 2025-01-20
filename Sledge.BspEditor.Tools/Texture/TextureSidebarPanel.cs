@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.Composition;
 using System.Drawing;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
@@ -129,7 +130,7 @@ namespace Sledge.BspEditor.Tools.Texture
                 {
                     using (var ss = tc.GetStreamSource())
                     {
-                        bmp = await ss.GetProcessedImage(selection, 256, 256);
+                        bmp = (await ss.GetImage(selection, 256, 256)).First();
                     }
                 }
             }
