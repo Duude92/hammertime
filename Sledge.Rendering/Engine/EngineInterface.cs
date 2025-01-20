@@ -63,6 +63,10 @@ namespace Sledge.Rendering.Engine
 		{
 			return Engine.Instance.Context.ResourceLoader.UploadTexture(name, width, height, data, sampleType);
 		}
+		public Texture UploadTexture(string name, int width, int height, byte[] data, TextureSampleType sampleType, int frameNum)
+		{
+			return Engine.Instance.Context.ResourceLoader.UploadTexture(name, width, height, data, sampleType, frameNum);
+		}
 		/// <summary>
 		/// Upload a texture to the engine.
 		/// A texture is a resource that is internally managed by the engine.
