@@ -22,6 +22,12 @@ cbuffer Projection
     matrix Model;
     matrix View;
     matrix Projection;
+}
+cbuffer UVBuffer
+{
+    float FrameCount;
+    float CurrentFrame;
+    float2 UniformPadding;
 };
 
 [maxvertexcount(4)]
@@ -43,11 +49,14 @@ void main(point GeometryIn input[1], inout TriangleStream<FragmentIn> output)
     verts[2] = -right - up;
     verts[3] = +right - up;
 
+    float column = CurrentFrame % FrameCount;
+    float frameSize = 1.0 / FrameCount;
+    
     float2 texCoords[4];
-    texCoords[0] = float2(0, 0);
-    texCoords[1] = float2(1, 0);
-    texCoords[2] = float2(0, 1);
-    texCoords[3] = float2(1, 1);
+    texCoords[0] = float2(column * frameSize, 0);
+    texCoords[1] = float2((column * frameSize) + frameSize, 0);
+    texCoords[2] = float2(column * frameSize, 1);
+    texCoords[3] = float2((column * frameSize) + frameSize, 1);
 
     FragmentIn gOut;
 
