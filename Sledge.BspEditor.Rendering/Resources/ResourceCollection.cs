@@ -56,7 +56,8 @@ namespace Sledge.BspEditor.Rendering.Resources
 			var rlist = _resources[environment.ID];
 
 			// Check if the model has already been loaded
-			var existing = mlist.FirstOrDefault(x => string.Equals(x.Name, path, StringComparison.InvariantCultureIgnoreCase));
+            var existing = mlist.FirstOrDefault(x =>
+                string.Equals(x.Name, path, StringComparison.InvariantCultureIgnoreCase));
 			if (existing != null) return existing.Model;
 
 			// Find the file
@@ -154,26 +155,45 @@ namespace Sledge.BspEditor.Rendering.Resources
 			if (!_resources.ContainsKey(environment.ID)) _resources.TryAdd(environment.ID, new List<IResource>());
 		}
 
-		private async Task<IResource> UploadTexture(IEnvironment environment, TextureItem item, ITextureStreamSource source)
+        private async Task<IResource> UploadTexture(IEnvironment environment, TextureItem item,
+            ITextureStreamSource source)
+        {
+            var bitmaps = await source.GetImage(item.Name, 512, 512);
+            var firstbitmap = bitmaps.First();
+            var combinedBitmap = new Bitmap(firstbitmap.Width * bitmaps.Count, firstbitmap.Height);
+            int i = 0;
+            foreach (var bitmap in bitmaps)
 		{
-			using (var bitmap = await source.GetProcessedImage(item.Name, 512, 512))
+                using (Graphics g = Graphics.FromImage(combinedBitmap))
 			{
-				var lb = bitmap.LockBits(new Rectangle(0, 0, item.Width, item.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+                    g.DrawImage(bitmap, firstbitmap.Width * i, 0);
+                }
+
+                i++;
+            }
+
+            var lb = combinedBitmap.LockBits(new Rectangle(0, 0, item.Width, item.Height), ImageLockMode.ReadOnly,
+                PixelFormat.Format32bppArgb);
 				var data = new byte[lb.Stride * lb.Height];
 				Marshal.Copy(lb.Scan0, data, 0, data.Length);
-				bitmap.UnlockBits(lb);
+            combinedBitmap.UnlockBits(lb);
 
-				return _engine.Value.UploadTexture($"{environment.ID}::{item.Name}", bitmap.Width, bitmap.Height, data, TextureSampleType.Standard);
+
+            return _engine.Value.UploadTexture($"{environment.ID}::{item.Name}", combinedBitmap.Width,
+                combinedBitmap.Height, data, TextureSampleType.Standard, bitmaps.Count);
 			}
 		}
 		public async Task<Texture> UploadCubemap(CompositeFile file)
 		{
 			try
 			{
-				var cubeFiles = file.GetCompositeFiles().Select(x => SixLabors.ImageSharp.Image.Load<Rgba32>(x.FullPathName)).ToList();
-				return _engine.Value.UploadCubemap(file.NameWithoutExtension.Substring(0, file.NameWithoutExtension.Length - 2), cubeFiles);
+                var cubeFiles = file.GetCompositeFiles()
+                    .Select(x => SixLabors.ImageSharp.Image.Load<Rgba32>(x.FullPathName)).ToList();
+                return _engine.Value.UploadCubemap(
+                    file.NameWithoutExtension.Substring(0, file.NameWithoutExtension.Length - 2), cubeFiles);
 			}
-			catch {
+            catch
+            {
 				return null;
 			}
 		}
