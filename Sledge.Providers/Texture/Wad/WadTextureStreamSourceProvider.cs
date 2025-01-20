@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Threading.Tasks;
@@ -23,7 +25,7 @@ namespace Sledge.Providers.Texture.Wad
             return _stream.HasEntry(item);
         }
 
-        public async Task<Bitmap> GetProcessedImage(string item, int maxWidth, int maxHeight)
+        public async Task<ICollection<Bitmap>> GetImage(string item, int maxWidth, int maxHeight)
         {
             var entry = _stream.GetEntry(item);
             if (entry == null) return null;
@@ -32,7 +34,7 @@ namespace Sledge.Providers.Texture.Wad
             {
                 using (var s = _stream.OpenEntry(entry))
                 {
-                    return PostProcessBitmap(_package.File.Name, entry.Name, new Bitmap(s));
+                    return new Collection<Bitmap>() { PostProcessBitmap(_package.File.Name, entry.Name, new Bitmap(s)) } as ICollection<Bitmap>;
                 }
             });
         }

@@ -1,4 +1,6 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Drawing;
 using System.Drawing.Imaging;
 using System.Threading.Tasks;
 
@@ -23,20 +25,16 @@ namespace Sledge.Providers.Texture
             return true;
         }
 
-        public Task<Bitmap> GetProcessedImage(string item, int maxWidth, int maxHeight)
+        public Task<ICollection<Bitmap>> GetImage(string item, int maxWidth, int maxHeight)
         {
             return Task.Factory.StartNew(() =>
             {
                 lock (PlaceholderImage)
                 {
-                    return new Bitmap(PlaceholderImage);
+                    return new Collection<Bitmap> { new Bitmap(PlaceholderImage) } as ICollection<Bitmap>;
                 }
             });
         }
-		public Task<Bitmap> GetRawImage(string item, int maxWidth, int maxHeight)
-		{
-			return GetProcessedImage(item, maxWidth, maxHeight);
-		}
 
 		public void Dispose()
         {
