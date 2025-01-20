@@ -72,7 +72,11 @@ namespace Sledge.Rendering.Engine
         // Textures
         private readonly ConcurrentDictionary<string, Texture> _textures = new ConcurrentDictionary<string, Texture>(StringComparer.InvariantCultureIgnoreCase);
 
-        internal Texture UploadTexture(string name, int width, int height, byte[] data, TextureSampleType sampleType)
+		internal Texture UploadTexture(string name, int width, int height, byte[] data, TextureSampleType sampleType, int frameNum)
+		{
+			return _textures.GetOrAdd(name, n => new Texture(_context, width, height, data, sampleType, frameNum));
+		}
+		internal Texture UploadTexture(string name, int width, int height, byte[] data, TextureSampleType sampleType)
         {
 			return _textures.GetOrAdd(name, n => new Texture(_context, width, height, data, sampleType));
         }

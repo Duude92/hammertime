@@ -5,23 +5,29 @@ using Vulkan;
 
 namespace Sledge.Rendering.Resources
 {
-    public class Texture : IResource
-    {
-        protected Veldrid.Texture _texture;
-        protected TextureView _view;
-        protected ResourceSet _set;
+	public class Texture : IResource
+	{
+		protected Veldrid.Texture _texture;
+		protected TextureView _view;
+		protected ResourceSet _set;
 
-        protected bool _mipsGenerated;
-        public Texture() { }
-        public Texture(RenderContext context, Veldrid.Texture texture, TextureSampleType sampleType, ResourceSet resourceSet)
-        {
-            _texture = texture;
+		protected bool _mipsGenerated;
+		public int FrameCount => _frameCount;
+		private int _frameCount = 1;
+		public Texture() { }
+		public Texture(RenderContext context, Veldrid.Texture texture, TextureSampleType sampleType, ResourceSet resourceSet)
+		{
+			_texture = texture;
 			var device = context.Device;
 			var sampler = context.ResourceLoader.TextureSampler;
 			if (sampleType == TextureSampleType.Point) sampler = context.ResourceLoader.OverlaySampler;
 
 			_view = device.ResourceFactory.CreateTextureView(_texture);
-            _set = resourceSet;
+			_set = resourceSet;
+		}
+		public Texture(RenderContext context, int width, int height, byte[] data, TextureSampleType sampleType, int frameCount) : this(context, width, height, data, sampleType)
+		{
+			_frameCount = frameCount > 0 ? frameCount : 1;
 		}
 		public Texture(RenderContext context, int width, int height, byte[] data, TextureSampleType sampleType)
 		{
@@ -95,30 +101,29 @@ namespace Sledge.Rendering.Resources
 		}
 
 		public void CreateResources(EngineInterface engine, RenderContext context)
-        {
-            // The resources are created in the constructor
-        }
-        public void BindTo(CommandList cl, uint slot)
-        {
-            if (!_mipsGenerated)
-            {
-                cl.GenerateMipmaps(_texture);
-                _mipsGenerated = true;
-            }
+		{
+			// The resources are created in the constructor
+		}
+		public void BindTo(CommandList cl, uint slot)
+		{
+			if (!_mipsGenerated)
+			{
+				cl.GenerateMipmaps(_texture);
+				_mipsGenerated = true;
+			}
+			cl.SetGraphicsResourceSet(slot, _set);
+		}
 
-            cl.SetGraphicsResourceSet(slot, _set);
-        }
+		public void DestroyResources()
+		{
+			// For consistency to match the constructor, the resources are destroyed in the dispose function
+		}
 
-        public void DestroyResources()
-        {
-            // For consistency to match the constructor, the resources are destroyed in the dispose function
-        }
-
-        public void Dispose()
-        {
-            _set.Dispose();
-            _view.Dispose();
-            _texture.Dispose();
-        }
-    }
+		public void Dispose()
+		{
+			_set.Dispose();
+			_view.Dispose();
+			_texture.Dispose();
+		}
+	}
 }
