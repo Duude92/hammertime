@@ -8,6 +8,7 @@ using Sledge.BspEditor.Environment;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.ChangeHandling;
 using Sledge.BspEditor.Primitives.MapObjects;
+using Sledge.BspEditor.Rendering.Resources;
 using Sledge.DataStructures.GameData;
 using Sledge.DataStructures.Geometric;
 
@@ -17,7 +18,15 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
     public class EntitySpriteChangeHandler : IMapDocumentChangeHandler
     {
         public string OrderHint => "M";
+        private readonly Lazy<ResourceCollection> _resourceCollection;
 
+        [ImportingConstructor]
+        public EntitySpriteChangeHandler(
+            [Import] Lazy<ResourceCollection> resourceCollection
+        )
+        {
+            _resourceCollection = resourceCollection;
+        }
         public async Task Changed(Change change)
         {
             var gd = await change.Document.Environment.GetGameData();
@@ -32,7 +41,7 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
             }
         }
 
-        private static async Task<EntitySprite> CreateSpriteData(Entity entity, MapDocument doc, GameData gd, TextureCollection tc, string name)
+        private async Task<EntitySprite> CreateSpriteData(Entity entity, MapDocument doc, GameData gd, TextureCollection tc, string name)
         {
             if (!tc.HasTexture(name)) return null;
 
@@ -66,8 +75,9 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
                     size = texture.Size;
                 }
             }
+            var renderable = await _resourceCollection.Value.CreateSpriteRenderable(doc.Environment, name);
 
-            return new EntitySprite(name, scale, color, size);
+            return new EntitySprite(name, scale, color, size, renderable, entity);
         }
 
         private static string GetSpriteName(Entity entity, GameData gd)

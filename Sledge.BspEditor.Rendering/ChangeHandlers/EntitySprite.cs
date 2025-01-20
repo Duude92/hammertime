@@ -7,24 +7,29 @@ using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Transport;
 using Sledge.DataStructures.Geometric;
+using Sledge.Rendering.Interfaces;
 
 namespace Sledge.BspEditor.Rendering.ChangeHandlers
 {
     public class EntitySprite : IMapObjectData, IContentsReplaced, IBoundingBoxProvider
     {
+        private readonly IMapObject _mapObject;
         public string Name { get; set; }
         public float Scale { get; }
         public Color Color { get; set; }
         public SizeF Size { get; }
+		public IModelRenderable Renderable { get; }
 
-        public bool ContentsReplaced => !string.IsNullOrWhiteSpace(Name);
+		public bool ContentsReplaced => !string.IsNullOrWhiteSpace(Name);
 
-        public EntitySprite(string name, float scale, Color color, SizeF? size)
+        public EntitySprite(string name, float scale, Color color, SizeF? size, IModelRenderable renderable, IMapObject mapObject)
         {
             Name = name;
             Scale = scale;
             Color = color;
             Size = size ?? SizeF.Empty;
+            Renderable = renderable;
+            _mapObject = mapObject;
         }
 
         public EntitySprite(SerialisedObject obj)
@@ -52,6 +57,7 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
             if (string.IsNullOrWhiteSpace(Name) || Size.IsEmpty) return null;
             var origin = obj.Data.GetOne<Origin>()?.Location ?? Vector3.Zero;
             var half = new Vector3(Size.Width, Size.Width, Size.Height) * Scale / 2;
+            Renderable.Origin = origin;
             return new Box(origin - half, origin + half);
         }
 
@@ -62,7 +68,7 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
 
         public IMapElement Clone()
         {
-            return new EntitySprite(Name, Scale, Color, Size);
+            return new EntitySprite(Name, Scale, Color, Size, null, null);
         }
 
         public SerialisedObject ToSerialisedObject()
