@@ -7,6 +7,7 @@ using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Transport;
 using Sledge.DataStructures.Geometric;
+using Sledge.Providers.Texture.Spr;
 using Sledge.Rendering.Interfaces;
 
 namespace Sledge.BspEditor.Rendering.ChangeHandlers
@@ -22,7 +23,7 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
 
 		public bool ContentsReplaced => !string.IsNullOrWhiteSpace(Name);
 
-        public EntitySprite(string name, float scale, Color color, SizeF? size, IModelRenderable renderable, IMapObject mapObject)
+        public EntitySprite(string name, float scale, Color color, SizeF? size, IModelRenderable renderable, Entity mapObject)
         {
             Name = name;
             Scale = scale;
