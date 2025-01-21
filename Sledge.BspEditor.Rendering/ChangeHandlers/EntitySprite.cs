@@ -14,12 +14,12 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
 {
     public class EntitySprite : IMapObjectData, IContentsReplaced, IBoundingBoxProvider
     {
-        private readonly IMapObject _mapObject;
+        private readonly Entity _mapObject;
         public string Name { get; set; }
         public float Scale { get; }
         public Color Color { get; set; }
         public SizeF Size { get; }
-		public IModelRenderable Renderable { get; }
+		public SpriteRenderable Renderable { get; }
 
 		public bool ContentsReplaced => !string.IsNullOrWhiteSpace(Name);
 
@@ -29,8 +29,9 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
             Scale = scale;
             Color = color;
             Size = size ?? SizeF.Empty;
-            Renderable = renderable;
+            Renderable = renderable as SpriteRenderable;
             _mapObject = mapObject;
+			Renderable.Framerate =(int) mapObject.EntityData.Get<float>("framerate", 1);
         }
 
         public EntitySprite(SerialisedObject obj)
