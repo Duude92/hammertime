@@ -105,36 +105,13 @@ namespace Sledge.Providers.Texture.Spr
 			cl.UpdateBuffer(_uvBuffer, 0, uv);
 			cl.SetGraphicsResourceSet(1, _uvProjectionSet);
 
-
-			// var entity = (Entity) mapo;
-			//
-			// var sd = GetSpriteData(entity);
-			// if (sd == null || !sd.ContentsReplaced) return;
-			//
-			// var name = sd.Name;
-			// var scale = sd.Scale;
-			//
-			// var width = entity.BoundingBox.Width;
-			// var height = entity.BoundingBox.Height;
-			//
-			// var t = await tc.GetTextureItem(name);
-			//
-			// var texture = $"{document.Environment.ID}::{name}";
-			// if (t != null) resourceCollector.RequireTexture(t.Name);
-			//
-			// var tint = sd.Color.ToVector4();
-			//
-			// var flags = VertexFlags.None;
-			// if (entity.IsSelected) flags |= VertexFlags.SelectiveTransformed;
-
-
 			_buffer.Update(
 				new[]
 				{
 					new VertexStandard
 					{
-						Position = Origin, Normal = new Vector3(_textureItem.Width, _textureItem.Height, 0),
-						Colour = Vector4.One, Tint = Vector4.One, Flags = VertexFlags.None
+						Position = Origin, Normal = new Vector3(_textureItem.Width * Scale, _textureItem.Height * Scale, 0),
+						Colour = Vector4.One, Tint = Tint, Flags = VertexFlags.None
 					}
 				},
 				new[] { 0u }
