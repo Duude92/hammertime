@@ -25,9 +25,15 @@ namespace Sledge.Providers.Texture.Spr
 		private readonly TextureItem _textureItem;
 		private Buffer _buffer;
 		public Vector3 Origin { get; set; }
+		public Vector3 Origin
+		{
+			get => _location.Location;
+			set => _location.Location = value;
+		}
 		public Vector3 Angles { get; set; }
 		public int Sequence { get; set; }
 
+		private SpriteLocation _location = new SpriteLocation();
 
 		public SpriteRenderable(Rendering.Resources.Texture texture, TextureItem item)
 		{
@@ -73,7 +79,7 @@ namespace Sledge.Providers.Texture.Spr
 
 		public IEnumerable<ILocation> GetLocationObjects(IPipeline pipeline, IViewport viewport)
 		{
-			yield break;
+			yield return _location;
 		}
 
 		public Matrix4x4 GetModelTransformation()
@@ -163,6 +169,10 @@ namespace Sledge.Providers.Texture.Spr
 		public void Update(long frame)
 		{
 			Sequence++;
+		}
+		public class SpriteLocation : ILocation
+		{
+			public Vector3 Location { get; set; }
 		}
 	}
 }
