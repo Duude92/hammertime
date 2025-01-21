@@ -18,13 +18,14 @@ namespace Sledge.Providers.Texture.Spr
 	public class SpriteRenderable : IModelRenderable
 	{
 		public IModel Model => null;
+		public int Framerate = 10;
 		private readonly Rendering.Resources.Texture _texture;
 		private ResourceLayout _uvLayout;
 		private DeviceBuffer _uvBuffer;
 		private ResourceSet _uvProjectionSet;
 		private readonly TextureItem _textureItem;
 		private Buffer _buffer;
-		public Vector3 Origin { get; set; }
+		private double _interframePercent;
 		public Vector3 Origin
 		{
 			get => _location.Location;
@@ -34,6 +35,7 @@ namespace Sledge.Providers.Texture.Spr
 		public int Sequence { get; set; }
 
 		private SpriteLocation _location = new SpriteLocation();
+		private long _lastFrameTime;
 
 		public SpriteRenderable(Rendering.Resources.Texture texture, TextureItem item)
 		{
@@ -170,7 +172,16 @@ namespace Sledge.Providers.Texture.Spr
 
 		public void Update(long frame)
 		{
-			Sequence++;
+			double targetFps = 1000 / Framerate;
+			double diff = frame - _lastFrameTime;
+			_interframePercent += diff / targetFps;
+
+			var skip = (int)_interframePercent;
+			_interframePercent -= skip;
+
+			Sequence = (Sequence + skip) % _texture.FrameCount;
+
+			_lastFrameTime = frame;
 		}
 		public class SpriteLocation : ILocation
 		{
