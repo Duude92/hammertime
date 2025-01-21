@@ -146,6 +146,8 @@ namespace Sledge.Providers.Texture.Spr
 		public void Render(RenderContext context, IPipeline pipeline, IViewport viewport, CommandList cl,
 			ILocation locationObject)
 		{
+			Render(context, pipeline, viewport, cl);
+			return;
 			var frameCount = _texture == null ? 1 : (float)_texture.FrameCount;
 
 			context.Device.UpdateBuffer(_uvBuffer, 0, new BillboardUV
