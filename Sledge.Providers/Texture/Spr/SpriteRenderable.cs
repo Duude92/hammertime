@@ -18,7 +18,6 @@ namespace Sledge.Providers.Texture.Spr
 	public class SpriteRenderable : IModelRenderable
 	{
 		public IModel Model => null;
-		public int Framerate = 10;
 		private readonly Rendering.Resources.Texture _texture;
 		private ResourceLayout _uvLayout;
 		private DeviceBuffer _uvBuffer;
@@ -33,6 +32,9 @@ namespace Sledge.Providers.Texture.Spr
 		}
 		public Vector3 Angles { get; set; }
 		public int Sequence { get; set; }
+		public int Framerate { get; set; } = 10;
+		public float Scale { get; set; } = 1;
+		public Vector4 Tint { get; set; } = Vector4.One;
 
 		private SpriteLocation _location = new SpriteLocation();
 		private long _lastFrameTime;

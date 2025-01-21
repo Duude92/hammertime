@@ -12,76 +12,76 @@ using Sledge.Rendering.Interfaces;
 
 namespace Sledge.BspEditor.Rendering.ChangeHandlers
 {
-    public class EntitySprite : IMapObjectData, IContentsReplaced, IBoundingBoxProvider
-    {
-        private readonly Entity _mapObject;
-        public string Name { get; set; }
-        public float Scale { get; }
-        public Color Color { get; set; }
-        public SizeF Size { get; }
+	public class EntitySprite : IMapObjectData, IContentsReplaced, IBoundingBoxProvider
+	{
+		public string Name { get; set; }
+		public float Scale { get; }
+		public Color Color { get; set; }
+		public SizeF Size { get; }
 		public SpriteRenderable Renderable { get; }
 
 		public bool ContentsReplaced => !string.IsNullOrWhiteSpace(Name);
 
-        public EntitySprite(string name, float scale, Color color, SizeF? size, IModelRenderable renderable, Entity mapObject)
-        {
-            Name = name;
-            Scale = scale;
-            Color = color;
-            Size = size ?? SizeF.Empty;
-            Renderable = renderable as SpriteRenderable;
-            _mapObject = mapObject;
-			Renderable.Framerate =(int) mapObject.EntityData.Get<float>("framerate", 1);
-        }
+		public EntitySprite(string name, float scale, Color color, SizeF? size, int framerate, IModelRenderable renderable)
+		{
+			Name = name;
+			Scale = scale;
+			Color = color;
+			Size = size ?? SizeF.Empty;
+			Renderable = renderable as SpriteRenderable;
+			Renderable.Framerate = framerate;
+			Renderable.Scale = scale;
+			Renderable.Tint = color.ToVector4();
+		}
 
-        public EntitySprite(SerialisedObject obj)
-        {
-            Name = obj.Get<string>("Name");
-            Scale = obj.Get<float>("Scale");
-            Color = obj.GetColor("Color");
-            Size = new SizeF(obj.Get<float>("Width"), obj.Get<float>("Height"));
-        }
+		public EntitySprite(SerialisedObject obj)
+		{
+			Name = obj.Get<string>("Name");
+			Scale = obj.Get<float>("Scale");
+			Color = obj.GetColor("Color");
+			Size = new SizeF(obj.Get<float>("Width"), obj.Get<float>("Height"));
+		}
 
-        [Export(typeof(IMapElementFormatter))]
-        public class ActiveTextureFormatter : StandardMapElementFormatter<EntitySprite> { }
+		[Export(typeof(IMapElementFormatter))]
+		public class ActiveTextureFormatter : StandardMapElementFormatter<EntitySprite> { }
 
-        public void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            info.AddValue("Name", Name);
-            info.AddValue("Scale", Scale);
-            info.AddValue("Color", Color);
-            info.AddValue("Width", Size.Width);
-            info.AddValue("Height", Size.Height);
-        }
+		public void GetObjectData(SerializationInfo info, StreamingContext context)
+		{
+			info.AddValue("Name", Name);
+			info.AddValue("Scale", Scale);
+			info.AddValue("Color", Color);
+			info.AddValue("Width", Size.Width);
+			info.AddValue("Height", Size.Height);
+		}
 
-        public Box GetBoundingBox(IMapObject obj)
-        {
-            if (string.IsNullOrWhiteSpace(Name) || Size.IsEmpty) return null;
-            var origin = obj.Data.GetOne<Origin>()?.Location ?? Vector3.Zero;
-            var half = new Vector3(Size.Width, Size.Width, Size.Height) * Scale / 2;
-            Renderable.Origin = origin;
-            return new Box(origin - half, origin + half);
-        }
+		public Box GetBoundingBox(IMapObject obj)
+		{
+			if (string.IsNullOrWhiteSpace(Name) || Size.IsEmpty) return null;
+			var origin = obj.Data.GetOne<Origin>()?.Location ?? Vector3.Zero;
+			var half = new Vector3(Size.Width, Size.Width, Size.Height) * Scale / 2;
+			Renderable.Origin = origin;
+			return new Box(origin - half, origin + half);
+		}
 
-        public IMapElement Copy(UniqueNumberGenerator numberGenerator)
-        {
-            return Clone();
-        }
+		public IMapElement Copy(UniqueNumberGenerator numberGenerator)
+		{
+			return Clone();
+		}
 
-        public IMapElement Clone()
-        {
-            return new EntitySprite(Name, Scale, Color, Size, null, null);
-        }
+		public IMapElement Clone()
+		{
+			return new EntitySprite(Name, Scale, Color, Size, Renderable.Framerate, null);
+		}
 
-        public SerialisedObject ToSerialisedObject()
-        {
-            var so = new SerialisedObject(nameof(EntitySprite));
-            so.Set(nameof(Name), Name);
-            so.Set(nameof(Scale), Scale);
-            so.SetColor(nameof(Color), Color);
-            so.Set("Width", Size.Width);
-            so.Set("Height", Size.Height);
-            return so;
-        }
-    }
+		public SerialisedObject ToSerialisedObject()
+		{
+			var so = new SerialisedObject(nameof(EntitySprite));
+			so.Set(nameof(Name), Name);
+			so.Set(nameof(Scale), Scale);
+			so.SetColor(nameof(Color), Color);
+			so.Set("Width", Size.Width);
+			so.Set("Height", Size.Height);
+			return so;
+		}
+	}
 }

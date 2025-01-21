@@ -67,6 +67,7 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
 			var cls = gd?.GetClass(entity.EntityData.Name);
 			var scale = 1f;
 			var color = Color.White;
+			var framerate = 10;
 			SizeF? size = new SizeF(entity.BoundingBox.Width, entity.BoundingBox.Height);
 
 			if (cls != null)
@@ -90,10 +91,14 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
 				{
 					size = texture.Size;
 				}
+				if (cls.Behaviours.Any(x => string.Equals(x.Name, "framerate", StringComparison.InvariantCultureIgnoreCase)))
+				{
+					framerate = (int)entity.EntityData.Get<float>("framerate", 1);
+				}
 			}
 			var renderable = await _resourceCollection.Value.CreateSpriteRenderable(doc.Environment, name);
 
-			return new EntitySprite(name, scale, color, size, renderable, entity);
+			return new EntitySprite(name, scale, color, size, framerate, renderable);
 		}
 
 		private static string GetSpriteName(Entity entity, GameData gd)
