@@ -171,6 +171,7 @@ namespace Sledge.Providers.Model.Mdl10
 					for (var i = 0; i < mesh.Vertices.Length; i++)
 					{
 						var x = mesh.Vertices[i];
+						x.Texture = new Vector2(float.IsNaN(x.Texture.X) ? x.Vertex.X : x.Texture.X, float.IsNaN(x.Texture.Y) ? x.Vertex.Z : x.Texture.Y);
 						var origRect = _originalRectangles.Count > texId ? _originalRectangles[texId] : Rectangle.Empty;
 
 						var coeff = maxTexSize / new Vector2(origRect.Width, origRect.Height);
