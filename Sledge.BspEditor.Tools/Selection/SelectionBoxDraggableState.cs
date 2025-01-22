@@ -48,7 +48,7 @@ namespace Sledge.BspEditor.Tools.Selection
                 Update();
             }
         }
-
+        private readonly MoveWidget _scaleWidget;
         private readonly RotationWidget _rotationWidget;
 
         public SelectionBoxDraggableState(SelectTool tool) : base(tool)
@@ -56,7 +56,8 @@ namespace Sledge.BspEditor.Tools.Selection
             _tool = tool;
             Widgets = new List<Widget>
             {
-                (_rotationWidget = new RotationWidget(tool.GetDocument()) { Active = false })
+                (_rotationWidget = new RotationWidget(tool.GetDocument()) { Active = false }),
+                (_scaleWidget = new MoveWidget(tool.GetDocument()) {Active = false})
             };
             BindWidgets();
         }
@@ -211,7 +212,7 @@ namespace Sledge.BspEditor.Tools.Selection
 
             _rotationOrigin.Position = new Box(State.Start, State.End).Center;
 
-            //_scaleWidget.Active = _currentTransformationMode == TransformationMode.Resize;
+            _scaleWidget.Active = CurrentTransformationMode == TransformationMode.Resize && ShowWidgets;
             _rotationWidget.Active = CurrentTransformationMode == TransformationMode.Rotate && ShowWidgets;
             //_skewWidget.Active = _currentTransformationMode == TransformationMode.Skew;
 
