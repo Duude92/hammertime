@@ -1,6 +1,7 @@
 ﻿using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Rendering.Resources;
 using Sledge.BspEditor.Rendering.Viewport;
+using Sledge.BspEditor.Tools.Selection;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Overlay;
@@ -23,6 +24,8 @@ namespace Sledge.BspEditor.Tools.Widgets
 		public override bool IsUniformTransformation => true;
 
 		public override bool IsScaleTransformation => false;
+
+		public override SelectionBoxDraggableState.TransformationMode WidgetTransformationMode => SelectionBoxDraggableState.TransformationMode.Resize;
 
 		public MoveWidget(MapDocument document)
 		{

@@ -9,6 +9,7 @@ using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Overlay;
 using Sledge.Rendering.Viewports;
+using static Sledge.BspEditor.Tools.Selection.SelectionBoxDraggableState;
 using Plane = Sledge.DataStructures.Geometric.Plane;
 
 
@@ -22,6 +23,7 @@ namespace Sledge.BspEditor.Tools.Widgets
 		protected Vector3? _mouseMovePoint;
 		protected AxisType _mouseOver;
 		protected readonly List<CachedLines> _cachedLines = new List<CachedLines>();
+		public abstract TransformationMode WidgetTransformationMode { get; }
 
 		public class CachedLines
 		{
