@@ -8,10 +8,12 @@ using Sledge.Rendering.Pipelines;
 using Sledge.Rendering.Primitives;
 using Sledge.Rendering.Resources;
 using Sledge.Rendering.Viewports;
+using Sledge.Shell.Input;
 using System;
 using System.Drawing;
 using System.Linq;
 using System.Numerics;
+using static System.Net.Mime.MediaTypeNames;
 using Plane = Sledge.DataStructures.Geometric.Plane;
 
 namespace Sledge.BspEditor.Tools.Widgets
@@ -110,6 +112,93 @@ namespace Sledge.BspEditor.Tools.Widgets
 
 		private void RenderMoveTypeNone(PerspectiveCamera camera, I2DRenderer im, IViewport viewport)
 		{
+			var origin = Pivot;
+
+			var center = Pivot;
+
+			var distance = (camera.EyeLocation - origin).Length();
+			if (distance <= 1) return;
+
+			// Ensure points that can't be projected properly don't get rendered
+			var screenOrigin = camera.WorldToScreen(origin);
+			var sop = new PointF(screenOrigin.X, screenOrigin.Y);
+			var rec = new RectangleF(-200, -200, camera.Width + 400, camera.Height + 400);
+			if (!rec.Contains(sop)) return;
+
+			var radius = 0.3f * distance;
+
+			var normal = Vector3.Normalize(Vector3.Subtract(camera.EyeLocation, origin));
+			var right = Vector3.Normalize(Vector3.Cross(normal, Vector3.UnitZ));
+			var up = Vector3.Normalize(Vector3.Cross(normal, right));
+
+			const int sides = 3;
+			var plane = new Plane(normal, Vector3.Dot(origin, normal));
+
+			for (var i = 0; i < sides; i++)
+			{
+				RenderLine(
+					(origin - Vector3.UnitX),
+					(origin + Vector3.UnitX * radius),
+					plane,
+					_mouseOver == AxisType.X ? Color.Red : Color.DarkRed,
+					camera,
+					im
+					);
+				RenderLine(
+					(origin - Vector3.UnitY),
+					(origin + Vector3.UnitY * radius),
+					plane,
+					_mouseOver == AxisType.Y ? Color.Lime : Color.LimeGreen,
+					camera,
+					im
+					);
+				RenderLine(
+					(origin - Vector3.UnitZ),
+					(origin + Vector3.UnitZ * radius),
+					plane,
+					_mouseOver == AxisType.Z ? Color.Blue : Color.DarkBlue,
+					camera,
+					im
+					);
+			}
+		}
+		protected override Matrix4x4? GetTransformationMatrix(MapViewport viewport)
+		{
+			if (_mouseMovePoint == null || _mouseDownPoint == null) return null;
+
+			var originPoint = viewport.Viewport.Camera.WorldToScreen(Pivot);
+			var movementVector = _mouseMovePoint.Value - _mouseDownPoint.Value;
+
+			// Determine the axis based on _mouseDown
+			Vector3 axis;
+			switch (_mouseDown)
+			{
+				case AxisType.X:
+					axis = Vector3.UnitX;
+					break;
+				case AxisType.Y:
+					axis = Vector3.UnitY;
+					break;
+				case AxisType.Z:
+					axis = Vector3.UnitZ;
+					break;
+				case AxisType.Outer:
+				default:
+					axis = Vector3.Zero; // No movement if no axis is chosen
+					break;
+			}
+
+			// Project the movement vector onto the chosen axis
+			var projectedMovement = axis * Vector3.Dot(movementVector, axis);
+
+			// Create a translation matrix for the projected movement
+			var translationMatrix = Matrix4x4.CreateTranslation(projectedMovement);
+
+			return translationMatrix;
+		}
+
+		protected override void UpdateCache(IViewport viewport, PerspectiveCamera camera)
+		{
 			var ccl = camera.EyeLocation;
 			var ccla = camera.Position + camera.Direction;
 
@@ -160,54 +249,26 @@ namespace Sledge.BspEditor.Tools.Widgets
 
 			for (var i = 0; i < sides; i++)
 			{
-				AddLineInternal(AxisType.X,
+
+				AddLine(AxisType.X,
 					(origin - Vector3.UnitX),
 					(origin + Vector3.UnitX * radius),
 					plane,
-					cache,
-					camera,
-					im,
-					_mouseOver == AxisType.X ? Color.Red : Color.DarkRed
+					cache
 					);
-				AddLineInternal(AxisType.Y,
+				AddLine(AxisType.Y,
 					(origin - Vector3.UnitY),
 					(origin + Vector3.UnitY * radius),
 					plane,
-					cache,
-					camera,
-					im,
-					_mouseOver == AxisType.Y ? Color.Lime : Color.LimeGreen
+					cache
 					);
-				AddLineInternal(AxisType.Z,
+				AddLine(AxisType.Z,
 					(origin - Vector3.UnitZ),
 					(origin + Vector3.UnitZ * radius),
 					plane,
-					cache,
-					camera,
-					im,
-					_mouseOver == AxisType.Z ? Color.Blue : Color.DarkBlue
+					cache
 					);
 			}
-		}
-		private void AddLineInternal(Widget.AxisType type, Vector3 start, Vector3 end, Plane test, CachedLines cache, PerspectiveCamera camera, I2DRenderer im, Color color)
-		{
-			RenderLine(
-				start,
-				end,
-				test,
-				color,
-				camera, im);
-			AddLine(type, start, end, test, cache);
-		}
-
-		protected override Matrix4x4? GetTransformationMatrix(MapViewport viewport)
-		{
-			throw new NotImplementedException();
-		}
-
-		protected override void UpdateCache(IViewport viewport, PerspectiveCamera camera)
-		{
-			return;
 		}
 
 	}
