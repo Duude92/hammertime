@@ -1,5 +1,6 @@
 ﻿using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Rendering.Resources;
+using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Overlay;
@@ -20,58 +21,41 @@ namespace Sledge.BspEditor.Tools.Widgets
 
 		public override bool IsScaleTransformation => false;
 
-		private Vector3? _mouseMovePoint;
-		private Vector3 _pivotPoint = Vector3.Zero;
-		private MoveType _mouseOver;
-		private MoveType _mouseDown;
-		private Vector3? _mouseDownPoint;
-		private bool _autoPivot;
-
 		public MoveWidget(MapDocument document)
 		{
 			SetDocument(document);
 		}
 
-		public override void SelectionChanged()
-		{
-			var document = GetDocument();
-			if (document != null && document.Selection.IsEmpty) _autoPivot = true;
-			if (!_autoPivot) return;
-
-			var bb = document?.Selection.GetSelectionBoundingBox();
-			_pivotPoint = bb?.Center ?? Vector3.Zero;
-		}
-
 		protected override void Render(MapDocument document, BufferBuilder builder, ResourceCollector resourceCollector)
 		{
-			if (_mouseMovePoint.HasValue && _mouseDown != MoveType.None)
+			if (_mouseMovePoint.HasValue && _mouseDown != AxisType.None)
 			{
 				var axis = Vector3.One;
 				var c = Color.White;
 
 				switch (_mouseDown)
 				{
-					case MoveType.X:
+					case AxisType.X:
 						axis = Vector3.UnitX;
 						c = Color.Red;
 						break;
-					case MoveType.Y:
+					case AxisType.Y:
 						axis = Vector3.UnitY;
 						c = Color.Lime;
 						break;
-					case MoveType.Z:
+					case AxisType.Z:
 						axis = Vector3.UnitZ;
 						c = Color.Blue;
 						break;
-					case MoveType.Outer:
+					case AxisType.Outer:
 						if (ActiveViewport == null || !(ActiveViewport.Viewport.Camera is PerspectiveCamera pc)) return;
 						axis = pc.Direction;
 						c = Color.White;
 						break;
 				}
 
-				var start = _pivotPoint - axis * 1024 * 1024;
-				var end = _pivotPoint + axis * 1024 * 1024;
+				var start = Pivot - axis * 1024 * 1024;
+				var end = Pivot + axis * 1024 * 1024;
 
 				var col = new Vector4(c.R, c.G, c.B, c.A) / 255;
 
@@ -96,15 +80,15 @@ namespace Sledge.BspEditor.Tools.Widgets
 		{
 			if (!document.Selection.IsEmpty)
 			{
-				switch (_mouseMovePoint == null ? MoveType.None : _mouseDown)
+				switch (_mouseMovePoint == null ? AxisType.None : _mouseDown)
 				{
-					case MoveType.None:
+					case AxisType.None:
 						RenderMoveTypeNone(camera, im);
 						break;
-					case MoveType.Outer:
-					case MoveType.X:
-					case MoveType.Y:
-					case MoveType.Z:
+					case AxisType.Outer:
+					case AxisType.X:
+					case AxisType.Y:
+					case AxisType.Z:
 						RenderAxisRotating(viewport, camera, im);
 						break;
 				}
@@ -115,7 +99,7 @@ namespace Sledge.BspEditor.Tools.Widgets
 		{
 			if (ActiveViewport.Viewport != viewport || !_mouseDownPoint.HasValue || !_mouseMovePoint.HasValue) return;
 
-			var st = camera.WorldToScreen(_pivotPoint);
+			var st = camera.WorldToScreen(Pivot);
 			var en = _mouseDownPoint.Value;
 			im.AddLine(st.ToVector2(), en.ToVector2(), Color.Gray);
 
@@ -125,7 +109,7 @@ namespace Sledge.BspEditor.Tools.Widgets
 
 		private void RenderMoveTypeNone(PerspectiveCamera camera, I2DRenderer im)
 		{
-			var center = _pivotPoint;
+			var center = Pivot;
 			var origin = new Vector3(center.X, center.Y, center.Z);
 
 			var distance = (camera.EyeLocation - origin).Length();
@@ -153,54 +137,34 @@ namespace Sledge.BspEditor.Tools.Widgets
 					(origin - Vector3.UnitX),
 					(origin + Vector3.UnitX * radius),
 					plane,
-					_mouseOver == MoveType.Z ? Color.Blue : Color.DarkBlue,
+					_mouseOver == AxisType.Z ? Color.Blue : Color.DarkBlue,
 					camera, im);
 
 				RenderLine(
 					(origin - Vector3.UnitY),
 					(origin + Vector3.UnitY * radius),
 					plane,
-					_mouseOver == MoveType.X ? Color.Red : Color.DarkRed,
+					_mouseOver == AxisType.X ? Color.Red : Color.DarkRed,
 					camera, im);
 
 				RenderLine(
 					(origin - Vector3.UnitZ),
 					(origin + Vector3.UnitZ * radius),
 					plane,
-					_mouseOver == MoveType.Y ? Color.Lime : Color.LimeGreen,
+					_mouseOver == AxisType.Y ? Color.Lime : Color.LimeGreen,
 					camera, im);
 			}
 		}
 
-		private void RenderLine(Vector3 start, Vector3 end, Plane plane, Color color, ICamera camera, I2DRenderer im)
+		protected override Matrix4x4? GetTransformationMatrix(MapViewport viewport)
 		{
-			var line = new Line(start, end);
-			var cls = line.ClassifyAgainstPlane(plane);
-			if (cls == PlaneClassification.Back) return;
-			if (cls == PlaneClassification.Spanning)
-			{
-				var isect = plane.GetIntersectionPoint(line, true);
-				var first = plane.OnPlane(line.Start) > 0 ? line.Start : line.End;
-				if (!isect.HasValue) return;
-				line = new Line(first, isect.Value);
-			}
-
-			var st = camera.WorldToScreen(line.Start);
-			var en = camera.WorldToScreen(line.End);
-
-			im.AddLine(st.ToVector2(), en.ToVector2(), color, 2);
+			throw new NotImplementedException();
 		}
 
-
-		private enum MoveType
+		protected override void UpdateCache(IViewport viewport, PerspectiveCamera camera)
 		{
-			None,
-			Outer,
-			X,
-			Y,
-			Z
+			throw new NotImplementedException();
 		}
-
 
 	}
 }
