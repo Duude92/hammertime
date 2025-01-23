@@ -32,20 +32,6 @@ namespace Sledge.BspEditor.Tools.Widgets
 
         #region Line cache
 
-        private void AddLine(Widget.AxisType type, Vector3 start, Vector3 end, Plane test, CachedLines cache)
-        {
-            var line = new Line(start, end);
-            var cls = line.ClassifyAgainstPlane(test);
-            if (cls == PlaneClassification.Back) return;
-            if (cls == PlaneClassification.Spanning)
-            {
-                var isect = test.GetIntersectionPoint(line, true);
-                var first = test.OnPlane(line.Start) > 0 ? line.Start : line.End;
-                if (isect.HasValue) line = new Line(first, isect.Value);
-            }
-            cache.Cache[type].Add(new Line(cache.Viewport.Camera.WorldToScreen(line.Start), cache.Viewport.Camera.WorldToScreen(line.End)));
-        }
-
         protected override void UpdateCache(IViewport viewport, PerspectiveCamera camera)
         {
             var ccl = camera.EyeLocation;

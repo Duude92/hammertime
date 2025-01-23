@@ -10,6 +10,7 @@ using Sledge.Rendering.Resources;
 using Sledge.Rendering.Viewports;
 using System;
 using System.Drawing;
+using System.Linq;
 using System.Numerics;
 using Plane = Sledge.DataStructures.Geometric.Plane;
 
@@ -83,7 +84,7 @@ namespace Sledge.BspEditor.Tools.Widgets
 				switch (_mouseMovePoint == null ? AxisType.None : _mouseDown)
 				{
 					case AxisType.None:
-						RenderMoveTypeNone(camera, im);
+						RenderMoveTypeNone(camera, im, viewport);
 						break;
 					case AxisType.Outer:
 					case AxisType.X:
@@ -97,7 +98,7 @@ namespace Sledge.BspEditor.Tools.Widgets
 		}
 		private void RenderAxisRotating(IViewport viewport, PerspectiveCamera camera, I2DRenderer im)
 		{
-			if (ActiveViewport.Viewport != viewport || !_mouseDownPoint.HasValue || !_mouseMovePoint.HasValue) return;
+			if (ActiveViewport?.Viewport != viewport || !_mouseDownPoint.HasValue || !_mouseMovePoint.HasValue) return;
 
 			var st = camera.WorldToScreen(Pivot);
 			var en = _mouseDownPoint.Value;
@@ -107,10 +108,37 @@ namespace Sledge.BspEditor.Tools.Widgets
 			im.AddLine(st.ToVector2(), en.ToVector2(), Color.LightGray);
 		}
 
-		private void RenderMoveTypeNone(PerspectiveCamera camera, I2DRenderer im)
+		private void RenderMoveTypeNone(PerspectiveCamera camera, I2DRenderer im, IViewport viewport)
 		{
+			var ccl = camera.EyeLocation;
+			var ccla = camera.Position + camera.Direction;
+
+			var cache = _cachedLines.FirstOrDefault(x => x.Viewport.Camera is PerspectiveCamera);
+			if (cache == null)
+			{
+				cache = new CachedLines(viewport);
+				_cachedLines.Add(cache);
+			}
+			//if (ccl == cache.CameraLocation && ccla == cache.CameraLookAt && cache.PivotPoint == Pivot && cache.Width == viewport.Width && cache.Height == viewport.Height) return;
+
+			var origin = Pivot;
+			var distance1 = (ccl - origin).Length();
+
+			if (distance1 <= 1) return;
+
+			cache.CameraLocation = ccl;
+			cache.CameraLookAt = ccla;
+			cache.PivotPoint = Pivot;
+			cache.Width = viewport.Width;
+			cache.Height = viewport.Height;
+
+			cache.Cache[AxisType.Outer].Clear();
+			cache.Cache[AxisType.X].Clear();
+			cache.Cache[AxisType.Y].Clear();
+			cache.Cache[AxisType.Z].Clear();
+
+
 			var center = Pivot;
-			var origin = new Vector3(center.X, center.Y, center.Z);
 
 			var distance = (camera.EyeLocation - origin).Length();
 			if (distance <= 1) return;
@@ -132,28 +160,44 @@ namespace Sledge.BspEditor.Tools.Widgets
 
 			for (var i = 0; i < sides; i++)
 			{
-
-				RenderLine(
+				AddLineInternal(AxisType.X,
 					(origin - Vector3.UnitX),
 					(origin + Vector3.UnitX * radius),
 					plane,
-					_mouseOver == AxisType.Z ? Color.Blue : Color.DarkBlue,
-					camera, im);
-
-				RenderLine(
+					cache,
+					camera,
+					im,
+					_mouseOver == AxisType.X ? Color.Red : Color.DarkRed
+					);
+				AddLineInternal(AxisType.Y,
 					(origin - Vector3.UnitY),
 					(origin + Vector3.UnitY * radius),
 					plane,
-					_mouseOver == AxisType.X ? Color.Red : Color.DarkRed,
-					camera, im);
-
-				RenderLine(
+					cache,
+					camera,
+					im,
+					_mouseOver == AxisType.Y ? Color.Lime : Color.LimeGreen
+					);
+				AddLineInternal(AxisType.Z,
 					(origin - Vector3.UnitZ),
 					(origin + Vector3.UnitZ * radius),
 					plane,
-					_mouseOver == AxisType.Y ? Color.Lime : Color.LimeGreen,
-					camera, im);
+					cache,
+					camera,
+					im,
+					_mouseOver == AxisType.Z ? Color.Blue : Color.DarkBlue
+					);
 			}
+		}
+		private void AddLineInternal(Widget.AxisType type, Vector3 start, Vector3 end, Plane test, CachedLines cache, PerspectiveCamera camera, I2DRenderer im, Color color)
+		{
+			RenderLine(
+				start,
+				end,
+				test,
+				color,
+				camera, im);
+			AddLine(type, start, end, test, cache);
 		}
 
 		protected override Matrix4x4? GetTransformationMatrix(MapViewport viewport)
@@ -163,7 +207,7 @@ namespace Sledge.BspEditor.Tools.Widgets
 
 		protected override void UpdateCache(IViewport viewport, PerspectiveCamera camera)
 		{
-			throw new NotImplementedException();
+			return;
 		}
 
 	}
