@@ -114,8 +114,6 @@ namespace Sledge.BspEditor.Tools.Widgets
 		{
 			var origin = Pivot;
 
-			var center = Pivot;
-
 			var distance = (camera.EyeLocation - origin).Length();
 			if (distance <= 1) return;
 
@@ -166,10 +164,13 @@ namespace Sledge.BspEditor.Tools.Widgets
 		{
 			if (_mouseMovePoint == null || _mouseDownPoint == null) return null;
 
-			var originPoint = viewport.Viewport.Camera.WorldToScreen(Pivot);
-			var movementVector = _mouseMovePoint.Value - _mouseDownPoint.Value;
+			// Project object origin to screen space
+			var screenPivot = viewport.Viewport.Camera.WorldToScreen(Pivot);
 
-			// Determine the axis based on _mouseDown
+			// Calculate mouse delta in screen space
+			var screenDelta = _mouseMovePoint.Value - _mouseDownPoint.Value;
+
+			// Project the chosen axis into screen space
 			Vector3 axis;
 			switch (_mouseDown)
 			{
@@ -182,17 +183,24 @@ namespace Sledge.BspEditor.Tools.Widgets
 				case AxisType.Z:
 					axis = Vector3.UnitZ;
 					break;
-				case AxisType.Outer:
 				default:
-					axis = Vector3.Zero; // No movement if no axis is chosen
-					break;
+					return null;
 			}
 
-			// Project the movement vector onto the chosen axis
-			var projectedMovement = axis * Vector3.Dot(movementVector, axis);
+			// Convert axis to screen space
+			var worldAxisEnd = Pivot + axis; // A point along the axis
+			var screenAxisEnd = viewport.Viewport.Camera.WorldToScreen(worldAxisEnd);
+			var screenAxis = (screenAxisEnd - screenPivot).Normalise().ToVector2();
 
-			// Create a translation matrix for the projected movement
-			var translationMatrix = Matrix4x4.CreateTranslation(projectedMovement);
+			// Calculate movement along the screen axis
+			var movementMagnitude = Vector2.Dot(screenDelta.ToVector2(), screenAxis);
+			if (Math.Abs(movementMagnitude) < 0.001f) return null; // Ignore small movements
+
+			// Convert movement back to world space
+			var worldMovement = axis * movementMagnitude;
+
+			// Create translation matrix
+			var translationMatrix = Matrix4x4.CreateTranslation(worldMovement);
 
 			return translationMatrix;
 		}
