@@ -285,6 +285,8 @@ namespace Sledge.BspEditor.Tools.Selection
 		}
 
 		private bool _lastIgnoreGroupingValue;
+		private MapViewport _lastSelectedViewport;
+
 		private void IgnoreGroupingPossiblyChanged(MapDocument document)
 		{
 			var igVal = IgnoreGrouping();
@@ -311,7 +313,11 @@ namespace Sledge.BspEditor.Tools.Selection
 		{
 			if (document == null) return;
 
-			foreach (var widget in Children.OfType<Widget>()) widget.SelectionChanged();
+			foreach (var widget in Children.OfType<Widget>())
+			{
+				widget.SetViewport(_lastSelectedViewport);
+				widget.SelectionChanged();
+			}
 			UpdateBoxBasedOnSelection(document);
 
 			if (!document.Selection.IsEmpty)
@@ -477,6 +483,7 @@ namespace Sledge.BspEditor.Tools.Selection
 			var desel = ChosenItemFor3DSelection != null && KeyboardState.Ctrl && ChosenItemFor3DSelection.IsSelected;
 
 			SetSelected(document, desel ? list : null, desel ? null : list, !KeyboardState.Ctrl, IgnoreGrouping());
+			_lastSelectedViewport = viewport;
 		}
 
 		protected override void MouseUp(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
