@@ -108,7 +108,10 @@ namespace Sledge.BspEditor.Tools.Selection
 				task = MapDocumentOperation.Perform(document, transaction);
 			}
 
-			task.ContinueWith(_ => Engine.Interface.SetSelectiveTransform(Matrix4x4.Identity));
+			task.ContinueWith(_ => {
+				Engine.Interface.SetSelectiveTransform(Matrix4x4.Identity);
+				SetRotationOrigin(document.Selection.GetSelectionBoundingBox().Center);
+				});
 		}
 
 		public void Update()
