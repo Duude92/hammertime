@@ -139,7 +139,7 @@ namespace Sledge.BspEditor.Tools.Widgets
 			{
 				RenderLine(
 					(origin - Vector3.UnitX),
-					(origin + Vector3.UnitX * radius),
+					GetEndPoint(origin, Vector3.UnitX, radius, plane),
 					plane,
 					_mouseOver == AxisType.X ? Color.Red : Color.DarkRed,
 					camera,
@@ -147,7 +147,7 @@ namespace Sledge.BspEditor.Tools.Widgets
 					);
 				RenderLine(
 					(origin - Vector3.UnitY),
-					(origin + Vector3.UnitY * radius),
+					GetEndPoint(origin, Vector3.UnitY, radius, plane),
 					plane,
 					_mouseOver == AxisType.Y ? Color.Lime : Color.LimeGreen,
 					camera,
@@ -155,13 +155,20 @@ namespace Sledge.BspEditor.Tools.Widgets
 					);
 				RenderLine(
 					(origin - Vector3.UnitZ),
-					(origin + Vector3.UnitZ * radius),
+					GetEndPoint(origin, Vector3.UnitZ, radius, plane),
 					plane,
 					_mouseOver == AxisType.Z ? Color.Blue : Color.DarkBlue,
 					camera,
 					im
 					);
 			}
+		}
+		private Vector3 GetEndPoint(Vector3 origin, Vector3 axis, float radius, Plane plane)
+		{
+			var worldDirection = axis * radius;
+			var end = origin + worldDirection;
+			return plane.EvalAtPoint(end) < 0.5f ? (origin - worldDirection) : end;
+
 		}
 		protected override Matrix4x4? GetTransformationMatrix(MapViewport viewport)
 		{
@@ -263,19 +270,19 @@ namespace Sledge.BspEditor.Tools.Widgets
 
 				AddLine(AxisType.X,
 					(origin - Vector3.UnitX),
-					(origin + Vector3.UnitX * radius),
+					GetEndPoint(origin, Vector3.UnitX, radius, plane),
 					plane,
 					cache
 					);
 				AddLine(AxisType.Y,
 					(origin - Vector3.UnitY),
-					(origin + Vector3.UnitY * radius),
+					GetEndPoint(origin, Vector3.UnitY, radius, plane),
 					plane,
 					cache
 					);
 				AddLine(AxisType.Z,
 					(origin - Vector3.UnitZ),
-					(origin + Vector3.UnitZ * radius),
+					GetEndPoint(origin, Vector3.UnitZ, radius, plane),
 					plane,
 					cache
 					);
