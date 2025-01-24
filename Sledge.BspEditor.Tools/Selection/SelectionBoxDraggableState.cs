@@ -217,10 +217,6 @@ namespace Sledge.BspEditor.Tools.Selection
 
 			_rotationOrigin.Position = new Box(State.Start, State.End).Center;
 
-			_scaleWidget.Active = CurrentTransformationMode == TransformationMode.Resize && ShowWidgets;
-			_rotationWidget.Active = CurrentTransformationMode == TransformationMode.Rotate && ShowWidgets;
-			//_skewWidget.Active = _currentTransformationMode == TransformationMode.Skew;
-
 			_tool.TransformationModeChanged(CurrentTransformationMode);
 			Update();
 		}
