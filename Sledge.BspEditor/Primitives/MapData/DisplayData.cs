@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 
 namespace Sledge.BspEditor.Primitives.MapData
 {
-	[Serializable]
 	public class DisplayData : IMapData
 	{
 		public bool AffectsRendering => true;
@@ -17,7 +16,7 @@ namespace Sledge.BspEditor.Primitives.MapData
 
 		public IMapElement Clone()
 		{
-			return Clone();
+			return new DisplayData() { SkyboxName = SkyboxName };
 		}
 
 		public IMapElement Copy(UniqueNumberGenerator numberGenerator)
