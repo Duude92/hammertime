@@ -71,7 +71,7 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
 
 		public IMapElement Clone()
 		{
-			return new EntitySprite(Name, Scale, Color, Size, Renderable?.Framerate ?? 10, null);
+			return new EntitySprite(Name, Scale, Color, Size, Renderable?.Framerate ?? 10, Renderable);
 		}
 
 		public SerialisedObject ToSerialisedObject()
