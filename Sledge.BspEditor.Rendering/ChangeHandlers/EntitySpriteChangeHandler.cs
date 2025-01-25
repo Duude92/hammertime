@@ -33,13 +33,16 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
 			var tc = await change.Document.Environment.GetTextureCollection();
 			foreach (var entity in change.Added.Union(change.Updated).OfType<Entity>())
 			{
-				var sn = GetSpriteName(entity, gd);
-				var sd =
-					sn == null ?
-					null :
-					await CreateSpriteData(entity, change.Document, gd, tc, sn);
+				var sn = GetSpriteData(entity, gd);
+				if (sn == null) continue;
 				var es = entity.Data.GetOne<EntitySprite>();
-				if(es!=null)
+				if (es != null &&
+					es.Name == sn.Name &&
+					es.Scale == sn.Scale &&
+					es.Color == sn.Color &&
+					es.Framerate == sn.Framerate) continue;
+				var sd = await CreateSpriteData(entity, change.Document, gd, tc, sn.Name);
+				if (es != null)
 					_resourceCollection.Value.DestroyModelRenderable(change.Document.Environment, es.Renderable);
 
 				if (sd == null) entity.Data.Remove(x => x == es);
@@ -101,7 +104,7 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
 			return new EntitySprite(name, scale, color, size, framerate, renderable);
 		}
 
-		private static string GetSpriteName(Entity entity, GameData gd)
+		private static EntitySpriteData GetSpriteData(Entity entity, GameData gd)
 		{
 			if (entity.Hierarchy.HasChildren || String.IsNullOrWhiteSpace(entity.EntityData.Name)) return null;
 			var cls = gd?.GetClass(entity.EntityData.Name);
@@ -111,21 +114,70 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
 					  ?? cls.Behaviours.FirstOrDefault(x => String.Equals(x.Name, "iconsprite", StringComparison.InvariantCultureIgnoreCase));
 			if (spr == null) return null;
 
-			// First see if the studio behaviour forces a model...
-			if (spr.Values.Count == 1 && !String.IsNullOrWhiteSpace(spr.Values[0]))
+			var result = new EntitySpriteData()
 			{
-				return spr.Values[0].Trim();
-			}
+				Name = GetName(),
+				Scale = GetScale(),
+				Color = GetColor(),
+				Framerate = GetFramerate(),
+			};
 
-			// Find the first property that is a studio type, or has a name of "sprite"...
-			var prop = cls.Properties.FirstOrDefault(x => x.VariableType == VariableType.Sprite) ??
-					   cls.Properties.FirstOrDefault(x => String.Equals(x.Name, "sprite", StringComparison.InvariantCultureIgnoreCase));
-			if (prop != null)
+			return result;
+			int GetFramerate()
 			{
-				var val = entity.EntityData.Get(prop.Name, prop.DefaultValue);
-				if (!String.IsNullOrWhiteSpace(val)) return val;
+				var prop = cls.Properties.FirstOrDefault(x => String.Equals(x.Name, "framerate", StringComparison.InvariantCultureIgnoreCase));
+				if (prop != null)
+				{
+					return (int)entity.EntityData.Get(prop.Name, 1f);
+				}
+				return 1;
 			}
-			return null;
+			Color GetColor()
+			{
+				var colProp = cls.Properties.FirstOrDefault(x => x.VariableType == VariableType.Color255 || x.VariableType == VariableType.Color1);
+				if (colProp != null)
+				{
+					var col = entity.EntityData.GetVector3(colProp.Name);
+					if (colProp.VariableType == VariableType.Color255) col /= 255f;
+					if (col.HasValue) return col.Value.ToColor();
+				}
+				return Color.Black;
+			}
+			string GetName()
+			{
+
+				// First see if the studio behaviour forces a model...
+				if (spr.Values.Count == 1 && !String.IsNullOrWhiteSpace(spr.Values[0]))
+				{
+					return spr.Values[0].Trim();
+				}
+
+				// Find the first property that is a studio type, or has a name of "sprite"...
+				var prop = cls.Properties.FirstOrDefault(x => x.VariableType == VariableType.Sprite) ??
+						   cls.Properties.FirstOrDefault(x => String.Equals(x.Name, "sprite", StringComparison.InvariantCultureIgnoreCase));
+				if (prop != null)
+				{
+					var val = entity.EntityData.Get(prop.Name, prop.DefaultValue);
+					if (!String.IsNullOrWhiteSpace(val)) return val;
+				}
+				return null;
+			}
+			float GetScale()
+			{
+				var prop = cls.Properties.FirstOrDefault(x => String.Equals(x.Name, "scale", StringComparison.InvariantCultureIgnoreCase));
+				if (prop != null)
+				{
+					return entity.EntityData.Get(prop.Name, 1f);
+				}
+				return 1f;
+			}
+		}
+		private class EntitySpriteData
+		{
+			public string Name { get; set; }
+			public float Scale { get; set; }
+			public Color Color { get; set; }
+			public int Framerate { get; set; }
 		}
 	}
 }

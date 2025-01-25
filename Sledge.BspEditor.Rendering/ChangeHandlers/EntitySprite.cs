@@ -18,6 +18,7 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
 		public float Scale { get; }
 		public Color Color { get; set; }
 		public SizeF Size { get; }
+		public int Framerate => Renderable.Framerate;
 		public SpriteRenderable Renderable { get; }
 
 		public bool ContentsReplaced => !string.IsNullOrWhiteSpace(Name);
@@ -70,7 +71,7 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
 
 		public IMapElement Clone()
 		{
-			return new EntitySprite(Name, Scale, Color, Size, Renderable.Framerate, null);
+			return new EntitySprite(Name, Scale, Color, Size, Renderable?.Framerate ?? 10, null);
 		}
 
 		public SerialisedObject ToSerialisedObject()
