@@ -122,7 +122,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
 			return gse;
 		}
 
-		public SerialisedEnvironment InverseSerilise(IEnvironment environment)
+		public SerialisedEnvironment InverseSerialise(IEnvironment environment)
         {
 			var env = (GoldsourceEnvironment)environment;
 			var se = new SerialisedEnvironment

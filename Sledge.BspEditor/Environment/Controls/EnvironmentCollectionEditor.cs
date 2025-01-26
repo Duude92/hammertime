@@ -228,7 +228,7 @@ namespace Sledge.BspEditor.Environment.Controls
 				var factory = _factories.FirstOrDefault(x => x.TypeName == node.Type);
 				if (factory != null && factory is GoldsourceEnvironmentFactory gsFactory)
 				{
-					var ser = gsFactory.InverseSerilise(_currentEditor.Environment);
+					var ser = gsFactory.InverseSerialise(_currentEditor.Environment);
 					ser.Name = node.Name;
 					ser.ID = node.ID;
 
