@@ -7,7 +7,7 @@ using Sledge.Common.Translations;
 
 namespace Sledge.BspEditor.Environment.Goldsource
 {
-    [Export(typeof(IEnvironmentFactory))]
+	[Export(typeof(IEnvironmentFactory))]
     [AutoTranslate]
     public class GoldsourceEnvironmentFactory : IEnvironmentFactory
     {
@@ -72,7 +72,8 @@ namespace Sledge.BspEditor.Environment.Goldsource
                 DefaultGridSize = GetVal(environment.Properties, "DefaultGridSize", 16f),
                 ExcludedWads = GetVal(environment.Properties, "ExcludedWads", "").Split(';').Where(x => !String.IsNullOrWhiteSpace(x)).ToList(),
                 AdditionalTextureFiles = GetVal(environment.Properties, "AdditionalTextureFiles", "").Split(';').Where(x => !String.IsNullOrWhiteSpace(x)).ToList(),
-            };
+				CordonTexture = GetVal(environment.Properties, "CordonWrapTexture", "BLACK"),
+			};
             return gse;
         }
 		public IEnvironment InverseDeserialise(SerialisedEnvironment environment)
@@ -116,6 +117,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
 
 				IncludedWads = GetVal(environment.Properties, "IncludedWads", "").Split(';').Where(x => !String.IsNullOrWhiteSpace(x)).ToList(),
 				AdditionalTextureFiles = GetVal(environment.Properties, "AdditionalTextureFiles", "").Split(';').Where(x => !String.IsNullOrWhiteSpace(x)).ToList(),
+				CordonTexture = GetVal(environment.Properties, "CordonWrapTexture", "BLACK"),
 			};
 			return gse;
 		}
@@ -164,7 +166,8 @@ namespace Sledge.BspEditor.Environment.Goldsource
 					{ "DefaultGridSize", Convert.ToString(env.DefaultGridSize, CultureInfo.InvariantCulture)},
 
 					{ "IncludedWads", String.Join(";", env.IncludedWads) },
-					{ "AdditionalTextureFiles", String.Join(";", env.AdditionalTextureFiles) }
+					{ "AdditionalTextureFiles", String.Join(";", env.AdditionalTextureFiles) },
+					{ "CordonWrapTexture", String.Join(";", env.CordonTexture) }
 				}
 			};
 			return se;
@@ -215,7 +218,8 @@ namespace Sledge.BspEditor.Environment.Goldsource
 					{ "DefaultGridSize", Convert.ToString(env.DefaultGridSize, CultureInfo.InvariantCulture)},
 
 					{ "ExcludedWads", String.Join(";", env.ExcludedWads) },
-                    { "AdditionalTextureFiles", String.Join(";", env.AdditionalTextureFiles) }
+                    { "AdditionalTextureFiles", String.Join(";", env.AdditionalTextureFiles) },
+					{ "CordonWrapTexture", string.Join(";", env.CordonTexture) }
                 }
             };
             return se;
