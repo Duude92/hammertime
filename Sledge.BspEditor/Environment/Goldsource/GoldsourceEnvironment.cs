@@ -74,6 +74,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
 		public bool MapCopyLog { get; set; }
 		public bool MapCopyErr { get; set; }
 		public bool MapCopyRes { get; set; }
+		public string CordonTexture { get; set; }
 
 		public List<string> ExcludedWads { get; set; }
 		public List<string> IncludedWads
@@ -255,7 +256,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
 
 		private async Task ExportDocumentForBatch(MapDocument doc, string path, Box cordonBounds)
 		{
-			var cordonTextureName = "BLACK"; // todo make this configurable
+			var cordonTextureName = String.IsNullOrWhiteSpace(CordonTexture)? "BLACK" : CordonTexture;
 
 			if (cordonBounds != null && !cordonBounds.IsEmpty())
 			{

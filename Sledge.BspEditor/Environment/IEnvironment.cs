@@ -103,5 +103,10 @@ namespace Sledge.BspEditor.Environment
         /// Default grid size for environment
         /// </summary>
         float DefaultGridSize { get; }
-    }
+        /// <summary>
+        /// Default texture name for cordon wrap
+        /// </summary>
+		string CordonTexture { get; set; }
+
+	}
 }
