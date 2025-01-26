@@ -130,6 +130,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
 			lblTexturePackageExclusions.Text = strings.GetString(prefix, "TexturePackagesToInclude");
 			chkToggleAllTextures.Text = strings.GetString(prefix, "ToggleAll");
 			lblAdditionalTexturePackages.Text = strings.GetString(prefix, "AdditionalTexturePackages");
+			//cordonDefaultTextureLabel.Text = strings.GetString(prefix, "CordonToolTextureText");
 		}
 
 		private void OnEnvironmentChanged(object sender, EventArgs e)
@@ -178,10 +179,11 @@ namespace Sledge.BspEditor.Environment.Goldsource
 			chkCopyErr.Checked = env.MapCopyErr;
 			chkCopyRes.Checked = env.MapCopyRes;
 
-			gridUpDown.Value += (decimal)env.DefaultGridSize; 
+			gridUpDown.Value += (decimal)env.DefaultGridSize;
 
 			nudDefaultTextureScale.Value = env.DefaultTextureScale;
 
+			cordonTextureText.Text = env.CordonTexture;
 
 			cklTexturePackages.Items.Clear();
 			foreach (var exc in env.ExcludedWads)
@@ -236,8 +238,10 @@ namespace Sledge.BspEditor.Environment.Goldsource
 				DefaultGridSize = (float)gridUpDown.Value,
 
 				DefaultTextureScale = nudDefaultTextureScale.Value,
-				ExcludedWads = _initialObjectCollection.Where(x => !x.Value).Select(x=>x.Key).ToList(),
-				AdditionalTextureFiles = lstAdditionalTextures.Items.OfType<ListViewItem>().Select(x => x.SubItems[1].Text).Where(File.Exists).ToList()
+				ExcludedWads = _initialObjectCollection.Where(x => !x.Value).Select(x => x.Key).ToList(),
+				AdditionalTextureFiles = lstAdditionalTextures.Items.OfType<ListViewItem>().Select(x => x.SubItems[1].Text).Where(File.Exists).ToList(),
+
+				CordonTexture = cordonTextureText.Text
 			};
 		}
 
@@ -615,6 +619,11 @@ namespace Sledge.BspEditor.Environment.Goldsource
 				cklTexturePackages.Items.Add(item.Key, item.Value);
 			}
 			this.InvokeLater(() => OnEnvironmentChanged(sender, e));
+		}
+
+		private void cordonTextureText_TextChanged(object sender, EventArgs e)
+		{
+			OnEnvironmentChanged(sender, e);
 		}
 	}
 }
