@@ -121,8 +121,6 @@ namespace Sledge.BspEditor.Rendering.Resources
             _engine.Value.CreateResource(resource);
             rList.Add(resource);
 
-            _engine.Value.Add(resource as IUpdateable);
-            _engine.Value.Add(resource as IRenderable);
 
 
             return resource;

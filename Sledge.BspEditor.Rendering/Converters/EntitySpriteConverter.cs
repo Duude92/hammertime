@@ -40,33 +40,13 @@ namespace Sledge.BspEditor.Rendering.Converters
         public async Task Convert(BufferBuilder builder, MapDocument document, IMapObject obj, ResourceCollector resourceCollector)
         {
             var entity = (Entity) obj;
-            var tc = await document.Environment.GetTextureCollection();
-
-            var sd = GetSpriteData(entity);
+			var sd = GetSpriteData(entity);
             if (sd == null || !sd.ContentsReplaced) return;
 
-            var name = sd.Name;
-            var scale = sd.Scale;
-
-            var width = entity.BoundingBox.Width;
-            var height = entity.BoundingBox.Height;
-
-            var t = await tc.GetTextureItem(name);
-
-            var texture = $"{document.Environment.ID}::{name}";
-            if (t != null) resourceCollector.RequireTexture(t.Name);
-
-            var tint = sd.Color.ToVector4();
-
-            var flags = VertexFlags.None;
-            if (entity.IsSelected) flags |= VertexFlags.SelectiveTransformed;
-
-            builder.Append(
-                new [] { new VertexStandard { Position = entity.Origin, Normal = new Vector3(width, height, 0), Colour = Vector4.One, Tint = tint, Flags = flags } },
-                new [] { 0u },
-                new [] { new BufferGroup(PipelineType.BillboardAlpha, CameraType.Perspective, entity.BoundingBox.Center, texture, 0, 1) }
-            );
-
+            if (sd.ContentsReplaced && sd.Renderable != null)
+            {
+                resourceCollector.AddRenderables(new[] { sd.Renderable });
+            }
         }
     }
 }
