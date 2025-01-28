@@ -58,11 +58,15 @@ namespace Sledge.BspEditor.Rendering.Converters
 
 			var points = new VertexStandard[numVertices];
 			var indices = new uint[numSolidIndices + numWireframeIndices];
+			Color? vColor = null;
+			var vId = obj.Data.GetOne<VisgroupID>();
+			if (vId != null)
+			{
+				vColor = document.Map.Data.Get<Visgroup>().FirstOrDefault(x=>x.ID == vId.ID)?.Colour;
+			}
 
-			var colour = (obj.IsSelected ? Color.Red : obj.Data.GetOne<ObjectColor>()?.Color ?? Color.White).ToVector4();
+			var colour = (obj.IsSelected ? Color.Red : vColor.HasValue? vColor.Value : obj.Data.GetOne<ObjectColor>()?.Color ?? Color.White).ToVector4();
 
-			//var c = obj.IsSelected ? Color.FromArgb(255, 128, 128) : Color.White;
-			//var tint = new Vector4(c.R, c.G, c.B, c.A) / 255f;
 			var tint = Vector4.One;
 
 			var tc = await document.Environment.GetTextureCollection();
