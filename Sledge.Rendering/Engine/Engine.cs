@@ -73,12 +73,12 @@ namespace Sledge.Rendering.Engine
 			_pipelines.Add(PipelineGroup.Transparent, new List<IPipeline>());
 			_pipelines.Add(PipelineGroup.Overlay, new List<IPipeline>());
 
-            AddPipeline(new SkyboxPipeline());
-            AddPipeline(new WireframePipeline());
-            AddPipeline(new TexturedOpaquePipeline());
-            AddPipeline(new BillboardOpaquePipeline());
-            AddPipeline(new WireframeModelPipeline());
-            AddPipeline(new TexturedModelPipeline());
+			AddPipeline(new SkyboxPipeline());
+			AddPipeline(new WireframePipeline());
+			AddPipeline(new TexturedOpaquePipeline());
+			AddPipeline(new BillboardOpaquePipeline());
+			AddPipeline(new WireframeModelPipeline());
+			AddPipeline(new TexturedModelPipeline());
 
 			AddPipeline(new TexturedAlphaPipeline());
 			AddPipeline(new TexturedAdditivePipeline());
@@ -189,10 +189,10 @@ namespace Sledge.Rendering.Engine
 				{
 					var frame = _timer.ElapsedMilliseconds;
 					var diff = (frame - lastFrame);
-					if (diff < 16 || _paused > 0)
+					if (diff < 8 || _paused > 0)
 					{
 						if (_paused > 0) _pauseThreadEvent.Set();
-						Thread.Sleep(2);
+						Thread.Sleep(1);
 						continue;
 					}
 
@@ -233,7 +233,7 @@ namespace Sledge.Rendering.Engine
 					}
 				}
 				if (shouldRender)
-					_previousFrameTime = currentTime;
+				_previousFrameTime = currentTime;
 			}
 		}
 
