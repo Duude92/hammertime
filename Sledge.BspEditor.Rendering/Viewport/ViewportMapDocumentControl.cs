@@ -96,8 +96,6 @@ namespace Sledge.BspEditor.Rendering.Viewport
 		{
 			try
 			{
-				var option = settings.Split('/');
-				if (option[0]=="PerspectiveCamera" && option.Length > 1 && option[1] != "View" && _camera is PerspectiveCamera camera) return;
 				Camera = Sledge.Rendering.Cameras.Camera.Deserialise(settings);
 			}
 			catch
