@@ -40,7 +40,7 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
 					es.Name == sn.Name &&
 					es.Scale == sn.Scale &&
 					es.Color == sn.Color &&
-					es.Framerate == sn.Framerate) continue;
+					es.Framerate == sn.Framerate && es.ContentsReplaced) continue;
 				var sd = await CreateSpriteData(entity, change.Document, gd, tc, sn.Name);
 				if (es != null)
 					_resourceCollection.Value.DestroyModelRenderable(change.Document.Environment, es.Renderable);

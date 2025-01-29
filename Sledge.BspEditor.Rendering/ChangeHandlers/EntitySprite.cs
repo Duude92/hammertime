@@ -21,7 +21,7 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
 		public int Framerate => Renderable.Framerate;
 		public SpriteRenderable Renderable { get; }
 
-		public bool ContentsReplaced => !string.IsNullOrWhiteSpace(Name);
+		public bool ContentsReplaced => Renderable.Model != null;
 
 		public EntitySprite(string name, float scale, Color color, SizeF? size, int framerate, IModelRenderable renderable)
 		{
@@ -29,7 +29,14 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
 			Scale = scale;
 			Color = color;
 			Size = size ?? SizeF.Empty;
-			Renderable = renderable as SpriteRenderable;
+			if (renderable == null)
+			{
+				Renderable = new SpriteRenderable(null, null);
+			}
+			else
+			{
+				Renderable = renderable as SpriteRenderable;
+			}
 			Renderable.Framerate = framerate;
 			Renderable.Scale = scale;
 			Renderable.Tint = color.ToVector4();
@@ -41,6 +48,7 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
 			Scale = obj.Get<float>("Scale");
 			Color = obj.GetColor("Color");
 			Size = new SizeF(obj.Get<float>("Width"), obj.Get<float>("Height"));
+			Renderable = new SpriteRenderable(null, null);
 		}
 
 		[Export(typeof(IMapElementFormatter))]

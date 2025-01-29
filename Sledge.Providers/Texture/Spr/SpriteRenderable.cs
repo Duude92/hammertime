@@ -12,12 +12,13 @@ using Sledge.Rendering.Primitives;
 using Sledge.Rendering.Resources;
 using Veldrid;
 using Buffer = Sledge.Rendering.Resources.Buffer;
+using Sledge.Providers.Model.Mdl10;
 
 namespace Sledge.Providers.Texture.Spr
 {
 	public class SpriteRenderable : IModelRenderable
 	{
-		public IModel Model => null;
+		public IModel Model { get; } = null;
 		private readonly Rendering.Resources.Texture _texture;
 		private ResourceLayout _uvLayout;
 		private DeviceBuffer _uvBuffer;
@@ -41,8 +42,9 @@ namespace Sledge.Providers.Texture.Spr
 
 		public SpriteRenderable(Rendering.Resources.Texture texture, TextureItem item)
 		{
-			_texture = texture;
+			_texture = texture ?? new Rendering.Resources.Texture();
 			_textureItem = item;
+			Model = texture == null ? null : new MdlModel(null);
 		}
 
 		public void CreateResources(EngineInterface engine, RenderContext context)
