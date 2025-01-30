@@ -429,7 +429,7 @@ namespace Sledge.BspEditor.Tools.Texture
         private Task<ICollection<Bitmap>> GetTextureBitmap(string name, int maxWidth, int maxHeight)
         {
             if (_streamSource == null) return Task.FromResult<ICollection<Bitmap>>(null);
-            return _streamSource.GetImage(name, maxWidth, maxHeight);
+            return  _streamSource.GetImage(name, maxWidth, maxHeight) ;
         }
 
         private void UpdateTextureList()

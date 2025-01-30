@@ -217,12 +217,13 @@ namespace Sledge.BspEditor.Rendering.Converters
 				var texture = t == null ? string.Empty : $"{document.Environment.ID}::{f.Texture.Name}";
 				BufferGroup group;
 
-				//				if(skybox && f.Texture.Name.ToLower() == "sky")
-				//				{
-				//					group = new BufferGroup(
-				//    PipelineType.TexturedAlpha,
-				//   CameraType.Perspective, true, f.Origin, texture, texOffset, texInd
-				//);
+//				if (f.Texture.Name.ToLower() == "sky")
+//				{
+//					group = new BufferGroup(
+//	PipelineType.ShadowDepth,
+//   CameraType.Perspective, true, f.Origin, texture, texOffset, texInd
+//);
+//				}
 				//					flags |= VertexFlags.FlatColour;
 				//					points = points.Select(x => { x.Tint = new Vector4(1,1,1, 0.5f); return x; }).ToArray();
 				//				}
@@ -234,7 +235,11 @@ namespace Sledge.BspEditor.Rendering.Converters
 				   );
 				}
 				groups.Add(group);
-
+				group = new BufferGroup(
+PipelineType.ShadowDepth,
+CameraType.Perspective, true, f.Origin, texture, texOffset, texInd
+);
+				groups.Add(group);
 
 				texOffset += texInd;
 

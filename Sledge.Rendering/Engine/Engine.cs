@@ -72,13 +72,16 @@ namespace Sledge.Rendering.Engine
 			_pipelines.Add(PipelineGroup.Opaque, new List<IPipeline>());
 			_pipelines.Add(PipelineGroup.Transparent, new List<IPipeline>());
 			_pipelines.Add(PipelineGroup.Overlay, new List<IPipeline>());
+			var shadowdepth = new ShadowDepthPipeline();
+
 
 			AddPipeline(new SkyboxPipeline());
-			AddPipeline(new WireframePipeline());
-			AddPipeline(new TexturedOpaquePipeline());
-			AddPipeline(new BillboardOpaquePipeline());
-			AddPipeline(new WireframeModelPipeline());
-			AddPipeline(new TexturedModelPipeline());
+            AddPipeline(new WireframePipeline());
+            AddPipeline(new TexturedOpaquePipeline());
+            AddPipeline(new BillboardOpaquePipeline());
+            AddPipeline(new WireframeModelPipeline());
+            AddPipeline(new TexturedModelPipeline());
+			AddPipeline(shadowdepth);
 
 			AddPipeline(new TexturedAlphaPipeline());
 			AddPipeline(new TexturedAdditivePipeline());
@@ -86,6 +89,7 @@ namespace Sledge.Rendering.Engine
 
 			AddPipeline(new SwapchainOverlayPipeline());
 			AddPipeline(new OverlayPipeline());
+			AddPipeline(new ShadowmapDrawer(()=>shadowdepth.NearShadowMapView));
 
 			Application.ApplicationExit += Shutdown;
 		}
