@@ -70,7 +70,7 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
 			var cls = gd?.GetClass(entity.EntityData.Name);
 			var scale = 1f;
 			var color = Color.White;
-			var framerate = 10;
+			var framerate = 1;
 			SizeF? size = new SizeF(entity.BoundingBox.Width, entity.BoundingBox.Height);
 
 			if (cls != null)
@@ -94,7 +94,7 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
 				{
 					size = texture.Size;
 				}
-				if (cls.Behaviours.Any(x => string.Equals(x.Name, "framerate", StringComparison.InvariantCultureIgnoreCase)))
+				if (cls.Properties.Any(x => string.Equals(x.Name, "framerate", StringComparison.InvariantCultureIgnoreCase)))
 				{
 					framerate = (int)entity.EntityData.Get<float>("framerate", 1);
 				}
