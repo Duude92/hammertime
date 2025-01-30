@@ -14,7 +14,9 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
 {
     public class ResizeTransformHandle : BoxResizeHandle, ITransformationHandle
     {
-        public string Name => Handle == ResizeHandle.Center ? "Move" : "Resize";
+		private readonly Vector3 Vector3MaxValue = new Vector3(1,1,1) * float.MaxValue;
+
+		public string Name => Handle == ResizeHandle.Center ? "Move" : "Resize";
 
         public ResizeTransformHandle(BoxDraggableState state, ResizeHandle handle) : base(state, handle)
         {
@@ -83,7 +85,7 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
             {
                 var resize = (state.OrigStart - state.Start) + (state.End - state.OrigEnd);
                 var origSize = state.OrigStart - state.OrigEnd;
-                resize = Vector3.Clamp(resize, origSize + Vector3.One, Vector3.Zero);
+				resize = Vector3.Clamp(resize, origSize + Vector3.One, Vector3MaxValue);
                 resize = Vector3.Divide(resize, state.OrigEnd - state.OrigStart);
                 resize += new Vector3(1, 1, 1);
                 var offset = -GetOriginForTransform(camera, state);
