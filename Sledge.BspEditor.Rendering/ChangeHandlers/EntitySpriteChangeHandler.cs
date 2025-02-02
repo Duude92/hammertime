@@ -34,8 +34,13 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
 			foreach (var entity in change.Added.Union(change.Updated).OfType<Entity>())
 			{
 				var sn = GetSpriteData(entity, gd);
-				if (sn == null) continue;
 				var es = entity.Data.GetOne<EntitySprite>();
+				if(sn==null && es != null)
+				{
+					entity.Data.Remove(x => x == es);
+					continue;
+				}
+				if (sn == null) continue;
 				if (es != null &&
 					es.Name == sn.Name &&
 					es.Scale == sn.Scale &&
