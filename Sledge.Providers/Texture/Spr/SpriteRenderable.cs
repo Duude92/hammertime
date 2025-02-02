@@ -153,17 +153,24 @@ namespace Sledge.Providers.Texture.Spr
 
 		public void Update(long frame)
 		{
-			double targetFps = 1000 / Framerate;
-			double diff = frame - _lastFrameTime;
-			_interframePercent += diff / targetFps;
+			if (Framerate <= 0)
+			{
+				_lastFrameTime = frame; // Still update the last frame time to avoid drift
+				return;
+			}
 
-			var skip = (int)_interframePercent;
+			double targetFrameTime = 1000.0 / Framerate;
+			double diff = frame - _lastFrameTime;
+			_interframePercent += diff / targetFrameTime;
+
+			int skip = (int)_interframePercent;
 			_interframePercent -= skip;
 
 			Sequence = (Sequence + skip) % _texture.FrameCount;
 
 			_lastFrameTime = frame;
 		}
+
 		public class SpriteLocation : ILocation
 		{
 			public Vector3 Location { get; set; }
