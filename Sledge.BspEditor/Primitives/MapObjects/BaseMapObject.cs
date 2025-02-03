@@ -185,7 +185,9 @@ namespace Sledge.BspEditor.Primitives.MapObjects
             AddCustomSerialisedData(obj);
             foreach (var data in Data)
             {
-                obj.Children.Add(data.ToSerialisedObject());
+                var serializedObject = data.ToSerialisedObject();
+                if (serializedObject == null) continue;
+				obj.Children.Add(serializedObject);
             }
             foreach (var child in Hierarchy)
             {
