@@ -22,7 +22,7 @@ namespace Sledge.Providers.Texture.Spr
             var dir = _file.GetChild("sprites");
             if (dir == null) return;
             
-            Textures.UnionWith(dir.GetFiles(".*\\.spr", true).Select(x => x.GetRelativePath(dir)));
+            Textures.UnionWith(dir.GetFiles(".*\\.spr$", true).Select(x => x.GetRelativePath(dir)));
         }
 
         private static Size GetSize(IFile file)
