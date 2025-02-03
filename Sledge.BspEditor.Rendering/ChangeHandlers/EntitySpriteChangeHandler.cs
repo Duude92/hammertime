@@ -67,7 +67,7 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
 
 		private async Task<EntitySprite> CreateSpriteData(Entity entity, MapDocument doc, GameData gd, TextureCollection tc, string name)
 		{
-			if (!tc.HasTexture(name)) return null;
+			if (string.IsNullOrEmpty(name?.Trim()) || !tc.HasTexture(name)) return null;
 
 			var texture = await tc.GetTextureItem(name);
 			if (texture == null) return null;
