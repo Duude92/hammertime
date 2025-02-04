@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,6 +18,8 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 			btnEditVisgroups = new System.Windows.Forms.Button();
 			lblMemberOfGroup = new System.Windows.Forms.Label();
 			visgroupPanel = new Sledge.BspEditor.Editing.Components.Visgroup.VisgroupPanel();
+			objectColorPanel = new System.Windows.Forms.Panel();
+			objectColor = new System.Windows.Forms.Label();
 			SuspendLayout();
 			// 
 			// btnEditVisgroups
@@ -51,9 +54,31 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 			visgroupPanel.TabIndex = 6;
 			visgroupPanel.VisgroupToggled += VisgroupToggled;
 			// 
+			// objectColorPanel
+			// 
+			objectColorPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left));
+
+			objectColorPanel.Location = new System.Drawing.Point(98, 440);
+			objectColorPanel.Name = "objectColorPanel";
+			objectColorPanel.Size = new System.Drawing.Size(73, 23);
+			objectColorPanel.TabIndex = 7;
+			objectColorPanel.Click += ObjectColorPanel_Click;
+			// 
+			// objectColor
+			// 
+			objectColor.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left));
+
+			objectColor.Location = new System.Drawing.Point(4, 442);
+			objectColor.Name = "objectColor";
+			objectColor.Size = new System.Drawing.Size(88, 21);
+			objectColor.TabIndex = 8;
+			objectColor.Text = "Object color:";
+			// 
 			// VisgroupTab
 			// 
 			BackColor = System.Drawing.SystemColors.ControlLightLight;
+			Controls.Add(objectColor);
+			Controls.Add(objectColorPanel);
 			Controls.Add(visgroupPanel);
 			Controls.Add(btnEditVisgroups);
 			Controls.Add(lblMemberOfGroup);
@@ -61,8 +86,11 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 			ResumeLayout(false);
 		}
 
+		private System.Windows.Forms.Panel objectColorPanel;
+		private System.Windows.Forms.Label objectColor;
+
 		private System.Windows.Forms.Button btnEditVisgroups;
 		private System.Windows.Forms.Label lblMemberOfGroup;
-		private Visgroup.VisgroupPanel visgroupPanel;
+		private Sledge.BspEditor.Editing.Components.Visgroup.VisgroupPanel visgroupPanel;
 	}
 }
