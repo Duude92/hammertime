@@ -4,9 +4,11 @@ using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
+using Sledge.BspEditor.Commands.Clipboard;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations.Mutation;
+using Sledge.BspEditor.Modification.Operations.Tree;
 using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.Viewport;
@@ -18,6 +20,7 @@ using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Engine;
 using Sledge.Rendering.Overlay;
 using Sledge.Rendering.Viewports;
+using Sledge.Shell.Input;
 
 namespace Sledge.BspEditor.Tools.Selection
 {
@@ -86,23 +89,35 @@ namespace Sledge.BspEditor.Tools.Selection
 			if (document != null && transformation.HasValue)
 			{
 				var objects = document.Selection.GetSelectedParents().ToList();
+				var shf = KeyboardState.Shift;
 
 				var transaction = new Transaction();
-
-				// Perform the operation
-				var matrix = transformation.Value;
-				var transformOperation = new Transform(matrix, objects);
-				transaction.Add(transformOperation);
-
-				// Texture for texture operations
-				var tl = document.Map.Data.GetOne<TransformationFlags>() ?? new TransformationFlags();
-				if (tl.TextureLock && sender.IsUniformTransformation)
+				if (!shf)
 				{
-					transaction.Add(new TransformTexturesUniform(matrix, objects.SelectMany(x => x.FindAll())));
+
+					// Perform the operation
+					var matrix = transformation.Value;
+					var transformOperation = new Transform(matrix, objects);
+					transaction.Add(transformOperation);
+
+					// Texture for texture operations
+					var tl = document.Map.Data.GetOne<TransformationFlags>() ?? new TransformationFlags();
+					if (tl.TextureLock && sender.IsUniformTransformation)
+					{
+						transaction.Add(new TransformTexturesUniform(matrix, objects.SelectMany(x => x.FindAll())));
+					}
+					else if (tl.TextureScaleLock && sender.IsScaleTransformation)
+					{
+						transaction.Add(new TransformTexturesScale(matrix, objects.SelectMany(x => x.FindAll())));
+					}
 				}
-				else if (tl.TextureScaleLock && sender.IsScaleTransformation)
+				else if(shf && sender is MoveWidget)
 				{
-					transaction.Add(new TransformTexturesScale(matrix, objects.SelectMany(x => x.FindAll())));
+					var matrix = transformation.Value;
+					var clone = objects.Select(x =>(IMapObject) x.Copy(document.Map.NumberGenerator)).ToList();
+					transaction.Add(new Attach(document.Map.Root.ID, clone));
+					var transformOperation = new Transform(matrix, clone);
+					transaction.Add(transformOperation);
 				}
 
 				task = MapDocumentOperation.Perform(document, transaction);
