@@ -8,6 +8,7 @@ using Sledge.BspEditor.Commands.Clipboard;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations.Mutation;
+using Sledge.BspEditor.Modification.Operations.Selection;
 using Sledge.BspEditor.Modification.Operations.Tree;
 using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjects;
@@ -113,11 +114,13 @@ namespace Sledge.BspEditor.Tools.Selection
 				}
 				else if(shf && sender is MoveWidget)
 				{
+					transaction.Add(new Deselect(document.Selection));
 					var matrix = transformation.Value;
 					var clone = objects.Select(x =>(IMapObject) x.Copy(document.Map.NumberGenerator)).ToList();
 					transaction.Add(new Attach(document.Map.Root.ID, clone));
 					var transformOperation = new Transform(matrix, clone);
 					transaction.Add(transformOperation);
+					transaction.Add(new Select(clone));
 				}
 
 				task = MapDocumentOperation.Perform(document, transaction);
