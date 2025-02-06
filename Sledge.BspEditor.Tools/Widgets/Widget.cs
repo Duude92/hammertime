@@ -5,6 +5,7 @@ using System.Numerics;
 using System.Windows.Forms;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Rendering.Viewport;
+using Sledge.BspEditor.Tools.Draggable;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Overlay;
@@ -49,6 +50,7 @@ namespace Sledge.BspEditor.Tools.Widgets
 		}
 
 		public Vector3 Pivot { get; private set; }
+		public BoxState State { get; set; }
 
 		protected MapViewport ActiveViewport { get; private set; }
 
@@ -184,6 +186,10 @@ namespace Sledge.BspEditor.Tools.Widgets
 			if (viewport != ActiveViewport) return;
 
 			if (e.Button != MouseButtons.Left || _mouseOver == AxisType.None) return;
+
+			State.OrigStart = State.Start;
+			State.OrigEnd = State.End;
+
 			_mouseDown = _mouseOver;
 			_mouseDownPoint = new Vector3(e.X, e.Y, 0);
 			_mouseMovePoint = null;

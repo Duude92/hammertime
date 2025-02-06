@@ -14,18 +14,21 @@ using System;
 using System.Drawing;
 using System.Linq;
 using System.Numerics;
-using static System.Net.Mime.MediaTypeNames;
 using Plane = Sledge.DataStructures.Geometric.Plane;
 
 namespace Sledge.BspEditor.Tools.Widgets
 {
 	public class MoveWidget : Widget
 	{
-		public override bool IsUniformTransformation => true;
+		public override bool IsUniformTransformation => _uniformTransform;
 
-		public override bool IsScaleTransformation => false;
+		public override bool IsScaleTransformation => _scaleTransformation;
 
 		public override SelectionBoxDraggableState.TransformationMode WidgetTransformationMode => SelectionBoxDraggableState.TransformationMode.Resize;
+
+		private readonly Vector3 Vector3MaxValue = new Vector3(1, 1, 1) * float.MaxValue;
+		private bool _uniformTransform = true;
+		private bool _scaleTransformation = false;
 
 		public MoveWidget(MapDocument document)
 		{
@@ -129,11 +132,11 @@ namespace Sledge.BspEditor.Tools.Widgets
 			var radius = 0.3f * distance;
 
 			var normal = Vector3.Normalize(Vector3.Subtract(camera.EyeLocation, origin));
+			var plane = new Plane(normal, Vector3.Dot(origin, normal));
 			var right = Vector3.Normalize(Vector3.Cross(normal, Vector3.UnitZ));
 			var up = Vector3.Normalize(Vector3.Cross(normal, right));
 
 			const int sides = 3;
-			var plane = new Plane(normal, Vector3.Dot(origin, normal));
 
 			for (var i = 0; i < sides; i++)
 			{
@@ -179,6 +182,7 @@ namespace Sledge.BspEditor.Tools.Widgets
 
 			// Calculate mouse delta in screen space
 			var screenDelta = _mouseMovePoint.Value - _mouseDownPoint.Value;
+			var alt = KeyboardState.Alt;
 
 			// Project the chosen axis into screen space
 			Vector3 axis;
@@ -208,11 +212,33 @@ namespace Sledge.BspEditor.Tools.Widgets
 
 			// Convert movement back to world space
 			var worldMovement = axis * movementMagnitude;
+			if (!alt)
+			{
 
-			// Create translation matrix
-			var translationMatrix = Matrix4x4.CreateTranslation(worldMovement);
+				// Create translation matrix
+				_uniformTransform = true;
+				_scaleTransformation = false;
+				var translationMatrix = Matrix4x4.CreateTranslation(worldMovement);
 
-			return translationMatrix;
+				return translationMatrix;
+
+			}
+			else
+			{
+				_uniformTransform = false;
+				_scaleTransformation = true;
+				var origSize = State.OrigStart - State.OrigEnd;
+				var resize = worldMovement - origSize;
+				resize = Vector3.Clamp(resize, Vector3.One, Vector3MaxValue);
+				resize = Vector3.Divide(resize, State.OrigEnd - State.OrigStart);
+				var offset = -Pivot;
+				var trans = Matrix4x4.CreateTranslation(offset.X, offset.Y, offset.Z);
+				var scale = Matrix4x4.Multiply(trans, Matrix4x4.CreateScale(resize.X, resize.Y, resize.Z));
+				var inv = Matrix4x4.Invert(trans, out var i) ? i : Matrix4x4.Identity;
+				var resizeMatrix = Matrix4x4.Multiply(scale, inv);
+				return resizeMatrix;
+			}
+
 		}
 
 		protected override void UpdateCache(IViewport viewport, PerspectiveCamera camera)

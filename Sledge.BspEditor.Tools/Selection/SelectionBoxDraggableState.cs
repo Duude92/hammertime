@@ -138,6 +138,7 @@ namespace Sledge.BspEditor.Tools.Selection
 			{
 				widget.Active = State.Action != BoxAction.Idle && CurrentTransformationMode == widget.WidgetTransformationMode && ShowWidgets;
 				widget.SetPivotPoint(_rotationOrigin.Position);
+				widget.State = State;
 			}
 		}
 
