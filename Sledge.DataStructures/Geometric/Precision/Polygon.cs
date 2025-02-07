@@ -162,8 +162,29 @@ namespace Sledge.DataStructures.Geometric.Precision
 
             return true;
         }
+		public bool TryMerge(Polygon other, out Polygon mergedPolygon)
+		{
+			mergedPolygon = null;
 
-        public Geometric.Polygon ToStandardPolygon()
+			if (!Plane.EquivalentTo(other.Plane))
+				return false; // Not coplanar
+
+			var combinedVertices = new List<Vector3>(this.Vertices);
+			combinedVertices.AddRange(other.Vertices);
+
+			// Remove duplicate vertices
+			combinedVertices = combinedVertices.Distinct().ToList();
+
+			mergedPolygon = new Polygon(combinedVertices);
+			return true;
+		}
+        private bool ComparePlanes(Polygon a, Polygon b)
+        {
+			return ((a.Vertices.Count > 2) && (b != a)&&  (b.Vertices.Count > 2) && (b.Plane.EquivalentTo( a.Plane)));
+
+		}
+
+		public Geometric.Polygon ToStandardPolygon()
         {
             return new Geometric.Polygon(Vertices.Select(x => x.ToStandardVector3()));
         }

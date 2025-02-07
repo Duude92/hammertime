@@ -43,38 +43,44 @@ namespace Sledge.DataStructures.Geometric.Precision
 				polygons.Add(poly);
 			}
 
-			var polys = new List<Polygon>();
+			var groupedPolygons = polygons.GroupBy(p => p.Plane).ToList();
 
-			foreach (var poly in polygons)
+			var mergedPolygons = new List<Polygon>();
+
+
+			foreach (var group in groupedPolygons)
 			{
-				int vertexNeighbours = 0;
+				var polyList = group.ToList();
+				while (polyList.Count > 0)
+				{
+					var basePolygon = polyList[0];
+					polyList.RemoveAt(0);
 
-				foreach (var vertex1 in poly.Vertices)
-				{ 
-				int edgeCount = 0;
-					foreach (var poly2 in polygons)
+					bool merged = true;
+					while (merged)
 					{
-						if (poly != poly2)
+						merged = false;
+						for (int i = polyList.Count - 1; i >= 0; i--)
 						{
-							foreach (var vertex2 in poly2.Vertices)
+							if (basePolygon.TryMerge(polyList[i], out var mergedPolygon))
 							{
-								if (vertex1.EquivalentTo( vertex2, 0.002)) edgeCount++;
+								basePolygon = mergedPolygon;
+								polyList.RemoveAt(i);
+								merged = true;
 							}
 						}
 					}
-					if (edgeCount > 1) vertexNeighbours++; //it have to hade at least 3 edges
+					mergedPolygons.Add(basePolygon);
 				}
-				if(vertexNeighbours == poly.Vertices.Count)
-					polys.Add(poly);
 			}
-			polygons = polys;
 
-			// Ensure all the faces point outwards
+			polygons = mergedPolygons;
 			var origin = polygons.Aggregate(Vector3.Zero, (x, y) => x + y.Origin) / polygons.Count;
 			for (var i = 0; i < polygons.Count; i++)
 			{
 				var face = polygons[i];
-				if (face.Plane.OnPlane(origin) >= 0) polygons[i] = new Polygon(face.Vertices.Reverse());
+				if (face.Plane.OnPlane(origin) >= 0)
+					polygons[i] = new Polygon(face.Vertices.Reverse());
 			}
 
 			Polygons = polygons;

@@ -321,10 +321,14 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
 				var currentSolid = solid.Copy;
 				var poly = new Polyhedron(currentSolid.Faces.Select(x => x.Plane));
 
-				foreach (var face in currentSolid.Faces)
+				var groupedFaces = currentSolid.Faces.GroupBy(x => x.Plane);
+
+				foreach (var faces in groupedFaces)
 				{
-					var pg = poly.Polygons.FirstOrDefault(x => x.Plane.Normal.EquivalentTo(face.Plane.Normal, 0.0075f)); // Magic number that seems to match VHE
-					if (pg != null)
+					var face = faces.First();
+
+					var pg = poly.Polygons.FirstOrDefault(x => x.Plane.EquivalentTo(face.Plane, 0.0075f)); // Magic number that seems to match VHE
+					if (pg != null&&faces.Count() == 1)
 					{
 						face.Vertices.Clear();
 
@@ -333,7 +337,14 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
 					}
 					else
 					{
-						facesToRemove.Add(face);
+						facesToRemove.AddRange(faces.Where(f=>f!=face));
+						if(faces.Count()>1)
+						{
+							face.Vertices.Clear();
+
+							foreach (var vertx in pg.Vertices)
+								face.Vertices.Add(new MutableVertex(vertx));
+						}
 					}
 				}
 				foreach (var face in facesToRemove)
