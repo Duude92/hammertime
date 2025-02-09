@@ -1,4 +1,8 @@
-﻿namespace Sledge.BspEditor.Tools.Selection
+﻿using Sledge.BspEditor.Primitives.MapData;
+using Sledge.BspEditor.Primitives;
+using System;
+
+namespace Sledge.BspEditor.Tools.Selection
 {
     partial class SelectToolSidebarPanel
     {
@@ -22,164 +26,184 @@
 
         #region Component Designer generated code
 
-        /// <summary> 
-        /// Required method for Designer support - do not modify 
+        /// <summary>
+        /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()
         {
-            this.Show3DWidgetsCheckbox = new System.Windows.Forms.CheckBox();
-            this.lblMode = new System.Windows.Forms.Label();
-            this.TranslateModeCheckbox = new System.Windows.Forms.CheckBox();
-            this.RotateModeCheckbox = new System.Windows.Forms.CheckBox();
-            this.SkewModeCheckbox = new System.Windows.Forms.CheckBox();
-            this.MoveToWorldButton = new System.Windows.Forms.Button();
-            this.MoveToEntityButton = new System.Windows.Forms.Button();
-            this.lblActions = new System.Windows.Forms.Label();
-            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
-            this.flowLayoutPanel1.SuspendLayout();
-            this.flowLayoutPanel2.SuspendLayout();
-            this.SuspendLayout();
+            Show3DWidgetsCheckbox = new System.Windows.Forms.CheckBox();
+            lblMode = new System.Windows.Forms.Label();
+            TranslateModeCheckbox = new System.Windows.Forms.CheckBox();
+            RotateModeCheckbox = new System.Windows.Forms.CheckBox();
+            SkewModeCheckbox = new System.Windows.Forms.CheckBox();
+            MoveToWorldButton = new System.Windows.Forms.Button();
+            MoveToEntityButton = new System.Windows.Forms.Button();
+            lblActions = new System.Windows.Forms.Label();
+            flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
+            keepEntityAngle = new System.Windows.Forms.CheckBox();
+            flowLayoutPanel1.SuspendLayout();
+            flowLayoutPanel2.SuspendLayout();
+            SuspendLayout();
             // 
             // Show3DWidgetsCheckbox
             // 
-            this.Show3DWidgetsCheckbox.AutoSize = true;
-            this.Show3DWidgetsCheckbox.Location = new System.Drawing.Point(7, 54);
-            this.Show3DWidgetsCheckbox.Name = "Show3DWidgetsCheckbox";
-            this.Show3DWidgetsCheckbox.Size = new System.Drawing.Size(112, 17);
-            this.Show3DWidgetsCheckbox.TabIndex = 6;
-            this.Show3DWidgetsCheckbox.Text = "Show 3D Widgets";
-            this.Show3DWidgetsCheckbox.UseVisualStyleBackColor = true;
-            this.Show3DWidgetsCheckbox.CheckedChanged += new System.EventHandler(this.Show3DWidgetsChecked);
+            Show3DWidgetsCheckbox.AutoSize = true;
+            Show3DWidgetsCheckbox.Location = new System.Drawing.Point(8, 62);
+            Show3DWidgetsCheckbox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Show3DWidgetsCheckbox.Name = "Show3DWidgetsCheckbox";
+            Show3DWidgetsCheckbox.Size = new System.Drawing.Size(118, 19);
+            Show3DWidgetsCheckbox.TabIndex = 6;
+            Show3DWidgetsCheckbox.Text = "Show 3D Widgets";
+            Show3DWidgetsCheckbox.UseVisualStyleBackColor = true;
+            Show3DWidgetsCheckbox.CheckedChanged += Show3DWidgetsChecked;
             // 
             // lblMode
             // 
-            this.lblMode.AutoSize = true;
-            this.lblMode.Location = new System.Drawing.Point(3, 5);
-            this.lblMode.Name = "lblMode";
-            this.lblMode.Size = new System.Drawing.Size(100, 13);
-            this.lblMode.TabIndex = 5;
-            this.lblMode.Text = "Manipulation Mode:";
-            this.lblMode.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            lblMode.AutoSize = true;
+            lblMode.Location = new System.Drawing.Point(4, 6);
+            lblMode.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            lblMode.Name = "lblMode";
+            lblMode.Size = new System.Drawing.Size(115, 15);
+            lblMode.TabIndex = 5;
+            lblMode.Text = "Manipulation Mode:";
+            lblMode.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // TranslateModeCheckbox
             // 
-            this.TranslateModeCheckbox.Appearance = System.Windows.Forms.Appearance.Button;
-            this.TranslateModeCheckbox.AutoSize = true;
-            this.TranslateModeCheckbox.Location = new System.Drawing.Point(3, 3);
-            this.TranslateModeCheckbox.Name = "TranslateModeCheckbox";
-            this.TranslateModeCheckbox.Size = new System.Drawing.Size(61, 23);
-            this.TranslateModeCheckbox.TabIndex = 7;
-            this.TranslateModeCheckbox.Text = "Translate";
-            this.TranslateModeCheckbox.UseVisualStyleBackColor = true;
-            this.TranslateModeCheckbox.CheckedChanged += new System.EventHandler(this.TranslateModeChecked);
+            TranslateModeCheckbox.Appearance = System.Windows.Forms.Appearance.Button;
+            TranslateModeCheckbox.AutoSize = true;
+            TranslateModeCheckbox.Location = new System.Drawing.Point(4, 3);
+            TranslateModeCheckbox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            TranslateModeCheckbox.Name = "TranslateModeCheckbox";
+            TranslateModeCheckbox.Size = new System.Drawing.Size(63, 25);
+            TranslateModeCheckbox.TabIndex = 7;
+            TranslateModeCheckbox.Text = "Translate";
+            TranslateModeCheckbox.UseVisualStyleBackColor = true;
+            TranslateModeCheckbox.CheckedChanged += TranslateModeChecked;
             // 
             // RotateModeCheckbox
             // 
-            this.RotateModeCheckbox.Appearance = System.Windows.Forms.Appearance.Button;
-            this.RotateModeCheckbox.AutoSize = true;
-            this.RotateModeCheckbox.Location = new System.Drawing.Point(70, 3);
-            this.RotateModeCheckbox.Name = "RotateModeCheckbox";
-            this.RotateModeCheckbox.Size = new System.Drawing.Size(49, 23);
-            this.RotateModeCheckbox.TabIndex = 7;
-            this.RotateModeCheckbox.Text = "Rotate";
-            this.RotateModeCheckbox.UseVisualStyleBackColor = true;
-            this.RotateModeCheckbox.CheckedChanged += new System.EventHandler(this.RotateModeChecked);
+            RotateModeCheckbox.Appearance = System.Windows.Forms.Appearance.Button;
+            RotateModeCheckbox.AutoSize = true;
+            RotateModeCheckbox.Location = new System.Drawing.Point(75, 3);
+            RotateModeCheckbox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            RotateModeCheckbox.Name = "RotateModeCheckbox";
+            RotateModeCheckbox.Size = new System.Drawing.Size(51, 25);
+            RotateModeCheckbox.TabIndex = 7;
+            RotateModeCheckbox.Text = "Rotate";
+            RotateModeCheckbox.UseVisualStyleBackColor = true;
+            RotateModeCheckbox.CheckedChanged += RotateModeChecked;
             // 
             // SkewModeCheckbox
             // 
-            this.SkewModeCheckbox.Appearance = System.Windows.Forms.Appearance.Button;
-            this.SkewModeCheckbox.AutoSize = true;
-            this.SkewModeCheckbox.Location = new System.Drawing.Point(125, 3);
-            this.SkewModeCheckbox.Name = "SkewModeCheckbox";
-            this.SkewModeCheckbox.Size = new System.Drawing.Size(44, 23);
-            this.SkewModeCheckbox.TabIndex = 7;
-            this.SkewModeCheckbox.Text = "Skew";
-            this.SkewModeCheckbox.UseVisualStyleBackColor = true;
-            this.SkewModeCheckbox.CheckedChanged += new System.EventHandler(this.SkewModeChecked);
+            SkewModeCheckbox.Appearance = System.Windows.Forms.Appearance.Button;
+            SkewModeCheckbox.AutoSize = true;
+            SkewModeCheckbox.Location = new System.Drawing.Point(134, 3);
+            SkewModeCheckbox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            SkewModeCheckbox.Name = "SkewModeCheckbox";
+            SkewModeCheckbox.Size = new System.Drawing.Size(44, 25);
+            SkewModeCheckbox.TabIndex = 7;
+            SkewModeCheckbox.Text = "Skew";
+            SkewModeCheckbox.UseVisualStyleBackColor = true;
+            SkewModeCheckbox.CheckedChanged += SkewModeChecked;
             // 
             // MoveToWorldButton
             // 
-            this.MoveToWorldButton.AutoSize = true;
-            this.MoveToWorldButton.Location = new System.Drawing.Point(1, 1);
-            this.MoveToWorldButton.Margin = new System.Windows.Forms.Padding(1);
-            this.MoveToWorldButton.Name = "MoveToWorldButton";
-            this.MoveToWorldButton.Size = new System.Drawing.Size(100, 23);
-            this.MoveToWorldButton.TabIndex = 8;
-            this.MoveToWorldButton.Text = "Move to World";
-            this.MoveToWorldButton.UseVisualStyleBackColor = true;
-            this.MoveToWorldButton.Click += new System.EventHandler(this.MoveToWorldButtonClicked);
+            MoveToWorldButton.AutoSize = true;
+            MoveToWorldButton.Location = new System.Drawing.Point(1, 1);
+            MoveToWorldButton.Margin = new System.Windows.Forms.Padding(1);
+            MoveToWorldButton.Name = "MoveToWorldButton";
+            MoveToWorldButton.Size = new System.Drawing.Size(117, 29);
+            MoveToWorldButton.TabIndex = 8;
+            MoveToWorldButton.Text = "Move to World";
+            MoveToWorldButton.UseVisualStyleBackColor = true;
+            MoveToWorldButton.Click += MoveToWorldButtonClicked;
             // 
             // MoveToEntityButton
             // 
-            this.MoveToEntityButton.AutoSize = true;
-            this.MoveToEntityButton.Location = new System.Drawing.Point(1, 26);
-            this.MoveToEntityButton.Margin = new System.Windows.Forms.Padding(1);
-            this.MoveToEntityButton.Name = "MoveToEntityButton";
-            this.MoveToEntityButton.Size = new System.Drawing.Size(100, 23);
-            this.MoveToEntityButton.TabIndex = 9;
-            this.MoveToEntityButton.Text = "Tie to Entity";
-            this.MoveToEntityButton.UseVisualStyleBackColor = true;
-            this.MoveToEntityButton.Click += new System.EventHandler(this.TieToEntityButtonClicked);
+            MoveToEntityButton.AutoSize = true;
+            MoveToEntityButton.Location = new System.Drawing.Point(1, 32);
+            MoveToEntityButton.Margin = new System.Windows.Forms.Padding(1);
+            MoveToEntityButton.Name = "MoveToEntityButton";
+            MoveToEntityButton.Size = new System.Drawing.Size(117, 29);
+            MoveToEntityButton.TabIndex = 9;
+            MoveToEntityButton.Text = "Tie to Entity";
+            MoveToEntityButton.UseVisualStyleBackColor = true;
+            MoveToEntityButton.Click += TieToEntityButtonClicked;
             // 
             // lblActions
             // 
-            this.lblActions.AutoSize = true;
-            this.lblActions.Location = new System.Drawing.Point(3, 75);
-            this.lblActions.Name = "lblActions";
-            this.lblActions.Size = new System.Drawing.Size(45, 13);
-            this.lblActions.TabIndex = 5;
-            this.lblActions.Text = "Actions:";
-            this.lblActions.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            lblActions.AutoSize = true;
+            lblActions.Location = new System.Drawing.Point(4, 113);
+            lblActions.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            lblActions.Name = "lblActions";
+            lblActions.Size = new System.Drawing.Size(50, 15);
+            lblActions.TabIndex = 5;
+            lblActions.Text = "Actions:";
+            lblActions.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // flowLayoutPanel1
             // 
-            this.flowLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.flowLayoutPanel1.Controls.Add(this.TranslateModeCheckbox);
-            this.flowLayoutPanel1.Controls.Add(this.RotateModeCheckbox);
-            this.flowLayoutPanel1.Controls.Add(this.SkewModeCheckbox);
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 19);
-            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(220, 30);
-            this.flowLayoutPanel1.TabIndex = 10;
-            this.flowLayoutPanel1.WrapContents = false;
+            flowLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
+            flowLayoutPanel1.Controls.Add(TranslateModeCheckbox);
+            flowLayoutPanel1.Controls.Add(RotateModeCheckbox);
+            flowLayoutPanel1.Controls.Add(SkewModeCheckbox);
+            flowLayoutPanel1.Location = new System.Drawing.Point(4, 22);
+            flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            flowLayoutPanel1.Name = "flowLayoutPanel1";
+            flowLayoutPanel1.Size = new System.Drawing.Size(257, 35);
+            flowLayoutPanel1.TabIndex = 10;
+            flowLayoutPanel1.WrapContents = false;
             // 
             // flowLayoutPanel2
             // 
-            this.flowLayoutPanel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.flowLayoutPanel2.Controls.Add(this.MoveToWorldButton);
-            this.flowLayoutPanel2.Controls.Add(this.MoveToEntityButton);
-            this.flowLayoutPanel2.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowLayoutPanel2.Location = new System.Drawing.Point(3, 88);
-            this.flowLayoutPanel2.Name = "flowLayoutPanel2";
-            this.flowLayoutPanel2.Size = new System.Drawing.Size(220, 53);
-            this.flowLayoutPanel2.TabIndex = 11;
-            this.flowLayoutPanel2.WrapContents = false;
+            flowLayoutPanel2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
+            flowLayoutPanel2.Controls.Add(MoveToWorldButton);
+            flowLayoutPanel2.Controls.Add(MoveToEntityButton);
+            flowLayoutPanel2.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+            flowLayoutPanel2.Location = new System.Drawing.Point(4, 131);
+            flowLayoutPanel2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            flowLayoutPanel2.Name = "flowLayoutPanel2";
+            flowLayoutPanel2.Size = new System.Drawing.Size(257, 61);
+            flowLayoutPanel2.TabIndex = 11;
+            flowLayoutPanel2.WrapContents = false;
             // 
-            // SelectToolSidebarPanel
+            // keepEntityAngle
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.AutoSize = true;
-            this.Controls.Add(this.flowLayoutPanel2);
-            this.Controls.Add(this.flowLayoutPanel1);
-            this.Controls.Add(this.lblActions);
-            this.Controls.Add(this.lblMode);
-            this.Controls.Add(this.Show3DWidgetsCheckbox);
-            this.Name = "SelectToolSidebarPanel";
-            this.Padding = new System.Windows.Forms.Padding(5);
-            this.Size = new System.Drawing.Size(232, 149);
-            this.flowLayoutPanel1.ResumeLayout(false);
-            this.flowLayoutPanel1.PerformLayout();
-            this.flowLayoutPanel2.ResumeLayout(false);
-            this.flowLayoutPanel2.PerformLayout();
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            keepEntityAngle.Location = new System.Drawing.Point(8, 87);
+            keepEntityAngle.Name = "keepEntityAngle";
+            keepEntityAngle.Size = new System.Drawing.Size(122, 26);
+            keepEntityAngle.TabIndex = 12;
+            keepEntityAngle.Text = "Keep entity angles";
+            keepEntityAngle.UseVisualStyleBackColor = true;
+            keepEntityAngle.Checked = true;
+            keepEntityAngle.CheckedChanged += KeepEntityAngleChecked;
+			// 
+			// SelectToolSidebarPanel
+			// 
+			AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            AutoSize = true;
+            Controls.Add(keepEntityAngle);
+            Controls.Add(flowLayoutPanel2);
+            Controls.Add(flowLayoutPanel1);
+            Controls.Add(lblActions);
+            Controls.Add(lblMode);
+            Controls.Add(Show3DWidgetsCheckbox);
+            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            Size = new System.Drawing.Size(271, 201);
+            flowLayoutPanel1.ResumeLayout(false);
+            flowLayoutPanel1.PerformLayout();
+            flowLayoutPanel2.ResumeLayout(false);
+            flowLayoutPanel2.PerformLayout();
+            ResumeLayout(false);
+            PerformLayout();
         }
+
+		private System.Windows.Forms.CheckBox keepEntityAngle;
 
         #endregion
 
