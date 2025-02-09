@@ -55,6 +55,7 @@ namespace Sledge.DataStructures.Geometric.Precision
 				{
 					var basePolygon = polyList[0];
 					polyList.RemoveAt(0);
+					if (basePolygon.Plane.Normal == basePolygon.Plane.PointOnPlane && basePolygon.Plane.Normal == Vector3.Zero) continue;
 
 					bool merged = true;
 					while (merged)
