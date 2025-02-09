@@ -37,14 +37,15 @@ namespace Sledge.BspEditor.Editing.Problems
 
 		public Task Fix(MapDocument document, Problem problem)
 		{
-			var delete = new Transaction();
+			var fixTransaction = new Transaction();
 			foreach (var g in problem.Objects.GroupBy(x => x.Hierarchy.Parent.ID))
 			{
-				delete.Add(new Detatch(g.Key, g));
+				fixTransaction.Add(new Detatch(g.Key, g));
 				var newSolid = FixSolid(document, g.First() as Solid);
-				delete.Add(new Attach(g.First().Hierarchy.Parent.ID, newSolid));
+				if(newSolid.IsValid())
+					fixTransaction.Add(new Attach(g.First().Hierarchy.Parent.ID, newSolid));
 			}
-			return MapDocumentOperation.Perform(document, delete);
+			return MapDocumentOperation.Perform(document, fixTransaction);
 		}
 		private Solid FixSolid(MapDocument document, Solid solid)
 		{
