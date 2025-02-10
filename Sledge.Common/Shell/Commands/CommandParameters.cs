@@ -38,5 +38,9 @@ namespace Sledge.Common.Shell.Commands
         {
             return _parameters.ContainsKey(key) && _parameters[key] is T ? (T) _parameters[key] : defaultValue;
         }
-    }
+		/// <summary>
+		/// Gets the number of parameters in the collection.
+		/// </summary>
+		public int Count => _parameters.Count;
+	}
 }
