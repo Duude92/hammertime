@@ -10,12 +10,14 @@ using Sledge.BspEditor.Primitives.MapData;
 using Sledge.Common;
 using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Context;
+using Sledge.Common.Shell.Hotkeys;
 
 namespace Sledge.BspEditor.Editing.Commands.Modification
 {
 	[Export(typeof(ICommand))]
     [CommandID("BspEditor:Tools:Rotate")]
-    public class RotateSelection : BaseCommand
+	[DefaultHotkey("R")]
+	public class RotateSelection : BaseCommand
     {
         public override string Name { get; set; } = "Rotate";
         public override string Details { get; set; } = "Rotate";
