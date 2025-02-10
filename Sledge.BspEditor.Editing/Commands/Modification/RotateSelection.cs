@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.Composition;
 using System.Numerics;
 using System.Threading.Tasks;
+using LogicAndTrick.Oy;
 using Sledge.BspEditor.Commands;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
@@ -12,7 +13,7 @@ using Sledge.Common.Shell.Context;
 
 namespace Sledge.BspEditor.Editing.Commands.Modification
 {
-    [Export(typeof(ICommand))]
+	[Export(typeof(ICommand))]
     [CommandID("BspEditor:Tools:Rotate")]
     public class RotateSelection : BaseCommand
     {
@@ -26,6 +27,11 @@ namespace Sledge.BspEditor.Editing.Commands.Modification
         
         protected override async Task Invoke(MapDocument document, CommandParameters parameters)
         {
+			if(parameters.Count == 0)
+			{
+				await Oy.Publish("SelectTool:TransformationModeChanged", "Rotate");
+                return;
+            }
             var selBox = document.Selection.GetSelectionBoundingBox();
 
             var axis = parameters.Get<Vector3>("Axis");
