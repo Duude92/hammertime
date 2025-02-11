@@ -18,8 +18,7 @@ namespace Sledge.Providers.Texture.Env
 			IFile envRoot = null;
 			try
 			{
-				envRoot = file.GetChild("gfx");
-				envRoot = envRoot.GetChild("env");
+				envRoot = file.GetChild("gfx")?.GetChild("env");
 			}
 			catch
 			{
