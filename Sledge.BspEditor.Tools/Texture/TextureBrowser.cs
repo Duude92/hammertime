@@ -240,7 +240,6 @@ namespace Sledge.BspEditor.Tools.Texture
 		private void UpdateFavouritesList()
 		{
 			FavouritesTree.Nodes.Clear();
-			//FavouritesTree.Nodes.Add("", "(Not implemented yet)");
 			var selected = FavouritesTree.SelectedNode;
 			var selectedKey = selected == null ? GetMemory<string>("SelectedFavourite") : selected.Name;
 			var favourites = SettingsManager.FavouriteTextureFolders;
@@ -285,7 +284,6 @@ namespace Sledge.BspEditor.Tools.Texture
 		private IEnumerable<string> GetFavouriteFolderTextures()
 		{
 			var folder = FavouritesTree.SelectedNode;
-			//return _textures;
 			var node = folder == null ? null : folder.Tag as FavouriteTextureFolder;
 			var nodes = new List<FavouriteTextureFolder>();
 			CollectNodes(nodes, node == null ? SettingsManager.FavouriteTextureFolders : node.Children);
@@ -465,14 +463,10 @@ namespace Sledge.BspEditor.Tools.Texture
 				var dest = FavouritesTree.GetNodeAt(pt);
 				if (dest != null && dest.Tag is FavouriteTextureFolder)
 				{
-					//var data = e.Data.GetDataPresent(typeof(string))
-					//	? new List<TextureItem> { (TextureItem)e.Data.GetData(typeof(TextureItem)) }
-					//	: (List<TextureItem>)e.Data.GetData(typeof(List<TextureItem>));
 					var data = new List<string>();
 					data.AddRange(
-						(e.Data.GetData(typeof(List<string>)) as List<string>).ToList()
+						(e.Data.GetData(typeof(List<string>)) as List<string>)
 						);
-						//(e.Data.GetData(typeof(List<string>)) as List<string>).Select(x=> new TextureItem(x, TextureFlags.None)).FirstOrDefault(),
 					var folder = (FavouriteTextureFolder)dest.Tag;
 					foreach (var ti in data)
 					{
