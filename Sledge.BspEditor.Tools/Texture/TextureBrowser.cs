@@ -564,17 +564,42 @@ namespace Sledge.BspEditor.Tools.Texture
 			if (_memory.TryGetValue(id, out var m)) return m.Get(name, def);
 			return def;
 		}
-		private static class SettingsManager
+		[Export(typeof(ISettingsContainer))]
+		public class SettingsManager : ISettingsContainer
 		{
-			public static List<FavouriteTextureFolder> FavouriteTextureFolders { get; set; } = new ();
+			private static SettingsManager _instance;
+
+			[Setting("FavouriteFolders")]
+			public List<FavouriteTextureFolder> FavouriteTextureFolders { get; private set; } = new();
+			
+			public string Name => "Sledge.BspEditor.Tools.Texture.TextureBrowser.SettingsManager";
+
+			public bool ValuesLoaded { get; set; } = false;
+			public SettingsManager()
+		{
+				_instance = this;
+			}
+
+			public IEnumerable<SettingKey> GetKeys()
+			{
+				yield break;
 		}
 
-		private class FavouriteTextureFolder
+			public void LoadValues(ISettingsStore store)
 		{
-			public List<string> Items { get; set; } = new();
-			public List<FavouriteTextureFolder> Children = new();
-			public string Name { get; set; }
+				FavouriteTextureFolders = store.Get<FavouriteTextureFolder[]>("FavouriteFolders")?.ToList() ?? new();
+				ValuesLoaded = true;
+			}
 
+			public void StoreValues(ISettingsStore store)
+			{
+				store.Set("FavouriteFolders", FavouriteTextureFolders);
+			}
+
+			internal static SettingsManager GetInstance()
+			{
+				return _instance;
+			}
 		}
 	}
 }
