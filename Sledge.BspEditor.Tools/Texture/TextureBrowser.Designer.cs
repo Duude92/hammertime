@@ -1,6 +1,6 @@
 ﻿namespace Sledge.BspEditor.Tools.Texture
 {
-    partial class TextureBrowser
+	partial class TextureBrowser
     {
         /// <summary>
         /// Required designer variable.
@@ -47,7 +47,8 @@
             this.RemoveFavouriteItemButton = new System.Windows.Forms.Button();
             this.AddFavouriteFolderButton = new System.Windows.Forms.Button();
             this.FavouriteTexturesLabel = new System.Windows.Forms.Label();
-            this.TextureListPanel = new System.Windows.Forms.Panel();
+            this.RenameFolderButton = new System.Windows.Forms.Button();
+			this.TextureListPanel = new System.Windows.Forms.Panel();
             this.panel1.SuspendLayout();
             this.LeftbarPanel.SuspendLayout();
             this.SuspendLayout();
@@ -218,7 +219,8 @@
             this.LeftbarPanel.Controls.Add(this.RemoveFavouriteItemButton);
             this.LeftbarPanel.Controls.Add(this.AddFavouriteFolderButton);
             this.LeftbarPanel.Controls.Add(this.FavouriteTexturesLabel);
-            this.LeftbarPanel.Controls.Add(this.FavouritesTree);
+            this.LeftbarPanel.Controls.Add(this.RenameFolderButton);
+			this.LeftbarPanel.Controls.Add(this.FavouritesTree);
             this.LeftbarPanel.Controls.Add(this.PackageTree);
             this.LeftbarPanel.Dock = System.Windows.Forms.DockStyle.Left;
             this.LeftbarPanel.Location = new System.Drawing.Point(0, 0);
@@ -244,27 +246,39 @@
             this.RemoveFavouriteItemButton.Enabled = true;
             this.RemoveFavouriteItemButton.Location = new System.Drawing.Point(3, 469);
             this.RemoveFavouriteItemButton.Name = "RemoveFavouriteItemButton";
-            this.RemoveFavouriteItemButton.Size = new System.Drawing.Size(220, 23);
+            this.RemoveFavouriteItemButton.Size = new System.Drawing.Size(110, 23);
             this.RemoveFavouriteItemButton.TabIndex = 3;
             this.RemoveFavouriteItemButton.Text = "Remove Selection From Folder";
             this.RemoveFavouriteItemButton.UseVisualStyleBackColor = true;
             this.RemoveFavouriteItemButton.Click += new System.EventHandler(this.RemoveFavouriteItemButtonClicked);
-            // 
-            // AddFavouriteFolderButton
-            // 
-            this.AddFavouriteFolderButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.AddFavouriteFolderButton.Enabled = true;
+			// 
+			// AddFavouriteFolderButton
+			// 
+			this.AddFavouriteFolderButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.AddFavouriteFolderButton.Enabled = true;
             this.AddFavouriteFolderButton.Location = new System.Drawing.Point(3, 446);
-            this.AddFavouriteFolderButton.Name = "AddFavouriteFolderButton";
-            this.AddFavouriteFolderButton.Size = new System.Drawing.Size(110, 23);
-            this.AddFavouriteFolderButton.TabIndex = 3;
-            this.AddFavouriteFolderButton.Text = "Add Folder";
-            this.AddFavouriteFolderButton.UseVisualStyleBackColor = true;
+			this.AddFavouriteFolderButton.Name = "AddFavouriteFolderButton";
+			this.AddFavouriteFolderButton.Size = new System.Drawing.Size(110, 23);
+			this.AddFavouriteFolderButton.TabIndex = 3;
+			this.AddFavouriteFolderButton.Text = "Add Folder";
+			this.AddFavouriteFolderButton.UseVisualStyleBackColor = true;
             this.AddFavouriteFolderButton.Click += new System.EventHandler(this.AddFavouriteFolderButtonClicked);
-            // 
-            // FavouriteTexturesLabel
-            // 
-            this.FavouriteTexturesLabel.AutoSize = true;
+			// 
+			// RenameFolderButton
+			// 
+			this.RenameFolderButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.RenameFolderButton.Enabled = true;
+			this.RenameFolderButton.Location = new System.Drawing.Point(113, 469);
+			this.RenameFolderButton.Name = "RenameFolderButton";
+			this.RenameFolderButton.Size = new System.Drawing.Size(110, 23);
+			this.RenameFolderButton.TabIndex = 3;
+			this.RenameFolderButton.Text = "Rename Folder";
+			this.RenameFolderButton.UseVisualStyleBackColor = true;
+			this.RenameFolderButton.Click += new System.EventHandler(this.RenameFolderButtonClicked);
+			// 
+			// FavouriteTexturesLabel
+			// 
+			this.FavouriteTexturesLabel.AutoSize = true;
             this.FavouriteTexturesLabel.Location = new System.Drawing.Point(3, 416);
             this.FavouriteTexturesLabel.Name = "FavouriteTexturesLabel";
             this.FavouriteTexturesLabel.Size = new System.Drawing.Size(170, 13);
@@ -302,9 +316,9 @@
 
         }
 
-        #endregion
+		#endregion
 
-        private System.Windows.Forms.TreeView PackageTree;
+		private System.Windows.Forms.TreeView PackageTree;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label TextureSizeLabel;
         private System.Windows.Forms.Label TextureNameLabel;
@@ -323,6 +337,7 @@
         private System.Windows.Forms.Button AddFavouriteFolderButton;
         private System.Windows.Forms.Label FavouriteTexturesLabel;
         private System.Windows.Forms.Button RemoveFavouriteItemButton;
+        private System.Windows.Forms.Button RenameFolderButton;
         private System.Windows.Forms.Panel TextureListPanel;
     }
 }

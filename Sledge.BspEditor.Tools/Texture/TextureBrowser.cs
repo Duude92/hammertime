@@ -16,6 +16,7 @@ using Sledge.Common.Translations;
 using Sledge.QuickForms;
 using Sledge.Shell;
 using Sledge.Shell.Commands;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 
 namespace Sledge.BspEditor.Tools.Texture
 {
@@ -424,7 +425,35 @@ namespace Sledge.BspEditor.Tools.Texture
 				UpdateTextureList();
 			}
 		}
+		private void RenameFolderButtonClicked(object sender, EventArgs e)
+		{
+			FavouriteTextureFolder item = null;
+			var selected = FavouritesTree.SelectedNode;
+			if (selected != null && selected.Parent != null)
+			{
+				item = selected.Tag as FavouriteTextureFolder;
+				var siblings = item != null ? item.Children : _settingsManager.Folders;
 
+				using (var qf = new QuickForm("Rename Folder") { UseShortcutKeys = true }.TextBox("Name", "Name").OkCancel("Ok", "Cancel"))
+				{
+					if (qf.ShowDialog() != DialogResult.OK) return;
+
+					var name = qf.String("Name");
+					var uniqName = name;
+					if (String.IsNullOrWhiteSpace(name)) return;
+
+					var counter = 1;
+					while (siblings.Any(x => x.Name == uniqName))
+					{
+						uniqName = name + "_" + counter;
+						counter++;
+					}
+
+					item.Name = uniqName;
+					UpdateFavouritesList();
+				}
+			}
+		}
 		private void AddFavouriteFolderButtonClicked(object sender, EventArgs e)
 		{
 			FavouriteTextureFolder parent = null;
