@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,9 +11,11 @@ using Sledge.BspEditor.Modification.Operations.Selection;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjects;
+using Sledge.Common.Shell.Settings;
 using Sledge.Common.Translations;
 using Sledge.QuickForms;
 using Sledge.Shell;
+using Sledge.Shell.Commands;
 
 namespace Sledge.BspEditor.Tools.Texture
 {
@@ -20,7 +23,7 @@ namespace Sledge.BspEditor.Tools.Texture
 	{
 		private readonly MapDocument _document;
 		private TextureListPanel _textureList;
-
+		private SettingsManager _settingsManager = SettingsManager.GetInstance();
 		public TextureBrowser(MapDocument document)
 		{
 			_document = document;
@@ -242,7 +245,7 @@ namespace Sledge.BspEditor.Tools.Texture
 			FavouritesTree.Nodes.Clear();
 			var selected = FavouritesTree.SelectedNode;
 			var selectedKey = selected == null ? GetMemory<string>("SelectedFavourite") : selected.Name;
-			var favourites = SettingsManager.FavouriteTextureFolders;
+			var favourites = _settingsManager.FavouriteTextureFolders;
 			FavouritesTree.Nodes.Clear();
 			var parent = FavouritesTree.Nodes.Add("", "All Favourites");
 			TreeNode reselect;
@@ -286,7 +289,7 @@ namespace Sledge.BspEditor.Tools.Texture
 			var folder = FavouritesTree.SelectedNode;
 			var node = folder == null ? null : folder.Tag as FavouriteTextureFolder;
 			var nodes = new List<FavouriteTextureFolder>();
-			CollectNodes(nodes, node == null ? SettingsManager.FavouriteTextureFolders : node.Children);
+			CollectNodes(nodes, node == null ? _settingsManager.FavouriteTextureFolders : node.Children);
 			if (node != null) nodes.Add(node);
 			var favs = nodes.SelectMany(x => x.Items).ToList();
 			return _textures.Where(x => InFavouriteList(favs, x));
@@ -407,7 +410,7 @@ namespace Sledge.BspEditor.Tools.Texture
 			if (selected != null && selected.Parent != null)
 			{
 				parent = selected.Parent.Tag as FavouriteTextureFolder;
-				var siblings = parent != null ? parent.Children : SettingsManager.FavouriteTextureFolders;
+				var siblings = parent != null ? parent.Children : _settingsManager.FavouriteTextureFolders;
 				siblings.Remove(selected.Tag as FavouriteTextureFolder);
 				UpdateFavouritesList();
 				UpdateTextureList();
@@ -419,7 +422,7 @@ namespace Sledge.BspEditor.Tools.Texture
 			FavouriteTextureFolder parent = null;
 			var selected = FavouritesTree.SelectedNode;
 			if (selected != null) parent = selected.Tag as FavouriteTextureFolder;
-			var siblings = parent != null ? parent.Children : SettingsManager.FavouriteTextureFolders;
+			var siblings = parent != null ? parent.Children : _settingsManager.FavouriteTextureFolders;
 			using (var qf = new QuickForm("Enter Folder Name") { UseShortcutKeys = true }.TextBox("Name", "Name").OkCancel("Ok", "Cancel"))
 			{
 				if (qf.ShowDialog() != DialogResult.OK) return;
@@ -512,7 +515,7 @@ namespace Sledge.BspEditor.Tools.Texture
 			var folder = FavouritesTree.SelectedNode;
 			var node = folder == null ? null : folder.Tag as FavouriteTextureFolder;
 			var nodes = new List<FavouriteTextureFolder>();
-			CollectNodes(nodes, node == null ? SettingsManager.FavouriteTextureFolders : node.Children);
+			CollectNodes(nodes, node == null ? _settingsManager.FavouriteTextureFolders : node.Children);
 			if (node != null) nodes.Add(node);
 
 			nodes.ForEach(x => x.Items.RemoveAll(selection.Contains));
@@ -576,17 +579,17 @@ namespace Sledge.BspEditor.Tools.Texture
 
 			public bool ValuesLoaded { get; set; } = false;
 			public SettingsManager()
-		{
+			{
 				_instance = this;
 			}
 
 			public IEnumerable<SettingKey> GetKeys()
 			{
 				yield break;
-		}
+			}
 
 			public void LoadValues(ISettingsStore store)
-		{
+			{
 				FavouriteTextureFolders = store.Get<FavouriteTextureFolder[]>("FavouriteFolders")?.ToList() ?? new();
 				ValuesLoaded = true;
 			}
