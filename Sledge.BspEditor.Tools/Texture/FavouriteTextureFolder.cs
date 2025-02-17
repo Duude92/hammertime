@@ -7,4 +7,9 @@ namespace Sledge.BspEditor.Tools.Texture
 		public List<FavouriteTextureFolder> Children { get; set; } = new();
 		public string Name { get; set; }
 	}
+	public class FavouriteTextureEnvironmentCollection
+	{
+		public string EnvironmentId { get; set; }
+		public List<FavouriteTextureFolder> Folders { get; set; } = new();
+	}
 }
