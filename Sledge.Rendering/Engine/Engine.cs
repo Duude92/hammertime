@@ -241,7 +241,7 @@ namespace Sledge.Rendering.Engine
 		private void Render(IViewport renderTarget)
 		{
 			_commandList.Begin();
-			_commandList.SetFramebuffer(renderTarget.Swapchain.Framebuffer);
+			_commandList.SetFramebuffer(renderTarget.ViewportFramebuffer);
 			_commandList.ClearDepthStencil(1);
 
 			var cc = renderTarget.Camera.Type == CameraType.Perspective
@@ -313,8 +313,16 @@ namespace Sledge.Rendering.Engine
 				overlay.SetupFrame(Context, renderTarget);
 				overlay.Render(Context, renderTarget, _commandList, Scene.GetRenderables(overlay, renderTarget));
 			}
-
 			_commandList.End();
+			Device.SubmitCommands(_commandList);
+
+			if (renderTarget.ViewportFramebuffer.ColorTargets[0].Target.SampleCount != TextureSampleCount.Count1)
+			{
+				_commandList.Begin();
+				_commandList.ResolveTexture(renderTarget.ViewportFramebuffer.ColorTargets[0].Target, renderTarget.ViewportResolvedTexture);
+			_commandList.End();
+				Device.SubmitCommands(_commandList);
+			}
 
 			Device.SubmitCommands(_commandList);
 			Device.SwapBuffers(renderTarget.Swapchain);
@@ -329,7 +337,7 @@ namespace Sledge.Rendering.Engine
 		{
 			lock (_lock)
 			{
-				var control = new Viewports.Viewport(Device, _options);
+				var control = new Viewports.Viewport(Device, _options, _sampleCount);
 				control.Disposed += DestroyViewport;
 
 				if (!_renderTargets.Any()) Start();

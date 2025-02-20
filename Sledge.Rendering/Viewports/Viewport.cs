@@ -29,40 +29,78 @@ namespace Sledge.Rendering.Viewports
         }
 
         public Control Control => this;
-        public ViewportOverlay Overlay { get; }
+
+		public Framebuffer ViewportFramebuffer { get; private set; }
+		public ViewportOverlay Overlay { get; }
         public bool IsFocused => _isFocused;
 
-        private bool _isFocused;
+		public Texture ViewportResolvedTexture { get; private set; }
+
+		private bool _isFocused;
         private int _unfocusedCounter = 0;
         private ICamera _camera;
+		private GraphicsDevice _device;
+		private TextureSampleCount _sampleCount;
 
-        public event EventHandler<long> OnUpdate;
+		public event EventHandler<long> OnUpdate;
 
-        public Viewport(GraphicsDevice graphics, GraphicsDeviceOptions options)
+        public Viewport(GraphicsDevice graphics, GraphicsDeviceOptions options, TextureSampleCount sampleCount)
+		{
+            _device = graphics;
+            _sampleCount = sampleCount;
+			SetStyle(ControlStyles.Opaque, true);
+			SetStyle(ControlStyles.UserPaint, true);
+			SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+			DoubleBuffered = false;
+
+			var hWnd = Handle; // Will call CreateHandle internally
+			var hInstance = HInstance;
+
+			uint w = (uint)Width, h = (uint)Height;
+			if (w <= 0) w = 1;
+			if (h <= 0) h = 1;
+
+			ID = _nextId++;
+			Camera = new PerspectiveCamera { Width = Width, Height = Height };
+
+			var source = SwapchainSource.CreateWin32(hWnd, hInstance);
+			var desc = new SwapchainDescription(source, w, h, options.SwapchainDepthFormat, options.SyncToVerticalBlank);
+			Swapchain = graphics.ResourceFactory.CreateSwapchain(desc);
+
+			InitFramebuffer( w, h, sampleCount);
+
+			Overlay = new ViewportOverlay(this);
+		}
+		public void InitFramebuffer(TextureSampleCount sampleCount)
         {
-            SetStyle(ControlStyles.Opaque, true);
-            SetStyle(ControlStyles.UserPaint, true);
-            SetStyle(ControlStyles.AllPaintingInWmPaint, true);
-            DoubleBuffered = false;
+			InitFramebuffer((uint)Width, (uint)Height, sampleCount);
+		}
 
-            var hWnd = Handle; // Will call CreateHandle internally
-            var hInstance = HInstance;
+		private void InitFramebuffer(uint width, uint height, TextureSampleCount sampleCount)
+		{
+			var mainSceneDepthTexture = _device.ResourceFactory.CreateTexture(TextureDescription.Texture2D(
+				width,
+				height,
+				1,
+				1,
+				PixelFormat.R32_Float,
+				TextureUsage.DepthStencil,
+				 sampleCount));
+			ViewportResolvedTexture = _device.ResourceFactory.CreateTexture(TextureDescription.Texture2D(width, height, 1, 1, PixelFormat.B8_G8_R8_A8_UNorm, TextureUsage.RenderTarget,
+				TextureSampleCount.Count1));
+			TextureDescription mainColorDesc = TextureDescription.Texture2D(
+				width,
+				height,
+				1,
+				1,
+				PixelFormat.B8_G8_R8_A8_UNorm,
+				TextureUsage.RenderTarget | TextureUsage.Sampled,
+				sampleCount);
+			var mainSceneColorTexture = _device.ResourceFactory.CreateTexture(ref mainColorDesc);
+			ViewportFramebuffer = _device.ResourceFactory.CreateFramebuffer(new FramebufferDescription(mainSceneDepthTexture, mainSceneColorTexture));
+		}
 
-            uint w = (uint)Width, h = (uint)Height;
-            if (w <= 0) w = 1;
-            if (h <= 0) h = 1;
-
-            ID = _nextId++;
-            Camera = new PerspectiveCamera { Width = Width, Height = Height };
-
-            var source = SwapchainSource.CreateWin32(hWnd, hInstance);
-            var desc = new SwapchainDescription(source, w, h, options.SwapchainDepthFormat, options.SyncToVerticalBlank);
-            Swapchain = graphics.ResourceFactory.CreateSwapchain(desc);
-
-            Overlay = new ViewportOverlay(this);
-        }
-
-        protected override bool IsInputKey(Keys keyData)
+		protected override bool IsInputKey(Keys keyData)
         {
             // Force all keys to be passed to the regular key events
             return true;
@@ -75,7 +113,8 @@ namespace Sledge.Rendering.Viewports
                 var w = Math.Max(Width, 1);
                 var h = Math.Max(Height, 1);
                 Swapchain.Resize((uint) w, (uint) h);
-                _resizeRequired = false;
+                InitFramebuffer((uint)w, (uint)h, _sampleCount);
+				_resizeRequired = false;
             }
 
             OnUpdate?.Invoke(this, frame);
