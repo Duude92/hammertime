@@ -308,11 +308,7 @@ namespace Sledge.Rendering.Engine
 					pipeline.Render(Context, renderTarget, _commandList, Scene.GetRenderables(pipeline, renderTarget));
 			}
 
-			foreach (var overlay in _pipelines[PipelineGroup.Overlay])
-			{
-				overlay.SetupFrame(Context, renderTarget);
-				overlay.Render(Context, renderTarget, _commandList, Scene.GetRenderables(overlay, renderTarget));
-			}
+
 			_commandList.End();
 			Device.SubmitCommands(_commandList);
 
@@ -324,6 +320,18 @@ namespace Sledge.Rendering.Engine
 				Device.SubmitCommands(_commandList);
 			}
 
+
+			_commandList.Begin();
+			_commandList.SetFramebuffer(renderTarget.Swapchain.Framebuffer);
+			_commandList.ClearDepthStencil(1);
+			_commandList.ClearColorTarget(0, cc);
+
+			foreach (var overlay in _pipelines[PipelineGroup.Overlay])
+			{
+				overlay.SetupFrame(Context, renderTarget);
+				overlay.Render(Context, renderTarget, _commandList, Scene.GetRenderables(overlay, renderTarget));
+			}
+			_commandList.End();
 			Device.SubmitCommands(_commandList);
 			Device.SwapBuffers(renderTarget.Swapchain);
 		}
@@ -376,6 +384,8 @@ namespace Sledge.Rendering.Engine
 			_sampleCount = (TextureSampleCount)mSAAoption;
 			foreach (var pl in _pipelines.SelectMany(x => x.Value))
 			{
+				//TODO: Separate rendering pipeline groups
+				if(pl.Group == PipelineGroup.Overlay) continue;
 				pl.Create(Context, _sampleCount);
 			}
 			foreach (var rt in _renderTargets)
