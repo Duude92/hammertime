@@ -374,6 +374,14 @@ namespace Sledge.Rendering.Engine
 		internal void SetMSAA(int mSAAoption)
 		{
 			_sampleCount = (TextureSampleCount)mSAAoption;
+			foreach (var pl in _pipelines.SelectMany(x => x.Value))
+			{
+				pl.Create(Context, _sampleCount);
+			}
+			foreach (var rt in _renderTargets)
+			{
+				rt.InitFramebuffer(_sampleCount);
+			}
 		}
 	}
 }
