@@ -28,6 +28,7 @@ namespace Sledge.BspEditor.Rendering
 		[Setting] public static Color AxisGridLineColour { get; set; } = Color.FromArgb(0, 100, 100);
 		[Setting] public static Color BoundaryGridLineColour { get; set; } = Color.Red;
 		[Setting("UnfocusedViewportTargetFps")] private int _targetFps { get; set; } = 10;
+		[Setting] private static MSAA_OPTION MSAAoption { get; set; } = MSAA_OPTION.MSAA_1X;
 
 		// Settings container
 
@@ -39,6 +40,7 @@ namespace Sledge.BspEditor.Rendering
 			yield return new SettingKey("Rendering", "PerspectiveBackgroundColour", typeof(Color));
 			yield return new SettingKey("Rendering", "OrthographicBackgroundColour", typeof(Color));
 			yield return new SettingKey("Rendering", "UnfocusedViewportTargetFps", typeof(int));
+			yield return new SettingKey("Rendering", "MSAAoption", typeof(MSAA_OPTION));
 
 
 			yield return new SettingKey("Rendering/Grid", "FractionalGridLineColour", typeof(Color));
@@ -55,12 +57,22 @@ namespace Sledge.BspEditor.Rendering
 			_engine.Value.SetClearColour(CameraType.Perspective, PerspectiveBackgroundColour);
 			_engine.Value.SetClearColour(CameraType.Orthographic, OrthographicBackgroundColour);
 			_engine.Value.InactiveTargetFps = Math.Max(_targetFps, 1);
+			_engine.Value.SetMSAA((int)MSAAoption);
 			ValuesLoaded = true;
 		}
 
 		public void StoreValues(ISettingsStore store)
 		{
 			store.StoreInstance(this);
+		}
+		private enum MSAA_OPTION
+		{
+			MSAA_1X ,
+			MSAA_2X ,
+			MSAA_4X ,
+			MSAA_8X ,
+			MSAA_16X,
+			MSAA_32X
 		}
 	}
 }

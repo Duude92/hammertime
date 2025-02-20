@@ -370,5 +370,10 @@ namespace Sledge.Rendering.Engine
 				t.Dispose();
 			}
 		}
+
+		internal void SetMSAA(int mSAAoption)
+		{
+			_sampleCount = (TextureSampleCount)mSAAoption;
+		}
 	}
 }
