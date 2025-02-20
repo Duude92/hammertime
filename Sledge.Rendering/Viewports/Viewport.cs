@@ -32,6 +32,8 @@ namespace Sledge.Rendering.Viewports
 
 		public Framebuffer ViewportFramebuffer { get; private set; }
 		public ViewportOverlay Overlay { get; }
+		public Resources.Texture ViewportRenderTexture { get; private set; }
+
         public bool IsFocused => _isFocused;
 
 		public Texture ViewportResolvedTexture { get; private set; }
@@ -67,7 +69,7 @@ namespace Sledge.Rendering.Viewports
 			var desc = new SwapchainDescription(source, w, h, options.SwapchainDepthFormat, options.SyncToVerticalBlank);
 			Swapchain = graphics.ResourceFactory.CreateSwapchain(desc);
 
-			InitFramebuffer( w, h, sampleCount);
+            InitFramebuffer(w, h, sampleCount);
 
 			Overlay = new ViewportOverlay(this);
 		}
@@ -86,7 +88,7 @@ namespace Sledge.Rendering.Viewports
 				PixelFormat.R32_Float,
 				TextureUsage.DepthStencil,
 				 sampleCount));
-			ViewportResolvedTexture = _device.ResourceFactory.CreateTexture(TextureDescription.Texture2D(width, height, 1, 1, PixelFormat.B8_G8_R8_A8_UNorm, TextureUsage.RenderTarget,
+			ViewportResolvedTexture = _device.ResourceFactory.CreateTexture(TextureDescription.Texture2D(width, height, 1, 1, PixelFormat.B8_G8_R8_A8_UNorm, TextureUsage.RenderTarget | TextureUsage.Sampled,
 				TextureSampleCount.Count1));
 			TextureDescription mainColorDesc = TextureDescription.Texture2D(
 				width,
@@ -98,6 +100,7 @@ namespace Sledge.Rendering.Viewports
 				sampleCount);
 			var mainSceneColorTexture = _device.ResourceFactory.CreateTexture(ref mainColorDesc);
 			ViewportFramebuffer = _device.ResourceFactory.CreateFramebuffer(new FramebufferDescription(mainSceneDepthTexture, mainSceneColorTexture));
+			ViewportRenderTexture = new Sledge.Rendering.Resources.Texture(Engine.Engine.Instance.Context, mainSceneColorTexture, Resources.TextureSampleType.Standard);
 		}
 
 		protected override bool IsInputKey(Keys keyData)
