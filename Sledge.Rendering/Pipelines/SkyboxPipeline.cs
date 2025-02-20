@@ -39,7 +39,7 @@ namespace Sledge.Rendering.Pipelines
 			cl.SetGraphicsResourceSet(0, _projectionResourceSet);
 		}
 
-		public void Create(RenderContext context)
+		public void Create(RenderContext context, TextureSampleCount sampleCount)
 		{
 			var factory = context.Device.ResourceFactory;
 
@@ -58,7 +58,7 @@ namespace Sledge.Rendering.Pipelines
 				{
 					ColorAttachments = new[] { new OutputAttachmentDescription(PixelFormat.B8_G8_R8_A8_UNorm) },
 					DepthAttachment = new OutputAttachmentDescription(PixelFormat.R32_Float),
-					SampleCount = TextureSampleCount.Count1
+					SampleCount = sampleCount
 				},
 			};
 

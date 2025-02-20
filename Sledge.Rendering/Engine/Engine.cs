@@ -114,7 +114,7 @@ namespace Sledge.Rendering.Engine
 
 		public void AddPipeline(IPipeline pipeline)
 		{
-			pipeline.Create(Context);
+			pipeline.Create(Context, TextureSampleCount.Count1);
 			lock (_lock)
 			{
 				_pipelines[pipeline.Group].Add(pipeline);
@@ -160,6 +160,7 @@ namespace Sledge.Rendering.Engine
 
 
 		private int _paused = 0;
+		private TextureSampleCount _sampleCount = TextureSampleCount.Count1;
 		private readonly ManualResetEvent _pauseThreadEvent = new ManualResetEvent(false);
 
 		public IDisposable Pause()

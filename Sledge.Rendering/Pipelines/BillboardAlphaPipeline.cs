@@ -25,7 +25,7 @@ namespace Sledge.Rendering.Pipelines
 		private ResourceSet _projectionResourceSet;
 		private ResourceLayout _uvLayout;
 
-		public void Create(RenderContext context)
+		public void Create(RenderContext context, TextureSampleCount sampleCount)
 		{
 			(_vertex, _geometry, _fragment) = context.ResourceLoader.LoadShadersGeometry("Billboard");
 			_uvLayout = context.Device.ResourceFactory.CreateResourceLayout(new ResourceLayoutDescription(
@@ -45,7 +45,7 @@ namespace Sledge.Rendering.Pipelines
 				{
 					ColorAttachments = new[] { new OutputAttachmentDescription(PixelFormat.B8_G8_R8_A8_UNorm) },
 					DepthAttachment = new OutputAttachmentDescription(PixelFormat.R32_Float),
-					SampleCount = TextureSampleCount.Count1
+					SampleCount = sampleCount
 				}
 			};
 
