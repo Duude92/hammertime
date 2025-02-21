@@ -71,8 +71,6 @@ namespace Sledge.BspEditor.Rendering
 			MSAA_2X ,
 			MSAA_4X ,
 			MSAA_8X ,
-			MSAA_16X,
-			MSAA_32X
 		}
 	}
 }
