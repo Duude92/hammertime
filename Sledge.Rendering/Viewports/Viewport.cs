@@ -80,6 +80,8 @@ namespace Sledge.Rendering.Viewports
 
 		private void InitFramebuffer(uint width, uint height, TextureSampleCount sampleCount)
 		{
+			_sampleCount = sampleCount;
+
 			var mainSceneDepthTexture = _device.ResourceFactory.CreateTexture(TextureDescription.Texture2D(
 				width,
 				height,
