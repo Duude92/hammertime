@@ -235,7 +235,7 @@ namespace Sledge.Rendering.Engine
 					}
 				}
 				if (shouldRender)
-				_previousFrameTime = currentTime;
+					_previousFrameTime = currentTime;
 			}
 		}
 
@@ -313,14 +313,17 @@ namespace Sledge.Rendering.Engine
 			_commandList.End();
 			Device.SubmitCommands(_commandList);
 
+			_commandList.Begin();
 			if (renderTarget.ViewportFramebuffer.ColorTargets[0].Target.SampleCount != TextureSampleCount.Count1)
 			{
-				_commandList.Begin();
 				_commandList.ResolveTexture(renderTarget.ViewportFramebuffer.ColorTargets[0].Target, renderTarget.ViewportResolvedTexture);
-			_commandList.End();
-				Device.SubmitCommands(_commandList);
 			}
-
+			else
+			{
+				_commandList.CopyTexture(renderTarget.ViewportFramebuffer.ColorTargets[0].Target, renderTarget.ViewportResolvedTexture);
+			}
+			_commandList.End();
+			Device.SubmitCommands(_commandList);
 
 			_commandList.Begin();
 			_commandList.SetFramebuffer(renderTarget.Swapchain.Framebuffer);
@@ -386,7 +389,7 @@ namespace Sledge.Rendering.Engine
 			foreach (var pl in _pipelines.SelectMany(x => x.Value))
 			{
 				//TODO: Separate rendering pipeline groups
-				if(pl.Group == PipelineGroup.Overlay) continue;
+				if (pl.Group == PipelineGroup.Overlay) continue;
 				pl.Create(Context, _sampleCount);
 			}
 			foreach (var rt in _renderTargets)
