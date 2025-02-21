@@ -84,6 +84,7 @@ namespace Sledge.Rendering.Engine
 			AddPipeline(new TexturedAdditivePipeline());
 			AddPipeline(new BillboardAlphaPipeline());
 
+			AddPipeline(new SwapchainOverlayPipeline());
 			AddPipeline(new OverlayPipeline());
 
 			Application.ApplicationExit += Shutdown;
