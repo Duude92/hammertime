@@ -174,5 +174,10 @@ namespace Sledge.Rendering.Viewports
 				ViewportRenderTexture.Dispose();
 			}
         }
-    }
+
+		public void ResolveRenderTexture(CommandList commandList)
+		{
+			throw new NotImplementedException();
+		}
+	}
 }
