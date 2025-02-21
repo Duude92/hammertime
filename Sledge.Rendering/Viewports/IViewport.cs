@@ -20,7 +20,7 @@ namespace Sledge.Rendering.Viewports
         Framebuffer ViewportFramebuffer { get; }
         Texture ViewportResolvedTexture { get; }
 		public Resources.Texture ViewportRenderTexture { get; }
-        void InitFramebuffer(TextureSampleCount sampleCount);
+		void InitFramebuffer(TextureSampleCount sampleCount);
 
 		void Update(long frame);
         event EventHandler<long> OnUpdate;

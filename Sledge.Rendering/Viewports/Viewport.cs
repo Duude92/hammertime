@@ -7,7 +7,7 @@ using Veldrid;
 
 namespace Sledge.Rendering.Viewports
 {
-    public class Viewport : Control, IViewport
+	public class Viewport : Control, IViewport
     {
         private static int _nextId = 1;
         private static readonly IntPtr HInstance = Process.GetCurrentProcess().Handle;
@@ -34,7 +34,7 @@ namespace Sledge.Rendering.Viewports
 		public ViewportOverlay Overlay { get; }
 		public Resources.Texture ViewportRenderTexture { get; private set; }
 
-        public bool IsFocused => _isFocused;
+		public bool IsFocused => _isFocused;
 
 		public Texture ViewportResolvedTexture { get; private set; }
 
@@ -47,32 +47,32 @@ namespace Sledge.Rendering.Viewports
 		public event EventHandler<long> OnUpdate;
 
         public Viewport(GraphicsDevice graphics, GraphicsDeviceOptions options, TextureSampleCount sampleCount)
-		{
+        {
             _device = graphics;
             _sampleCount = sampleCount;
-			SetStyle(ControlStyles.Opaque, true);
-			SetStyle(ControlStyles.UserPaint, true);
-			SetStyle(ControlStyles.AllPaintingInWmPaint, true);
-			DoubleBuffered = false;
+            SetStyle(ControlStyles.Opaque, true);
+            SetStyle(ControlStyles.UserPaint, true);
+            SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+            DoubleBuffered = false;
 
-			var hWnd = Handle; // Will call CreateHandle internally
-			var hInstance = HInstance;
+            var hWnd = Handle; // Will call CreateHandle internally
+            var hInstance = HInstance;
 
-			uint w = (uint)Width, h = (uint)Height;
-			if (w <= 0) w = 1;
-			if (h <= 0) h = 1;
+            uint w = (uint)Width, h = (uint)Height;
+            if (w <= 0) w = 1;
+            if (h <= 0) h = 1;
 
-			ID = _nextId++;
-			Camera = new PerspectiveCamera { Width = Width, Height = Height };
+            ID = _nextId++;
+            Camera = new PerspectiveCamera { Width = Width, Height = Height };
 
-			var source = SwapchainSource.CreateWin32(hWnd, hInstance);
-			var desc = new SwapchainDescription(source, w, h, options.SwapchainDepthFormat, options.SyncToVerticalBlank);
-			Swapchain = graphics.ResourceFactory.CreateSwapchain(desc);
+            var source = SwapchainSource.CreateWin32(hWnd, hInstance);
+            var desc = new SwapchainDescription(source, w, h, options.SwapchainDepthFormat, options.SyncToVerticalBlank);
+            Swapchain = graphics.ResourceFactory.CreateSwapchain(desc);
 
             InitFramebuffer(w, h, sampleCount);
 
-			Overlay = new ViewportOverlay(this);
-		}
+            Overlay = new ViewportOverlay(this);
+        }
 		public void InitFramebuffer(TextureSampleCount sampleCount)
         {
 			InitFramebuffer((uint)Width, (uint)Height, sampleCount);
@@ -88,7 +88,7 @@ namespace Sledge.Rendering.Viewports
 				PixelFormat.R32_Float,
 				TextureUsage.DepthStencil,
 				 sampleCount));
-			ViewportResolvedTexture = _device.ResourceFactory.CreateTexture(TextureDescription.Texture2D(width, height, 1, 1, PixelFormat.B8_G8_R8_A8_UNorm, TextureUsage.RenderTarget | TextureUsage.Sampled,
+			ViewportResolvedTexture = _device.ResourceFactory.CreateTexture(TextureDescription.Texture2D(width, height, 1, 1, PixelFormat.B8_G8_R8_A8_UNorm, TextureUsage.Sampled ,
 				TextureSampleCount.Count1));
 			TextureDescription mainColorDesc = TextureDescription.Texture2D(
 				width,
@@ -100,12 +100,11 @@ namespace Sledge.Rendering.Viewports
 				sampleCount);
 			var mainSceneColorTexture = _device.ResourceFactory.CreateTexture(ref mainColorDesc);
 			ViewportFramebuffer = _device.ResourceFactory.CreateFramebuffer(new FramebufferDescription(mainSceneDepthTexture, mainSceneColorTexture));
-			ViewportRenderTexture = new Sledge.Rendering.Resources.Texture(Engine.Engine.Instance.Context, mainSceneColorTexture, Resources.TextureSampleType.Standard);
+			ViewportRenderTexture = new Sledge.Rendering.Resources.Texture(Engine.Engine.Instance.Context, mainSceneColorTexture, Resources.TextureSampleType.Point);
 		}
-
 		protected override bool IsInputKey(Keys keyData)
-        {
-            // Force all keys to be passed to the regular key events
+		{
+			// Force all keys to be passed to the regular key events
             return true;
         }
 
