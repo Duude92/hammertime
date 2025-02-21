@@ -15,7 +15,7 @@ namespace Sledge.Rendering.Resources
 		public int FrameCount => _frameCount;
 		private int _frameCount = 1;
 		public Texture() { }
-		public Texture(RenderContext context, Veldrid.Texture texture, TextureSampleType sampleType, ResourceSet resourceSet)
+		public Texture(RenderContext context, Veldrid.Texture texture, TextureSampleType sampleType, ResourceSet resourceSet = null)
 		{
 			_texture = texture;
 			var device = context.Device;
@@ -23,7 +23,10 @@ namespace Sledge.Rendering.Resources
 			if (sampleType == TextureSampleType.Point) sampler = context.ResourceLoader.OverlaySampler;
 
 			_view = device.ResourceFactory.CreateTextureView(_texture);
-			_set = resourceSet;
+			_set = resourceSet ?? device.ResourceFactory.CreateResourceSet(new ResourceSetDescription(
+				context.ResourceLoader.TextureLayout, _view, sampler
+			));
+			_mipsGenerated = resourceSet == null ? true : false;
 		}
 		public Texture(RenderContext context, int width, int height, byte[] data, TextureSampleType sampleType, int frameCount) : this(context, width, height, data, sampleType)
 		{

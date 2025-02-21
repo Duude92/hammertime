@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Overlay;
+using Veldrid;
 
 namespace Sledge.Rendering.Viewports
 {
@@ -16,8 +17,12 @@ namespace Sledge.Rendering.Viewports
 
         ICamera Camera { get; set; }
         ViewportOverlay Overlay { get; }
+        Framebuffer ViewportFramebuffer { get; }
+		public Resources.Texture ViewportRenderTexture { get; }
+		void InitFramebuffer(TextureSampleCount sampleCount);
+        void ResolveRenderTexture(CommandList commandList);
 
-        void Update(long frame);
+		void Update(long frame);
         event EventHandler<long> OnUpdate;
     }
 }

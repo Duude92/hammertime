@@ -147,5 +147,7 @@ namespace Sledge.Rendering.Engine
 		public void Remove(IRenderable renderable) => Engine.Instance.Scene.Remove(renderable);
 		public void Remove(IUpdateable updateable) => Engine.Instance.Scene.Remove(updateable);
 		public void Remove(IOverlayRenderable overlayRenderable) => Engine.Instance.Scene.Remove(overlayRenderable);
+
+		public void SetMSAA(int mSAAoption) => Engine.Instance.SetMSAA(mSAAoption);
 	}
 }

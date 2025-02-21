@@ -19,7 +19,7 @@ namespace Sledge.Shell.Settings.Editors
 
         public object Value
         {
-            get => Combobox.SelectedValue;
+            get => (Combobox.SelectedItem as EnumValue)?.Value;
             set => Combobox.SelectedItem = Combobox.Items.OfType<EnumValue>().FirstOrDefault(x => x.Value == Convert.ToString(value));
         }
 

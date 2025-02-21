@@ -84,6 +84,7 @@ namespace Sledge.Rendering.Engine
 			AddPipeline(new TexturedAdditivePipeline());
 			AddPipeline(new BillboardAlphaPipeline());
 
+			AddPipeline(new SwapchainOverlayPipeline());
 			AddPipeline(new OverlayPipeline());
 
 			Application.ApplicationExit += Shutdown;
@@ -114,7 +115,7 @@ namespace Sledge.Rendering.Engine
 
 		public void AddPipeline(IPipeline pipeline)
 		{
-			pipeline.Create(Context);
+			pipeline.Create(Context, TextureSampleCount.Count1);
 			lock (_lock)
 			{
 				_pipelines[pipeline.Group].Add(pipeline);
@@ -160,6 +161,7 @@ namespace Sledge.Rendering.Engine
 
 
 		private int _paused = 0;
+		private TextureSampleCount _sampleCount = TextureSampleCount.Count1;
 		private readonly ManualResetEvent _pauseThreadEvent = new ManualResetEvent(false);
 
 		public IDisposable Pause()
@@ -233,14 +235,14 @@ namespace Sledge.Rendering.Engine
 					}
 				}
 				if (shouldRender)
-				_previousFrameTime = currentTime;
+					_previousFrameTime = currentTime;
 			}
 		}
 
 		private void Render(IViewport renderTarget)
 		{
 			_commandList.Begin();
-			_commandList.SetFramebuffer(renderTarget.Swapchain.Framebuffer);
+			_commandList.SetFramebuffer(renderTarget.ViewportFramebuffer);
 			_commandList.ClearDepthStencil(1);
 
 			var cc = renderTarget.Camera.Type == CameraType.Perspective
@@ -307,14 +309,26 @@ namespace Sledge.Rendering.Engine
 					pipeline.Render(Context, renderTarget, _commandList, Scene.GetRenderables(pipeline, renderTarget));
 			}
 
+
+			_commandList.End();
+			Device.SubmitCommands(_commandList);
+
+			_commandList.Begin();
+			renderTarget.ResolveRenderTexture(_commandList);
+			_commandList.End();
+			Device.SubmitCommands(_commandList);
+
+			_commandList.Begin();
+			_commandList.SetFramebuffer(renderTarget.Swapchain.Framebuffer);
+			_commandList.ClearDepthStencil(1);
+			_commandList.ClearColorTarget(0, cc);
+
 			foreach (var overlay in _pipelines[PipelineGroup.Overlay])
 			{
 				overlay.SetupFrame(Context, renderTarget);
 				overlay.Render(Context, renderTarget, _commandList, Scene.GetRenderables(overlay, renderTarget));
 			}
-
 			_commandList.End();
-
 			Device.SubmitCommands(_commandList);
 			Device.SwapBuffers(renderTarget.Swapchain);
 		}
@@ -328,7 +342,7 @@ namespace Sledge.Rendering.Engine
 		{
 			lock (_lock)
 			{
-				var control = new Viewports.Viewport(Device, _options);
+				var control = new Viewports.Viewport(Device, _options, _sampleCount);
 				control.Disposed += DestroyViewport;
 
 				if (!_renderTargets.Any()) Start();
@@ -359,6 +373,23 @@ namespace Sledge.Rendering.Engine
 
 				t.Control.Disposed -= DestroyViewport;
 				t.Dispose();
+			}
+		}
+
+		internal void SetMSAA(int mSAAoption)
+		{
+			lock (_lock)
+			{
+				_sampleCount = (TextureSampleCount)mSAAoption;
+				foreach (var pl in _pipelines.SelectMany(x => x.Value))
+				{
+					if (pl.Group == PipelineGroup.Overlay) continue;
+					pl.Create(Context, _sampleCount);
+				}
+				foreach (var rt in _renderTargets)
+				{
+					rt.InitFramebuffer(_sampleCount);
+				}
 			}
 		}
 	}

@@ -21,7 +21,7 @@ namespace Sledge.Rendering.Pipelines
         private DeviceBuffer _projectionBuffer;
         private ResourceSet _projectionResourceSet;
 
-        public void Create(RenderContext context)
+        public void Create(RenderContext context, TextureSampleCount sampleCount)
         {
             (_vertex, _fragment) = context.ResourceLoader.LoadShaders(Type.ToString());
 
@@ -37,7 +37,7 @@ namespace Sledge.Rendering.Pipelines
                 {
                     ColorAttachments = new[] { new OutputAttachmentDescription(PixelFormat.B8_G8_R8_A8_UNorm) },
                     DepthAttachment = new OutputAttachmentDescription(PixelFormat.R32_Float),
-                    SampleCount = TextureSampleCount.Count1
+                    SampleCount = sampleCount
                 }
             };
 

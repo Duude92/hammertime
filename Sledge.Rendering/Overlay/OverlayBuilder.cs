@@ -27,7 +27,7 @@ namespace Sledge.Rendering.Overlay
             _viewport = viewport;
             _width = -1;
             _height = -1;
-            _controller = new ImGuiController(Engine.Engine.Instance.Device, viewport.Swapchain.Framebuffer.OutputDescription, viewport.Width, viewport.Height);
+            _controller = new ImGuiController(Engine.Engine.Instance.Device, viewport.ViewportFramebuffer.OutputDescription, viewport.Width, viewport.Height);
         }
 
         private void Resize()
