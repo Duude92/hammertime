@@ -95,15 +95,11 @@ namespace Sledge.Rendering.Pipelines
 			cl.SetIndexBuffer(_quadIndexBuffer, IndexFormat.UInt32);
 
 			target.ViewportRenderTexture.BindTo(cl, 0);
-			cl.DrawIndexed(6, 1, 0, 0, 0); // Fullscreen quad
+			cl.DrawIndexed(6, 1, 0, 0, 0);
 		}
 
 		public void Render(RenderContext context, IViewport target, CommandList cl, IRenderable renderable, ILocation locationObject)
 		{
-			cl.SetPipeline(_quadPipeline);
-			target.ViewportRenderTexture.BindTo(cl, 0);
-
-			cl.Draw(vertexCount: 6, instanceCount: 1, vertexStart: 0, instanceStart: 0); // Fullscreen quad
 		}
 
 		public void SetupFrame(RenderContext context, IViewport target)
