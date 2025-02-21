@@ -18,7 +18,6 @@ namespace Sledge.Rendering.Viewports
         ICamera Camera { get; set; }
         ViewportOverlay Overlay { get; }
         Framebuffer ViewportFramebuffer { get; }
-        Texture ViewportResolvedTexture { get; }
 		public Resources.Texture ViewportRenderTexture { get; }
 		void InitFramebuffer(TextureSampleCount sampleCount);
         void ResolveRenderTexture(CommandList commandList);

@@ -34,7 +34,6 @@ namespace Sledge.Rendering.Viewports
 		public ViewportOverlay Overlay { get; }
 		public Resources.Texture ViewportRenderTexture { get; private set; }
 		public bool IsFocused => _isFocused;
-		public Texture ViewportResolvedTexture { get; private set; }
 
 		private bool _isFocused;
 		private int _unfocusedCounter = 0;
@@ -43,6 +42,7 @@ namespace Sledge.Rendering.Viewports
 		private TextureSampleCount _sampleCount;
 		private IViewportResolver _viewportResolver;
 		private Texture _mainSceneColorTexture;
+		private Texture _viewportResolvedTexture;
 
 		public event EventHandler<long> OnUpdate;
 
@@ -90,7 +90,7 @@ namespace Sledge.Rendering.Viewports
 				PixelFormat.R32_Float,
 				TextureUsage.DepthStencil,
 				 sampleCount));
-			ViewportResolvedTexture = _device.ResourceFactory.CreateTexture(TextureDescription.Texture2D(width, height, 1, 1, PixelFormat.B8_G8_R8_A8_UNorm, TextureUsage.Sampled,
+			_viewportResolvedTexture = _device.ResourceFactory.CreateTexture(TextureDescription.Texture2D(width, height, 1, 1, PixelFormat.B8_G8_R8_A8_UNorm, TextureUsage.Sampled,
 				TextureSampleCount.Count1));
 			TextureDescription mainColorDesc = TextureDescription.Texture2D(
 				width,
@@ -102,7 +102,7 @@ namespace Sledge.Rendering.Viewports
 				sampleCount);
 			_mainSceneColorTexture = _device.ResourceFactory.CreateTexture(ref mainColorDesc);
 			ViewportFramebuffer = _device.ResourceFactory.CreateFramebuffer(new FramebufferDescription(mainSceneDepthTexture, _mainSceneColorTexture));
-			ViewportRenderTexture = new Sledge.Rendering.Resources.Texture(Engine.Engine.Instance.Context, ViewportResolvedTexture, Resources.TextureSampleType.Standard);
+			ViewportRenderTexture = new Sledge.Rendering.Resources.Texture(Engine.Engine.Instance.Context, _viewportResolvedTexture, Resources.TextureSampleType.Standard);
 			if (sampleCount == TextureSampleCount.Count1)
 			{
 				_viewportResolver = new SingleSampleResolver();
@@ -177,7 +177,7 @@ namespace Sledge.Rendering.Viewports
 			{
 				Overlay.Dispose();
 				Swapchain.Dispose();
-				ViewportResolvedTexture.Dispose();
+				_viewportResolvedTexture.Dispose();
 				ViewportFramebuffer.Dispose();
 				ViewportRenderTexture.Dispose();
 			}
@@ -185,7 +185,7 @@ namespace Sledge.Rendering.Viewports
 
 		public void ResolveRenderTexture(CommandList commandList)
 		{
-			_viewportResolver.ResolveTexture(commandList, _mainSceneColorTexture, ViewportResolvedTexture);
+			_viewportResolver.ResolveTexture(commandList, _mainSceneColorTexture, _viewportResolvedTexture);
 		}
 	}
 }
