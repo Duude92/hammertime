@@ -83,6 +83,10 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Shaders\SwapchainOverlay.frag.hlsl" />
+    <None Remove="Shaders\SwapchainOverlay.vert.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
@@ -124,6 +128,8 @@
   <ItemGroup>
     <EmbeddedResource Include="Shaders\Skybox.frag.hlsl" />
     <EmbeddedResource Include="Shaders\Skybox.vert.hlsl" />
+    <EmbeddedResource Include="Shaders\SwapchainOverlay.frag.hlsl" />
+    <EmbeddedResource Include="Shaders\SwapchainOverlay.vert.hlsl" />
     <EmbeddedResource Include="Shaders\Wireframe.frag.hlsl" />
     <EmbeddedResource Include="Shaders\Wireframe.vert.hlsl" />
   </ItemGroup>
