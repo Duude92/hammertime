@@ -169,7 +169,10 @@ namespace Sledge.Rendering.Viewports
             {
                 Overlay.Dispose();
                 Swapchain.Dispose();
-            }
+				ViewportResolvedTexture.Dispose();
+                ViewportFramebuffer.Dispose();
+				ViewportRenderTexture.Dispose();
+			}
         }
     }
 }
