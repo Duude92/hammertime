@@ -314,14 +314,7 @@ namespace Sledge.Rendering.Engine
 			Device.SubmitCommands(_commandList);
 
 			_commandList.Begin();
-			if (renderTarget.ViewportFramebuffer.ColorTargets[0].Target.SampleCount != TextureSampleCount.Count1)
-			{
-				_commandList.ResolveTexture(renderTarget.ViewportFramebuffer.ColorTargets[0].Target, renderTarget.ViewportResolvedTexture);
-			}
-			else
-			{
-				_commandList.CopyTexture(renderTarget.ViewportFramebuffer.ColorTargets[0].Target, renderTarget.ViewportResolvedTexture);
-			}
+			renderTarget.ResolveRenderTexture(_commandList);
 			_commandList.End();
 			Device.SubmitCommands(_commandList);
 
