@@ -46,9 +46,9 @@ namespace Sledge.Rendering.Viewports
 
 		public event EventHandler<long> OnUpdate;
 
-        public Viewport(GraphicsDevice graphics, GraphicsDeviceOptions options, TextureSampleCount sampleCount)
+		public Viewport(GraphicsDevice graphics, GraphicsDeviceOptions options, TextureSampleCount sampleCount)
         {
-            _device = graphics;
+			_device = graphics;
             _sampleCount = sampleCount;
             SetStyle(ControlStyles.Opaque, true);
             SetStyle(ControlStyles.UserPaint, true);
@@ -102,7 +102,7 @@ namespace Sledge.Rendering.Viewports
 				sampleCount);
 			var mainSceneColorTexture = _device.ResourceFactory.CreateTexture(ref mainColorDesc);
 			ViewportFramebuffer = _device.ResourceFactory.CreateFramebuffer(new FramebufferDescription(mainSceneDepthTexture, mainSceneColorTexture));
-			ViewportRenderTexture = new Sledge.Rendering.Resources.Texture(Engine.Engine.Instance.Context, mainSceneColorTexture, Resources.TextureSampleType.Point);
+			ViewportRenderTexture = new Sledge.Rendering.Resources.Texture(Engine.Engine.Instance.Context, ViewportResolvedTexture, Resources.TextureSampleType.Standard);
 		}
 		protected override bool IsInputKey(Keys keyData)
 		{
