@@ -24,12 +24,12 @@ namespace Sledge.Rendering.Pipelines
 		public float Order => 1;
 		private static VertexStandard[] _overlayVertices = new VertexStandard[]
 		{
-			new VertexStandard{ Position = new Vector3(-1, -1, 0f), Texture = new Vector2(0, 1) }, 
-			new VertexStandard{ Position = new Vector3( 1, -1, 0f), Texture = new Vector2(1, 1) }, 
-			new VertexStandard{ Position = new Vector3(-1,  1, 0f), Texture = new Vector2(0, 0) }, 
-			new VertexStandard{ Position = new Vector3( 1,  1, 0f), Texture = new Vector2(1, 0) }, 
+			new VertexStandard{ Position = new Vector3(-1, -1, 0f), Texture = new Vector2(0, 1) },
+			new VertexStandard{ Position = new Vector3( 1, -1, 0f), Texture = new Vector2(1, 1) },
+			new VertexStandard{ Position = new Vector3(-1,  1, 0f), Texture = new Vector2(0, 0) },
+			new VertexStandard{ Position = new Vector3( 1,  1, 0f), Texture = new Vector2(1, 0) },
 		};
-		UInt32[] _quadIndices = { 0, 1, 2, 2, 1, 3 }; 
+		UInt32[] _quadIndices = { 0, 1, 2, 2, 1, 3 };
 
 		public void Bind(RenderContext context, CommandList cl, string binding)
 		{
@@ -81,7 +81,11 @@ namespace Sledge.Rendering.Pipelines
 
 		public void Dispose()
 		{
-			throw new NotImplementedException();
+			_quadPipeline.Dispose();
+			_vertex.Dispose();
+			_fragment.Dispose();
+			_quadVertexBuffer.Dispose();
+			_quadIndexBuffer.Dispose();
 		}
 
 		public void Render(RenderContext context, IViewport target, CommandList cl, IEnumerable<IRenderable> renderables)
