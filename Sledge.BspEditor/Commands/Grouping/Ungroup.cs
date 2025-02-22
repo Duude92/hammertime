@@ -41,7 +41,7 @@ namespace Sledge.BspEditor.Commands.Grouping
                 return;
             }
             var solids = document.Selection.GetSelectedParents().OfType<Primitives.MapObjects.Solid>().ToList();
-            if(solids.Count > 0)
+			if (solids.Count > 0)
             {
 				var tns = new Transaction();
 				foreach (var solid in solids)
@@ -53,6 +53,7 @@ namespace Sledge.BspEditor.Commands.Grouping
 
             Transaction DetachRecursively(Transaction transaction, IMapObject mapObject)
             {
+                if (mapObject is Solid && mapObject.Hierarchy.Parent is Entity) return transaction;
 				transaction.Add(new Detatch(mapObject.Hierarchy.Parent.ID, mapObject));
 				transaction.Add(new Attach(document.Map.Root.ID, mapObject));
 				foreach (var obj in mapObject.Hierarchy)
