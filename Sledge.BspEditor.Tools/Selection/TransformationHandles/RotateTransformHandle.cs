@@ -61,73 +61,71 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
 		{
 			var transformation = document.Map.Data.GetOne<TransformationFlags>() ?? new TransformationFlags();
 
-			if (!transformation.KeepRotationAngle)
-			{
-				var selection = document.Selection.Where(x => x is Sledge.BspEditor.Primitives.MapObjects.Entity).OfType<Primitives.MapObjects.Entity>();
-				var tsn = new Transaction();
+			var selection = document.Selection.Where(x => x is Sledge.BspEditor.Primitives.MapObjects.Entity).OfType<Primitives.MapObjects.Entity>();
+			var tsn = new Transaction();
 
-				foreach (var entity in selection)
+			foreach (var entity in selection)
+			{
+				if (entity.EntityData.Properties.TryGetValue("angles", out var angleString))
 				{
-					if (entity.EntityData.Properties.TryGetValue("angles", out var angleString))
+
+					var initialAngles = angleString.Split(' ');
+					var initial = NumericsExtensions.Parse(initialAngles[0], initialAngles[1], initialAngles[2], System.Globalization.NumberStyles.Float, CultureInfo.InvariantCulture);
+
+					var origin = camera.ZeroUnusedCoordinate((_rotateStart.Value + _rotateEnd.Value) / 2);
+					if (_origin != null) origin = _origin.Position;
+
+					var forigin = camera.Flatten(origin);
+
+					var origv = Vector3.Normalize(_rotateStart.Value - forigin);
+					var newv = Vector3.Normalize(_rotateEnd.Value - forigin);
+
+					Vector3 previousLocalRotationRadians = new Vector3(
+						MathHelper.DegreesToRadians(initial.X),
+						MathHelper.DegreesToRadians(initial.Y),
+						MathHelper.DegreesToRadians(initial.Z));
+					Matrix4x4 yawMatrix = Matrix4x4.CreateRotationY(-previousLocalRotationRadians.X);
+					Matrix4x4 pitchMatrix = Matrix4x4.CreateRotationX(previousLocalRotationRadians.Z);
+					Matrix4x4 rollMatrix = Matrix4x4.CreateRotationZ(previousLocalRotationRadians.Y);
+
+					Matrix4x4 rotationMatrix = pitchMatrix * yawMatrix * rollMatrix;
+
+					// Now, newLocalRotationDegrees contains the updated local rotation in degrees
+
+					Matrix4x4 viewRotation = Matrix4x4.Identity;
+					if (camera is OrthographicCamera orthographic)
 					{
 
-						var initialAngles = angleString.Split(' ');
-						var initial = NumericsExtensions.Parse(initialAngles[0], initialAngles[1], initialAngles[2], System.Globalization.NumberStyles.Float, CultureInfo.InvariantCulture);
+						var dot = origv.Dot(newv);
 
-						var origin = camera.ZeroUnusedCoordinate((_rotateStart.Value + _rotateEnd.Value) / 2);
-						if (_origin != null) origin = _origin.Position;
+						var angle = Math.Acos(Math.Max(-1, Math.Min(1, dot)));
+						if ((origv.Cross(newv).Z < 0)) angle *= -1;
 
-						var forigin = camera.Flatten(origin);
+						var roundingDegrees = 15f;
+						if (KeyboardState.Alt) roundingDegrees = 1;
 
-						var origv = Vector3.Normalize(_rotateStart.Value - forigin);
-						var newv = Vector3.Normalize(_rotateEnd.Value - forigin);
+						var deg = angle * (180 / Math.PI);
+						float rnd = (float)(Math.Round(deg / roundingDegrees) * roundingDegrees);
 
-						Vector3 previousLocalRotationRadians = new Vector3(
-							MathHelper.DegreesToRadians(initial.X),
-							MathHelper.DegreesToRadians(initial.Y),
-							MathHelper.DegreesToRadians(initial.Z));
-						Matrix4x4 yawMatrix = Matrix4x4.CreateRotationY(-previousLocalRotationRadians.X);
-						Matrix4x4 pitchMatrix = Matrix4x4.CreateRotationX(previousLocalRotationRadians.Z);
-						Matrix4x4 rollMatrix = Matrix4x4.CreateRotationZ(previousLocalRotationRadians.Y);
-
-						Matrix4x4 rotationMatrix = pitchMatrix * yawMatrix * rollMatrix;
-
-						// Now, newLocalRotationDegrees contains the updated local rotation in degrees
-
-						Matrix4x4 viewRotation = Matrix4x4.Identity;
-						if (camera is OrthographicCamera orthographic)
+						var anglerad = (float)(rnd * (Math.PI / 180));
+						switch (orthographic.ViewType)
 						{
+							case OrthographicCamera.OrthographicType.Top:
+								viewRotation = Matrix4x4.CreateRotationZ(anglerad);
+								break;
+							case OrthographicCamera.OrthographicType.Front:
+								viewRotation = Matrix4x4.CreateRotationX(anglerad);
+								break;
+							case OrthographicCamera.OrthographicType.Side:
+								viewRotation = Matrix4x4.CreateRotationY(-anglerad);
+								break;
+							default:
+								break;
+						}
 
-							var dot = origv.Dot(newv);
-
-							var angle = Math.Acos(Math.Max(-1, Math.Min(1, dot)));
-							if ((origv.Cross(newv).Z < 0)) angle *= -1;
-
-							var roundingDegrees = 15f;
-							if (KeyboardState.Alt) roundingDegrees = 1;
-
-							var deg = angle * (180 / Math.PI);
-							float rnd = (float)(Math.Round(deg / roundingDegrees) * roundingDegrees);
-
-							var anglerad = (float)(rnd * (Math.PI / 180));
-							switch (orthographic.ViewType)
-							{
-								case OrthographicCamera.OrthographicType.Top:
-									viewRotation = Matrix4x4.CreateRotationZ(anglerad);
-									break;
-								case OrthographicCamera.OrthographicType.Front:
-									viewRotation = Matrix4x4.CreateRotationX(anglerad);
-									break;
-								case OrthographicCamera.OrthographicType.Side:
-									viewRotation = Matrix4x4.CreateRotationY(-anglerad);
-									break;
-								default:
-									break;
-							}
-
-							rotationMatrix *= viewRotation;
-
-
+						rotationMatrix *= viewRotation;
+						if (transformation.KeepRotationAngle && !entity.Hierarchy.HasChildren)
+						{
 							var newLocalRotationDegrees = ExtractEulerAngles(rotationMatrix);
 
 							var op = new EditEntityDataProperties(entity.ID, new Dictionary<string, string>() {
@@ -137,8 +135,8 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
 						}
 					}
 				}
-				((Action)(async () => await MapDocumentOperation.Perform(document, tsn)))();
 			}
+				((Action)(async () => await MapDocumentOperation.Perform(document, tsn)))();
 			_rotateStart = _rotateEnd = null;
 			base.EndDrag(document, viewport, camera, e, position);
 		}
