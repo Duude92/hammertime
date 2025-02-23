@@ -25,6 +25,7 @@ namespace Sledge.BspEditor.Editing.Components
 		[Import] private IContext _context;
 
 		private List<Subscription> _subscriptions;
+		private IMapObject _selection;
 
 		public MapTreeWindow()
 		{
@@ -99,8 +100,8 @@ namespace Sledge.BspEditor.Editing.Components
 			this.InvokeLater(() =>
 			{
 				if (doc == null || doc.Selection.IsEmpty) return;
-				var first = doc.Selection.GetSelectedParents().First();
-				var node = FindNodeWithTag(MapTree.Nodes.OfType<TreeNode>(), first);
+				_selection = doc.Selection.GetSelectedParents().First();
+				var node = FindNodeWithTag(MapTree.Nodes.OfType<TreeNode>(), _selection);
 				if (node != null) MapTree.SelectedNode = node;
 			});
 		}
@@ -118,6 +119,8 @@ namespace Sledge.BspEditor.Editing.Components
 			this.InvokeLater(() =>
 			{
 				RefreshNodes(change.Document);
+				var node = FindNodeWithTag(MapTree.Nodes.OfType<TreeNode>(), _selection);
+				if (node != null) MapTree.SelectedNode = node;
 			});
 		}
 
