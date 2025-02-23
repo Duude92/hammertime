@@ -73,8 +73,8 @@ namespace Sledge.BspEditor.Editing.Components.Properties.SmartEdit
 					fs.FilterText = "Models (*.mdl)";
 					break;
 				case VariableType.Sprite:
-					fs.Filter = "*.spr";
-					fs.FilterText = "Sprites (*.spr)";
+					fs.Filter = "*.spr,*.mdl";
+					fs.FilterText = "Sprites (*.spr),Models (*.mdl)";
 					break;
 				case VariableType.Sound:
 					fs.Filter = "*.wav,*.mp3";

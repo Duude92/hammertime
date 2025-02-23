@@ -478,6 +478,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 			{
 				var prop = btnSmartEdit.Checked ? tv.GameDataProperty : null;
 				var type = prop?.VariableType ?? VariableType.Void;
+				type = type is VariableType.Sprite && _tableValues.OriginalClass == "env_sprite" ? type : VariableType.Studio;
 				_currentEditor = _smartEditControls
 									 .Select(x => x.Value)
 									 .OrderBy(x => x.PriorityHint)
