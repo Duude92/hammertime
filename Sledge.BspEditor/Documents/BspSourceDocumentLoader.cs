@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
-using System.Runtime;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
@@ -11,11 +10,11 @@ using Sledge.BspEditor.Environment;
 using Sledge.BspEditor.Environment.Controls;
 using Sledge.BspEditor.Environment.Empty;
 using Sledge.BspEditor.Primitives;
+using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Providers;
 using Sledge.BspEditor.Providers.Processors;
 using Sledge.Common.Shell.Commands;
-using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Documents;
 using Sledge.Common.Translations;
 using Sledge.Common.Transport;
@@ -184,6 +183,7 @@ namespace Sledge.BspEditor.Documents
 						SearchForRelatives();
 
 						var md = new MapDocument(result.Map, env) { FileName = location };
+						GetLightData(md);
 						await ProcessAfterLoad(env, md, result);
 						return md;
 					}
@@ -351,6 +351,7 @@ namespace Sledge.BspEditor.Documents
 						SearchForRelatives();
 
 						var md = new MapDocument(result.Map, env) { FileName = fileName };
+						GetLightData(md);
 						await ProcessAfterLoad(env, md, result);
 						return md;
 					}
@@ -360,8 +361,15 @@ namespace Sledge.BspEditor.Documents
 					}
 				}
 			}
-
 			return null;
+		}
+
+		private void GetLightData(MapDocument md)
+		{
+			var dd = md.Map.Data.GetOne<DisplayData>() ?? new DisplayData();
+			var light = _entities.FirstOrDefault(e => e.EntityData.Name.Equals("light_environment"));
+			//dd.LightDirection = light.EntityData.Get()
+
 		}
 
 		public IDocument UpdateEnvironment(IDocument document)
