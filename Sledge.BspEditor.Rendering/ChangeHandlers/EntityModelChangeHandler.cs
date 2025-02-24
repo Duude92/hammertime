@@ -35,8 +35,12 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
             {
                 var modelDetails = GetModelDetails(entity, gd);
                 var modelName = modelDetails?.Name;
-                var existingEntityModel = entity.Data.GetOne<EntityModel>();
+                // return null if we are looking at spr Sprite entity
+				if (modelName != null && (modelName.Substring(modelName.Length-4,4).Equals(".spr"))) continue;
 
+				var existingEntityModel = entity.Data.GetOne<EntityModel>();
+                // Skip if wasn't model and did not became model
+                if (modelDetails == null && null == existingEntityModel) continue;
                 // If the model data is unchanged then we can skip
                 if (ModelDataMatches(existingEntityModel, modelDetails))
                 {
@@ -128,7 +132,7 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
             {
                 details.Name = studio.Values[0].Trim();
             }
-            
+
             {
                 // Find the first property that is a studio type, or has a name of "model"...
                 var prop = cls.Properties.FirstOrDefault(x => x.VariableType == VariableType.Studio) ??
