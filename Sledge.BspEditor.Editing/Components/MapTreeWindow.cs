@@ -30,6 +30,7 @@ namespace Sledge.BspEditor.Editing.Components
 		public MapTreeWindow()
 		{
 			InitializeComponent();
+			MapTree.BeforeExpand += MapTree_BeforeExpand;
 		}
 
 		protected override void OnClosing(CancelEventArgs e)
@@ -67,15 +68,15 @@ namespace Sledge.BspEditor.Editing.Components
 			});
 		}
 
-        public void Translate(ITranslationStringProvider strings)
-        {
+		public void Translate(ITranslationStringProvider strings)
+		{
 			if (Handle == null) CreateHandle();
 			var prefix = GetType().FullName;
-            this.InvokeLater(() =>
-            {
-                Text = strings.GetString(prefix, "Title");
-            });
-        }
+			this.InvokeLater(() =>
+			{
+				Text = strings.GetString(prefix, "Title");
+			});
+		}
 
 		private void Subscribe()
 		{
@@ -116,9 +117,9 @@ namespace Sledge.BspEditor.Editing.Components
 
 		private async Task DocumentChanged(Change change)
 		{
-			this.InvokeLater(() =>
+			await this.InvokeAsync(async () =>
 			{
-				RefreshNodes(change.Document);
+				await RefreshNodes(change.Document);
 				var node = FindNodeWithTag(MapTree.Nodes.OfType<TreeNode>(), _selection);
 				if (node != null) MapTree.SelectedNode = node;
 			});
@@ -135,47 +136,80 @@ namespace Sledge.BspEditor.Editing.Components
 			return null;
 		}
 
-		private void RefreshNodes()
+		private async Task RefreshNodes()
 		{
 			var doc = _context.Get<MapDocument>("ActiveDocument");
-			RefreshNodes(doc);
+			await RefreshNodes(doc);
 		}
 
-		private void RefreshNodes(MapDocument doc)
+		private async Task RefreshNodes(MapDocument doc)
 		{
 			MapTree.BeginUpdate();
 			MapTree.Nodes.Clear();
 			if (doc != null)
 			{
-				LoadMapNode(null, doc.Map.Root);
+				await LoadMapNodeAsync(null, doc.Map.Root);
 			}
 			MapTree.EndUpdate();
 		}
 
-		private void LoadMapNode(TreeNode parent, IMapObject obj)
+		private async Task LoadMapNodeAsync(TreeNode parent, IMapObject obj)
 		{
 			var text = GetNodeText(obj);
 			var node = new TreeNode(obj.GetType().Name + $" {obj.ID}" + text) { Tag = obj };
+
+			// Add a dummy node to indicate it has children (this forces expand button)
+			node.Nodes.Add(new TreeNode("Loading..."));
+
+			if (parent == null)
+				MapTree.Nodes.Add(node);
+			else
+				parent.Nodes.Add(node);
+
+			// Load child nodes asynchronously
+			await Task.Run(() => LoadChildNodes(node, obj));
+			MapTree.Invoke((MethodInvoker)(() => node.Expand()));
+		}
+		private async void MapTree_BeforeExpand(object sender, TreeViewCancelEventArgs e)
+		{
+			var obj = e.Node.Tag as IMapObject;
+			if (obj != null && e.Node.Nodes.Count == 1 && e.Node.Nodes[0].Text == "Loading...")
+			{
+				await Task.Run(() => LoadChildNodes(e.Node, obj));
+			}
+		}
+		private void LoadChildNodes(TreeNode node, IMapObject obj)
+		{
+			// Prepare list of child nodes
+			List<TreeNode> childNodes = new();
+
 			if (obj is Root w)
 			{
-				node.Nodes.AddRange(GetEntityNodes(w.Data.GetOne<EntityData>()).ToArray());
+				childNodes.AddRange(GetEntityNodes(w.Data.GetOne<EntityData>()));
 			}
 			else if (obj is Entity e)
 			{
-				node.Nodes.AddRange(GetEntityNodes(e.EntityData).ToArray());
+				childNodes.AddRange(GetEntityNodes(e.EntityData));
 			}
 			else if (obj is Solid s)
 			{
-				node.Nodes.AddRange(GetFaceNodes(s.Faces).ToArray());
+				childNodes.AddRange(GetFaceNodes(s.Faces));
 			}
+
 			foreach (var mo in obj.Hierarchy)
 			{
-				LoadMapNode(node, mo);
+				TreeNode childNode = new TreeNode(mo.GetType().Name + $" {mo.ID}" + GetNodeText(mo)) { Tag = mo };
+				childNode.Nodes.Add(new TreeNode("Loading...")); // Placeholder for expandability
+				childNodes.Add(childNode);
 			}
-			if (parent == null) MapTree.Nodes.Add(node);
-			else parent.Nodes.Add(node);
-		}
 
+			// Update UI on the main thread
+			MapTree.Invoke((MethodInvoker)(() =>
+			{
+				node.Nodes.Clear(); // Remove "Loading..." node
+				node.Nodes.AddRange(childNodes.ToArray()); // Add real children
+			}));
+		}
 		private string GetNodeText(IMapObject mo)
 		{
 			if (mo is Solid solid)
