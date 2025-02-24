@@ -58,6 +58,9 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
             foreach (var entity in changedEntities)
             {
                 var sn = GetDecalName(entity);
+                var ed = entity.Data.GetOne<EntityDecal>();
+                //No need to perform next actions, if entity wasn't infodecal before
+                if (sn == null && ed == null) continue;
                 var dd = sn == null ? null : await CreateDecalData(entity, change.Document, tc, sn);
                 if (dd == null) entity.Data.Remove(x => x is EntityDecal);
                 else entity.Data.Replace(dd);
