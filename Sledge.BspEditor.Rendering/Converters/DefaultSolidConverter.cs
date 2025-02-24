@@ -62,10 +62,10 @@ namespace Sledge.BspEditor.Rendering.Converters
 			var vId = obj.Data.GetOne<VisgroupID>();
 			if (vId != null)
 			{
-				vColor = document.Map.Data.Get<Visgroup>().FirstOrDefault(x=>x.ID == vId.ID)?.Colour;
+				vColor = document.Map.Data.Get<Visgroup>().FirstOrDefault(x => x.ID == vId.ID)?.Colour;
 			}
 
-			var colour = (obj.IsSelected ? Color.Red : vColor.HasValue? vColor.Value : obj.Data.GetOne<ObjectColor>()?.Color ?? Color.White).ToVector4();
+			var colour = (obj.IsSelected ? Color.Red : vColor.HasValue ? vColor.Value : obj.Data.GetOne<ObjectColor>()?.Color ?? Color.White).ToVector4();
 
 			var tint = Vector4.One;
 
@@ -217,17 +217,16 @@ namespace Sledge.BspEditor.Rendering.Converters
 				var texture = t == null ? string.Empty : $"{document.Environment.ID}::{f.Texture.Name}";
 				BufferGroup group;
 
-//				if (f.Texture.Name.ToLower() == "sky")
-//				{
-//					group = new BufferGroup(
-//	PipelineType.ShadowDepth,
-//   CameraType.Perspective, true, f.Origin, texture, texOffset, texInd
-//);
-//				}
+				//				if (f.Texture.Name.ToLower() == "sky")
+				//				{
+				//					group = new BufferGroup(
+				//	PipelineType.ShadowDepth,
+				//   CameraType.Perspective, true, f.Origin, texture, texOffset, texInd
+				//);
 				//					flags |= VertexFlags.FlatColour;
-				//					points = points.Select(x => { x.Tint = new Vector4(1,1,1, 0.5f); return x; }).ToArray();
+				//					points = points.Select(x => { x.Tint = new Vector4(1, 1, 1, 0.5f); return x; }).ToArray();
 				//				}
-				//else
+				//				else
 				{
 					group = new BufferGroup(
 					   pipeline == PipelineType.TexturedOpaque && transparent ? PipelineType.TexturedAlpha : pipeline,
@@ -235,12 +234,14 @@ namespace Sledge.BspEditor.Rendering.Converters
 				   );
 				}
 				groups.Add(group);
-				group = new BufferGroup(
-PipelineType.ShadowDepth,
-CameraType.Perspective, true, f.Origin, texture, texOffset, texInd
-);
-				groups.Add(group);
-
+				if (f.Texture.Name.ToLower() != "sky")
+				{
+					group = new BufferGroup(
+						PipelineType.ShadowDepth,
+						CameraType.Perspective, true, f.Origin, texture, texOffset, texInd
+						);
+					groups.Add(group);
+				}
 				texOffset += texInd;
 
 				if (t != null) resourceCollector.RequireTexture(t.Name);
