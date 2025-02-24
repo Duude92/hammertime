@@ -146,7 +146,7 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
 					if (colProp.VariableType == VariableType.Color255) col /= 255f;
 					if (col.HasValue) return col.Value.ToColor();
 				}
-				return Color.Black;
+				return Color.White;
 			}
 			string GetName()
 			{
