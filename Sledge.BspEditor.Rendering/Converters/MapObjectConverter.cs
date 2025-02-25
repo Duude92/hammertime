@@ -30,7 +30,7 @@ namespace Sledge.BspEditor.Rendering.Converters
 			var converter = _converters.FirstOrDefault(x=>x.Value is SkyboxConverter).Value;
             if (converter == null) return;
             var buffer = builder.GetBufferForGroup(0);
-            converter.Convert(buffer, document, null, resourceCollector);
+            await converter.Convert(buffer, document, null, resourceCollector);
 		}
 
         public async Task Convert(MapDocument document, SceneBuilder builder, IEnumerable<IMapObject> affected, ResourceCollector resourceCollector)
