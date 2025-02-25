@@ -5,11 +5,12 @@ using Vulkan;
 
 namespace Sledge.Rendering.Resources
 {
-	public class Texture : IResource
-	{
-		protected Veldrid.Texture _texture;
-		protected TextureView _view;
-		protected ResourceSet _set;
+    public class Texture : IResource
+    {
+        protected Veldrid.Texture _texture;
+        protected TextureView _view;
+        protected ResourceSet _set;
+        public Veldrid.Texture GetTexture() => _texture;
 
 		protected bool _mipsGenerated;
 		public int FrameCount => _frameCount;
@@ -107,6 +108,8 @@ namespace Sledge.Rendering.Resources
 		{
 			// The resources are created in the constructor
 		}
+		public bool GenerateMips { get => !_mipsGenerated; set => _mipsGenerated = !value; }
+
 		public void BindTo(CommandList cl, uint slot)
 		{
 			if (!_mipsGenerated)
