@@ -53,7 +53,7 @@ namespace Sledge.Rendering.Pipelines
 			//cl.SetGraphicsResourceSet(2, _textureSet);
 		}
 
-		public void Create(RenderContext context)
+		public void Create(RenderContext context, TextureSampleCount sampleCount)
 		{
 
 			var gd = context.Device;
