@@ -32,6 +32,7 @@ namespace Sledge.Rendering.Engine
 		private readonly object _lock = new object();
 		private readonly List<IViewport> _renderTargets;
 		private readonly Dictionary<PipelineGroup, List<IPipeline>> _pipelines;
+		private readonly Dictionary<PipelineGroup, List<IPipeline>> _customPipeline;
 		private readonly CommandList _commandList;
 
 		private RgbaFloat _clearColourPerspective;
@@ -61,6 +62,7 @@ namespace Sledge.Rendering.Engine
 
 			_renderTargets = new List<IViewport>();
 			_pipelines = new Dictionary<PipelineGroup, List<IPipeline>>();
+			_customPipeline = new Dictionary<PipelineGroup, List<IPipeline>>();
 			Context = new RenderContext(Device);
 			Scene.Add(Context);
 #if DEBUG
@@ -76,12 +78,14 @@ namespace Sledge.Rendering.Engine
 
 
 			AddPipeline(new SkyboxPipeline());
-            AddPipeline(new WireframePipeline());
-            AddPipeline(new TexturedOpaquePipeline());
+			AddPipeline(new WireframePipeline());
+			AddPipeline(new TexturedOpaquePipeline());
             AddPipeline(new BillboardOpaquePipeline());
-            AddPipeline(new WireframeModelPipeline());
-            AddPipeline(new TexturedModelPipeline());
-			AddPipeline(shadowdepth);
+			AddPipeline(new WireframeModelPipeline());
+			AddPipeline(new TexturedModelPipeline());
+			shadowdepth.Create(Context);
+			_customPipeline.TryAdd(shadowdepth.Group, new List<IPipeline>());
+			_customPipeline[shadowdepth.Group].Add(shadowdepth);
 
 			AddPipeline(new TexturedAlphaPipeline());
 			AddPipeline(new TexturedAdditivePipeline());
@@ -89,7 +93,11 @@ namespace Sledge.Rendering.Engine
 
 			AddPipeline(new SwapchainOverlayPipeline());
 			AddPipeline(new OverlayPipeline());
-			AddPipeline(new ShadowmapDrawer(()=>shadowdepth.NearShadowMapView));
+			//AddPipeline(new ShadowmapDrawer(()=>shadowdepth.NearShadowMapView));
+			shmap = new ShadowmapPipeline(() => shadowdepth.NearShadowResourceTexture, () => shadowdepth.NearShadowMapView);
+			shmap.Create(Context);
+			//_customPipeline.TryAdd(shmap.Group, new List<IPipeline>());
+			//_customPipeline[shmap.Group].Add(shmap);
 
 			Application.ApplicationExit += Shutdown;
 		}
@@ -131,6 +139,8 @@ namespace Sledge.Rendering.Engine
 		{
 			_pipelines.SelectMany(x => x.Value).ToList().ForEach(x => x.Dispose());
 			_pipelines.Clear();
+			_customPipeline.SelectMany(x => x.Value).ToList().ForEach(x => x.Dispose());
+			_customPipeline.Clear();
 
 			_renderTargets.ForEach(x => x.Dispose());
 			_renderTargets.Clear();
@@ -166,6 +176,7 @@ namespace Sledge.Rendering.Engine
 
 		private int _paused = 0;
 		private TextureSampleCount _sampleCount = TextureSampleCount.Count1;
+		private ShadowmapPipeline shmap;
 		private readonly ManualResetEvent _pauseThreadEvent = new ManualResetEvent(false);
 
 		public IDisposable Pause()
@@ -246,6 +257,15 @@ namespace Sledge.Rendering.Engine
 		private void Render(IViewport renderTarget)
 		{
 			_commandList.Begin();
+			foreach (var group in _customPipeline)
+			{
+				foreach (var pipeline in group.Value)
+				{
+					pipeline.SetupFrame(Context, renderTarget);
+					pipeline.Render(Context, renderTarget, _commandList, Scene.GetRenderables(pipeline, renderTarget));
+				}
+			}
+
 			_commandList.SetFramebuffer(renderTarget.ViewportFramebuffer);
 			_commandList.ClearDepthStencil(1);
 
@@ -312,6 +332,9 @@ namespace Sledge.Rendering.Engine
 				if (pipeline.Type == PipelineType.BillboardAlpha)
 					pipeline.Render(Context, renderTarget, _commandList, Scene.GetRenderables(pipeline, renderTarget));
 			}
+			//shmap.SetupFrame(Context, renderTarget);
+			//shmap.Render(Context, renderTarget, _commandList, null);
+			//_commandList.Draw(4);
 
 
 			_commandList.End();
