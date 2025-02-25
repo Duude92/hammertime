@@ -182,7 +182,7 @@ namespace Sledge.Rendering.Pipelines
 
 			float orthoSize = 5000f; // Adjust based on scene size
 			float nearPlane = 1f;
-			float farPlane = 5000f;
+			float farPlane = 2000f;
 
 			Matrix4x4 lightProjection = Matrix4x4.CreateOrthographic(
 				orthoSize, // Width
