@@ -168,7 +168,7 @@ namespace Sledge.Rendering.Pipelines
             return;
 		}
 
-		public void Create(RenderContext context)
+		public void Create(RenderContext context, TextureSampleCount sampleCount)
 		{
             CreateDeviceObjects(context.Device, context);
 		}

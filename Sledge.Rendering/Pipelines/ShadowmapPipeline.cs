@@ -43,7 +43,7 @@ namespace Sledge.Rendering.Pipelines
 			//cl.SetGraphicsResourceSet(0, _projectionResourceSet);
 		}
 
-		public void Create(RenderContext context)
+		public void Create(RenderContext context, TextureSampleCount sampleCount)
 		{
 			var gd = context.Device;
 			var factory = gd.ResourceFactory;

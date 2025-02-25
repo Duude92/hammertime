@@ -83,7 +83,7 @@ namespace Sledge.Rendering.Engine
             AddPipeline(new BillboardOpaquePipeline());
 			AddPipeline(new WireframeModelPipeline());
 			AddPipeline(new TexturedModelPipeline());
-			shadowdepth.Create(Context);
+			shadowdepth.Create(Context, TextureSampleCount.Count1);
 			_customPipeline.TryAdd(shadowdepth.Group, new List<IPipeline>());
 			_customPipeline[shadowdepth.Group].Add(shadowdepth);
 
@@ -95,7 +95,7 @@ namespace Sledge.Rendering.Engine
 			AddPipeline(new OverlayPipeline());
 			//AddPipeline(new ShadowmapDrawer(()=>shadowdepth.NearShadowMapView));
 			shmap = new ShadowmapPipeline(() => shadowdepth.NearShadowResourceTexture, () => shadowdepth.NearShadowMapView);
-			shmap.Create(Context);
+			shmap.Create(Context,TextureSampleCount.Count1);
 			//_customPipeline.TryAdd(shmap.Group, new List<IPipeline>());
 			//_customPipeline[shmap.Group].Add(shmap);
 
