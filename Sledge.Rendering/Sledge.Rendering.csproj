@@ -116,6 +116,7 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Shaders\ShadowOverlay.vert.hlsl" />
     <None Remove="Shaders\SwapchainOverlay.frag.hlsl" />
     <None Remove="Shaders\SwapchainOverlay.vert.hlsl" />
     <None Remove="Shaders\ShadowDepth.frag.hlsl" />
@@ -171,6 +172,8 @@
     <EmbeddedResource Include="Shaders\Shadowmap.vert.hlsl" />
     <EmbeddedResource Include="Shaders\ShadowmapPreviewShader.frag.hlsl" />
     <EmbeddedResource Include="Shaders\ShadowmapPreviewShader.vert.hlsl" />
+    <EmbeddedResource Include="Shaders\ShadowOverlay.frag.hlsl" />
+    <EmbeddedResource Include="Shaders\ShadowOverlay.vert.hlsl" />
     <EmbeddedResource Include="Shaders\Skybox.frag.hlsl" />
     <EmbeddedResource Include="Shaders\Skybox.vert.hlsl" />
     <EmbeddedResource Include="Shaders\SwapchainOverlay.frag.hlsl" />
