@@ -94,8 +94,10 @@ namespace Sledge.Rendering.Engine
 			AddPipeline(new SwapchainOverlayPipeline());
 			AddPipeline(new OverlayPipeline());
 			//AddPipeline(new ShadowmapDrawer(()=>shadowdepth.NearShadowMapView));
-			shmap = new ShadowmapPipeline(() => shadowdepth.NearShadowResourceTexture, () => shadowdepth.NearShadowMapView);
-			shmap.Create(Context,TextureSampleCount.Count1);
+			//shmap = new ShadowOverlayPipeline(() => shadowdepth.NearShadowResourceTexture, () => shadowdepth.NearShadowMapView);
+			//shmap.Create(Context,TextureSampleCount.Count1);
+			AddPipeline(new ShadowOverlayPipeline(() => shadowdepth.NearShadowResourceTexture, () => shadowdepth.NearShadowMapView));
+
 			//_customPipeline.TryAdd(shmap.Group, new List<IPipeline>());
 			//_customPipeline[shmap.Group].Add(shmap);
 
@@ -176,7 +178,7 @@ namespace Sledge.Rendering.Engine
 
 		private int _paused = 0;
 		private TextureSampleCount _sampleCount = TextureSampleCount.Count1;
-		private ShadowmapPipeline shmap;
+		private ShadowOverlayPipeline shmap;
 		private readonly ManualResetEvent _pauseThreadEvent = new ManualResetEvent(false);
 
 		public IDisposable Pause()
