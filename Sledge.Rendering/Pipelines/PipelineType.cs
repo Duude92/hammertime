@@ -17,6 +17,7 @@
 
         ShadowDepth,
         Shadowmap,
+        ShadowOverlay,
 
         Overlay,
     }
