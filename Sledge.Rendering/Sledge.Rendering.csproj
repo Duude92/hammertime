@@ -121,10 +121,6 @@
     <None Remove="Shaders\SwapchainOverlay.vert.hlsl" />
     <None Remove="Shaders\ShadowDepth.frag.hlsl" />
     <None Remove="Shaders\ShadowDepth.vert.hlsl" />
-    <None Remove="Shaders\Shadowmap.frag.hlsl" />
-    <None Remove="Shaders\Shadowmap.vert.hlsl" />
-    <None Remove="Shaders\ShadowmapPreviewShader.frag.hlsl" />
-    <None Remove="Shaders\ShadowmapPreviewShader.vert.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -168,10 +164,6 @@
   <ItemGroup>
     <EmbeddedResource Include="Shaders\ShadowDepth.frag.hlsl" />
     <EmbeddedResource Include="Shaders\ShadowDepth.vert.hlsl" />
-    <EmbeddedResource Include="Shaders\Shadowmap.frag.hlsl" />
-    <EmbeddedResource Include="Shaders\Shadowmap.vert.hlsl" />
-    <EmbeddedResource Include="Shaders\ShadowmapPreviewShader.frag.hlsl" />
-    <EmbeddedResource Include="Shaders\ShadowmapPreviewShader.vert.hlsl" />
     <EmbeddedResource Include="Shaders\ShadowOverlay.frag.hlsl" />
     <EmbeddedResource Include="Shaders\ShadowOverlay.vert.hlsl" />
     <EmbeddedResource Include="Shaders\Skybox.frag.hlsl" />
