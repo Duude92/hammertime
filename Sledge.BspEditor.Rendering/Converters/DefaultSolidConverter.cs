@@ -241,6 +241,11 @@ namespace Sledge.BspEditor.Rendering.Converters
 						CameraType.Perspective, true, f.Origin, texture, texOffset, texInd
 						);
 					groups.Add(group);
+					group = new BufferGroup(
+						PipelineType.ShadowOverlay,
+						CameraType.Perspective, true, f.Origin, texture, texOffset, texInd
+						);
+					groups.Add(group);
 				}
 				texOffset += texInd;
 
