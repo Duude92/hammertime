@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.CompilerServices;
+using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Engine;
 using Sledge.Rendering.Primitives;
 using Sledge.Rendering.Renderables;
@@ -175,23 +176,11 @@ upVector
 
 		}
 
-		public void Render(RenderContext context, IViewport target, CommandList cl, IEnumerable<IRenderable> renderables)
-		{
-			cl.SetPipeline(_pipeline);
-			cl.SetGraphicsResourceSet(0, _projectionResourceSet);
-			_shadowmapGetter().BindTo(cl, 1);
-
-			cl.SetGraphicsResourceSet(2, _lightDirectionSet);
-			cl.SetGraphicsResourceSet(3, _lightProjectionSet);
-
-			foreach (var r in renderables)
-			{
-				r.Render(context, this, target, cl);
-			}
-		}
+		public void Render(RenderContext context, IViewport target, CommandList cl, IEnumerable<IRenderable> renderables) { }
 
 		public void Render(RenderContext context, IViewport target, CommandList cl, IRenderable renderable, ILocation locationObject)
 		{
+			if (target.Camera is not PerspectiveCamera) return;
 			cl.SetPipeline(_pipeline);
 			cl.SetGraphicsResourceSet(0, _projectionResourceSet);
 			_shadowmapGetter().BindTo(cl, 1);
