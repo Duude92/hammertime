@@ -38,10 +38,8 @@ namespace Sledge.Rendering.Pipelines
 		private DeviceBuffer _worldAndInverseBuffer;
 		private uint _uniformOffset = 0;
 
-		//private ResourceSet _shadowmapResource;
 		private ResourceSet _shadowWorld;
 		private Bitmap _bitmap;
-		private Veldrid.Texture stagingTexture;
 
 		public void Bind(RenderContext context, CommandList cl, string binding)
 		{
@@ -61,7 +59,7 @@ namespace Sledge.Rendering.Pipelines
 
 			var factory = gd.ResourceFactory;
 
-			TextureDescription desc = TextureDescription.Texture2D(2048, 2048, 1, 1, PixelFormat.R32_Float, TextureUsage.DepthStencil | TextureUsage.Sampled, TextureSampleCount.Count1);
+			TextureDescription desc = TextureDescription.Texture2D(2048, 2048, 1, 1, PixelFormat.D32_Float_S8_UInt, TextureUsage.DepthStencil | TextureUsage.Sampled, TextureSampleCount.Count1);
 			NearShadowMap = factory.CreateTexture(ref desc);
 
 			//TextureDescription desc1 = TextureDescription.Texture2D(2048, 2048, 1, 1, PixelFormat.B8_G8_R8_A8_UNorm, TextureUsage.Sampled | TextureUsage.RenderTarget);
@@ -125,8 +123,6 @@ namespace Sledge.Rendering.Pipelines
 
 
 			_bitmap = new Bitmap((int)10, (int)10, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
-			// Step 1: Create a staging texture
-			stagingTexture = gd.ResourceFactory.CreateTexture(TextureDescription.Texture2D(NearShadowMap.Width, NearShadowMap.Height, 1, 1, NearShadowMap.Format, TextureUsage.Staging));
 
 			Oy.Subscribe("GetDepthImage", () => Oy.Publish("Context:Add", new ContextInfo("DepthImage", _bitmap)));
 		}
