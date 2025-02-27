@@ -69,7 +69,7 @@ namespace Sledge.BspEditor.Tools.PathTool
 			var states = States.OfType<PathState>();
 			States.RemoveAll(state => states.Contains(state));
 			var path = _lastDocument.Map.Root.Data.Get<Path>();
-			States.InsertRange(0, path.Select(p => new PathState(this)
+			var pathStates = path.Select(p => new PathState(this)
 			{
 				Property = new PathProperty
 				{
@@ -82,7 +82,11 @@ namespace Sledge.BspEditor.Tools.PathTool
 				ID = n.ID,
 				Name = n.Name,
 				Properties = n.Properties,
-			}))));
+			})));
+			for(int i = 0; i < pathStates.Count(); i++)
+			{
+				States.Insert(i, pathStates.ElementAt(i));
+			}
 		}
 
 		public override async Task ToolDeselected()
