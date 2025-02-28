@@ -21,24 +21,12 @@ struct PS_INPUT
     float4 Position : SV_Position;
 };
 
-
 PS_INPUT main(VertexIn input)
 {
     matrix tModel = transpose(Model);
     matrix tView = transpose(View);
     matrix tProjection = transpose(Projection);
-
-
-    float4 position = float4(input.Position, 1);
-    float4 normal = float4(input.Normal, 1);
-
-    float4 modelPos = mul(position, tModel);
-    float4 cameraPos = mul(modelPos, tView);
-    float4 viewportPos = mul(cameraPos, tProjection);
-    
     PS_INPUT output;
-    
-    output.Position = viewportPos;
-    
+    output.Position = mul(float4(input.Position, 1), mul(tView, tProjection));
     return output;
 }
