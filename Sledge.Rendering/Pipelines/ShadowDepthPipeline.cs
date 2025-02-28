@@ -93,7 +93,7 @@ namespace Sledge.Rendering.Pipelines
 			{
 				BlendState = BlendStateDescription.Empty,
 				DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
-				RasterizerState = RasterizerStateDescription.Default,
+				RasterizerState = new RasterizerStateDescription { CullMode = FaceCullMode.Back, DepthClipEnabled = true, FrontFace = FrontFace.CounterClockwise, FillMode = PolygonFillMode.Solid},
 
 				PrimitiveTopology = PrimitiveTopology.TriangleList,
 				ResourceLayouts = new ResourceLayout[] { projViewCombinedLayout },// ,context.ResourceLoader.TextureLayout/*, worldLayout*/ },
