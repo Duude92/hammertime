@@ -57,8 +57,8 @@ FragmentIn main(VertexIn input)
     float4 cameraPos = mul(modelPos, tView);
     float4 viewportPos = mul(cameraPos, tProjection);
     
-    tView = transpose(LightView);
-    tProjection = transpose(LightProjection);
+    matrix tLightView = transpose(LightView);
+    matrix tLightProjection = transpose(LightProjection);
 
 
     output.fPosition = viewportPos;
@@ -67,7 +67,7 @@ FragmentIn main(VertexIn input)
     output.fTexture = input.Texture;
     output.fTint = input.Tint;
     output.fFlags = input.Flags;
-    output.sPosition = mul(mul(mul(float4(input.Position, 1.0), tModel), tView), tProjection);
+    output.sPosition = mul(float4(input.Position, 1), mul(tLightView, tLightProjection));
 
     return output;
 }
