@@ -35,37 +35,18 @@ namespace Sledge.Rendering.Pipelines
 		public TextureView NearShadowMapView { get; private set; }
 		public Framebuffer NearShadowMapFramebuffer { get; private set; }
 
-		private DeviceBuffer _worldAndInverseBuffer;
-		private uint _uniformOffset = 0;
-
-		private ResourceSet _shadowWorld;
-		private Bitmap _bitmap;
-
 		public void Bind(RenderContext context, CommandList cl, string binding)
 		{
-			//var tex = context.ResourceLoader.GetTexture(binding);
-			//tex?.BindTo(cl, 1);
-			//NearShadowResourceTexture?.BindTo(cl,1);
 			cl.SetGraphicsResourceSet(0, _projectionResourceSet);
-			//cl.SetGraphicsResourceSet(1, _shadowWorld);
-			//cl.SetGraphicsResourceSet(2, _textureSet);
 		}
 
 		public void Create(RenderContext context, TextureSampleCount sampleCount)
 		{
-
 			var gd = context.Device;
-			_uniformOffset = gd.UniformBufferMinOffsetAlignment;
-
 			var factory = gd.ResourceFactory;
 
 			TextureDescription desc = TextureDescription.Texture2D(2048, 2048, 1, 1, PixelFormat.D32_Float_S8_UInt, TextureUsage.DepthStencil | TextureUsage.Sampled, TextureSampleCount.Count1);
 			NearShadowMap = factory.CreateTexture(ref desc);
-
-			//TextureDescription desc1 = TextureDescription.Texture2D(2048, 2048, 1, 1, PixelFormat.B8_G8_R8_A8_UNorm, TextureUsage.Sampled | TextureUsage.RenderTarget);
-			//var ColorShadowMap = factory.CreateTexture(desc1);
-
-			//gd.UpdateTexture(NearShadowMap, new byte[2048 * 2048 * 8], 0, 0,0, 2048, 2048, 1, 0, 0);
 
 			NearShadowMap.Name = "Near Shadow Map";
 			NearShadowMapView = factory.CreateTextureView(NearShadowMap);
@@ -76,18 +57,6 @@ namespace Sledge.Rendering.Pipelines
 			(_vertex, _fragment) = context.ResourceLoader.LoadShaders(Type.ToString());
 
 			ResourceLayout projViewCombinedLayout = context.ResourceLoader.ProjectionLayout;
-
-			//ResourceLayout worldLayout = context.Device.ResourceFactory.CreateResourceLayout(new ResourceLayoutDescription(
-			//	new ResourceLayoutElementDescription("WorldAndInverse", ResourceKind.UniformBuffer, ShaderStages.Vertex)));
-
-
-			//VertexLayoutDescription[] shadowDepthVertexLayouts = new VertexLayoutDescription[]
-			//{
-			//	new VertexLayoutDescription(
-			//		new VertexElementDescription("Position", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float3),
-			//		new VertexElementDescription("Normal", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float3),
-			//		new VertexElementDescription("TexCoord", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2))
-			//};
 
 			var pd = new GraphicsPipelineDescription
 			{
@@ -120,11 +89,6 @@ namespace Sledge.Rendering.Pipelines
 
 			NearShadowResourceTexture = new Resources.Texture(context, NearShadowMap, Resources.TextureSampleType.Standard, _textureSet);
 			NearShadowResourceTexture.GenerateMips = false;
-
-
-			_bitmap = new Bitmap((int)10, (int)10, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
-
-			Oy.Subscribe("GetDepthImage", () => Oy.Publish("Context:Add", new ContextInfo("DepthImage", _bitmap)));
 		}
 		public void Dispose()
 		{
@@ -147,13 +111,7 @@ namespace Sledge.Rendering.Pipelines
 			cl.ClearDepthStencil(1);
 
 			cl.SetPipeline(_pipeline);
-			//cl.SetGraphicsResourceSet(0, _shadowmapResource);
-
-			//cl.SetGraphicsResourceSet(1, _shadowWorld);
-
 			cl.SetGraphicsResourceSet(0, _projectionResourceSet);
-			//cl.SetGraphicsResourceSet(1, _shadowWorld);
-			//cl.SetGraphicsResourceSet(2, _textureSet);
 			var count = renderables.Count();
 
 			foreach (var r in renderables)
