@@ -1,14 +1,10 @@
-﻿using LogicAndTrick.Oy;
-using Sledge.Common.Shell.Context;
-using Sledge.Rendering.Cameras;
+﻿using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Engine;
 using Sledge.Rendering.Primitives;
 using Sledge.Rendering.Renderables;
-using Sledge.Rendering.Resources;
 using Sledge.Rendering.Viewports;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
@@ -30,10 +26,15 @@ namespace Sledge.Rendering.Pipelines
 		private DeviceBuffer _projectionBuffer;
 		private ResourceSet _projectionResourceSet;
 		private ResourceSet _textureSet;
+		private Engine.Engine.LightData _lightData;
 		public Resources.Texture NearShadowResourceTexture { get; private set; }
 		public Veldrid.Texture NearShadowMap { get; private set; }
 		public TextureView NearShadowMapView { get; private set; }
 		public Framebuffer NearShadowMapFramebuffer { get; private set; }
+		public ShadowDepthPipeline(Engine.Engine.LightData lightData)
+		{
+			_lightData = lightData;
+		}
 
 		public void Bind(RenderContext context, CommandList cl, string binding)
 		{
@@ -134,35 +135,12 @@ namespace Sledge.Rendering.Pipelines
 		{
 			if (target.Camera is not PerspectiveCamera) return;
 
-			float orthoSize = 5000f; // Adjust based on scene size
-			float nearPlane = 1f;
-			float farPlane = 2000f;
-
-			Matrix4x4 lightProjection = Matrix4x4.CreateOrthographic(
-				orthoSize, // Width
-				orthoSize, // Height
-				nearPlane,
-				farPlane
-			);
-
-			Vector3 lightPosition = new Vector3(0, 0, 1000); // Light high above the scene
-			Vector3 lightTarget = new Vector3(100, 0, 0); // Looking at the scene center
-			Vector3 upVector = Vector3.UnitZ; // Adjust if needed
-
-
-			Matrix4x4 lightView = Matrix4x4.CreateLookAt(
-	lightPosition,
-	lightTarget,
-	upVector
-);
-
-
 			context.Device.UpdateBuffer(_projectionBuffer, 0, new UniformProjection
 			{
 				Selective = context.SelectiveTransform,
 				Model = Matrix4x4.Identity,
-				View = lightView,
-				Projection = lightProjection
+				View = _lightData.LightView,
+				Projection = _lightData.LightProjection
 			});
 		}
 	}

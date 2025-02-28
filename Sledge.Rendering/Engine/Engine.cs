@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Numerics;
 using System.Threading;
 using System.Windows.Forms;
 using SharpDX.Direct3D;
@@ -23,6 +24,13 @@ namespace Sledge.Rendering.Engine
 		public GraphicsDevice Device { get; }
 		public Thread RenderThread { get; private set; }
 		public Scene Scene { get; }
+		public Vector3 LightAngle
+		{
+			get => Vector3.Zero; set
+			{
+				_lightData.LightView = Matrix4x4.CreateFromYawPitchRoll(value.X, value.Y, value.Z);
+			}
+		}
 		internal RenderContext Context { get; }
 
 		private CancellationTokenSource _token;
@@ -39,6 +47,7 @@ namespace Sledge.Rendering.Engine
 		private RgbaFloat _clearColourOrthographic;
 		internal int InactiveTargetFps { get; set; } = 10;
 		private long _previousFrameTime = DateTime.Now.Ticks;
+		private LightData _lightData;
 
 		private Engine()
 		{
@@ -57,6 +66,29 @@ namespace Sledge.Rendering.Engine
 
 			SetClearColour(CameraType.Both, RgbaFloat.Black);
 
+			float orthoSize = 5000f; // Adjust based on scene size
+			float nearPlane = 1f;
+			float farPlane = 2000f;
+
+			var _lightProjection = Matrix4x4.CreateOrthographic(
+				orthoSize, // Width
+				orthoSize, // Height
+				nearPlane,
+				farPlane
+			);
+
+			Vector3 lightPosition = new Vector3(0, 0, 1000); // Light high above the scene
+			Vector3 lightTarget = new Vector3(500, 0, 0); // Looking at the scene center
+			Vector3 upVector = Vector3.UnitZ; // Adjust if needed
+
+
+			var _lightView = Matrix4x4.CreateLookAt(
+				lightPosition,
+				lightTarget,
+				upVector
+			);
+			_lightData = new LightData { LightProjection = _lightProjection, LightView = _lightView };
+
 			_timer = new Stopwatch();
 			_token = new CancellationTokenSource();
 
@@ -74,7 +106,7 @@ namespace Sledge.Rendering.Engine
 			_pipelines.Add(PipelineGroup.Opaque, new List<IPipeline>());
 			_pipelines.Add(PipelineGroup.Transparent, new List<IPipeline>());
 			_pipelines.Add(PipelineGroup.Overlay, new List<IPipeline>());
-			var shadowdepth = new ShadowDepthPipeline();
+			var shadowdepth = new ShadowDepthPipeline(_lightData);
 
 
 			AddPipeline(new SkyboxPipeline());
@@ -96,7 +128,7 @@ namespace Sledge.Rendering.Engine
 			//AddPipeline(new ShadowmapDrawer(()=>shadowdepth.NearShadowMapView));
 			//shmap = new ShadowOverlayPipeline(() => shadowdepth.NearShadowResourceTexture, () => shadowdepth.NearShadowMapView);
 			//shmap.Create(Context,TextureSampleCount.Count1);
-			AddPipeline(new ShadowOverlayPipeline(() => shadowdepth.NearShadowResourceTexture, () => shadowdepth.NearShadowMapView));
+			AddPipeline(new ShadowOverlayPipeline(() => shadowdepth.NearShadowResourceTexture, () => shadowdepth.NearShadowMapView, _lightData));
 
 			//_customPipeline.TryAdd(shmap.Group, new List<IPipeline>());
 			//_customPipeline[shmap.Group].Add(shmap);
@@ -420,6 +452,11 @@ namespace Sledge.Rendering.Engine
 					rt.InitFramebuffer(_sampleCount);
 				}
 			}
+		}
+		public class LightData
+		{
+			public Matrix4x4 LightProjection;
+			public Matrix4x4 LightView;
 		}
 	}
 }
