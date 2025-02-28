@@ -1,8 +1,11 @@
 ﻿using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Transport;
 using System;
-using System.Numerics;
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Sledge.BspEditor.Primitives.MapData
 {
@@ -10,7 +13,6 @@ namespace Sledge.BspEditor.Primitives.MapData
 	{
 		public bool AffectsRendering => true;
 		public string SkyboxName { get; set; } = null;
-		public Vector3 LightDirection { get; set; }
 
 		public IMapElement Clone()
 		{
