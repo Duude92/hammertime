@@ -8,6 +8,7 @@ using Sledge.Rendering.Primitives;
 using Sledge.Rendering.Renderables;
 using Sledge.Rendering.Viewports;
 using Veldrid;
+using static Sledge.Rendering.Engine.Engine;
 
 namespace Sledge.Rendering.Pipelines
 {
@@ -22,6 +23,7 @@ namespace Sledge.Rendering.Pipelines
 		private Pipeline _pipeline;
 		private DeviceBuffer _projectionBuffer;
 		private ResourceSet _projectionResourceSet;
+		private LightData _lightData;
 		private ResourceSet _textureSet;
 		private Func<Resources.Texture> _shadowmapGetter;
 		private Func<TextureView> _viewGetter;
@@ -36,10 +38,11 @@ namespace Sledge.Rendering.Pipelines
 		private ResourceSet _lightProjectionSet;
 		private DeviceBuffer _lightDirection;
 
-		public ShadowOverlayPipeline(Func<Resources.Texture> bindingGetter, Func<TextureView> viewGetter)
+		public ShadowOverlayPipeline(Func<Resources.Texture> bindingGetter, Func<TextureView> viewGetter, Engine.Engine.LightData lightData)
 		{
 			_shadowmapGetter = bindingGetter;
 			_viewGetter = viewGetter;
+			_lightData = lightData;
 		}
 
 
@@ -148,32 +151,8 @@ new BufferDescription((uint)Unsafe.SizeOf<Matrix4x4>(), BufferUsage.UniformBuffe
 				Projection = target.Camera.Projection,
 			});
 
-			Vector3 lightPosition = new Vector3(0, 0, 1000); // Light high above the scene
-			Vector3 lightTarget = new Vector3(100, 0, 0); // Looking at the scene center
-			Vector3 upVector = Vector3.UnitZ; // Adjust if needed
-
-
-			Matrix4x4 lightView = Matrix4x4.CreateLookAt(
-lightPosition,
-lightTarget,
-upVector
-);
-			float orthoSize = 5000f; // Adjust based on scene size
-			float nearPlane = 1f;
-			float farPlane = 2000f;
-
-			Matrix4x4 lightProjection = Matrix4x4.CreateOrthographic(
-				orthoSize, // Width
-				orthoSize, // Height
-				nearPlane,
-				farPlane
-			);
-
-
-			context.Device.UpdateBuffer(_lightDirection, 0, lightView);
-			context.Device.UpdateBuffer(_lightProjection, 0, lightProjection);
-
-
+			context.Device.UpdateBuffer(_lightDirection, 0, _lightData.LightView);
+			context.Device.UpdateBuffer(_lightProjection, 0, _lightData.LightProjection);
 		}
 
 		public void Render(RenderContext context, IViewport target, CommandList cl, IEnumerable<IRenderable> renderables) { }
