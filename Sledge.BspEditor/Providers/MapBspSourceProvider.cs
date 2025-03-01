@@ -435,7 +435,7 @@ namespace Sledge.BspEditor.Providers
 				//     // The value hasn't changed from the default, don't write if it's an empty value
 				//     if (emptyGd && emptyProp) continue;
 				// }
-				var property = entityClass.Properties.FirstOrDefault(x => x.Name == prop.Key);
+				var property = entityClass?.Properties.FirstOrDefault(x => x.Name == prop.Key);
 				WriteProperty(sw, prop.Key, property?.VariableType == VariableType.Choices && String.IsNullOrEmpty(prop.Value) ? "0" : prop.Value);
 
 			}
