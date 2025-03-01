@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using Sledge.Rendering.Primitives;
 using Sledge.Rendering.Renderables;
 using Sledge.Rendering.Resources;
 
@@ -13,5 +14,6 @@ namespace Sledge.Rendering.Interfaces
 
         Matrix4x4 GetModelTransformation();
         (Vector3, Vector3) GetBoundingBox();
-    }
+        VertexFlags Flags { get; set; }
+	}
 }

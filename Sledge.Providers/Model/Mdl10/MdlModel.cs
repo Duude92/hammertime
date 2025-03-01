@@ -25,6 +25,7 @@ namespace Sledge.Providers.Model.Mdl10
 	{
 		private const int TEXTURE_MARGIN = 2;
 		public MdlFile Model { get; }
+		public VertexFlags Flags { get; set; } = 0;
 
 		private readonly Guid _guid;
 		private uint[][] _bodyPartIndices;
@@ -181,7 +182,8 @@ namespace Sledge.Providers.Model.Mdl10
 							Position = x.Vertex,
 							Normal = x.Normal,
 							Texture = texturePosition,
-							Bone = (uint)x.VertexBone
+							Bone = (uint)x.VertexBone,
+							Flags = Flags
 						});
 						indices[texId].Add(vi);
 						wireframeIndices.Add(vi);

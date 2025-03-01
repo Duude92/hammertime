@@ -4,6 +4,7 @@ struct VertexIn
     float3 Normal : NORMAL0;
     float3 Texture : TEXCOORD0;
     uint1 Bone : POSITION1;
+    uint1 Flags : POSITION1;
 };
 
 struct FragmentIn
@@ -28,6 +29,7 @@ cbuffer BoneTransforms
 };
 
 static const float4x4 Identity = { 1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1 };
+static const uint Flags_SelectiveTransformed = 1 << 0;
 
 FragmentIn main(VertexIn input)
 {
@@ -39,12 +41,13 @@ FragmentIn main(VertexIn input)
 
     float4 position = float4(input.Position, 1);
     float4 normal = float4(input.Normal, 1);
-
+    
     matrix bone = transpose(uTransforms[input.Bone.x]);
     position = mul(position, bone);
     normal = mul(normal, bone);
 
     float4 modelPos = mul(position, tModel);
+    modelPos = mul(modelPos, lerp(Identity, transpose(Selective), (input.Flags.x & Flags_SelectiveTransformed) / Flags_SelectiveTransformed));
     float4 cameraPos = mul(modelPos, tView);
     float4 viewportPos = mul(cameraPos, tProjection);
 

@@ -36,6 +36,7 @@ namespace Sledge.Providers.Texture.Spr
 		public int Framerate { get; set; } = 10;
 		public float Scale { get; set; } = 1;
 		public Vector4 Tint { get; set; } = Vector4.One;
+		public VertexFlags Flags { get; set; }
 
 		private SpriteLocation _location = new SpriteLocation();
 		private long _lastFrameTime;

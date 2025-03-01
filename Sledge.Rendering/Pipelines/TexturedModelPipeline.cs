@@ -82,7 +82,7 @@ namespace Sledge.Rendering.Pipelines
                 });
 
                 r.Render(context, this, target, cl);
-            }
+			}
         }
 
         public void Render(RenderContext context, IViewport target, CommandList cl, IRenderable renderable, ILocation locationObject)

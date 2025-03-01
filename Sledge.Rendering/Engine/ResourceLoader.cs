@@ -60,8 +60,9 @@ namespace Sledge.Rendering.Engine
                 new VertexElementDescription("Position", VertexElementSemantic.Position, VertexElementFormat.Float3),
                 new VertexElementDescription("Normal", VertexElementSemantic.Normal, VertexElementFormat.Float3),
                 new VertexElementDescription("Texture", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float3),
-                new VertexElementDescription("Bone", VertexElementSemantic.Position, VertexElementFormat.UInt1)
-            );
+                new VertexElementDescription("Bone", VertexElementSemantic.Position, VertexElementFormat.UInt1),
+				new VertexElementDescription("Flags", VertexElementSemantic.Position, VertexElementFormat.UInt1)
+			);
 
             TextureSampler = context.Device.Aniso4xSampler;
             OverlaySampler = context.Device.PointSampler;

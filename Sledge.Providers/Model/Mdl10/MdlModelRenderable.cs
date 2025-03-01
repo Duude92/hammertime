@@ -6,6 +6,7 @@ using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Engine;
 using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.Pipelines;
+using Sledge.Rendering.Primitives;
 using Sledge.Rendering.Renderables;
 using Sledge.Rendering.Viewports;
 using Veldrid;
@@ -16,8 +17,9 @@ namespace Sledge.Providers.Model.Mdl10
     {
         private readonly MdlModel _model;
         public IModel Model => _model;
+        public VertexFlags Flags { get => _model.Flags; set => _model.Flags = value; }
 
-        private DeviceBuffer _transformsBuffer;
+		private DeviceBuffer _transformsBuffer;
         private ResourceSet _transformsResourceSet;
         private Matrix4x4[] _transforms;
 

@@ -5,6 +5,7 @@ using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.ChangeHandlers;
 using Sledge.BspEditor.Rendering.Resources;
+using Sledge.Rendering.Primitives;
 using Sledge.Rendering.Resources;
 
 namespace Sledge.BspEditor.Rendering.Converters
@@ -33,9 +34,11 @@ namespace Sledge.BspEditor.Rendering.Converters
         public Task Convert(BufferBuilder builder, MapDocument document, IMapObject obj, ResourceCollector resourceCollector)
         {
             var em = obj.Data.GetOne<EntityModel>();
+			var flags = obj.IsSelected ? VertexFlags.SelectiveTransformed : VertexFlags.None;
 
-            if (em.ContentsReplaced && em.Renderable != null)
+			if (em.ContentsReplaced && em.Renderable != null)
             {
+                em.Renderable.Flags = flags;
                 resourceCollector.AddRenderables(new []{ em.Renderable });
             }
 
