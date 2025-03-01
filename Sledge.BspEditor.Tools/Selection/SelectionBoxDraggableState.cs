@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Sledge.BspEditor.Commands.Clipboard;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
+using Sledge.BspEditor.Modification.Operations.Data;
 using Sledge.BspEditor.Modification.Operations.Mutation;
 using Sledge.BspEditor.Modification.Operations.Selection;
 using Sledge.BspEditor.Modification.Operations.Tree;
@@ -16,6 +17,7 @@ using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Draggable;
 using Sledge.BspEditor.Tools.Selection.TransformationHandles;
 using Sledge.BspEditor.Tools.Widgets;
+using Sledge.Common;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Engine;
@@ -112,24 +114,56 @@ namespace Sledge.BspEditor.Tools.Selection
 						transaction.Add(new TransformTexturesScale(matrix, objects.SelectMany(x => x.FindAll())));
 					}
 				}
-				else if(shf && sender is MoveWidget)
+				else if (shf && sender is MoveWidget)
 				{
 					transaction.Add(new Deselect(document.Selection));
 					var matrix = transformation.Value;
-					var clone = objects.Select(x =>(IMapObject) x.Copy(document.Map.NumberGenerator)).ToList();
+					var clone = objects.Select(x => (IMapObject)x.Copy(document.Map.NumberGenerator)).ToList();
 					transaction.Add(new Attach(document.Map.Root.ID, clone));
 					var transformOperation = new Transform(matrix, clone);
 					transaction.Add(transformOperation);
 					transaction.Add(new Select(clone));
 				}
+				if (sender is RotationWidget)
+				{
+					foreach (var entity in objects.OfType<Primitives.MapObjects.Entity>())
+					{
+						var previousAngle = entity.EntityData.GetVector3("angles");
+						if (previousAngle.HasValue)
+						{
+							if (!entity.Hierarchy.HasChildren)
+							{
+
+								var oldAngle = previousAngle.Value;
+								Matrix4x4 yawMatrix = Matrix4x4.CreateRotationY(-oldAngle.X);
+								Matrix4x4 pitchMatrix = Matrix4x4.CreateRotationX(oldAngle.Z);
+								Matrix4x4 rollMatrix = Matrix4x4.CreateRotationZ(oldAngle.Y);
+
+								Matrix4x4 rotationMatrix = pitchMatrix * yawMatrix * rollMatrix;
+
+								var newLocalRotationDegrees = MathHelper.ExtractEulerAngles(transformation.Value);
+								rotationMatrix *= transformation.Value;
+								newLocalRotationDegrees = MathHelper.ExtractEulerAngles(rotationMatrix);
+
+
+
+								var op = new EditEntityDataProperties(entity.ID, new Dictionary<string, string>() {
+						{"angles", $"{Math.Round( MathHelper.RadiansToDegrees( newLocalRotationDegrees.Y))} {Math.Round( MathHelper.RadiansToDegrees( -newLocalRotationDegrees.Z))} {Math.Round(MathHelper.RadiansToDegrees(-newLocalRotationDegrees.X))}" }});
+
+								transaction.Add(op);
+							}
+						}
+					}
+				}
 
 				task = MapDocumentOperation.Perform(document, transaction);
 			}
 
-			task.ContinueWith(_ => {
+			task.ContinueWith(_ =>
+			{
 				Engine.Interface.SetSelectiveTransform(Matrix4x4.Identity);
 				SetRotationOrigin(document.Selection.GetSelectionBoundingBox().Center);
-				});
+			});
 		}
 
 		public void Update()
