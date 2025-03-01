@@ -134,21 +134,12 @@ namespace Sledge.BspEditor.Tools.Selection
 							if (!entity.Hierarchy.HasChildren)
 							{
 
-								var oldAngle = previousAngle.Value;
-								Matrix4x4 yawMatrix = Matrix4x4.CreateRotationY(-oldAngle.X);
-								Matrix4x4 pitchMatrix = Matrix4x4.CreateRotationX(oldAngle.Z);
-								Matrix4x4 rollMatrix = Matrix4x4.CreateRotationZ(oldAngle.Y);
-
-								Matrix4x4 rotationMatrix = pitchMatrix * yawMatrix * rollMatrix;
+								var oldAngle = previousAngle.Value *(float) (Math.PI / 180);
 
 								var newLocalRotationDegrees = MathHelper.ExtractEulerAngles(transformation.Value);
-								rotationMatrix *= transformation.Value;
-								newLocalRotationDegrees = MathHelper.ExtractEulerAngles(rotationMatrix);
-
-
 
 								var op = new EditEntityDataProperties(entity.ID, new Dictionary<string, string>() {
-						{"angles", $"{Math.Round( MathHelper.RadiansToDegrees( newLocalRotationDegrees.Y))} {Math.Round( MathHelper.RadiansToDegrees( -newLocalRotationDegrees.Z))} {Math.Round(MathHelper.RadiansToDegrees(-newLocalRotationDegrees.X))}" }});
+						{"angles", $"{Math.Round( MathHelper.RadiansToDegrees(oldAngle.X +  newLocalRotationDegrees.Y))} {Math.Round( MathHelper.RadiansToDegrees(oldAngle.Y -newLocalRotationDegrees.Z))} {Math.Round(MathHelper.RadiansToDegrees(oldAngle.Z-newLocalRotationDegrees.X))}" }});
 
 								transaction.Add(op);
 							}
