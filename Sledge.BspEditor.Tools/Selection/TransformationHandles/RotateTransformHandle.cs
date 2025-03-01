@@ -126,7 +126,7 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
 						rotationMatrix *= viewRotation;
 						if (transformation.KeepRotationAngle && !entity.Hierarchy.HasChildren)
 						{
-							var newLocalRotationDegrees = ExtractEulerAngles(rotationMatrix);
+							var newLocalRotationDegrees = MathHelper.ExtractEulerAngles(rotationMatrix);
 
 							var op = new EditEntityDataProperties(entity.ID, new Dictionary<string, string>() {
 						{"angles", $"{Math.Round( MathHelper.RadiansToDegrees( newLocalRotationDegrees.Y))} {Math.Round( MathHelper.RadiansToDegrees( -newLocalRotationDegrees.Z))} {Math.Round(MathHelper.RadiansToDegrees(-newLocalRotationDegrees.X))}" }});
@@ -142,29 +142,7 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
 		}
 
 
-		private Vector3 ExtractEulerAngles(Matrix4x4 matrix)
-		{
-			float x, y, z;
 
-			// Extract rotation around Y axis
-			y = (float)Math.Asin(matrix.M13);
-
-			// Handle special cases for pitch near +-90 degrees
-			if ((float)Math.Abs(matrix.M13) < 0.99999)
-			{
-				// Extract rotation around X and Z axes
-				x = (float)Math.Atan2(-matrix.M23, matrix.M33);
-				z = (float)Math.Atan2(-matrix.M12, matrix.M11);
-			}
-			else
-			{
-				// Gimbal lock case: rotation around X axis is set to 0, and extract rotation around Z axis
-				x = 0;
-				z = (float)Math.Atan2(matrix.M21, matrix.M22);
-			}
-
-			return new Vector3(x, y, z);
-		}
 		public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, I2DRenderer im)
 		{
 			var (wpos, soff) = GetWorldPositionAndScreenOffset(camera);
