@@ -75,7 +75,20 @@ namespace Sledge.BspEditor.Rendering.Scene
 		}
 
 		// Document events
-		private async Task DocumentChangedEarly(Change change) => await LoadSkybox();
+		private async Task DocumentChangedEarly(Change change)
+		{
+			await LoadSkybox();
+			_activeDocument.TryGetTarget(out var md);
+			var light = md.Map.Root.Hierarchy.OfType<Entity>().FirstOrDefault(Entity => Entity.EntityData.Name == "light_environment");
+			if (light != null)
+			{
+				var data = light.EntityData;
+				var angles = data.GetVector3("angles");
+				if (angles.HasValue)
+					Engine.Interface.SetLightAngles(angles.Value);
+			}
+
+		}
 
 		private async Task DocumentChanged(Change change)
 		{

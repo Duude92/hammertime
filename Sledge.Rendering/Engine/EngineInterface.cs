@@ -149,5 +149,6 @@ namespace Sledge.Rendering.Engine
 		public void Remove(IOverlayRenderable overlayRenderable) => Engine.Instance.Scene.Remove(overlayRenderable);
 
 		public void SetMSAA(int mSAAoption) => Engine.Instance.SetMSAA(mSAAoption);
+		public void SetLightAngles(Vector3 angles) => Engine.Instance.LightAngle = Vector3.Multiply(angles, (float)Math.PI / 180f);
 	}
 }

@@ -24,11 +24,23 @@ namespace Sledge.Rendering.Engine
 		public GraphicsDevice Device { get; }
 		public Thread RenderThread { get; private set; }
 		public Scene Scene { get; }
-		public Vector3 LightAngle
+		internal Vector3 LightAngle
 		{
 			get => Vector3.Zero; set
 			{
-				_lightData.LightView = Matrix4x4.CreateFromYawPitchRoll(value.X, value.Y, value.Z);
+				var lightPosition = new Vector3(0, 0, 1000);
+
+				Quaternion rotationQuat = Quaternion.CreateFromYawPitchRoll(value.Z, value.Y, value.X);
+				Vector3 forward = Vector3.Transform(-Vector3.UnitZ * 1000, rotationQuat);
+				Vector3 lightTarget = lightPosition + (forward);
+
+				forward = Vector3.Normalize(lightTarget - lightPosition);
+				Vector3 right = Vector3.Normalize(Vector3.Cross(Vector3.UnitY, forward));
+				Vector3 up = Vector3.Cross(forward, right); // Ensure orthogonality
+
+				Matrix4x4 lightView = Matrix4x4.CreateLookAt(lightPosition, lightTarget, up);
+
+				_lightData.LightView = lightView;
 			}
 		}
 		internal RenderContext Context { get; }
@@ -78,7 +90,7 @@ namespace Sledge.Rendering.Engine
 			);
 
 			Vector3 lightPosition = new Vector3(0, 0, 1000); // Light high above the scene
-			Vector3 lightTarget = new Vector3(500, 0, 0); // Looking at the scene center
+			Vector3 lightTarget = new Vector3(0, 0, 0); // Looking at the scene center
 			Vector3 upVector = Vector3.UnitZ; // Adjust if needed
 
 
