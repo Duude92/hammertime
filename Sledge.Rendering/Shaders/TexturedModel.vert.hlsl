@@ -47,7 +47,7 @@ FragmentIn main(VertexIn input)
     normal = mul(normal, bone);
 
     float4 modelPos = mul(position, tModel);
-    modelPos = mul(modelPos, lerp(Identity, transpose(Selective), (input.Flags.x & Flags_SelectiveTransformed) / Flags_SelectiveTransformed));
+    modelPos = mul(modelPos, transpose(Selective));
     float4 cameraPos = mul(modelPos, tView);
     float4 viewportPos = mul(cameraPos, tProjection);
 
