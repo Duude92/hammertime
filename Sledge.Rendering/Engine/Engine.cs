@@ -137,13 +137,7 @@ namespace Sledge.Rendering.Engine
 
 			AddPipeline(new SwapchainOverlayPipeline());
 			AddPipeline(new OverlayPipeline());
-			//AddPipeline(new ShadowmapDrawer(()=>shadowdepth.NearShadowMapView));
-			//shmap = new ShadowOverlayPipeline(() => shadowdepth.NearShadowResourceTexture, () => shadowdepth.NearShadowMapView);
-			//shmap.Create(Context,TextureSampleCount.Count1);
 			AddPipeline(new ShadowOverlayPipeline(() => shadowdepth.NearShadowResourceTexture, () => shadowdepth.NearShadowMapView, _lightData));
-
-			//_customPipeline.TryAdd(shmap.Group, new List<IPipeline>());
-			//_customPipeline[shmap.Group].Add(shmap);
 
 			Application.ApplicationExit += Shutdown;
 		}
@@ -219,10 +213,8 @@ namespace Sledge.Rendering.Engine
 			_token = new CancellationTokenSource();
 		}
 
-
 		private int _paused = 0;
 		private TextureSampleCount _sampleCount = TextureSampleCount.Count1;
-		private ShadowOverlayPipeline shmap;
 		private readonly ManualResetEvent _pauseThreadEvent = new ManualResetEvent(false);
 
 		public IDisposable Pause()
@@ -378,10 +370,6 @@ namespace Sledge.Rendering.Engine
 				if (pipeline.Type == PipelineType.BillboardAlpha || pipeline.Type == PipelineType.ShadowOverlay)
 					pipeline.Render(Context, renderTarget, _commandList, Scene.GetRenderables(pipeline, renderTarget));
 			}
-			//shmap.SetupFrame(Context, renderTarget);
-			//shmap.Render(Context, renderTarget, _commandList, null);
-			//_commandList.Draw(4);
-
 
 			_commandList.End();
 			Device.SubmitCommands(_commandList);
