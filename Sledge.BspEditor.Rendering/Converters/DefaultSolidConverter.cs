@@ -227,23 +227,23 @@ namespace Sledge.BspEditor.Rendering.Converters
 				//					points = points.Select(x => { x.Tint = new Vector4(1, 1, 1, 0.5f); return x; }).ToArray();
 				//				}
 				//				else
-				{
+				
 					group = new BufferGroup(
 					   pipeline == PipelineType.TexturedOpaque && transparent ? PipelineType.TexturedAlpha : pipeline,
 					   CameraType.Perspective, transparent, f.Origin, texture, texOffset, texInd
 				   );
-				}
+				
 				groups.Add(group);
 				if (f.Texture.Name.ToLower() != "sky")
 				{
 					group = new BufferGroup(
 						PipelineType.ShadowDepth,
-						CameraType.Perspective, true, f.Origin, texture, texOffset, texInd
+						CameraType.Perspective, false, f.Origin, texture, texOffset, texInd
 						);
 					groups.Add(group);
 					group = new BufferGroup(
 						PipelineType.ShadowOverlay,
-						CameraType.Perspective, true, f.Origin, texture, texOffset, texInd
+						CameraType.Perspective, false, f.Origin, texture, texOffset, texInd
 						);
 					groups.Add(group);
 				}

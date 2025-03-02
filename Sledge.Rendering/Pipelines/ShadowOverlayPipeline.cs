@@ -155,7 +155,21 @@ new BufferDescription((uint)Unsafe.SizeOf<Matrix4x4>(), BufferUsage.UniformBuffe
 			context.Device.UpdateBuffer(_lightProjection, 0, _lightData.LightProjection);
 		}
 
-		public void Render(RenderContext context, IViewport target, CommandList cl, IEnumerable<IRenderable> renderables) { }
+		public void Render(RenderContext context, IViewport target, CommandList cl, IEnumerable<IRenderable> renderables) {
+			if (target.Camera is not PerspectiveCamera) return;
+
+			cl.SetPipeline(_pipeline);
+			cl.SetGraphicsResourceSet(0, _projectionResourceSet);
+			_shadowmapGetter().BindTo(cl, 1);
+
+			cl.SetGraphicsResourceSet(2, _lightDirectionSet);
+			cl.SetGraphicsResourceSet(3, _lightProjectionSet);
+
+			foreach (var r in renderables)
+			{
+				r.Render(context, this, target, cl);
+			}
+		}
 
 		public void Render(RenderContext context, IViewport target, CommandList cl, IRenderable renderable, ILocation locationObject)
 		{
