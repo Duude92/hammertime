@@ -128,18 +128,14 @@ namespace Sledge.BspEditor.Tools.Selection
 				{
 					foreach (var entity in objects.OfType<Primitives.MapObjects.Entity>())
 					{
-						var previousAngle = entity.EntityData.GetVector3("angles");
-						if (previousAngle.HasValue)
+						if (!entity.Hierarchy.HasChildren)
 						{
-							if (!entity.Hierarchy.HasChildren)
+							var newAngle = GetPointEntityNewAngle(entity, transformation.Value);
+							if (newAngle.HasValue)
 							{
-
-								var oldAngle = previousAngle.Value *(float) (Math.PI / 180);
-
-								var newLocalRotationDegrees = MathHelper.ExtractEulerAngles(transformation.Value);
-
+								var newLocalRotationDegrees = newAngle.Value;
 								var op = new EditEntityDataProperties(entity.ID, new Dictionary<string, string>() {
-						{"angles", $"{Math.Round( MathHelper.RadiansToDegrees(oldAngle.X +  newLocalRotationDegrees.Y))} {Math.Round( MathHelper.RadiansToDegrees(oldAngle.Y -newLocalRotationDegrees.Z))} {Math.Round(MathHelper.RadiansToDegrees(oldAngle.Z-newLocalRotationDegrees.X))}" }});
+						{"angles", $"{Math.Round( MathHelper.RadiansToDegrees( newLocalRotationDegrees.Y))} {Math.Round( MathHelper.RadiansToDegrees(-newLocalRotationDegrees.Z))} {Math.Round(MathHelper.RadiansToDegrees(-newLocalRotationDegrees.X))}" }});
 
 								transaction.Add(op);
 							}
@@ -155,6 +151,23 @@ namespace Sledge.BspEditor.Tools.Selection
 				Engine.Interface.SetSelectiveTransform(Matrix4x4.Identity);
 				SetRotationOrigin(document.Selection.GetSelectionBoundingBox().Center);
 			});
+		}
+		private Vector3? GetPointEntityNewAngle(Primitives.MapObjects.Entity entity, Matrix4x4 transformation)
+		{
+			var previousAngle = entity.EntityData.GetVector3("angles");
+			if (!previousAngle.HasValue) return null;
+
+			var oldAngle = previousAngle.Value * (float)(Math.PI / 180);
+
+			Matrix4x4 yawMatrix = Matrix4x4.CreateRotationY(-oldAngle.X);
+			Matrix4x4 pitchMatrix = Matrix4x4.CreateRotationX(oldAngle.Z);
+			Matrix4x4 rollMatrix = Matrix4x4.CreateRotationZ(oldAngle.Y);
+
+			Matrix4x4 rotationMatrix = pitchMatrix * yawMatrix * rollMatrix;
+			var tr = rotationMatrix * Matrix4x4.CreateTranslation(Origin);
+
+			var newLocalRotationDegrees = MathHelper.ExtractEulerAngles(tr * transformation);
+			return newLocalRotationDegrees;
 		}
 
 		public void Update()
