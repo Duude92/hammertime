@@ -24,13 +24,16 @@ namespace Sledge.Rendering.Engine
 		public GraphicsDevice Device { get; }
 		public Thread RenderThread { get; private set; }
 		public Scene Scene { get; }
-		internal Vector3 LightAngle
-		{
-			get => Vector3.Zero; set
-			{
-				var lightPosition = new Vector3(0, 0, 1000);
+		internal Vector3 LightAngle { get; set; } = Vector3.Zero;
 
-				Quaternion rotationQuat = Quaternion.CreateFromYawPitchRoll(value.Z, value.Y, value.X);
+		internal Vector3 LightSourcePosition
+		{
+			get => Vector3.Zero;
+			set
+			{
+				var lightPosition = value;
+
+				Quaternion rotationQuat = Quaternion.CreateFromYawPitchRoll(LightAngle.Z, LightAngle.Y, LightAngle.X);
 				Vector3 forward = Vector3.Transform(-Vector3.UnitZ * 1000, rotationQuat);
 				Vector3 lightTarget = lightPosition + (forward);
 
@@ -124,7 +127,7 @@ namespace Sledge.Rendering.Engine
 			AddPipeline(new SkyboxPipeline());
 			AddPipeline(new WireframePipeline());
 			AddPipeline(new TexturedOpaquePipeline());
-            AddPipeline(new BillboardOpaquePipeline());
+			AddPipeline(new BillboardOpaquePipeline());
 			AddPipeline(new WireframeModelPipeline());
 			AddPipeline(new TexturedModelPipeline());
 			shadowdepth.Create(Context, TextureSampleCount.Count1);
