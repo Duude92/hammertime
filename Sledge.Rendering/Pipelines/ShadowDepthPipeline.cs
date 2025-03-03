@@ -26,12 +26,12 @@ namespace Sledge.Rendering.Pipelines
 		private DeviceBuffer _projectionBuffer;
 		private ResourceSet _projectionResourceSet;
 		private ResourceSet _textureSet;
-		private Engine.Engine.LightData _lightData;
+		private Engine.Engine.ViewProjectionBuffer _lightData;
 		public Resources.Texture NearShadowResourceTexture { get; private set; }
 		public Veldrid.Texture NearShadowMap { get; private set; }
 		public TextureView NearShadowMapView { get; private set; }
 		public Framebuffer NearShadowMapFramebuffer { get; private set; }
-		public ShadowDepthPipeline(Engine.Engine.LightData lightData)
+		public ShadowDepthPipeline(Engine.Engine.ViewProjectionBuffer lightData)
 		{
 			_lightData = lightData;
 		}
@@ -144,8 +144,8 @@ namespace Sledge.Rendering.Pipelines
 			{
 				Selective = context.SelectiveTransform,
 				Model = Matrix4x4.Identity,
-				View = _lightData.LightView,
-				Projection = _lightData.LightProjection
+				View = _lightData.View,
+				Projection = _lightData.Projection
 			});
 		}
 	}
