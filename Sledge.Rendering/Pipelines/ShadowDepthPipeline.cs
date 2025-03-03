@@ -104,7 +104,7 @@ namespace Sledge.Rendering.Pipelines
 		{
 			if (target.Camera is not PerspectiveCamera) return;
 
-			SetupFrame(context, target);
+			//SetupFrame(context, target);
 			cl.PushDebugGroup("Shadow Map - Near Cascade");
 			cl.SetFramebuffer(NearShadowMapFramebuffer);
 
@@ -131,11 +131,11 @@ namespace Sledge.Rendering.Pipelines
 
 			renderable.Render(context, this, target, cl, locationObject); 
 		}
-		public void SetupFrame(RenderContext context, IViewport target)
+		public void SetupFrame(RenderContext context, Engine.Engine.ViewProjectionBuffer viewProjectionBuffer)
 		{
-			if (target.Camera is not PerspectiveCamera) return;
+			if (viewProjectionBuffer.RenderTarget.Camera is not PerspectiveCamera) return;
 
-			Vector3 lightPosition = target.Camera.Position + new Vector3(0, 0, 1000); // Adjust if needed
+			Vector3 lightPosition = viewProjectionBuffer.RenderTarget.Camera.Position + new Vector3(0, 0, 1000); // Adjust if needed
 
 			Engine.Engine.Instance.LightSourcePosition = lightPosition;
 

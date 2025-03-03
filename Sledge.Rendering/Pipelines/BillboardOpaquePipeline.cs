@@ -53,9 +53,9 @@ namespace Sledge.Rendering.Pipelines
             );
         }
 
-        public void SetupFrame(RenderContext context, IViewport target)
+        public void SetupFrame(RenderContext context, Engine.Engine.ViewProjectionBuffer viewProjectionBuffer)
         {
-            var view = target.Camera.View;
+            var view = viewProjectionBuffer.View;
             if (!Matrix4x4.Invert(view, out var invView)) invView = Matrix4x4.Identity;
 
             context.Device.UpdateBuffer(_projectionBuffer, 0, new UniformProjection
@@ -63,7 +63,7 @@ namespace Sledge.Rendering.Pipelines
                 Selective = context.SelectiveTransform,
                 Model = invView,
                 View = view,
-                Projection = target.Camera.Projection
+                Projection = viewProjectionBuffer.Projection
             });
         }
 
