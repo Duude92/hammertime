@@ -23,7 +23,7 @@ namespace Sledge.Rendering.Pipelines
 		private Pipeline _pipeline;
 		private DeviceBuffer _projectionBuffer;
 		private ResourceSet _projectionResourceSet;
-		private LightData _lightData;
+		private ViewProjectionBuffer _lightData;
 		private ResourceSet _textureSet;
 		private Func<Resources.Texture> _shadowmapGetter;
 		private Func<TextureView> _viewGetter;
@@ -38,7 +38,7 @@ namespace Sledge.Rendering.Pipelines
 		private ResourceSet _lightProjectionSet;
 		private DeviceBuffer _lightDirection;
 
-		public ShadowOverlayPipeline(Func<Resources.Texture> bindingGetter, Func<TextureView> viewGetter, Engine.Engine.LightData lightData)
+		public ShadowOverlayPipeline(Func<Resources.Texture> bindingGetter, Func<TextureView> viewGetter, Engine.Engine.ViewProjectionBuffer lightData)
 		{
 			_shadowmapGetter = bindingGetter;
 			_viewGetter = viewGetter;
@@ -151,8 +151,8 @@ new BufferDescription((uint)Unsafe.SizeOf<Matrix4x4>(), BufferUsage.UniformBuffe
 				Projection = target.Camera.Projection,
 			});
 
-			context.Device.UpdateBuffer(_lightDirection, 0, _lightData.LightView);
-			context.Device.UpdateBuffer(_lightProjection, 0, _lightData.LightProjection);
+			context.Device.UpdateBuffer(_lightDirection, 0, _lightData.View);
+			context.Device.UpdateBuffer(_lightProjection, 0, _lightData.Projection);
 		}
 
 		public void Render(RenderContext context, IViewport target, CommandList cl, IEnumerable<IRenderable> renderables) {

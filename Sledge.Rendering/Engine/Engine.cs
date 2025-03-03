@@ -43,7 +43,7 @@ namespace Sledge.Rendering.Engine
 
 				Matrix4x4 lightView = Matrix4x4.CreateLookAt(lightPosition, lightTarget, up);
 
-				_lightData.LightView = lightView;
+				_lightData.View = lightView;
 			}
 		}
 		internal RenderContext Context { get; }
@@ -62,7 +62,7 @@ namespace Sledge.Rendering.Engine
 		private RgbaFloat _clearColourOrthographic;
 		internal int InactiveTargetFps { get; set; } = 10;
 		private long _previousFrameTime = DateTime.Now.Ticks;
-		private LightData _lightData;
+		private ViewProjectionBuffer _lightData;
 
 		private Engine()
 		{
@@ -102,7 +102,7 @@ namespace Sledge.Rendering.Engine
 				lightTarget,
 				upVector
 			);
-			_lightData = new LightData { LightProjection = _lightProjection, LightView = _lightView };
+			_lightData = new ViewProjectionBuffer { Projection = _lightProjection, View = _lightView };
 
 			_timer = new Stopwatch();
 			_token = new CancellationTokenSource();
@@ -456,10 +456,11 @@ namespace Sledge.Rendering.Engine
 				}
 			}
 		}
-		public class LightData
+		public class ViewProjectionBuffer
 		{
-			public Matrix4x4 LightProjection;
-			public Matrix4x4 LightView;
+			public Matrix4x4 Projection;
+			public Matrix4x4 View;
+			public IViewport RenderTarget;
 		}
 	}
 }
