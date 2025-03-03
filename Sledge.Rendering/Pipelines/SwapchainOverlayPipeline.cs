@@ -102,7 +102,7 @@ namespace Sledge.Rendering.Pipelines
 		{
 		}
 
-		public void SetupFrame(RenderContext context, IViewport target)
+		public void SetupFrame(RenderContext context, Engine.Engine.ViewProjectionBuffer viewProjectionBuffer)
 		{
 		}
 	}

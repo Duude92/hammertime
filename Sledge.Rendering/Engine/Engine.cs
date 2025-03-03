@@ -63,6 +63,7 @@ namespace Sledge.Rendering.Engine
 		internal int InactiveTargetFps { get; set; } = 10;
 		private long _previousFrameTime = DateTime.Now.Ticks;
 		private ViewProjectionBuffer _lightData;
+		private ViewProjectionBuffer _cameraBuffer;
 
 		private Engine()
 		{
@@ -287,6 +288,8 @@ namespace Sledge.Rendering.Engine
 					rt.Overlay.Build(overlays);
 					if (rt.IsFocused || (!rt.IsFocused && shouldRender))
 					{
+						_cameraBuffer = new ViewProjectionBuffer { Projection = rt.Camera.Projection, View = rt.Camera.View, RenderTarget = rt };
+						_lightData.RenderTarget = rt;
 						Render(rt);
 					}
 				}
@@ -302,7 +305,7 @@ namespace Sledge.Rendering.Engine
 			{
 				foreach (var pipeline in group.Value)
 				{
-					pipeline.SetupFrame(Context, renderTarget);
+					pipeline.SetupFrame(Context, _cameraBuffer);
 					pipeline.Render(Context, renderTarget, _commandList, Scene.GetRenderables(pipeline, renderTarget));
 				}
 			}
@@ -354,14 +357,14 @@ namespace Sledge.Rendering.Engine
 
 			foreach (var opaque in _pipelines[PipelineGroup.Opaque])
 			{
-				opaque.SetupFrame(Context, renderTarget);
+				opaque.SetupFrame(Context, _cameraBuffer);
 				opaque.Render(Context, renderTarget, _commandList, Scene.GetRenderables(opaque, renderTarget));
 			}
 
 
 			foreach (var transparent in transparentPipelines)
 			{
-				transparent.SetupFrame(Context, renderTarget);
+				transparent.SetupFrame(Context, _cameraBuffer);
 			}
 			foreach (var lo in locationObjects)
 			{
@@ -389,7 +392,7 @@ namespace Sledge.Rendering.Engine
 
 			foreach (var overlay in _pipelines[PipelineGroup.Overlay])
 			{
-				overlay.SetupFrame(Context, renderTarget);
+				overlay.SetupFrame(Context, _cameraBuffer);
 				overlay.Render(Context, renderTarget, _commandList, Scene.GetRenderables(overlay, renderTarget));
 			}
 			_commandList.End();
