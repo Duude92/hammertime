@@ -135,6 +135,11 @@ namespace Sledge.Rendering.Pipelines
 		{
 			if (target.Camera is not PerspectiveCamera) return;
 
+			Vector3 lightPosition = target.Camera.Position + new Vector3(0, 0, 1000); // Adjust if needed
+
+			Engine.Engine.Instance.LightSourcePosition = lightPosition;
+
+
 			context.Device.UpdateBuffer(_projectionBuffer, 0, new UniformProjection
 			{
 				Selective = context.SelectiveTransform,
