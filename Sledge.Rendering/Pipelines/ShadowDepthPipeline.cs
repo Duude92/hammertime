@@ -82,8 +82,21 @@ namespace Sledge.Rendering.Pipelines
 			_projectionResourceSet = context.Device.ResourceFactory.CreateResourceSet(
 				new ResourceSetDescription(context.ResourceLoader.ProjectionLayout, _projectionBuffer)
 			);
-
-
+#if USE_COMPARISON_SAMPLER
+			var shadowSampler = factory.CreateSampler(new SamplerDescription(
+				
+	addressModeU: SamplerAddressMode.Border,  // Prevents artifacts outside shadow map
+	addressModeV: SamplerAddressMode.Border,  // Prevents artifacts outside shadow map
+	addressModeW: SamplerAddressMode.Border,  // Prevents artifacts outside shadow map
+	filter: SamplerFilter.MinLinear_MagLinear_MipPoint, // Enables hardware PCF
+	comparisonKind: ComparisonKind.LessEqual, // Depth test (currentDepth ≤ storedDepth)
+	maximumAnisotropy: 1, // No anisotropic filtering
+	minimumLod: 0, // No LOD biasing
+	maximumLod: 0, // No LOD biasing
+	lodBias: 0, // No LOD biasing
+	borderColor: SamplerBorderColor.OpaqueWhite
+));
+#endif
 			_textureSet = gd.ResourceFactory.CreateResourceSet(new ResourceSetDescription(
 				context.ResourceLoader.TextureLayout, NearShadowMapView, context.ResourceLoader.TextureSampler
 			));

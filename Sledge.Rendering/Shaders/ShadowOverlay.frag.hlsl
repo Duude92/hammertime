@@ -1,6 +1,7 @@
 #define dx 1.0
 #define samples 9
 #define SHADOWMAP_SIZE 2048
+//#define USE_COMPARISON_SAMPLER
 struct FragmentIn
 {
     float4 fPosition : SV_Position;
@@ -12,7 +13,11 @@ struct FragmentIn
     float4 sPosition : TEXCOORD1;
 };
 Texture2D ShadowTexture;
+#ifdef USE_COMPARISON_SAMPLER
+SamplerComparisonState ShadowSampler;
+#else
 SamplerState ShadowSampler;
+#endif
 
 cbuffer LightData
 {
@@ -26,6 +31,22 @@ static const float2 PoissonDisk[9] =
     float2(-0.38277543, 0.27676845), float2(0.97484398, 0.75648379),
     float2(0.44323325, -0.97511554)
 };
+#ifdef USE_COMPARISON_SAMPLER
+float ShadowCalculation(float4 shadowCoord, float4 Normal)
+{
+    shadowCoord = float4(shadowCoord.x, -shadowCoord.y, shadowCoord.z, shadowCoord.w);
+
+    float3 perspectiveShadowCoord = shadowCoord.xyz / shadowCoord.w;
+    float2 shadowCoord1 = perspectiveShadowCoord.xy * 0.5 + 0.5;
+
+    float bias = 0.001;
+    float currentDepth = perspectiveShadowCoord.z;
+
+    // Hardware PCF: Uses built-in comparison sampler
+    return lerp(0.3, 1, ShadowTexture.SampleCmp(ShadowSampler, shadowCoord1, currentDepth - bias));
+}
+
+#else
 float ShadowCalculation(float4 shadowCoord, float4 Normal)
 {
     shadowCoord = float4(shadowCoord.x, -shadowCoord.y, shadowCoord.z, shadowCoord.w);
@@ -47,10 +68,11 @@ float ShadowCalculation(float4 shadowCoord, float4 Normal)
     }
     return 1-(shadow / samples);
 }
+#endif
 
 float4 main(FragmentIn input) : SV_Target0
 {
     float shadowFactor = ShadowCalculation(input.sPosition, input.fNormal);
-    float4 shadowColor = lerp(float4(0, 0, 0, 1), float4(1, 1, 1, 1),  shadowFactor);
+    float4 shadowColor = lerp(float4(0, 0, 0, 1), float4(1, 1, 1, 1), shadowFactor);
     return shadowColor;
 }
