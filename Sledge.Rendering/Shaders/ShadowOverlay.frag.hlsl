@@ -1,3 +1,6 @@
+#define dx 1.0
+#define samples 9
+#define SHADOWMAP_SIZE 2048
 struct FragmentIn
 {
     float4 fPosition : SV_Position;
@@ -15,18 +18,34 @@ cbuffer LightData
 {
     matrix LightViewProjection;
 };
-
+static const float2 PoissonDisk[9] =
+{
+    float2(-0.94201624, -0.39906216), float2(0.94558609, -0.76890725),
+    float2(-0.094184101, -0.92938870), float2(0.34495938, 0.29387760),
+    float2(-0.91588581, 0.45771432), float2(-0.81544232, -0.87912464),
+    float2(-0.38277543, 0.27676845), float2(0.97484398, 0.75648379),
+    float2(0.44323325, -0.97511554)
+};
 float ShadowCalculation(float4 shadowCoord, float4 Normal)
 {
     shadowCoord = float4(shadowCoord.x, -shadowCoord.y, shadowCoord.z, shadowCoord.w);
     float3 perspectiveShadowCoord = shadowCoord.xyz / shadowCoord.w; // Perspective divide
     float2 shadowCoord1 = perspectiveShadowCoord.xy * 0.5 + 0.5; // Transform to 0-1 range
-
-    float shadowDepth = ShadowTexture.Sample(ShadowSampler, shadowCoord1.xy).r;
     float bias = 0.001;
-    float shadowFactor = (perspectiveShadowCoord.z > shadowDepth - bias) ? 0.5 : 1.0;
 
-    return shadowFactor;
+    float current = perspectiveShadowCoord.z;
+    float shadow = 0.0;
+
+    for (int i = 0; i < samples; i++)
+    {
+        float closest = ShadowTexture.Sample(ShadowSampler, shadowCoord1.xy + (PoissonDisk[i] * 1 / SHADOWMAP_SIZE)).r;
+        if (current > closest - bias)
+        {
+            shadow += 0.5;
+        }
+
+    }
+    return 1-(shadow / samples);
 }
 
 float4 main(FragmentIn input) : SV_Target0
