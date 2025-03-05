@@ -303,6 +303,16 @@ namespace Sledge.BspEditor.Editing.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Menu_Shadows {
+            get {
+                object obj = ResourceManager.GetObject("Menu_Shadows", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Menu_ShowBrushID {
             get {
                 object obj = ResourceManager.GetObject("Menu_ShowBrushID", resourceCulture);
