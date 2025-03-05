@@ -24,6 +24,7 @@ namespace Sledge.Rendering.Engine
 		public GraphicsDevice Device { get; }
 		public Thread RenderThread { get; private set; }
 		public Scene Scene { get; }
+		internal bool IsShadowsEnabled { get; set; } = false;
 		internal Vector3 LightAngle { get; set; } = Vector3.Zero;
 
 		internal Vector3 LightSourcePosition
@@ -301,12 +302,15 @@ namespace Sledge.Rendering.Engine
 		private void Render(IViewport renderTarget)
 		{
 			_commandList.Begin();
-			foreach (var group in _customPipeline)
+			if (IsShadowsEnabled)
 			{
-				foreach (var pipeline in group.Value)
+				foreach (var group in _customPipeline)
 				{
-					pipeline.SetupFrame(Context, _cameraBuffer);
-					pipeline.Render(Context, renderTarget, _commandList, Scene.GetRenderables(pipeline, renderTarget));
+					foreach (var pipeline in group.Value)
+					{
+						pipeline.SetupFrame(Context, _cameraBuffer);
+						pipeline.Render(Context, renderTarget, _commandList, Scene.GetRenderables(pipeline, renderTarget));
+					}
 				}
 			}
 
@@ -373,7 +377,7 @@ namespace Sledge.Rendering.Engine
 
 			foreach (var pipeline in transparentPipelines)
 			{
-				if (pipeline.Type == PipelineType.BillboardAlpha || pipeline.Type == PipelineType.ShadowOverlay)
+				if (pipeline.Type == PipelineType.BillboardAlpha || (IsShadowsEnabled && pipeline.Type == PipelineType.ShadowOverlay))
 					pipeline.Render(Context, renderTarget, _commandList, Scene.GetRenderables(pipeline, renderTarget));
 			}
 
