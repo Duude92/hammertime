@@ -6,6 +6,7 @@ using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Menu;
 using Sledge.Common.Translations;
+using Sledge.Rendering.Engine;
 using System;
 using System.ComponentModel.Composition;
 using System.Threading.Tasks;
@@ -25,14 +26,15 @@ namespace Sledge.BspEditor.Editing.Commands.View
 
 		public bool IsToggle => true;
 
-		protected override async Task Invoke(MapDocument document, CommandParameters parameters)
+		protected override Task Invoke(MapDocument document, CommandParameters parameters)
 		{
-			throw new NotImplementedException();
+			Engine.Interface.ShadowsEnabled = !Engine.Interface.ShadowsEnabled;
+			return Task.CompletedTask;
 		}
 
 		public bool GetToggleState(IContext context)
 		{
-			return IsToggle;
+			return Engine.Interface.ShadowsEnabled;
 		}
 	}
 }
