@@ -1,4 +1,5 @@
-﻿using Sledge.Rendering.Cameras;
+﻿using Newtonsoft.Json;
+using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Engine;
 using Sledge.Rendering.Primitives;
 using Sledge.Rendering.Renderables;
@@ -9,6 +10,7 @@ using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using Veldrid;
+using Vortice.Mathematics;
 
 namespace Sledge.Rendering.Pipelines
 {
@@ -63,7 +65,7 @@ namespace Sledge.Rendering.Pipelines
 			{
 				BlendState = BlendStateDescription.Empty,
 				DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
-				RasterizerState = new RasterizerStateDescription { CullMode = FaceCullMode.Back, DepthClipEnabled = true, FrontFace = FrontFace.CounterClockwise, FillMode = PolygonFillMode.Solid},
+				RasterizerState = new RasterizerStateDescription { CullMode = FaceCullMode.Back, DepthClipEnabled = true, FrontFace = FrontFace.CounterClockwise, FillMode = PolygonFillMode.Solid },
 
 				PrimitiveTopology = PrimitiveTopology.TriangleList,
 				ResourceLayouts = new ResourceLayout[] { projViewCombinedLayout },// ,context.ResourceLoader.TextureLayout/*, worldLayout*/ },
@@ -142,13 +144,19 @@ namespace Sledge.Rendering.Pipelines
 			cl.SetGraphicsResourceSet(0, _textureSet);
 			cl.SetGraphicsResourceSet(1, _textureSet);
 
-			renderable.Render(context, this, target, cl, locationObject); 
+			renderable.Render(context, this, target, cl, locationObject);
 		}
 		public void SetupFrame(RenderContext context, Engine.Engine.ViewProjectionBuffer viewProjectionBuffer)
 		{
-			if (viewProjectionBuffer.RenderTarget.Camera is not PerspectiveCamera) return;
+			if (viewProjectionBuffer.RenderTarget.Camera is not PerspectiveCamera perspectiveCamera) return;
 
-			Vector3 lightPosition = viewProjectionBuffer.RenderTarget.Camera.Position + new Vector3(0, 0, 1000); // Adjust if needed
+			Vector3 lightDirection = (GetCameraForward(Engine.Engine.Instance.LightAngle)); 
+			Vector3 lightPosition = perspectiveCamera.Position + new Vector3(0, 0, 1000);
+			var cameraForward = GetCameraForward(perspectiveCamera.Angles);
+
+			float dotProduct = Vector3.Dot(cameraForward, lightDirection);
+
+			lightPosition -= lightDirection * 2000 * (0.7f+dotProduct);
 
 			Engine.Engine.Instance.LightSourcePosition = lightPosition;
 
@@ -160,6 +168,22 @@ namespace Sledge.Rendering.Pipelines
 				View = _lightData.View,
 				Projection = _lightData.Projection
 			});
+			Vector3 GetCameraForward(Vector3 angles)
+			{
+				// Convert angles to radians
+				float pitchRadians = (angles.X);
+				float yawRadians = (angles.Y);
+				float rollRadians = (angles.Z);
+
+				// Calculate forward vector
+				float x = MathF.Cos(yawRadians) * MathF.Cos(pitchRadians);
+				float y = MathF.Sin(pitchRadians);
+				float z = MathF.Sin(yawRadians) * MathF.Cos(pitchRadians);
+
+				return new Vector3(x, y, z);
+			}
+
+
 		}
 	}
 }
