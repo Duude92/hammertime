@@ -284,7 +284,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties
 
 		private async Task SelectionChanged(MapDocument document)
 		{
-			if (_selectedObjects.Count > 1) return ;
+			if (_selectedObjects.Count > 1) return;
 			await Save();
 		}
 
@@ -307,6 +307,11 @@ namespace Sledge.BspEditor.Editing.Components.Properties
 			_selectedObjects = _selectionForced
 				? _selectedObjects
 				: _currentDocument?.Selection.GetSelectedParents().ToList();
+			var entityParent = _selectedObjects.Select(obj => obj.Hierarchy.Parent).Distinct();
+			if (entityParent.Count() == 1 && entityParent.FirstOrDefault() != _currentDocument?.Map.Root)
+			{
+				_selectedObjects = entityParent.ToList();
+			}
 
 			foreach (var tab in _tabs)
 			{
