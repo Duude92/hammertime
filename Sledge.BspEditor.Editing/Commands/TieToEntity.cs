@@ -56,7 +56,12 @@ namespace Sledge.BspEditor.Editing.Commands
 
             Entity existing = null;
             var confirmed = false;
-            if (existingEntities.Count == 0)
+			if (existingEntities.Count == 0 && document.Selection.Count == 1 && document.Selection.First().Hierarchy.Parent is Entity ent)
+			{
+				await Oy.Publish("Context:Add", new ContextInfo("BspEditor:ObjectProperties"));
+                return;
+			}
+			if (existingEntities.Count == 0)
             {
                 // No entities selected, just create it straight up
                 confirmed = true;
