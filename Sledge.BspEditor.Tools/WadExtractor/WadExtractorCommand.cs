@@ -40,7 +40,7 @@ namespace Sledge.BspEditor.Tools.WadExtractor
 			{
 				using (var texStream = new MemoryStream())
 				{
-					if (string.IsNullOrEmpty(tex.Name)) continue;
+					if (string.IsNullOrEmpty(tex.Name) || tex.NumMips == 0) continue;
 					MipTexture.Write(new BinaryWriter(texStream), true, tex);
 					texStream.Seek(0, SeekOrigin.Begin);
 					var br = new BinaryReader(texStream);
