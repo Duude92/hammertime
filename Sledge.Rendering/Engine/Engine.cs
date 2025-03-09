@@ -42,7 +42,7 @@ namespace Sledge.Rendering.Engine
 				Vector3 right = Vector3.Normalize(Vector3.Cross(Vector3.UnitY, forward));
 				Vector3 up = Vector3.Cross(forward, right); // Ensure orthogonality
 
-				Matrix4x4 lightView = Matrix4x4.CreateLookAt(lightPosition, lightTarget, up);
+				Matrix4x4 lightView = Matrix4x4.CreateLookAt(lightPosition, lightTarget, Vector3.UnitZ);
 
 				_lightData.View = lightView;
 			}
@@ -84,7 +84,7 @@ namespace Sledge.Rendering.Engine
 			SetClearColour(CameraType.Both, RgbaFloat.Black);
 
 			float orthoSize = 5000f; // Adjust based on scene size
-			float nearPlane = 1f;
+			float nearPlane = 0.01f;
 			float farPlane = 5000f;
 
 			var _lightProjection = Matrix4x4.CreateOrthographic(
