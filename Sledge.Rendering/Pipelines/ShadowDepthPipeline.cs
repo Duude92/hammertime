@@ -1,4 +1,3 @@
-﻿using Newtonsoft.Json;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Engine;
 using Sledge.Rendering.Primitives;
@@ -10,7 +9,6 @@ using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using Veldrid;
-using Vortice.Mathematics;
 
 namespace Sledge.Rendering.Pipelines
 {
@@ -99,10 +97,19 @@ namespace Sledge.Rendering.Pipelines
 	borderColor: SamplerBorderColor.OpaqueWhite
 ));
 #endif
-			_textureSet = gd.ResourceFactory.CreateResourceSet(new ResourceSetDescription(
-				context.ResourceLoader.TextureLayout, NearShadowMapView, context.ResourceLoader.TextureSampler
-			));
+			SamplerDescription samplerDescription = new SamplerDescription(
+	addressModeU: SamplerAddressMode.Border,  // Repeat in U direction
+	addressModeV: SamplerAddressMode.Border,  // Repeat in V direction
+	addressModeW: SamplerAddressMode.Border,  // Repeat in W direction (for 3D textures)
+	SamplerFilter.MinLinear_MagLinear_MipLinear,
+	ComparisonKind.Never,
+	0,0,0,0, SamplerBorderColor.OpaqueWhite
+);
+			Sampler sampler = factory.CreateSampler(ref samplerDescription);
 
+			_textureSet = gd.ResourceFactory.CreateResourceSet(new ResourceSetDescription(
+				context.ResourceLoader.TextureLayout, NearShadowMapView, sampler
+			));
 			NearShadowResourceTexture = new Resources.Texture(context, NearShadowMap, Resources.TextureSampleType.Standard, _textureSet);
 			NearShadowResourceTexture.GenerateMips = false;
 		}
