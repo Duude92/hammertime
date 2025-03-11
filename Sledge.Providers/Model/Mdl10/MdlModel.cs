@@ -134,8 +134,6 @@ namespace Sledge.Providers.Model.Mdl10
 		{
 			_rectangles = CreateTexuture(engine, context);
 			_buffer = engine.CreateBuffer();
-
-			ReInitResources();
 		}
 		public void ReInitResources(int skinId = 0, int bodyPartId = 0)
 		{
