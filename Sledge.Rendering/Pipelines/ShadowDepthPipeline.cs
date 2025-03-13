@@ -1,4 +1,4 @@
-using Sledge.Rendering.Cameras;
+﻿using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Engine;
 using Sledge.Rendering.Primitives;
 using Sledge.Rendering.Renderables;
@@ -102,8 +102,8 @@ namespace Sledge.Rendering.Pipelines
 	addressModeV: SamplerAddressMode.Border,  // Repeat in V direction
 	addressModeW: SamplerAddressMode.Border,  // Repeat in W direction (for 3D textures)
 	SamplerFilter.MinLinear_MagLinear_MipLinear,
-	ComparisonKind.Never,
-	0,0,0,0, SamplerBorderColor.OpaqueWhite
+	ComparisonKind.LessEqual,
+	0,0,0,0, SamplerBorderColor.OpaqueBlack
 );
 			Sampler sampler = factory.CreateSampler(ref samplerDescription);
 
@@ -157,13 +157,55 @@ namespace Sledge.Rendering.Pipelines
 		{
 			if (viewProjectionBuffer.RenderTarget.Camera is not PerspectiveCamera perspectiveCamera) return;
 
-			Vector3 lightDirection = (GetCameraForward(Engine.Engine.Instance.LightAngle)); 
-			Vector3 lightPosition = perspectiveCamera.Position + new Vector3(0, 0, 1000);
-			var cameraForward = GetCameraForward(perspectiveCamera.Angles);
+			Vector3 lightDirection = (GetLightDirection(Engine.Engine.Instance.LightAngle) );
+			var newLightDirection = new Vector3(lightDirection.Z, lightDirection.X, lightDirection.Y);
+			Vector3 lightPosition = perspectiveCamera.Position + newLightDirection * 2000;
 
-			float dotProduct = Vector3.Dot(cameraForward, lightDirection);
+			float dotProduct = (GetZAxisDotProduct(perspectiveCamera.Direction, lightDirection) );
 
-			lightPosition -= lightDirection * 2000 * (0.7f+dotProduct);
+			float r = 1000;  // Radius
+			lightPosition = GetCircularPosition(lightPosition ,  r, dotProduct);
+
+			Vector3 GetCircularPosition(Vector3 center, float radius, float value)
+			{
+				float angle = 2 * MathF.PI * value; // Convert value [0,1] into full circle angle
+				angle = -value;
+				angle += MathF.PI;
+				if (angle >= MathF.Tau) angle -= MathF.Tau;
+
+				float x = center.X + radius * MathF.Cos(angle);
+				float y = center.Y + radius * MathF.Sin(angle);
+				float z = center.Z; // Remains unchanged (optional)
+
+				return new Vector3(x, y, z);
+			}
+
+			float GetZAxisDotProduct(Vector3 cameraForward, Vector3 lightDirection)
+			{
+				// Project vectors onto the XY plane (ignore Z)
+				Vector2 cameraXY = new Vector2(cameraForward.X, cameraForward.Y);
+				Vector2 lightXY = new Vector2(lightDirection.X, lightDirection.Y);
+
+				// Normalize both vectors
+				cameraXY = Vector2.Normalize(cameraXY);
+				lightXY = Vector2.Normalize(lightXY);
+
+				// Compute the dot and cross product
+				float dotProduct = Vector2.Dot(cameraXY, lightXY);
+				float crossProduct = cameraXY.X * lightXY.Y - cameraXY.Y * lightXY.X;
+
+				// Compute angle using Atan2
+				float angle = MathF.Atan2(crossProduct, dotProduct); // Range: [-π, π]
+
+				// Convert to [0, 2π] range
+				if (angle < 0) angle += MathF.Tau; // MathF.Tau = 2π
+
+				// 🔹 Shift angle by -π/2 to align with the expected result
+				angle -= MathF.PI / 2;
+				if (angle < 0) angle += MathF.Tau; // Ensure it's still in [0, 2π]
+
+				return angle;
+			}
 
 			Engine.Engine.Instance.LightSourcePosition = lightPosition;
 
@@ -175,22 +217,11 @@ namespace Sledge.Rendering.Pipelines
 				View = _lightData.View,
 				Projection = _lightData.Projection
 			});
-			Vector3 GetCameraForward(Vector3 angles)
+			Vector3 GetLightDirection(Vector3 angles)
 			{
-				// Convert angles to radians
-				float pitchRadians = (angles.X);
-				float yawRadians = (angles.Y);
-				float rollRadians = (angles.Z);
-
-				// Calculate forward vector
-				float x = MathF.Cos(yawRadians) * MathF.Cos(pitchRadians);
-				float y = MathF.Sin(pitchRadians);
-				float z = MathF.Sin(yawRadians) * MathF.Cos(pitchRadians);
-
-				return new Vector3(x, y, z);
+				var rot = Matrix4x4.CreateRotationX(angles.Y) * Matrix4x4.CreateRotationZ(angles.X);
+				return Vector3.Transform(-Vector3.UnitZ, rot);
 			}
-
-
 		}
 	}
 }
