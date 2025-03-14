@@ -103,7 +103,7 @@ namespace Sledge.Rendering.Pipelines
 	addressModeW: SamplerAddressMode.Border,  // Repeat in W direction (for 3D textures)
 	SamplerFilter.MinLinear_MagLinear_MipLinear,
 	ComparisonKind.LessEqual,
-	0,0,0,0, SamplerBorderColor.OpaqueBlack
+	0, 0, 0, 0, SamplerBorderColor.OpaqueBlack
 );
 			Sampler sampler = factory.CreateSampler(ref samplerDescription);
 
@@ -157,14 +157,14 @@ namespace Sledge.Rendering.Pipelines
 		{
 			if (viewProjectionBuffer.RenderTarget.Camera is not PerspectiveCamera perspectiveCamera) return;
 
-			Vector3 lightDirection = (GetLightDirection(Engine.Engine.Instance.LightAngle) );
+			Vector3 lightDirection = (GetLightDirection(Engine.Engine.Instance.LightAngle));
 			var newLightDirection = new Vector3(lightDirection.Z, lightDirection.X, lightDirection.Y);
 			Vector3 lightPosition = perspectiveCamera.Position + newLightDirection * 2000;
 
-			float dotProduct = (GetZAxisDotProduct(perspectiveCamera.Direction, lightDirection) );
+			float dotProduct = (GetZAxisDotProduct(perspectiveCamera.Direction, lightDirection));
 
 			float r = 1000;  // Radius
-			lightPosition = GetCircularPosition(lightPosition ,  r, dotProduct);
+			lightPosition = GetCircularPosition(lightPosition, r, dotProduct);
 
 			Vector3 GetCircularPosition(Vector3 center, float radius, float value)
 			{
@@ -189,7 +189,10 @@ namespace Sledge.Rendering.Pipelines
 				// Normalize both vectors
 				cameraXY = Vector2.Normalize(cameraXY);
 				lightXY = Vector2.Normalize(lightXY);
-
+				if ( float.IsNaN(lightXY.X) || float.IsNaN(lightXY.Y))
+					lightXY = Vector2.Zero;
+				if (float.IsNaN(cameraXY.X) || float.IsNaN(cameraXY.Y))
+					cameraXY = Vector2.Zero;
 				// Compute the dot and cross product
 				float dotProduct = Vector2.Dot(cameraXY, lightXY);
 				float crossProduct = cameraXY.X * lightXY.Y - cameraXY.Y * lightXY.X;
