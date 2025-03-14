@@ -49,9 +49,13 @@ float ShadowCalculation(float4 shadowCoord, float4 Normal)
 #else
 float ShadowCalculation(float4 shadowCoord, float4 Normal)
 {
+
     shadowCoord = float4(shadowCoord.x, -shadowCoord.y, shadowCoord.z, shadowCoord.w);
+
     float3 perspectiveShadowCoord = shadowCoord.xyz / shadowCoord.w; // Perspective divide
     float2 shadowCoord1 = perspectiveShadowCoord.xy * 0.5 + 0.5; // Transform to 0-1 range
+    if (shadowCoord1.x < 0 || shadowCoord1.x > 1 || shadowCoord1.y < 0 || shadowCoord1.y > 1)
+        return 1.0; // Fully lit if outside the shadow map
     float bias = 0.001;
 
     float current = perspectiveShadowCoord.z;
