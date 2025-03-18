@@ -158,7 +158,7 @@ namespace Sledge.Rendering.Pipelines
 			if (viewProjectionBuffer.RenderTarget.Camera is not PerspectiveCamera perspectiveCamera) return;
 
 			Vector3 lightDirection = (GetLightDirection(Engine.Engine.Instance.LightAngle));
-			var newLightDirection = new Vector3(lightDirection.Z, lightDirection.X, lightDirection.Y);
+			var newLightDirection = new Vector3(lightDirection.Y, lightDirection.X, lightDirection.Z);
 			Vector3 lightPosition = perspectiveCamera.Position + newLightDirection * 2000;
 
 			float dotProduct = (GetZAxisDotProduct(perspectiveCamera.Direction, lightDirection));
@@ -169,7 +169,7 @@ namespace Sledge.Rendering.Pipelines
 			Vector3 GetCircularPosition(Vector3 center, float radius, float value)
 			{
 				float angle = 2 * MathF.PI * value; // Convert value [0,1] into full circle angle
-				angle = -value;
+				angle = value;
 				angle += MathF.PI;
 				if (angle >= MathF.Tau) angle -= MathF.Tau;
 
@@ -222,8 +222,8 @@ namespace Sledge.Rendering.Pipelines
 			});
 			Vector3 GetLightDirection(Vector3 angles)
 			{
-				var rot = Matrix4x4.CreateRotationX(angles.Y) * Matrix4x4.CreateRotationZ(angles.X);
-				return Vector3.Transform(-Vector3.UnitZ, rot);
+				var rot = Matrix4x4.CreateRotationX(angles.Z) * Matrix4x4.CreateRotationZ(angles.X);
+				return Vector3.Transform(-Vector3.UnitY, rot);
 			}
 		}
 	}

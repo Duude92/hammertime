@@ -34,15 +34,11 @@ namespace Sledge.Rendering.Engine
 			{
 				var lightPosition = value;
 
-				Quaternion rotationQuat = Quaternion.CreateFromYawPitchRoll(LightAngle.Z, LightAngle.Y, LightAngle.X);
+				Quaternion rotationQuat = Quaternion.CreateFromYawPitchRoll(LightAngle.X, LightAngle.Z, LightAngle.Y);
 				Vector3 forward = Vector3.Transform(-Vector3.UnitZ * 1000, rotationQuat);
-				Vector3 lightTarget = lightPosition + (forward);
+				Vector3 lightTarget = lightPosition - (forward);
 
-				forward = Vector3.Normalize(lightTarget - lightPosition);
-				Vector3 right = Vector3.Normalize(Vector3.Cross(Vector3.UnitY, forward));
-				Vector3 up = Vector3.Cross(forward, right); // Ensure orthogonality
-
-				Matrix4x4 lightView = Matrix4x4.CreateLookAt(lightPosition, lightTarget, Vector3.UnitZ);
+				Matrix4x4 lightView = Matrix4x4.CreateLookAt(lightPosition, lightTarget, Vector3.UnitY);
 
 				_lightData.View = lightView;
 			}
