@@ -8,6 +8,7 @@ using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Transport;
 using Sledge.DataStructures.Geometric;
 using Sledge.Providers.Texture.Spr;
+using Sledge.Rendering.Engine;
 using Sledge.Rendering.Interfaces;
 
 namespace Sledge.BspEditor.Rendering.ChangeHandlers
@@ -79,7 +80,7 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
 
 		public IMapElement Clone()
 		{
-			return new EntitySprite(Name, Scale, Color, Size, Renderable?.Framerate ?? 10, Renderable);
+			return new EntitySprite(Name, Scale, Color, Size, Renderable?.Framerate ?? 10, null);
 		}
 
 		public SerialisedObject ToSerialisedObject()
