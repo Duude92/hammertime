@@ -108,10 +108,11 @@ namespace Sledge.BspEditor.Rendering.Resources
 
         public async Task<IModelRenderable> CreateSpriteRenderable(IEnvironment environment, string name)
         {
+            EnsureEnvironment(environment);
+
             var rList = _resources[environment.ID];
             var tList = _textures[environment.ID];
 
-            EnsureEnvironment(environment);
             var tc = await environment.GetTextureCollection();
             var item = await tc.GetTextureItem(name);
 
