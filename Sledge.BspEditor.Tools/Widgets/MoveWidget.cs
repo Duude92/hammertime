@@ -1,4 +1,6 @@
 ﻿using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Grid;
+using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Rendering.Resources;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Selection;
@@ -213,7 +215,12 @@ namespace Sledge.BspEditor.Tools.Widgets
 
 			Log.Debug(this.ToString(), Pivot.ToString());
 
-			movementMagnitude = (float)Math.Round(movementMagnitude);
+			movementMagnitude = RoundToNearest(movementMagnitude, (GetDocument().Map.Data.GetOne<GridData>().Grid as SquareGrid).Step);
+
+			int RoundToNearest(float value, float roundTo)
+			{
+				return (int)(Math.Round(value / (double)roundTo) * roundTo);
+			}
 			// Convert movement back to world space
 			var worldMovement = axis * movementMagnitude;
 			if (!alt)
