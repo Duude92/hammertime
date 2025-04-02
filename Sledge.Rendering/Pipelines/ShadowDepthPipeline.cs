@@ -1,4 +1,5 @@
-﻿using Sledge.Rendering.Cameras;
+﻿using Sledge.Common.Logging;
+using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Engine;
 using Sledge.Rendering.Primitives;
 using Sledge.Rendering.Renderables;
@@ -159,12 +160,15 @@ namespace Sledge.Rendering.Pipelines
 
 			Vector3 lightDirection = (GetLightDirection(Engine.Engine.Instance.LightAngle));
 			var newLightDirection = new Vector3(lightDirection.Y, lightDirection.X, lightDirection.Z);
-			Vector3 lightPosition = perspectiveCamera.Position + newLightDirection * 2000;
 
+			//lightDirection.Y = -lightDirection.Y;
 			float dotProduct = (GetZAxisDotProduct(perspectiveCamera.Direction, lightDirection));
+			Vector3 lightPosition = perspectiveCamera.Position + /*lightDirection * 1000 + */Vector3.UnitZ * 2000;
+			Log.Debug(perspectiveCamera.Position.ToString(), lightPosition.ToString());
 
 			float r = 1000;  // Radius
-			lightPosition = GetCircularPosition(lightPosition, r, dotProduct);
+			dotProduct = 1;
+			//lightPosition = GetCircularPosition(lightPosition, r, dotProduct);
 
 			Vector3 GetCircularPosition(Vector3 center, float radius, float value)
 			{
@@ -201,11 +205,11 @@ namespace Sledge.Rendering.Pipelines
 				float angle = MathF.Atan2(crossProduct, dotProduct); // Range: [-π, π]
 
 				// Convert to [0, 2π] range
-				if (angle < 0) angle += MathF.Tau; // MathF.Tau = 2π
+				//if (angle < 0) angle += MathF.Tau; // MathF.Tau = 2π
 
-				// 🔹 Shift angle by -π/2 to align with the expected result
-				angle -= MathF.PI / 2;
-				if (angle < 0) angle += MathF.Tau; // Ensure it's still in [0, 2π]
+				//// 🔹 Shift angle by -π/2 to align with the expected result
+				//angle -= MathF.PI / 2;
+				//if (angle < 0) angle += MathF.Tau; // Ensure it's still in [0, 2π]
 
 				return angle;
 			}

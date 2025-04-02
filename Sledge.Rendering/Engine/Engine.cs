@@ -12,7 +12,6 @@ using Sledge.Rendering.Pipelines;
 using Sledge.Rendering.Renderables;
 using Sledge.Rendering.Viewports;
 using Veldrid;
-using Vulkan;
 
 namespace Sledge.Rendering.Engine
 {
@@ -27,16 +26,17 @@ namespace Sledge.Rendering.Engine
 		internal bool IsShadowsEnabled { get; set; } = false;
 		internal Vector3 LightAngle { get; set; } = Vector3.Zero;
 
+
 		internal Vector3 LightSourcePosition
 		{
-			get => Vector3.Zero;
+			get { return lightPosition; }
 			set
 			{
-				var lightPosition = value;
+				lightPosition = value;
 
 				Quaternion rotationQuat = Quaternion.CreateFromYawPitchRoll(LightAngle.X, LightAngle.Z, LightAngle.Y);
-				Vector3 forward = Vector3.Transform(-Vector3.UnitZ * 1000, rotationQuat);
-				Vector3 lightTarget = lightPosition - (forward);
+				Vector3 forward = Vector3.Transform(Vector3.UnitZ * 1000, rotationQuat);
+				Vector3 lightTarget = lightPosition + (forward);
 
 				Matrix4x4 lightView = Matrix4x4.CreateLookAt(lightPosition, lightTarget, Vector3.UnitY);
 
@@ -218,6 +218,7 @@ namespace Sledge.Rendering.Engine
 
 		private int _paused = 0;
 		private TextureSampleCount _sampleCount = TextureSampleCount.Count1;
+		private Vector3 lightPosition;
 		private readonly ManualResetEvent _pauseThreadEvent = new ManualResetEvent(false);
 
 		public IDisposable Pause()
