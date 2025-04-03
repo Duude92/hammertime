@@ -46,6 +46,16 @@ namespace Sledge.Rendering.Engine
 			return new BufferBuilder(Engine.Instance.Device, size);
 		}
 		public int InactiveTargetFps { get => Engine.Instance.InactiveTargetFps; set => Engine.Instance.InactiveTargetFps = value; }
+		/// <summary>
+		/// Create a new depth texture.
+		/// </summary>
+		/// <param name="width">Width of the texture</param>
+		/// <param name="height">Height of the texture</param>
+		/// <returns></returns>
+		public Veldrid.Texture CreateDepthTexture(uint width, uint height)
+		{
+			return Engine.Instance.Context.Device.ResourceFactory.CreateTexture(TextureDescription.Texture2D(width, height, 1, 1, PixelFormat.D32_Float_S8_UInt, TextureUsage.DepthStencil | TextureUsage.Sampled, TextureSampleCount.Count1));
+		}
 
 		/// <summary>
 		/// Upload a texture to the engine.
