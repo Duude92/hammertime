@@ -17,6 +17,7 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
         public long ID { get; }
         public Texture Texture { get; set; }
         public VertexCollection Vertices { get; }
+        public Veldrid.Texture LightMap { get; set; }
 
         public Plane Plane
         {
