@@ -160,6 +160,8 @@ namespace Sledge.Rendering.Engine
 
 		public void SetMSAA(int mSAAoption) => Engine.Instance.SetMSAA(mSAAoption);
 		public void SetLightAngles(Vector3 angles) => Engine.Instance.LightAngle = Vector3.Multiply(angles, (float)Math.PI / 180f);
+		//TODO: Move this to the DisplayData? if baking approach be more reliable
+		public Vector3 GetLightAnglesRadians() => Engine.Instance.LightAngle;
 		public bool ShadowsEnabled { get => Engine.Instance.IsShadowsEnabled; set => Engine.Instance.IsShadowsEnabled = value; }
 	}
 }
