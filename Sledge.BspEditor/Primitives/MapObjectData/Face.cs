@@ -19,8 +19,12 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
         public Texture Texture { get; set; }
         public VertexCollection Vertices { get; }
         public Veldrid.Texture LightMap { get; set; }
+		/// <summary>
+        /// Used for lightmap UVs
+        /// </summary>
+		public Vector2[] Uv1 { get; set; }
 
-        public Plane Plane
+		public Plane Plane
         {
             get => Vertices.Plane;
             set => Vertices.Plane = value;
@@ -149,7 +153,7 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
 			return worldPos;
 		}
 
-        public virtual IEnumerable<Tuple<Vector3, float, float>> GetTextureCoordinates(int width, int height)
+		public virtual IEnumerable<Tuple<Vector3, float, float>> GetTextureCoordinates(int width, int height)
         {
             if (width <= 0 || height <= 0 || Texture.XScale == 0 || Texture.YScale == 0)
             {
