@@ -135,9 +135,9 @@ namespace Sledge.Rendering.Engine
 			AddPipeline(new TexturedAlphaPipeline());
 			AddPipeline(new TexturedAdditivePipeline());
 			AddPipeline(new BillboardAlphaPipeline());
-#if DEBUG
-			AddPipeline(new SwapchainShadowOverlay(shadowdepth.NearShadowResourceTexture));
-#endif
+//#if DEBUG
+//			AddPipeline(new SwapchainShadowOverlay(shadowdepth.NearShadowResourceTexture));
+//#endif
 			AddPipeline(new SwapchainOverlayPipeline());
 			AddPipeline(new OverlayPipeline());
 			AddPipeline(new ShadowOverlayPipeline(() => shadowdepth.NearShadowResourceTexture, () => shadowdepth.NearShadowMapView, _lightData));
@@ -301,7 +301,7 @@ namespace Sledge.Rendering.Engine
 		private void Render(IViewport renderTarget)
 		{
 			_commandList.Begin();
-			if (IsShadowsEnabled)
+			if (IsShadowsEnabled && false)
 			{
 				foreach (var group in _customPipeline)
 				{
@@ -396,7 +396,7 @@ namespace Sledge.Rendering.Engine
 			foreach (var overlay in _pipelines[PipelineGroup.Overlay])
 			{
 				overlay.SetupFrame(Context, _cameraBuffer);
-				overlay.Render(Context, renderTarget, _commandList, Scene.GetRenderables(overlay, renderTarget));
+					overlay.Render(Context, renderTarget, _commandList, Scene.GetRenderables(overlay, renderTarget));
 			}
 			_commandList.End();
 			Device.SubmitCommands(_commandList);
