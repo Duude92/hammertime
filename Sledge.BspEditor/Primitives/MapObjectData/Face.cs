@@ -8,6 +8,7 @@ using System.Runtime.Serialization;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Transport;
 using Sledge.DataStructures.Geometric;
+using Vortice.Mathematics;
 using Plane = Sledge.DataStructures.Geometric.Plane;
 
 namespace Sledge.BspEditor.Primitives.MapObjectData
@@ -119,6 +120,34 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
             }
             return so;
         }
+
+		public Vector3 ProjectedUVtoWorld(float x, float y)
+		{
+			float minU = float.MaxValue, maxU = float.MinValue;
+			float minV = float.MaxValue, maxV = float.MinValue;
+
+			foreach (var vertex in Vertices)
+			{
+				Vector3 local = vertex - Vertices[0];
+
+				float u = Vector3.Dot(local, Texture.UAxis) / Texture.YScale;
+				float v = Vector3.Dot(local, Texture.VAxis) / Texture.XScale;
+
+				minU = MathF.Min(minU, u);
+				maxU = MathF.Max(maxU, u);
+				minV = MathF.Min(minV, v);
+				maxV = MathF.Max(maxV, v);
+			}
+
+			float uWorld = MathHelper.Lerp(minU, maxU, y);
+			float vWorld = MathHelper.Lerp(minV, maxV, x);
+
+			Vector3 worldPos = Vertices[0]
+							 + Texture.UAxis * uWorld * Texture.XScale
+							 + Texture.VAxis * vWorld * Texture.YScale;
+
+			return worldPos;
+		}
 
         public virtual IEnumerable<Tuple<Vector3, float, float>> GetTextureCoordinates(int width, int height)
         {
