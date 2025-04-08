@@ -64,6 +64,7 @@ namespace Sledge.BspEditor.Rendering.Converters
 			var numWireframeIndices = numVertices * 2;
 
 			var points = new VertexStandard[numVertices];
+			var shadowPoints = new VertexStandard[numVertices];
 			var indices = new uint[numSolidIndices + numWireframeIndices];
 			Color? vColor = null;
 			var vId = obj.Data.GetOne<VisgroupID>();
@@ -176,16 +177,28 @@ namespace Sledge.BspEditor.Rendering.Converters
 				var normal = face.Plane.Normal;
 				for (var i = 0; i < face.Vertices.Count; i++)
 				{
-					var v = face.Vertices[i];
-					points[vi++] = new VertexStandard
+
+						var v = face.Vertices[i];
+					shadowPoints[vi] = new VertexStandard
 					{
 						Position = v,
 						Colour = colour,
 						Normal = normal,
-						Texture = new Vector2(textureCoords[i].Item2, textureCoords[i].Item3),
+						Texture = face.Uv1?[i] ?? new Vector2(textureCoords[i].Item2, textureCoords[i].Item3),
 						Tint = tint * tintModifier,
 						Flags = flags | extraFlags
 					};
+					points[vi++] = new VertexStandard
+						{
+							Position = v,
+							Colour = colour,
+							Normal = normal,
+							Texture = new Vector2(textureCoords[i].Item2, textureCoords[i].Item3),
+							Tint = tint * tintModifier,
+							Flags = flags | extraFlags
+						};
+
+
 				}
 
 				// Triangles - [0 1 2]  ... [0 n-1 n]
@@ -205,6 +218,7 @@ namespace Sledge.BspEditor.Rendering.Converters
 			}
 
 			var groups = new List<BufferGroup>();
+			var shadowGroups = new List<BufferGroup>();
 
 			uint texOffset = 0;
 			foreach (var f in faces)
@@ -234,14 +248,14 @@ namespace Sledge.BspEditor.Rendering.Converters
 				//					points = points.Select(x => { x.Tint = new Vector4(1, 1, 1, 0.5f); return x; }).ToArray();
 				//				}
 				//				else
-				
-					group = new BufferGroup(
-					   pipeline == PipelineType.TexturedOpaque && transparent ? PipelineType.TexturedAlpha : pipeline,
-					   CameraType.Perspective, transparent, f.Origin, texture, texOffset, texInd
-				   );
-				
+
+				group = new BufferGroup(
+				   pipeline == PipelineType.TexturedOpaque && transparent ? PipelineType.TexturedAlpha : pipeline,
+				   CameraType.Perspective, transparent, f.Origin, texture, texOffset, texInd
+			   );
+
 				groups.Add(group);
-				if (!_shadowTextureIgnore.Contains(f.Texture.Name.ToLower() ))
+				if (!_shadowTextureIgnore.Contains(f.Texture.Name.ToLower()))
 				{
 					group = new BufferGroup(
 						PipelineType.ShadowDepth,
@@ -249,10 +263,11 @@ namespace Sledge.BspEditor.Rendering.Converters
 						);
 					groups.Add(group);
 					group = new BufferGroup(
-						PipelineType.ShadowOverlay,
-						CameraType.Perspective, false, f.Origin, texture, texOffset, texInd
-						);
-					groups.Add(group);
+	PipelineType.ShadowOverlay,
+	CameraType.Perspective, false, f.Origin, f.LightMap.GetHashCode().ToString(), texOffset, texInd
+	);
+					shadowGroups.Add(group);
+
 				}
 				texOffset += texInd;
 
@@ -262,6 +277,8 @@ namespace Sledge.BspEditor.Rendering.Converters
 			groups.Add(new BufferGroup(PipelineType.Wireframe, obj.IsSelected ? CameraType.Both : CameraType.Orthographic, numSolidIndices, numWireframeIndices));
 
 			builder.Append(points, indices, groups);
+			builder.Append(shadowPoints, indices, shadowGroups);
+
 			if (wireframe)
 			{
 				var wirePoints = points.ToList().Select(x => { x.Flags |= VertexFlags.Wireframed; return x; });
