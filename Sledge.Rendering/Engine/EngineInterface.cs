@@ -52,6 +52,7 @@ namespace Sledge.Rendering.Engine
 			public Veldrid.Texture Staging { get; set; }
 			public MappedResourceView<float> MappedResource { get; set; }
 		}
+
 		/// <summary>
 		/// Create a new depth texture.
 		/// </summary>
@@ -70,10 +71,13 @@ namespace Sledge.Rendering.Engine
 		public void CopyDepthTexture(DepthResource[] resources)
 		{
 			var cl = Engine.Instance.Context.Device.ResourceFactory.CreateCommandList();
+			cl.Begin();
 			for (int i = 0; i < resources.Length; i++)
 			{
+				Engine.Instance.Context.Device.Unmap(resources[i].Staging);
 				cl.CopyTexture(resources[i].Staging, resources[i].Texture);
 			}
+			cl.End();
 			Engine.Instance.Context.Device.SubmitCommands(cl);
 			Engine.Instance.Context.Device.WaitForIdle();
 		}
