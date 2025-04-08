@@ -76,6 +76,7 @@ float ShadowCalculation(float4 shadowCoord, float4 Normal)
 
 float4 main(FragmentIn input) : SV_Target0
 {
+    return ShadowTexture.Sample(ShadowSampler, input.fTexture.xy).rrra;
     float shadowFactor = ShadowCalculation(input.sPosition, input.fNormal);
     float4 shadowColor = lerp(float4(0, 0, 0, 1), float4(1, 1, 1, 1), shadowFactor);
     return shadowColor;

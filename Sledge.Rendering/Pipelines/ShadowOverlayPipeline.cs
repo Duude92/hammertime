@@ -176,7 +176,7 @@ new BufferDescription((uint)Unsafe.SizeOf<Matrix4x4>(), BufferUsage.UniformBuffe
 			if (target.Camera is not PerspectiveCamera) return;
 			cl.SetPipeline(_pipeline);
 			cl.SetGraphicsResourceSet(0, _projectionResourceSet);
-			_shadowmapGetter().BindTo(cl, 1);
+			//_shadowmapGetter().BindTo(cl, 1);
 
 			cl.SetGraphicsResourceSet(2, _lightDirectionSet);
 			cl.SetGraphicsResourceSet(3, _lightProjectionSet);
@@ -188,7 +188,7 @@ new BufferDescription((uint)Unsafe.SizeOf<Matrix4x4>(), BufferUsage.UniformBuffe
 		public void Bind(RenderContext context, CommandList cl, string binding)
 		{
 			var tex = context.ResourceLoader.GetTexture(binding);
-			//tex?.BindTo(cl, 1);
+			tex?.BindTo(cl, 1);
 		}
 
 		public void Dispose()
