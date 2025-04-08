@@ -63,7 +63,7 @@ namespace Sledge.Rendering.Engine
 		public DepthResource CreateDepthTexture(uint width, uint height)
 		{
 			var staging = Engine.Instance.Context.Device.ResourceFactory.CreateTexture(TextureDescription.Texture2D(width, height, 1, 1, PixelFormat.R32_Float, TextureUsage.Staging, TextureSampleCount.Count1));
-			var texture = Engine.Instance.Context.Device.ResourceFactory.CreateTexture(TextureDescription.Texture2D(width, height, 1, 1, PixelFormat.R32_Float, TextureUsage.DepthStencil | TextureUsage.Sampled, TextureSampleCount.Count1));
+			var texture = Engine.Instance.Context.Device.ResourceFactory.CreateTexture(TextureDescription.Texture2D(width, height, 1, 1, PixelFormat.R32_Float, TextureUsage.Sampled, TextureSampleCount.Count1));
 			Engine.Instance.Context.ResourceLoader.UploadTexture(texture.GetHashCode().ToString(), new Texture(Engine.Instance.Context, texture, TextureSampleType.Standard), TextureSampleType.Standard);
 			return new DepthResource {Texture= texture,Staging= staging,MappedResource = Engine.Instance.Context.Device.Map<float>(staging, MapMode.ReadWrite) };
 		}
