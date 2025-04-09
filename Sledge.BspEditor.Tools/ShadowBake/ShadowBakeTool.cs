@@ -63,7 +63,7 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 	{
 		_document.TryGetTarget(out var doc);
 
-		var solids = doc.Map.Root.Hierarchy.OfType<Solid>().Where(solid=>solid.Faces.Count() != solid.Faces.Where(face=>face.Texture.Name.Equals("sky", StringComparison.InvariantCulture)).Count()).ToList();
+		var solids = doc.Map.Root.Hierarchy.OfType<Solid>().Where(solid => solid.Faces.Count() != solid.Faces.Where(face => face.Texture.Name.Equals("sky", StringComparison.InvariantCulture)).Count()).ToList();
 		var textureCollection = await doc.Environment.GetTextureCollection();
 		var textures = solids.SelectMany(x => x.Faces).Select(f => f.Texture).DistinctBy(t => t.Name).ToList();
 
@@ -79,7 +79,6 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 		var resources = new EngineInterface.DepthResource[faces.Count];
 		var i = 0;
 		var rand = new Random(DateTime.Now.Millisecond);
-
 		foreach (var face in faces)
 		{
 			var texFile = texturesCollection.FirstOrDefault(t => t.Name.ToLower().Equals(face.Texture.Name.ToLower()));
@@ -108,8 +107,9 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 
 			var resource = Engine.Interface.CreateDepthTexture(width, height);
 			face.LightMap = resource.Texture;
-			var rs = new float[width * height];
 			var w = 0;
+			var perFaceSolids = new LinkedList<Solid>(solids);
+			var cachedSolids = new LinkedList<Solid>();
 			for (var x = 0; x < width; x++)
 			{
 				for (var y = 0; y < height; y++)
@@ -119,7 +119,8 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 					var projection = worldPosition;
 					var line = new Line(projection, projection + (lightDirection.Normalise() * LightMaxDistance));
 					resource.MappedResource[w] = 1f;
-					foreach (var solid in solids)
+					var found = false;
+					foreach (var solid in cachedSolids)
 					{
 						if (solid.BoundingBox.IntersectsWith(line))
 						{
@@ -127,22 +128,39 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 							if (intersect.HasValue)
 							{
 								resource.MappedResource[w] = 0.5f;
-
+								found = true;
 								break;
 							}
 						}
 					}
-					rs[w] = resource.MappedResource[w];
+					if (!found)
+					{
+						var currentSolid = perFaceSolids.First;
+						while(currentSolid!=null)
+						{
+							var solid = currentSolid.Value;
+							if (solid.BoundingBox.IntersectsWith(line))
+							{
+								var intersect = solid.GetIntersectionPoint(line);
+								if (intersect.HasValue)
+								{
+									cachedSolids.AddFirst(solid);
+									perFaceSolids.Remove(currentSolid);
+
+									resource.MappedResource[w] = 0.5f;
+
+									break;
+								}
+							}
+							currentSolid = currentSolid.Next;
+						}
+					}
 					w++;
 				}
 			}
 
 			resources[i] = resource;
-			var rss = rs.Distinct();
-			if (rss.Count() > 1)
-			{
-				Log.Debug("1", "2");
-			}
+
 			i++;
 		}
 		Engine.Interface.CopyDepthTexture(resources);
