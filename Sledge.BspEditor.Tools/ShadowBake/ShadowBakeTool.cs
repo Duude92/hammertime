@@ -63,7 +63,7 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 	{
 		_document.TryGetTarget(out var doc);
 
-		var solids = doc.Map.Root.Hierarchy.OfType<Solid>().ToList();
+		var solids = doc.Map.Root.Hierarchy.OfType<Solid>().Where(solid=>solid.Faces.Count() != solid.Faces.Where(face=>face.Texture.Name.Equals("sky", StringComparison.InvariantCulture)).Count()).ToList();
 		var textureCollection = await doc.Environment.GetTextureCollection();
 		var textures = solids.SelectMany(x => x.Faces).Select(f => f.Texture).DistinctBy(t => t.Name).ToList();
 
@@ -79,7 +79,6 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 		var resources = new EngineInterface.DepthResource[faces.Count];
 		var i = 0;
 		var rand = new Random(DateTime.Now.Millisecond);
-		var solids2 = doc.Map.Root.Collect(x => true, y => y is Solid).ToArray();
 
 		foreach (var face in faces)
 		{
