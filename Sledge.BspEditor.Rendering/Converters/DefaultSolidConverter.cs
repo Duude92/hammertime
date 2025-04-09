@@ -178,25 +178,28 @@ namespace Sledge.BspEditor.Rendering.Converters
 				for (var i = 0; i < face.Vertices.Count; i++)
 				{
 
-						var v = face.Vertices[i];
-					shadowPoints[vi] = new VertexStandard
+					var v = face.Vertices[i];
+					if (face.Uv1 != null)
 					{
-						Position = v,
-						Colour = colour,
-						Normal = normal,
-						Texture = face.Uv1?[i] ?? new Vector2(textureCoords[i].Item2, textureCoords[i].Item3),
-						Tint = tint * tintModifier,
-						Flags = flags | extraFlags
-					};
-					points[vi++] = new VertexStandard
+						shadowPoints[vi] = new VertexStandard
 						{
 							Position = v,
 							Colour = colour,
 							Normal = normal,
-							Texture = new Vector2(textureCoords[i].Item2, textureCoords[i].Item3),
+							Texture = face.Uv1?[i] ?? new Vector2(textureCoords[i].Item2, textureCoords[i].Item3),
 							Tint = tint * tintModifier,
 							Flags = flags | extraFlags
 						};
+					}
+					points[vi++] = new VertexStandard
+					{
+						Position = v,
+						Colour = colour,
+						Normal = normal,
+						Texture = new Vector2(textureCoords[i].Item2, textureCoords[i].Item3),
+						Tint = tint * tintModifier,
+						Flags = flags | extraFlags
+					};
 
 
 				}
@@ -262,11 +265,14 @@ namespace Sledge.BspEditor.Rendering.Converters
 						CameraType.Perspective, false, f.Origin, texture, texOffset, texInd
 						);
 					groups.Add(group);
-					group = new BufferGroup(
-	PipelineType.ShadowOverlay,
-	CameraType.Perspective, false, f.Origin, f.LightMap.GetHashCode().ToString(), texOffset, texInd
-	);
-					shadowGroups.Add(group);
+					if (f.Uv1 != null)
+					{
+						group = new BufferGroup(
+		PipelineType.ShadowOverlay,
+		CameraType.Perspective, false, f.Origin, f.LightMap.GetHashCode().ToString(), texOffset, texInd
+		);
+						shadowGroups.Add(group);
+					}
 
 				}
 				texOffset += texInd;
