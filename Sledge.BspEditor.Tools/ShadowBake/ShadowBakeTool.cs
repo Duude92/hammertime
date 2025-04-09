@@ -70,7 +70,7 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 
 		var texturesCollection = await textureCollection.GetTextureItems(textures.Select(x => x.Name));
 
-		var faces = solids.SelectMany(x => x.Faces).Where(x => !x.Texture.Name.Equals("sky")).ToList();
+		var faces = solids.SelectMany(x => x.Faces).Where(x => !x.Texture.Name.Equals("sky", StringComparison.InvariantCulture)).ToList();
 		var lightVectorRotation = Engine.Interface.GetLightAnglesRadians();
 		Quaternion lightRotation = Quaternion.CreateFromYawPitchRoll(lightVectorRotation.X, lightVectorRotation.Y, lightVectorRotation.Z);
 		Vector3 lightDirection = Vector3.Transform(-Vector3.UnitX, lightRotation);
@@ -83,15 +83,20 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 		foreach (var face in faces)
 		{
 			var texFile = texturesCollection.FirstOrDefault(t => t.Name.ToLower().Equals(face.Texture.Name.ToLower()));
-			//var scaleX = MathF.Ceiling(face.Texture.XScale);
-			//var scaleY = MathF.Ceiling(face.Texture.YScale);
 
 			// IMPORTANT: Normalize UVs
 			var uvs = face.GetTextureCoordinates(64, 64);
-			var uvMax = uvs.Select(x => (MathF.Abs(x.Item2), MathF.Abs(x.Item3)));
-			var uvMaxU = uvMax.Max(x => x.Item1);
-			var uvMaxV = uvMax.Max(x => x.Item2);
-			var normalizedUvs = uvs.Select(x => new Vector2(x.Item2 / uvMaxU, x.Item3 / uvMaxV)).ToArray();
+			float minU = uvs.Min(x => x.Item2);
+			float maxU = uvs.Max(x => x.Item2);
+			float minV = uvs.Min(x => x.Item3);
+			float maxV = uvs.Max(x => x.Item3);
+
+			var normalizedUvs = uvs.Select(x =>
+			{
+				float normU = (x.Item2 - minU) / (maxU - minU);
+				float normV = (x.Item3 - minV) / (maxV - minV);
+				return new Vector2(normU, normV);
+			}).ToArray();
 			face.Uv1 = normalizedUvs;
 
 			uint width = (uint)MathF.Ceiling((texFile?.Width ?? 256));// * face.Texture.XScale);
@@ -112,7 +117,7 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 					var worldPosition = face.ProjectedUVtoWorld((float)x / width, (float)y / height);
 
 					var projection = worldPosition;
-					var line = new Line(projection, projection - (lightDirection.Normalise() * LightMaxDistance));
+					var line = new Line(projection, projection + (lightDirection.Normalise() * LightMaxDistance));
 					resource.MappedResource[w] = 1f;
 					foreach (var solid in solids)
 					{
