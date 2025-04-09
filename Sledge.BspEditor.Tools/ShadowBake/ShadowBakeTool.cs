@@ -117,12 +117,15 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 					resource.MappedResource[w] = 1f;
 					foreach (var solid in solids)
 					{
-						var intersect = solid.GetIntersectionPoint(line);
-						if (intersect.HasValue)
+						if (solid.BoundingBox.IntersectsWith(line))
 						{
-							resource.MappedResource[w] = 0.5f;
+							var intersect = solid.GetIntersectionPoint(line);
+							if (intersect.HasValue)
+							{
+								resource.MappedResource[w] = 0.5f;
 
-							break;
+								break;
+							}
 						}
 					}
 					rs[w] = resource.MappedResource[w];
