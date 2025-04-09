@@ -1,4 +1,5 @@
 ﻿using LogicAndTrick.Oy;
+using Microsoft.VisualBasic;
 using Newtonsoft.Json.Linq;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
@@ -16,6 +17,7 @@ using Sledge.Formats.Bsp.Lumps;
 using Sledge.Rendering.Engine;
 using Sledge.Shell.Forms;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Numerics;
@@ -68,7 +70,7 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 
 		var texturesCollection = await textureCollection.GetTextureItems(textures.Select(x => x.Name));
 
-		var faces = solids.SelectMany(x => x.Faces).Where(x=>!x.Texture.Name.Equals("sky")).ToList();
+		var faces = solids.SelectMany(x => x.Faces).Where(x => !x.Texture.Name.Equals("sky")).ToList();
 		var lightVectorRotation = Engine.Interface.GetLightAnglesRadians();
 		Quaternion lightRotation = Quaternion.CreateFromYawPitchRoll(lightVectorRotation.X, lightVectorRotation.Y, lightVectorRotation.Z);
 		Vector3 lightDirection = Vector3.Transform(-Vector3.UnitX, lightRotation);
@@ -77,7 +79,7 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 		var resources = new EngineInterface.DepthResource[faces.Count];
 		var i = 0;
 		var rand = new Random(DateTime.Now.Millisecond);
-
+		var solids2 = doc.Map.Root.Collect(x => true, y => y is Solid).ToArray();
 
 		foreach (var face in faces)
 		{
@@ -108,14 +110,21 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 			{
 				for (var y = 0; y < height; y++)
 				{
-					var worldPosition = face.ProjectedUVtoWorld((float)x/ width, (float)y/height);
+					var worldPosition = face.ProjectedUVtoWorld((float)x / width, (float)y / height);
 
 					var projection = worldPosition;
-					var intersection = doc.Map.Root.GetIntersectionsForVisibleObjects(new Line(projection, projection - (lightDirection.Normalise() * LightMaxDistance)), iopt)
-	.Select(x => x.Object)
-	.ToList();
-					resource.MappedResource[w] = intersection.Any() ? 0.5f : 1;
-					//resource.MappedResource[w] = (float)rand.Next(0, 2);
+					var line = new Line(projection, projection - (lightDirection.Normalise() * LightMaxDistance));
+					resource.MappedResource[w] = 1f;
+					foreach (var solid in solids)
+					{
+						var intersect = solid.GetIntersectionPoint(line);
+						if (intersect.HasValue)
+						{
+							resource.MappedResource[w] = 0.5f;
+
+							break;
+						}
+					}
 					rs[w] = resource.MappedResource[w];
 					w++;
 				}
@@ -123,7 +132,7 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 
 			resources[i] = resource;
 			var rss = rs.Distinct();
-			if(rss.Count()>1)
+			if (rss.Count() > 1)
 			{
 				Log.Debug("1", "2");
 			}
