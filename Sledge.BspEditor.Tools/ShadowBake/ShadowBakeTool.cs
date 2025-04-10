@@ -63,7 +63,9 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 	{
 		_document.TryGetTarget(out var doc);
 
-		var solids = doc.Map.Root.Hierarchy.OfType<Solid>().Where(solid => solid.Faces.Count() != solid.Faces.Where(face => face.Texture.Name.Equals("sky", StringComparison.InvariantCulture)).Count()).ToList();
+		//var solids = doc.Map.Root.Hierarchy.OfType<Solid>().Where(solid => solid.Faces.Count() != solid.Faces.Where(face => face.Texture.Name.Equals("sky", StringComparison.InvariantCulture)).Count()).ToList();
+		//var slds = doc.Map.Root.Collect(x => true, obj => obj is Solid solid && solid.Faces.Count() != solid.Faces.Where(face => face.Texture.Name.Equals("sky", StringComparison.InvariantCulture)).Count());
+		var solids = doc.Map.Root.Collect(x => true, x => x.Hierarchy.Parent != null && !x.Hierarchy.HasChildren && x is Solid solid && solid.Faces.Count() != solid.Faces.Where(face => face.Texture.Name.Equals("sky", StringComparison.InvariantCulture)).Count()).OfType<Solid>().ToList();
 		var textureCollection = await doc.Environment.GetTextureCollection();
 		var textures = solids.SelectMany(x => x.Faces).Select(f => f.Texture).DistinctBy(t => t.Name).ToList();
 
@@ -72,8 +74,17 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 
 		var faces = solids.SelectMany(x => x.Faces).Where(x => !x.Texture.Name.Equals("sky", StringComparison.InvariantCulture)).ToList();
 		var lightVectorRotation = Engine.Interface.GetLightAnglesRadians();
-		Quaternion lightRotation = Quaternion.CreateFromYawPitchRoll(lightVectorRotation.X, lightVectorRotation.Y, lightVectorRotation.Z);
-		Vector3 lightDirection = Vector3.Transform(-Vector3.UnitX, lightRotation);
+		
+		var mat_x = Matrix4x4.CreateRotationX(lightVectorRotation.Z);
+		var mat_y = Matrix4x4.CreateRotationY(lightVectorRotation.X);
+		var mat_z = Matrix4x4.CreateRotationZ(lightVectorRotation.Y);
+		var rot = mat_x * mat_y * mat_z;
+		var lightRotation = Quaternion.CreateFromRotationMatrix(rot);
+		Vector3 lightDirection = Vector3.Transform(Vector3.UnitX, lightRotation);
+
+		lightDirection.X *= 1;
+		lightDirection.Y *= 1;
+		lightDirection.Z *= -1;
 
 		var iopt = MapObjectExtensions.IgnoreOptions.IgnoreClip | MapObjectExtensions.IgnoreOptions.IgnoreNull;
 		var resources = new EngineInterface.DepthResource[faces.Count];
@@ -117,7 +128,7 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 					var worldPosition = face.ProjectedUVtoWorld((float)x / width, (float)y / height);
 
 					var projection = worldPosition;
-					var line = new Line(projection, projection + (lightDirection.Normalise() * LightMaxDistance));
+					var line = new Line(projection, projection - (lightDirection.Normalise() * LightMaxDistance));
 					resource.MappedResource[w] = 1f;
 					var found = false;
 					foreach (var solid in cachedSolids)
