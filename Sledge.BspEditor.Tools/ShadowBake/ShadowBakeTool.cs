@@ -1,33 +1,23 @@
 ﻿using LogicAndTrick.Oy;
-using Microsoft.VisualBasic;
-using Newtonsoft.Json.Linq;
+using Microsoft.Msagl.Drawing;
+using Microsoft.Msagl.GraphViewerGdi;
 using Sledge.BspEditor.Documents;
-using Sledge.BspEditor.Modification;
-using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjects;
-using Sledge.BspEditor.Rendering.Resources;
-using Sledge.BspEditor.Tools.Texture;
-using Sledge.Common.Logging;
+using Sledge.BspEditor.Tools.ShadowBake.BVH;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Documents;
 using Sledge.Common.Shell.Hooks;
 using Sledge.DataStructures.Geometric;
-using Sledge.Formats.Bsp.Lumps;
 using Sledge.Rendering.Engine;
-using Sledge.Shell.Forms;
+using Sledge.Shell;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Numerics;
-using System.Reflection.Metadata;
-using System.Security.AccessControl;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Xml.Linq;
-using Vortice.Mathematics;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Sledge.BspEditor.Tools.ShadowBake;
 [Export(typeof(ISidebarComponent))]
@@ -65,7 +55,7 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 
 		//var solids = doc.Map.Root.Hierarchy.OfType<Solid>().Where(solid => solid.Faces.Count() != solid.Faces.Where(face => face.Texture.Name.Equals("sky", StringComparison.InvariantCulture)).Count()).ToList();
 		//var slds = doc.Map.Root.Collect(x => true, obj => obj is Solid solid && solid.Faces.Count() != solid.Faces.Where(face => face.Texture.Name.Equals("sky", StringComparison.InvariantCulture)).Count());
-		var solids = doc.Map.Root.Collect(x => true, x => x.Hierarchy.Parent != null && !x.Hierarchy.HasChildren && x is Solid solid && solid.Faces.Count() != solid.Faces.Where(face => face.Texture.Name.Equals("sky", StringComparison.InvariantCulture)).Count()).OfType<Solid>().ToList();
+		var solids = doc.Map.Root.Collect(x => true, x => x.Hierarchy.Parent != null && !x.Hierarchy.HasChildren && x is Solid solid && solid.Faces.Count() != solid.Faces.Where(face => face.Texture.Name.Equals("sky", StringComparison.InvariantCulture)).Count()).OfType<Solid>();
 		var textureCollection = await doc.Environment.GetTextureCollection();
 		var textures = solids.SelectMany(x => x.Faces).Select(f => f.Texture).DistinctBy(t => t.Name).ToList();
 
@@ -74,7 +64,7 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 
 		var faces = solids.SelectMany(x => x.Faces).Where(x => !x.Texture.Name.Equals("sky", StringComparison.InvariantCulture)).ToList();
 		var lightVectorRotation = Engine.Interface.GetLightAnglesRadians();
-		
+
 		var mat_x = Matrix4x4.CreateRotationX(lightVectorRotation.Z);
 		var mat_y = Matrix4x4.CreateRotationY(lightVectorRotation.X);
 		var mat_z = Matrix4x4.CreateRotationZ(lightVectorRotation.Y);
@@ -90,6 +80,40 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 		var resources = new EngineInterface.DepthResource[faces.Count];
 		var i = 0;
 		var rand = new Random(DateTime.Now.Millisecond);
+		var bvhRoot = new BVH.BVHNode.BVHBuilder().BuildBVHIterative(solids.ToList());
+#if DEBUG
+		var graph = new Graph("BVH");
+
+		Node TraverseGraph(BVHAbstract bvhNode)
+		{
+			if (bvhNode == null) return null;
+			if (bvhNode is BVHLeaf leaf)
+			{
+				var nd = new Node($"{leaf.GetHashCode().ToString()}\n{leaf.Bounds.Center.ToFormattedString()}");
+				nd.Attr.Shape = Shape.Diamond;
+				graph.AddNode(nd);
+				return nd;
+			}
+			var node = new Node($"{bvhNode.GetHashCode().ToString()}\n{bvhNode.Bounds.Center.ToFormattedString()}");
+
+			graph.AddEdge(node.LabelText, TraverseGraph((bvhNode as BVHNode)?.Left)?.LabelText ?? "null");
+			graph.AddEdge(node.LabelText, TraverseGraph((bvhNode as BVHNode)?.Right)?.LabelText ?? "null");
+			return node;
+		}
+		graph.AddNode(TraverseGraph(bvhRoot));
+
+		var graphControl = new GViewer();
+		var renderer = new GraphRenderer(graph);
+		renderer.CalculateLayout();
+		graphControl.Graph = graph;
+		var form = new Form();
+		form.SuspendLayout();
+		graphControl.AutoSize = true;
+		form.Controls.Add(graphControl);
+		form.ResumeLayout();
+		form.ShowDialogAsync();
+#endif
+
 		foreach (var face in faces)
 		{
 			var texFile = texturesCollection.FirstOrDefault(t => t.Name.ToLower().Equals(face.Texture.Name.ToLower()));
@@ -115,7 +139,6 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 			height = height < 8 ? 8 : height;
 			width = 64;
 			height = 64;
-
 			var resource = Engine.Interface.CreateDepthTexture(width, height);
 			face.LightMap = resource.Texture;
 			var w = 0;
@@ -147,24 +170,31 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 					if (!found)
 					{
 						var currentSolid = perFaceSolids.First;
-						while(currentSolid!=null)
+						var intersect = TraverseBVH(bvhRoot, line);
+						if (intersect.Item1)
 						{
-							var solid = currentSolid.Value;
-							if (solid.BoundingBox.IntersectsWith(line))
-							{
-								var intersect = solid.GetIntersectionPoint(line);
-								if (intersect.HasValue)
-								{
-									cachedSolids.AddFirst(solid);
-									perFaceSolids.Remove(currentSolid);
-
-									resource.MappedResource[w] = 0.5f;
-
-									break;
-								}
-							}
-							currentSolid = currentSolid.Next;
+							cachedSolids.AddFirst((intersect.Item2 as BVHLeaf).Solid);
+							resource.MappedResource[w] = 0.5f;
 						}
+
+						//while(currentSolid!=null)
+						//{
+						//	var solid = currentSolid.Value;
+						//	if (solid.BoundingBox.IntersectsWith(line))
+						//	{
+						//		var intersect = solid.GetIntersectionPoint(line);
+						//		if (intersect.HasValue)
+						//		{
+						//			cachedSolids.AddFirst(solid);
+						//			perFaceSolids.Remove(currentSolid);
+
+						//			resource.MappedResource[w] = 0.5f;
+
+						//			break;
+						//		}
+						//	}
+						//	currentSolid = currentSolid.Next;
+						//}
 					}
 					w++;
 				}
@@ -176,10 +206,30 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 		}
 		Engine.Interface.CopyDepthTexture(resources);
 	}
+	private (bool, BVHAbstract) TraverseBVH(BVHAbstract bvhNode, Line line)
+	{
+		if (!bvhNode.Bounds.IntersectsWith(line))
+			return (false, null);
+
+		if (bvhNode is BVHLeaf leaf)
+			return (leaf.Solid.GetIntersectionPoint(line).HasValue, leaf);
+		var node = bvhNode as BVHNode;
+		var left = TraverseBVH(node.Left, line);
+		var right = TraverseBVH(node.Right, line);
+		return left.Item1 ? left : right;
+	}
 
 	public Task OnInitialise()
 	{
 		Oy.Subscribe<IDocument>("Document:Activated", SetDocument);
 		return Task.FromResult(0);
+	}
+
+}
+public static class Vector3Extensions
+{
+	public static string ToFormattedString(this Vector3 v)
+	{
+		return $"({v.X}, {v.Y}, {v.Z})";
 	}
 }
