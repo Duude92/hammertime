@@ -12,6 +12,7 @@ using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Engine;
 using Sledge.Shell;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
@@ -77,7 +78,8 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 		lightDirection.Z *= -1;
 
 		var iopt = MapObjectExtensions.IgnoreOptions.IgnoreClip | MapObjectExtensions.IgnoreOptions.IgnoreNull;
-		var resources = new EngineInterface.DepthResource[faces.Count];
+		//var resources = new EngineInterface.DepthResource[faces.Count];
+		var resources = new ConcurrentStack<EngineInterface.DepthResource>();
 		var i = 0;
 		var rand = new Random(DateTime.Now.Millisecond);
 		var bvhRoot = new BVH.BVHNode.BVHBuilder().BuildBVHIterative(solids.ToList());
@@ -113,8 +115,8 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 		form.ResumeLayout();
 		form.ShowDialogAsync();
 #endif
-
-		foreach (var face in faces)
+		Parallel.ForEach(faces, (face) =>
+		//foreach (var face in faces)
 		{
 			var texFile = texturesCollection.FirstOrDefault(t => t.Name.ToLower().Equals(face.Texture.Name.ToLower()));
 
@@ -142,7 +144,7 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 			var resource = Engine.Interface.CreateDepthTexture(width, height);
 			face.LightMap = resource.Texture;
 			var w = 0;
-			var perFaceSolids = new LinkedList<Solid>(solids);
+			//var perFaceSolids = new LinkedList<Solid>(solids);
 			var cachedSolids = new LinkedList<Solid>();
 			for (var x = 0; x < width; x++)
 			{
@@ -169,7 +171,7 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 					}
 					if (!found)
 					{
-						var currentSolid = perFaceSolids.First;
+						//var currentSolid = perFaceSolids.First;
 						var intersect = TraverseBVH(bvhRoot, line);
 						if (intersect.Item1)
 						{
@@ -199,12 +201,14 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 					w++;
 				}
 			}
-
-			resources[i] = resource;
+			resources.Push(resource);
+			//resources[i] = resource;
 
 			i++;
 		}
-		Engine.Interface.CopyDepthTexture(resources);
+		);
+
+		Engine.Interface.CopyDepthTexture(resources.ToArray());
 	}
 	private (bool, BVHAbstract) TraverseBVH(BVHAbstract bvhNode, Line line)
 	{
