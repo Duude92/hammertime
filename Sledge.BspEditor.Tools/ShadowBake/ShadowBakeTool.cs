@@ -146,7 +146,6 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 			var resource = Engine.Interface.CreateDepthTexture(width, height);
 			face.LightMap = resource.Texture;
 			var w = 0;
-			//var perFaceSolids = new LinkedList<Solid>(solids);
 			var cachedSolids = new LinkedList<Solid>();
 			var maxLightDistance = (lightDirection.Normalise() * LightMaxDistance);
 			var lines = new Line[width * height];
@@ -201,6 +200,12 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 		);
 
 		Engine.Interface.CopyDepthTexture(resources.ToArray());
+		var tr = new Transaction();
+		tr.Add(new TrivialOperation(x=> { }, x =>
+		{
+			x.UpdateRange(x.Document.Map.Root.Find(s => s is Solid));
+		}));
+		await MapDocumentOperation.Perform(doc, tr);
 	}
 	private (bool, BVHAbstract) TraverseBVH(BVHAbstract bvhNode, Line line)
 	{
