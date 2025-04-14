@@ -2,6 +2,8 @@
 using Microsoft.Msagl.Drawing;
 using Microsoft.Msagl.GraphViewerGdi;
 using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Modification.Operations;
+using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Tools.ShadowBake.BVH;
 using Sledge.Common.Shell.Components;
@@ -146,16 +148,25 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 			var w = 0;
 			//var perFaceSolids = new LinkedList<Solid>(solids);
 			var cachedSolids = new LinkedList<Solid>();
+			var maxLightDistance = (lightDirection.Normalise() * LightMaxDistance);
+			var lines = new Line[width * height];
 			for (var x = 0; x < width; x++)
 			{
 				for (var y = 0; y < height; y++)
 				{
-					var worldPosition = face.ProjectedUVtoWorld((float)x / width, (float)y / height);
-
-					var projection = worldPosition;
-					var line = new Line(projection, projection - (lightDirection.Normalise() * LightMaxDistance));
+					var projection = face.ProjectedUVtoWorld((float)x / width, (float)y / height);
+					lines[w] = new Line(projection, projection - maxLightDistance);
+					w++;
+				}
+			}
+			w = 0;
+			for (var x = 0; x < width; x++)
+			{
+				for (var y = 0; y < height; y++)
+				{
 					resource.MappedResource[w] = 1f;
 					var found = false;
+					var line = lines[w];
 					foreach (var solid in cachedSolids)
 					{
 						if (solid.BoundingBox.IntersectsWith(line))
@@ -179,30 +190,11 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 							resource.MappedResource[w] = 0.5f;
 						}
 
-						//while(currentSolid!=null)
-						//{
-						//	var solid = currentSolid.Value;
-						//	if (solid.BoundingBox.IntersectsWith(line))
-						//	{
-						//		var intersect = solid.GetIntersectionPoint(line);
-						//		if (intersect.HasValue)
-						//		{
-						//			cachedSolids.AddFirst(solid);
-						//			perFaceSolids.Remove(currentSolid);
-
-						//			resource.MappedResource[w] = 0.5f;
-
-						//			break;
-						//		}
-						//	}
-						//	currentSolid = currentSolid.Next;
-						//}
 					}
 					w++;
 				}
 			}
 			resources.Push(resource);
-			//resources[i] = resource;
 
 			i++;
 		}
