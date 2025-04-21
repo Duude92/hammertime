@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.Serialization;
@@ -167,8 +168,44 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
 
             return Vertices.Select(x => Tuple.Create(x, x.Dot(Texture.UAxis) / udiv + uadd, x.Dot(Texture.VAxis) / vdiv + vadd));
         }
+		public Size GetTextureResolution(float pixelsPerUnit)
+		{
+            var normal = Plane.Normal;
 
-        public void Transform(Matrix4x4 matrix)
+			Vector3 temp = Vector3.UnitX;
+			if (Math.Abs(Vector3.Dot(temp, normal)) > 0.99f)
+				temp = Vector3.UnitY;
+
+			Vector3 uAxis = Vector3.Normalize(Vector3.Cross(normal, temp));
+			Vector3 vAxis = Vector3.Normalize(Vector3.Cross(normal, uAxis));
+
+			float minU = float.MaxValue, maxU = float.MinValue;
+			float minV = float.MaxValue, maxV = float.MinValue;
+
+			foreach (var vertex in Vertices)
+			{
+				float u = Vector3.Dot(vertex, Texture.UAxis) / Texture.YScale;
+				float v = Vector3.Dot(vertex, Texture.VAxis) / Texture.XScale;
+
+				minU = Math.Min(minU, u);
+				maxU = Math.Max(maxU, u);
+				minV = Math.Min(minV, v);
+				maxV = Math.Max(maxV, v);
+			}
+
+			float worldWidth = maxU - minU;
+			float worldHeight = maxV - minV;
+
+			int rawWidth = (int)MathF.Ceiling(worldWidth * pixelsPerUnit);
+			int rawHeight = (int)MathF.Ceiling(worldHeight * pixelsPerUnit);
+
+            var width = (int)BitOperations.RoundUpToPowerOf2((uint)Math.Max(1, rawWidth));
+            var height = (int)BitOperations.RoundUpToPowerOf2((uint)Math.Max(1, rawHeight));
+            var size = new Size(width, height);
+            return size;
+		}
+
+		public void Transform(Matrix4x4 matrix)
         {
             Vertices.Transform(x => Vector3.Transform(x, matrix));
         }
@@ -224,7 +261,7 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
             }
         }
 
-        public class VertexCollection : IList<Vector3>
+		public class VertexCollection : IList<Vector3>
         {
             private readonly List<Vector3> _list = new List<Vector3>();
             private Plane _plane = new Plane(Vector3.UnitZ, Vector3.Zero);
