@@ -347,6 +347,7 @@ namespace Sledge.BspEditor.Tools.Selection
 				_selectionBox.State.Start = box.Start;
 				_selectionBox.State.End = box.End;
 				_selectionBox.State.Action = BoxAction.Drawn;
+				_selectionBox.SetRotationOrigin(box.Center);
 			}
 			_selectionBox.Update();
 		}
