@@ -40,6 +40,7 @@ namespace Sledge.BspEditor.Tools.Selection
 		private List<IDraggable>[] _handles;
 		public TransformationMode CurrentTransformationMode { get; private set; }
 		private RotationOrigin _rotationOrigin;
+		public List<Vector3> ModelsOrigin { get; set; } = new List<Vector3>();
 
 		public List<Widget> Widgets { get; private set; }
 
