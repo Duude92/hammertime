@@ -41,7 +41,8 @@
         "SecondaryGridLineColour": "Grid line colour for secondary highlights",
         "AxisGridLineColour": "Grid line colour for axis lines",
         "BoundaryGridLineColour": "Grid line colour for world boundaries",
-        "UnfocusedViewportTargetFps":  "Target FPS for inactive viewports (1 to 100)"
+            "UnfocusedViewportTargetFps": "Target FPS for inactive viewports (1 to 100)",
+            "MSAAoption": "MSAA",
       } 
     },
     "Components": {
