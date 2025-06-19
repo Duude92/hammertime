@@ -4,7 +4,6 @@ using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
-using Sledge.BspEditor.Commands.Clipboard;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations.Data;
@@ -283,6 +282,15 @@ namespace Sledge.BspEditor.Tools.Selection
 		{
 			im.AddRectFilled(start.ToVector2(), end.ToVector2(), GetRenderFillColour());
 			im.AddRect(start.ToVector2(), end.ToVector2(), GetRenderBoxColour());
+
+			foreach (var val in ModelsOrigin)
+			{
+				const int size = 8;
+				var orig = camera.WorldToScreen((val));
+
+				im.AddLine(new Vector2(orig.X - size, orig.Y - size), new Vector2(orig.X + size, orig.Y + size), Color.BlueViolet, 2, false);
+				im.AddLine(new Vector2(orig.X + size, orig.Y - size), new Vector2(orig.X - size, orig.Y + size), Color.BlueViolet, 2, false);
+			}
 		}
 
 		protected override Color GetRenderFillColour()
