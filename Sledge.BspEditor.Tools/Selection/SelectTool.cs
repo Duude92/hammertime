@@ -1,11 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.Drawing;
-using System.Linq;
-using System.Numerics;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
@@ -16,6 +8,7 @@ using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
+using Sledge.BspEditor.Rendering.ChangeHandlers;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Draggable;
 using Sledge.BspEditor.Tools.Properties;
@@ -31,6 +24,14 @@ using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Engine;
 using Sledge.Shell.Input;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.Drawing;
+using System.Linq;
+using System.Numerics;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 using static Sledge.BspEditor.Primitives.MapObjects.MapObjectExtensions;
 
 namespace Sledge.BspEditor.Tools.Selection
@@ -324,6 +325,7 @@ namespace Sledge.BspEditor.Tools.Selection
 			{
 				var box = document.Selection.GetSelectionBoundingBox();
 				_selectionBox.SetRotationOrigin(box.Center);
+				_selectionBox.ModelsOrigin = document.Selection.Select(x => x.Data.GetOne<EntityModel>()).Where(x => x != null).Select(x => x.Renderable.Origin).ToList();
 			}
 			else
 				TransformationModeChanged(SelectionBoxDraggableState.TransformationMode.Resize);
@@ -348,6 +350,7 @@ namespace Sledge.BspEditor.Tools.Selection
 				_selectionBox.State.End = box.End;
 				_selectionBox.State.Action = BoxAction.Drawn;
 				_selectionBox.SetRotationOrigin(box.Center);
+				_selectionBox.ModelsOrigin = document.Selection.Select(x => x.Data.GetOne<EntityModel>()).Where(x => x != null).Select(x => x.Renderable.Origin).ToList();
 			}
 			_selectionBox.Update();
 		}
@@ -433,7 +436,7 @@ namespace Sledge.BspEditor.Tools.Selection
 			objectsToDeselect = objectsToDeselect.Where(x => !objectsToSelect.Contains(x));
 
 			// Ignore transaction on secondary selection of same object (doubleclick)
-			if (objectsToDeselect.Count()==0 && !objectsToSelect.Except(document.Selection).Any()) return;
+			if (objectsToDeselect.Count() == 0 && !objectsToSelect.Except(document.Selection).Any()) return;
 
 			// Perform selections
 			var deselected = objectsToDeselect.ToList();
