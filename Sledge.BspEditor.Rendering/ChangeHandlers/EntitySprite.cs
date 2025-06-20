@@ -24,7 +24,7 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
 
 		public bool ContentsReplaced => Renderable.Model != null;
 
-		public EntitySprite(string name, float scale, Color color, SizeF? size, int framerate, IModelRenderable renderable)
+		public EntitySprite(string name, float scale, Color color, SizeF? size, int framerate, IModelRenderable renderable, bool isGizmo = false)
 		{
 			Name = name;
 			Scale = scale;
@@ -41,6 +41,10 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
 			Renderable.Framerate = framerate;
 			Renderable.Scale = scale;
 			Renderable.Tint = color.ToVector4();
+			if (isGizmo)
+			{
+				Renderable.Scale = Renderer.GizmoScale;
+			}
 		}
 
 		public EntitySprite(SerialisedObject obj)
