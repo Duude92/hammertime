@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Numerics;
 using System.Runtime.Serialization;
+using LogicAndTrick.Oy;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
@@ -44,6 +45,7 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
 			if (isGizmo)
 			{
 				Renderable.Scale = Renderer.GizmoScale;
+				Oy.Subscribe<float>("Render:Gizmos:ScaleChanged", scale => Renderable.Scale = scale);
 			}
 		}
 
