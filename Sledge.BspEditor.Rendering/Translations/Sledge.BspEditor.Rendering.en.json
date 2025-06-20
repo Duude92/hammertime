@@ -32,18 +32,19 @@
                 "DrawEntityAngles": "Show entity angles"
             }
         },
-      "Renderer": {
-        "PerspectiveBackgroundColour": "3D view background colour",
-        "OrthographicBackgroundColour": "2D view background colour",
-        "FractionalGridLineColour": "Grid line colour for fractional values",
-        "StandardGridLineColour": "Grid line colour for regular lines",
-        "PrimaryGridLineColour": "Grid line colour for primary highlights",
-        "SecondaryGridLineColour": "Grid line colour for secondary highlights",
-        "AxisGridLineColour": "Grid line colour for axis lines",
-        "BoundaryGridLineColour": "Grid line colour for world boundaries",
+        "Renderer": {
+            "PerspectiveBackgroundColour": "3D view background colour",
+            "OrthographicBackgroundColour": "2D view background colour",
+            "FractionalGridLineColour": "Grid line colour for fractional values",
+            "StandardGridLineColour": "Grid line colour for regular lines",
+            "PrimaryGridLineColour": "Grid line colour for primary highlights",
+            "SecondaryGridLineColour": "Grid line colour for secondary highlights",
+            "AxisGridLineColour": "Grid line colour for axis lines",
+            "BoundaryGridLineColour": "Grid line colour for world boundaries",
             "UnfocusedViewportTargetFps": "Target FPS for inactive viewports (1 to 100)",
             "MSAAoption": "MSAA",
-      } 
+            "GizmoScale": "Gizmos scale (entity icon scale)"
+        } 
     },
     "Components": {
         "ViewportZoomStatusItem": {
