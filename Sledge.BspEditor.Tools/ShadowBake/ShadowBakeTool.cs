@@ -166,6 +166,12 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 					resource.MappedResource[w] = 1f;
 					var found = false;
 					var line = lines[w];
+					var onPlane = face.Plane.OnPlane(line.End);
+					if (onPlane < 0)
+					{
+						data[w] = 0.5f;
+						continue;
+					}
 					foreach (var solid in cachedSolids)
 					{
 						if (solid.BoundingBox.IntersectsWith(line))
