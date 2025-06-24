@@ -122,8 +122,15 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 		{
 			var texFile = texturesCollection.FirstOrDefault(t => t.Name.ToLower().Equals(face.Texture.Name.ToLower()));
 
+			uint width, height;
+
+			var size = face.GetTextureResolution(0.25f);
+			width = (uint)size.Width;
+			height = (uint)size.Height;
+
+
 			// IMPORTANT: Normalize UVs
-			var uvs = face.GetTextureCoordinates(64, 64);
+			var uvs = face.GetTextureCoordinates((int)width, (int)height);
 			float minU = uvs.Min(x => x.Item2);
 			float maxU = uvs.Max(x => x.Item2);
 			float minV = uvs.Min(x => x.Item3);
@@ -137,12 +144,6 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 			}).ToArray();
 			face.Uv1 = normalizedUvs;
 
-			uint width = (uint)MathF.Ceiling((texFile?.Width ?? 256));// * face.Texture.XScale);
-			uint height = (uint)MathF.Ceiling((texFile?.Height ?? 256));// * face.Texture.YScale);
-			width = width < 8 ? 8 : width;
-			height = height < 8 ? 8 : height;
-			width = 64;
-			height = 64;
 			var resource = Engine.Interface.CreateDepthTexture(width, height);
 			face.LightMap = resource.Texture;
 			var w = 0;
