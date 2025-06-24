@@ -21,6 +21,7 @@ using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Runtime.InteropServices;
 
 namespace Sledge.BspEditor.Tools.ShadowBake;
 [Export(typeof(ISidebarComponent))]
@@ -118,7 +119,6 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 		form.ShowDialogAsync();
 #endif
 		Parallel.ForEach(faces, (face) =>
-		//foreach (var face in faces)
 		{
 			var texFile = texturesCollection.FirstOrDefault(t => t.Name.ToLower().Equals(face.Texture.Name.ToLower()));
 
@@ -150,13 +150,17 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 			var cachedSolids = new LinkedList<Solid>();
 			var maxLightDistance = (lightDirection.Normalise() * LightMaxDistance);
 			var lines = new Line[width * height];
+			var data = new float[width * height];
+
 			for (var x = 0; x < width; x++)
 			{
 				for (var y = 0; y < height; y++)
 				{
-					var projection = face.ProjectedUVtoWorld((float)x / width, (float)y / height);
+					w = (int)(y * width + x);
+					data[w] = 1f;
+
+					var projection = face.ProjectedUVtoWorld(  (float)y / height, (float)x / width);
 					lines[w] = new Line(projection, projection - maxLightDistance);
-					w++;
 				}
 			}
 			w = 0;
@@ -164,7 +168,8 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 			{
 				for (var y = 0; y < height; y++)
 				{
-					resource.MappedResource[w] = 1f;
+					w = (int)(y * width + x);
+
 					var found = false;
 					var line = lines[w];
 					var onPlane = face.Plane.OnPlane(line.End);
@@ -180,7 +185,7 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 							var intersect = solid.GetIntersectionPoint(line);
 							if (intersect.HasValue)
 							{
-								resource.MappedResource[w] = 0.5f;
+								data[w] = 0.5f;
 								found = true;
 								break;
 							}
@@ -188,27 +193,26 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 					}
 					if (!found)
 					{
-						//var currentSolid = perFaceSolids.First;
 						var intersect = TraverseBVH(bvhRoot, line);
 						if (intersect.Item1)
 						{
 							cachedSolids.AddFirst((intersect.Item2 as BVHLeaf).Solid);
-							resource.MappedResource[w] = 0.5f;
+							data[w] = 0.5f;
 						}
 
 					}
-					w++;
 				}
 			}
 			resources.Push(resource);
 
 			i++;
+			Marshal.Copy(data, 0, resource.MappedResource.MappedResource.Data, (int)(width * height));
 		}
 		);
 
 		Engine.Interface.CopyDepthTexture(resources.ToArray());
 		var tr = new Transaction();
-		tr.Add(new TrivialOperation(x=> { }, x =>
+		tr.Add(new TrivialOperation(x => { }, x =>
 		{
 			x.UpdateRange(x.Document.Map.Root.Find(s => s is Solid));
 		}));
