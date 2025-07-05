@@ -220,6 +220,10 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 	}
 	private (bool, BVHAbstract) TraverseBVH(BVHAbstract bvhNode, Line line)
 	{
+		if (bvhNode.Bounds == null)
+		{
+			return (false, null);
+		}
 		if (!bvhNode.Bounds.IntersectsWith(line))
 			return (false, null);
 
