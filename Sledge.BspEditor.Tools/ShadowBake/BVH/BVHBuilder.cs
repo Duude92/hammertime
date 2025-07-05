@@ -19,6 +19,7 @@ namespace Sledge.BspEditor.Tools.ShadowBake.BVH
 				while (workStack.Count > 0)
 				{
 					var (node, currentSolids) = workStack.Pop();
+					if (currentSolids.Count == 0) continue;
 					node.Bounds = GetBoundingBox(currentSolids);
 
 
@@ -59,8 +60,8 @@ namespace Sledge.BspEditor.Tools.ShadowBake.BVH
 					}
 
 
-					node.Left = leftList.Count <= 1 ? new BVHLeaf(leftList.First()) : new BVHNode();
-					node.Right = rightList.Count <= 1 ? new BVHLeaf(rightList.First()) : new BVHNode();
+					node.Left = leftList.Count == 1 ? new BVHLeaf(leftList.First()) : new BVHNode();
+					node.Right = rightList.Count == 1 ? new BVHLeaf(rightList.First()) : new BVHNode();
 					if (node.Right is BVHNode) workStack.Push((node.Right as BVHNode, rightList));
 					if (node.Left is BVHNode) workStack.Push((node.Left as BVHNode, leftList));
 				}
