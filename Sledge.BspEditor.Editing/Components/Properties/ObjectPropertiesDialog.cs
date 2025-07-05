@@ -307,7 +307,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties
 			_selectedObjects = _selectionForced
 				? _selectedObjects
 				: _currentDocument?.Selection.GetSelectedParents().ToList();
-			var entityParent = _selectedObjects.Select(obj => obj.Hierarchy.Parent).Distinct();
+			var entityParent = _selectedObjects.Select(obj => obj.Hierarchy.Parent).Where(x => x != null).Distinct();
 			if (entityParent.Count() == 1 && entityParent.FirstOrDefault() != _currentDocument?.Map.Root)
 			{
 				_selectedObjects = entityParent.ToList();

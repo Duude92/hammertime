@@ -9,6 +9,7 @@ using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.Resources;
 using Sledge.DataStructures.GameData;
+using Sledge.Providers.Model.Mdl10;
 using Sledge.Rendering.Interfaces;
 
 namespace Sledge.BspEditor.Rendering.ChangeHandlers
@@ -70,7 +71,8 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
                 }
 
                 var renderable = _resourceCollection.Value.CreateModelRenderable(change.Document.Environment, model);
-                var sd = new EntityModel(modelName, renderable);
+                (model as MdlModel)?.ReInitResources(entity.EntityData.Get<int>("skin", 0), entity.EntityData.Get<int>("body", 0));
+				var sd = new EntityModel(modelName, renderable);
                 UpdateSequence(sd, modelDetails);
 
                 entity.Data.Replace(sd);

@@ -77,6 +77,7 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
 			var color = Color.White;
 			var framerate = 1;
 			SizeF? size = new SizeF(entity.BoundingBox.Width, entity.BoundingBox.Height);
+			var isGizmo = false;
 
 			if (cls != null)
 			{
@@ -99,6 +100,10 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
 				{
 					size = texture.Size;
 				}
+				if (cls.Behaviours.Any(x => string.Equals(x.Name, "iconsprite", StringComparison.InvariantCultureIgnoreCase)))
+				{
+					isGizmo = true;
+				}
 				if (cls.Properties.Any(x => string.Equals(x.Name, "framerate", StringComparison.InvariantCultureIgnoreCase)))
 				{
 					framerate = (int)entity.EntityData.Get<float>("framerate", 1);
@@ -106,7 +111,7 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
 			}
 			var renderable = await _resourceCollection.Value.CreateSpriteRenderable(doc.Environment, name);
 
-			return new EntitySprite(name, scale, color, size, framerate, renderable);
+			return new EntitySprite(name, scale, color, size, framerate, renderable, isGizmo);
 		}
 
 		private static EntitySpriteData GetSpriteData(Entity entity, GameData gd)

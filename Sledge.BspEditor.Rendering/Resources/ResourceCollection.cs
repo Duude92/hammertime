@@ -56,12 +56,14 @@ namespace Sledge.BspEditor.Rendering.Resources
             EnsureEnvironment(environment);
             var mlist = _models[environment.ID];
             var rlist = _resources[environment.ID];
-
+            
+            /// Since MdlModel class also provides code for rendering - we have duplicating renderers, that would affect each other same model file
+            /*
             // Check if the model has already been loaded
             var existing = mlist.FirstOrDefault(x =>
                 string.Equals(x.Name, path, StringComparison.InvariantCultureIgnoreCase));
             if (existing != null) return existing.Model;
-
+            */
             // Find the file
             var file = environment.Root.TraversePath(path);
             if (file == null || !file.Exists) return null;
@@ -106,10 +108,11 @@ namespace Sledge.BspEditor.Rendering.Resources
 
         public async Task<IModelRenderable> CreateSpriteRenderable(IEnvironment environment, string name)
         {
+            EnsureEnvironment(environment);
+
             var rList = _resources[environment.ID];
             var tList = _textures[environment.ID];
 
-            EnsureEnvironment(environment);
             var tc = await environment.GetTextureCollection();
             var item = await tc.GetTextureItem(name);
 

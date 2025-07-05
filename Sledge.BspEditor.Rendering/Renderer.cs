@@ -1,10 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.Drawing;
+﻿using LogicAndTrick.Oy;
+using Sledge.BspEditor.Rendering.ChangeHandlers;
 using Sledge.Common.Shell.Settings;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Engine;
+using Sledge.Rendering.Renderables;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.Drawing;
 
 namespace Sledge.BspEditor.Rendering
 {
@@ -29,6 +32,7 @@ namespace Sledge.BspEditor.Rendering
 		[Setting] public static Color BoundaryGridLineColour { get; set; } = Color.Red;
 		[Setting("UnfocusedViewportTargetFps")] private int _targetFps { get; set; } = 10;
 		[Setting] private static MSAA_OPTION MSAAoption { get; set; } = MSAA_OPTION.MSAA_1X;
+		[Setting] public static float GizmoScale { get; set; } = 1.0f;
 
 		// Settings container
 
@@ -41,6 +45,7 @@ namespace Sledge.BspEditor.Rendering
 			yield return new SettingKey("Rendering", "OrthographicBackgroundColour", typeof(Color));
 			yield return new SettingKey("Rendering", "UnfocusedViewportTargetFps", typeof(int));
 			yield return new SettingKey("Rendering", "MSAAoption", typeof(MSAA_OPTION));
+			yield return new SettingKey("Rendering", "GizmoScale", typeof(decimal));
 
 
 			yield return new SettingKey("Rendering/Grid", "FractionalGridLineColour", typeof(Color));
@@ -58,6 +63,9 @@ namespace Sledge.BspEditor.Rendering
 			_engine.Value.SetClearColour(CameraType.Orthographic, OrthographicBackgroundColour);
 			_engine.Value.InactiveTargetFps = Math.Max(_targetFps, 1);
 			_engine.Value.SetMSAA((int)MSAAoption);
+			if (GizmoScale < .1f) GizmoScale = .1f;
+			Oy.Publish("Render:Gizmos:ScaleChanged", GizmoScale);
+
 			ValuesLoaded = true;
 		}
 

@@ -2,12 +2,14 @@
 using System.Drawing;
 using System.Numerics;
 using System.Runtime.Serialization;
+using LogicAndTrick.Oy;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Transport;
 using Sledge.DataStructures.Geometric;
 using Sledge.Providers.Texture.Spr;
+using Sledge.Rendering.Engine;
 using Sledge.Rendering.Interfaces;
 
 namespace Sledge.BspEditor.Rendering.ChangeHandlers
@@ -23,7 +25,7 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
 
 		public bool ContentsReplaced => Renderable.Model != null;
 
-		public EntitySprite(string name, float scale, Color color, SizeF? size, int framerate, IModelRenderable renderable)
+		public EntitySprite(string name, float scale, Color color, SizeF? size, int framerate, IModelRenderable renderable, bool isGizmo = false)
 		{
 			Name = name;
 			Scale = scale;
@@ -40,6 +42,11 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
 			Renderable.Framerate = framerate;
 			Renderable.Scale = scale;
 			Renderable.Tint = color.ToVector4();
+			if (isGizmo)
+			{
+				Renderable.Scale = Renderer.GizmoScale;
+				Oy.Subscribe<float>("Render:Gizmos:ScaleChanged", scale => Renderable.Scale = scale);
+			}
 		}
 
 		public EntitySprite(SerialisedObject obj)
@@ -79,7 +86,7 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
 
 		public IMapElement Clone()
 		{
-			return new EntitySprite(Name, Scale, Color, Size, Renderable?.Framerate ?? 10, Renderable);
+			return new EntitySprite(Name, Scale, Color, Size, Renderable?.Framerate ?? 10, null);
 		}
 
 		public SerialisedObject ToSerialisedObject()
