@@ -163,7 +163,7 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 					}
 					if (!found)
 					{
-						var intersect = TraverseBVH(bvhRoot, line);
+						var intersect = TraverseBVH(bvhRoot, line, face);
 						if (intersect.Item1)
 						{
 							cachedSolids.AddFirst((intersect.Item2 as BVHLeaf).Solid);
@@ -188,7 +188,7 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 		}));
 		await MapDocumentOperation.Perform(doc, tr);
 	}
-	private (bool, BVHAbstract) TraverseBVH(BVHAbstract bvhNode, Line line)
+	private (bool, BVHAbstract) TraverseBVH(BVHAbstract bvhNode, Line line, Face solidToIgnore = null)
 	{
 		if (bvhNode.Bounds == null)
 		{
@@ -198,10 +198,14 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 			return (false, null);
 
 		if (bvhNode is BVHLeaf leaf)
-			return (leaf.Solid.GetIntersectionPoint(line).HasValue, leaf);
+		{
+			var intersect = leaf.Solid.GetIntersectionPoint(line);
+			if (intersect.HasValue && (leaf.Solid.Faces.Contains(solidToIgnore))) return (false, null);
+			return (intersect.HasValue, leaf);
+		}
 		var node = bvhNode as BVHNode;
-		var left = TraverseBVH(node.Left, line);
-		var right = TraverseBVH(node.Right, line);
+		var left = TraverseBVH(node.Left, line, solidToIgnore);
+		var right = TraverseBVH(node.Right, line, solidToIgnore);
 		return left.Item1 ? left : right;
 	}
 
