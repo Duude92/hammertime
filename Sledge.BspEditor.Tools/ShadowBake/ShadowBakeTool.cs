@@ -57,9 +57,7 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 	{
 		_document.TryGetTarget(out var doc);
 
-		//var solids = doc.Map.Root.Hierarchy.OfType<Solid>().Where(solid => solid.Faces.Count() != solid.Faces.Where(face => face.Texture.Name.Equals("sky", StringComparison.InvariantCulture)).Count()).ToList();
-		//var slds = doc.Map.Root.Collect(x => true, obj => obj is Solid solid && solid.Faces.Count() != solid.Faces.Where(face => face.Texture.Name.Equals("sky", StringComparison.InvariantCulture)).Count());
-		var solids = doc.Map.Root.Collect(x => true, x => x.Hierarchy.Parent != null && !x.Hierarchy.HasChildren && x is Solid solid && solid.Faces.Count() != solid.Faces.Where(face => face.Texture.Name.Equals("sky", StringComparison.InvariantCulture)).Count()).OfType<Solid>();
+		var solids = doc.Map.Root.Collect(x => true, x => x.Hierarchy.Parent != null && !x.Hierarchy.HasChildren && x is Solid solid && solid.Faces.Count() != solid.Faces.Where(face => face.Texture.Name.ToLower().Equals("sky", StringComparison.InvariantCulture)).Count()).OfType<Solid>();
 		var textureCollection = await doc.Environment.GetTextureCollection();
 		var textures = solids.SelectMany(x => x.Faces).Select(f => f.Texture).DistinctBy(t => t.Name).ToList();
 
@@ -129,7 +127,7 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 					w = (int)(y * width + x);
 					data[w] = 1f;
 
-					var projection = face.ProjectedUVtoWorld(  (float)y / height, (float)x / width);
+					var projection = face.ProjectedUVtoWorld((float)y / height, (float)x / width);
 					lines[w] = new Line(projection, projection - maxLightDistance);
 				}
 			}
