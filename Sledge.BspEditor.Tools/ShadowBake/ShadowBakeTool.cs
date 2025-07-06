@@ -86,38 +86,8 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 		var i = 0;
 		var rand = new Random(DateTime.Now.Millisecond);
 		var bvhRoot = new BVH.BVHNode.BVHBuilder().BuildBVHIterative(solids.ToList());
-#if DEBUG
-		var graph = new Graph("BVH");
 
-		Node TraverseGraph(BVHAbstract bvhNode)
-		{
-			if (bvhNode == null) return null;
-			if (bvhNode is BVHLeaf leaf)
-			{
-				var nd = new Node($"{leaf.GetHashCode().ToString()}\n{leaf.Bounds.Center.ToFormattedString()}");
-				nd.Attr.Shape = Shape.Diamond;
-				graph.AddNode(nd);
-				return nd;
-			}
-			var node = new Node($"{bvhNode.GetHashCode().ToString()}\n{bvhNode.Bounds.Center.ToFormattedString()}");
-
-			graph.AddEdge(node.LabelText, TraverseGraph((bvhNode as BVHNode)?.Left)?.LabelText ?? "null");
-			graph.AddEdge(node.LabelText, TraverseGraph((bvhNode as BVHNode)?.Right)?.LabelText ?? "null");
-			return node;
-		}
-		graph.AddNode(TraverseGraph(bvhRoot));
-
-		var graphControl = new GViewer();
-		var renderer = new GraphRenderer(graph);
-		renderer.CalculateLayout();
-		graphControl.Graph = graph;
-		var form = new Form();
-		form.SuspendLayout();
-		graphControl.AutoSize = true;
-		form.Controls.Add(graphControl);
-		form.ResumeLayout();
-		form.ShowDialogAsync();
-#endif
+		var startTime = DateTime.Now;
 		Parallel.ForEach(faces, (face) =>
 		{
 			var texFile = texturesCollection.FirstOrDefault(t => t.Name.ToLower().Equals(face.Texture.Name.ToLower()));
