@@ -84,8 +84,15 @@ namespace Sledge.BspEditor.Rendering.Scene
 			{
 				var data = light.EntityData;
 				var angles = data.GetVector3("angles");
-				if (angles.HasValue)
-					Engine.Interface.SetLightAngles(angles.Value);
+				if (!angles.HasValue) return;
+				var anglesValue = angles.Value;
+				var pitch = data.Get<float>("pitch", float.NaN);
+				if (pitch != float.NaN)
+					anglesValue.X = pitch;
+				var yaw = data.Get<float>("angle", float.NaN);
+				if (yaw != float.NaN)
+					anglesValue.Y = yaw;
+				Engine.Interface.SetLightAngles(anglesValue);
 			}
 
 		}
