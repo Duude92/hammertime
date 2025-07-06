@@ -1,6 +1,4 @@
 ﻿using LogicAndTrick.Oy;
-using Microsoft.Msagl.Drawing;
-using Microsoft.Msagl.GraphViewerGdi;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification.Operations;
 using Sledge.BspEditor.Modification;
@@ -12,7 +10,6 @@ using Sledge.Common.Shell.Documents;
 using Sledge.Common.Shell.Hooks;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Engine;
-using Sledge.Shell;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -21,7 +18,9 @@ using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Sledge.Common.Logging;
 using System.Runtime.InteropServices;
+using Sledge.BspEditor.Primitives.MapObjectData;
 
 namespace Sledge.BspEditor.Tools.ShadowBake;
 [Export(typeof(ISidebarComponent))]
@@ -78,8 +77,6 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 		lightDirection.Y *= 1;
 		lightDirection.Z *= -1;
 
-		var iopt = MapObjectExtensions.IgnoreOptions.IgnoreClip | MapObjectExtensions.IgnoreOptions.IgnoreNull;
-		//var resources = new EngineInterface.DepthResource[faces.Count];
 		var resources = new ConcurrentStack<EngineInterface.DepthResource>();
 		var i = 0;
 		var rand = new Random(DateTime.Now.Millisecond);
@@ -172,12 +169,17 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 				}
 			}
 			resources.Push(resource);
-
 			i++;
-			Marshal.Copy(data, 0, resource.MappedResource.MappedResource.Data, (int)(width * height));
+
+			for (int y = 0; y < height; y++)
+			{
+				IntPtr dest = resource.MappedResource.MappedResource.Data + (int)(y * resource.MappedResource.MappedResource.RowPitch);
+				Marshal.Copy(data, (int)(y * width), dest, (int)width);
+			}
 		}
 		);
 
+		Log.Info($"Bake Light took {DateTime.Now - startTime} seconds", " ");
 		Engine.Interface.CopyDepthTexture(resources.ToArray());
 		var tr = new Transaction();
 		tr.Add(new TrivialOperation(x => { }, x =>
