@@ -63,7 +63,7 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 
 		var texturesCollection = await textureCollection.GetTextureItems(textures.Select(x => x.Name));
 
-		var faces = solids.SelectMany(x => x.Faces).Where(x => !x.Texture.Name.Equals("sky", StringComparison.InvariantCulture)).ToList();
+		var faces = solids.SelectMany(x => x.Faces).Where(x => !x.Texture.Name.ToLower().Equals("sky", StringComparison.InvariantCulture)).ToList();
 		var lightVectorRotation = Engine.Interface.GetLightAnglesRadians();
 
 		var mat_x = Matrix4x4.CreateRotationX(lightVectorRotation.Z);
