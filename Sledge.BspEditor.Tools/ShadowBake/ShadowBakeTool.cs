@@ -126,6 +126,8 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 
 					var projection = face.ProjectedUVtoWorld((float)y / height, (float)x / width);
 					lines[w] = new Line(projection, projection - maxLightDistance);
+				}
+			}
 			var firstLine = lines[0];
 			var onPlane = face.Plane.OnPlane(firstLine.End);
 			if (onPlane < 0)
@@ -137,38 +139,39 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 			}
 			else
 			{
-			w = 0;
-			for (var x = 0; x < width; x++)
-			{
-				for (var y = 0; y < height; y++)
+				w = 0;
+				for (var x = 0; x < width; x++)
 				{
-					w = (int)(y * width + x);
-
-					var found = false;
-					var line = lines[w];
-
-					foreach (var solid in cachedSolids)
+					for (var y = 0; y < height; y++)
 					{
-						if (solid.BoundingBox.IntersectsWith(line))
+						w = (int)(y * width + x);
+
+						var found = false;
+						var line = lines[w];
+
+						foreach (var solid in cachedSolids)
 						{
-							var intersect = solid.GetIntersectionPoint(line);
-							if (intersect.HasValue)
+							if (solid.BoundingBox.IntersectsWith(line))
 							{
-								data[w] = 0.5f;
-								found = true;
-								break;
+								var intersect = solid.GetIntersectionPoint(line);
+								if (intersect.HasValue)
+								{
+									data[w] = 0.5f;
+									found = true;
+									break;
+								}
 							}
 						}
-					}
-					if (!found)
-					{
-						var intersect = TraverseBVH(bvhRoot, line, face);
-						if (intersect.Item1)
+						if (!found)
 						{
-							cachedSolids.AddFirst((intersect.Item2 as BVHLeaf).Solid);
-							data[w] = 0.5f;
-						}
+							var intersect = TraverseBVH(bvhRoot, line, face);
+							if (intersect.Item1)
+							{
+								cachedSolids.AddFirst((intersect.Item2 as BVHLeaf).Solid);
+								data[w] = 0.5f;
+							}
 
+						}
 					}
 				}
 			}
