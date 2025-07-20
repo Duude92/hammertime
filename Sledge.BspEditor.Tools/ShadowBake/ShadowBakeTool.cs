@@ -126,8 +126,17 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 
 					var projection = face.ProjectedUVtoWorld((float)y / height, (float)x / width);
 					lines[w] = new Line(projection, projection - maxLightDistance);
+			var firstLine = lines[0];
+			var onPlane = face.Plane.OnPlane(firstLine.End);
+			if (onPlane < 0)
+			{
+				for (var i = 0; i < data.Length; i++)
+				{
+					data[i] = 0.5f;
 				}
 			}
+			else
+			{
 			w = 0;
 			for (var x = 0; x < width; x++)
 			{
@@ -137,12 +146,7 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 
 					var found = false;
 					var line = lines[w];
-					var onPlane = face.Plane.OnPlane(line.End);
-					if (onPlane < 0)
-					{
-						data[w] = 0.5f;
-						continue;
-					}
+
 					foreach (var solid in cachedSolids)
 					{
 						if (solid.BoundingBox.IntersectsWith(line))
