@@ -86,10 +86,10 @@ namespace Sledge.BspEditor.Rendering.Scene
 				var angles = data.GetVector3("angles");
 				if (!angles.HasValue) return;
 				var anglesValue = angles.Value;
-				var pitch = data.Get<float>("pitch", float.NaN);
+				var pitch = data.Get<float>("pitch", angles.Value.X);
 				if (pitch != float.NaN)
 					anglesValue.X = pitch;
-				var yaw = data.Get<float>("angle", float.NaN);
+				var yaw = data.Get<float>("angle", angles.Value.Y);
 				if (yaw != float.NaN)
 					anglesValue.Y = yaw;
 				Engine.Interface.SetLightAngles(anglesValue);
