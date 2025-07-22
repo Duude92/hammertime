@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.Linq;
-using System.Threading.Tasks;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Environment;
@@ -13,13 +8,26 @@ using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.Converters;
 using Sledge.BspEditor.Rendering.Resources;
+using Sledge.Common;
 using Sledge.Common.Shell.Documents;
 using Sledge.Common.Shell.Hooks;
+using Sledge.DataStructures.GameData;
+using Sledge.DataStructures.Geometric;
 using Sledge.FileSystem;
 using Sledge.Rendering.Engine;
 using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.Resources;
 using Sledge.Shell.Registers;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.Globalization;
+using System.Linq;
+using System.Numerics;
+using System.Reflection.Metadata;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Sledge.BspEditor.Rendering.Scene
 {
@@ -84,7 +92,30 @@ namespace Sledge.BspEditor.Rendering.Scene
 			{
 				var data = light.EntityData;
 				var angles = data.GetVector3("angles");
-				if (!angles.HasValue) return;
+				if (!angles.HasValue)
+				{
+					// Probably somewhere there is function to convert string to Vector3, but I don't remember for sure.
+					var gameData = await md.Environment.GetGameData();
+					var light_default = gameData.Classes.FirstOrDefault(x => x.ClassType != ClassType.Base && (x.Name ?? "").ToLower() == "light_environment");
+					var angleString = light_default.Properties.FirstOrDefault(x => x.Name == "angles").DefaultValue;
+					var pitchString = light_default.Properties.FirstOrDefault(x => x.Name == "pitch")?.DefaultValue;
+					var yawString = light_default.Properties.FirstOrDefault(x => x.Name == "angle")?.DefaultValue;
+
+					var spl = (angleString ?? "").Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+					var resultAngle = Vector3.Zero;
+
+					if (float.TryParse(spl[0], NumberStyles.Float, CultureInfo.InvariantCulture, out var x)
+						&& float.TryParse(spl[1], NumberStyles.Float, CultureInfo.InvariantCulture, out var y)
+						&& float.TryParse(spl[2], NumberStyles.Float, CultureInfo.InvariantCulture, out var z))
+					{
+						resultAngle = new Vector3(x, y, z);
+					}
+					if (!String.IsNullOrEmpty(pitchString))
+						resultAngle.X = int.Parse(pitchString);
+					if (!String.IsNullOrEmpty(yawString))
+						resultAngle.Y = int.Parse(yawString);
+					angles = resultAngle;
+				}
 				var anglesValue = angles.Value;
 				var pitch = data.Get<float>("pitch", angles.Value.X);
 				if (pitch != float.NaN)
