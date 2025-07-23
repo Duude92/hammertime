@@ -120,8 +120,6 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 				}).ToArray();
 				face.Uv1 = normalizedUvs;
 
-				var resource = Engine.Interface.CreateDepthTexture(width, height);
-				face.LightMap = resource.Texture;
 				var w = 0;
 				var cachedSolids = new LinkedList<Solid>();
 				var maxLightDistance = (lightDirection.Normalise() * LightMaxDistance);
@@ -186,14 +184,8 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 						}
 					}
 				}
-				resources.Push(resource);
 				i++;
 
-				//for (int y = 0; y < height; y++)
-				//{
-				//	IntPtr dest = resource.MappedResource.MappedResource.Data + (int)(y * resource.MappedResource.MappedResource.RowPitch);
-				//	Marshal.Copy(data, (int)(y * width), dest, (int)width);
-				//}
 				chunkData.Add((width, height, data));
 			}
 			var textureSize = BitOperations.RoundUpToPowerOf2((uint)MathF.Ceiling(MathF.Sqrt(chunkData.Count)));
@@ -214,15 +206,46 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 			}
 			var rects = rectangles.ToArray();
 			RectanglePacker.Pack(rects, out PackingRectangle bounds);
+			var boundsSize = BitOperations.RoundUpToPowerOf2((uint)MathF.Max(bounds.Width, bounds.Height));
+
+			var packedData = new float[boundsSize * boundsSize];
+
+			for (int i = 0; i < chunkData.Count; i++)
 				{
-					IntPtr dest = resource.MappedResource.MappedResource.Data + (int)(y * resource.MappedResource.MappedResource.RowPitch);
-					Marshal.Copy(data, (int)(y * width), dest, (int)width);
+				var rect = rects[i];
+				var dataId = rect.Id;
+
+				for (int iy = 0; iy < rect.Height; iy++)
+				{
+					for (int ix = 0; ix < rect.Width; ix++)
+					{
+						int srcIndex = (int)(iy * rect.Width + ix);
+						int dstIndex = (int)((rect.Y + iy) * boundsSize + (rect.X + ix));
+
+						packedData[dstIndex] = chunkData[dataId].Item3[srcIndex];
+
 				}
 			}
-			var textureSize = BitOperations.RoundUpToPowerOf2((uint)MathF.Ceiling(MathF.Sqrt(chunkData.Count)));
-			var resource = Engine.Interface.CreateDepthTexture(textureSize, textureSize);
-
 			}
+			var resource1 = Engine.Interface.CreateDepthTexture(boundsSize, boundsSize);
+
+
+			IntPtr dest1 = resource1.MappedResource.MappedResource.Data;
+			Marshal.Copy(packedData, 0, dest1, packedData.Length);
+			for (int i = 0; i < chunkData.Count; i++)
+			{
+				var rect = rects[i];
+
+				faceChunk[rect.Id].LightMap = resource1.Texture;
+				for (int k = 0; k < faceChunk[rect.Id].Uv1.Length; k++)
+				{
+					faceChunk[rect.Id].Uv1[k] = new Vector2(
+						(faceChunk[rect.Id].Uv1[k].X * rect.Width + rect.X) / boundsSize,
+						(faceChunk[rect.Id].Uv1[k].Y * rect.Height + rect.Y) / boundsSize
+					);
+				}
+			}
+			resources.Push(resource1);
 
 		}
 		);
