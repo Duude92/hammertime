@@ -1,4 +1,5 @@
 ﻿using LogicAndTrick.Oy;
+using RectpackSharp;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations;
@@ -188,18 +189,41 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 				resources.Push(resource);
 				i++;
 
-				for (int y = 0; y < height; y++)
+				//for (int y = 0; y < height; y++)
+				//{
+				//	IntPtr dest = resource.MappedResource.MappedResource.Data + (int)(y * resource.MappedResource.MappedResource.RowPitch);
+				//	Marshal.Copy(data, (int)(y * width), dest, (int)width);
+				//}
+				chunkData.Add((width, height, data));
+			}
+			var textureSize = BitOperations.RoundUpToPowerOf2((uint)MathF.Ceiling(MathF.Sqrt(chunkData.Count)));
+			List<PackingRectangle> rectangles = new();
+			var chunkDataId = 0;
+			foreach (var data in chunkData)
+			{
+				var rect = new PackingRectangle
+				{
+					X = 0,
+					Y = 0,
+					Width = data.Item1,
+					Height = data.Item2,
+					Id = chunkDataId
+				};
+				rectangles.Add(rect);
+				chunkDataId++;
+			}
+			var rects = rectangles.ToArray();
+			RectanglePacker.Pack(rects, out PackingRectangle bounds);
 				{
 					IntPtr dest = resource.MappedResource.MappedResource.Data + (int)(y * resource.MappedResource.MappedResource.RowPitch);
 					Marshal.Copy(data, (int)(y * width), dest, (int)width);
 				}
-				chunkData.Add((width, height, data));
 			}
 			var textureSize = BitOperations.RoundUpToPowerOf2((uint)MathF.Ceiling(MathF.Sqrt(chunkData.Count)));
 			var resource = Engine.Interface.CreateDepthTexture(textureSize, textureSize);
 
+			}
 
-			stringStack.Push($"Chunk data is {chunkData.Count}, texture size is {textureSize}");
 		}
 		);
 
