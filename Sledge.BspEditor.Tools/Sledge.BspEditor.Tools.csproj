@@ -187,6 +187,7 @@
     <PackageReference Include="Poly2Tri">
       <Version>1.0.1</Version>
     </PackageReference>
+    <PackageReference Include="RectpackSharp" Version="1.2.0" />
     <PackageReference Include="Sledge.Formats.Texture" Version="1.1.0" />
     <PackageReference Include="System.Numerics.Vectors">
       <Version>4.5.0</Version>
