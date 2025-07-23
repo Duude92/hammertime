@@ -90,7 +90,6 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 		bvhRoot.GetLeafs((int)nestLevel, 0, solidChunks);
 		var facesChunks = solidChunks.Select(chunk => chunk.SelectMany(x => x.Faces).Where(x => !x.Texture.Name.ToLower().Equals("sky", StringComparison.InvariantCulture)).ToList());
 
-		var stringStack = new ConcurrentStack<string>();
 		Parallel.ForEach(facesChunks, (faceChunk) =>
 		{
 			var chunkData = new List<(uint, uint, float[])>();
@@ -211,7 +210,7 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 			var packedData = new float[boundsSize * boundsSize];
 
 			for (int i = 0; i < chunkData.Count; i++)
-				{
+			{
 				var rect = rects[i];
 				var dataId = rect.Id;
 
@@ -224,8 +223,8 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 
 						packedData[dstIndex] = chunkData[dataId].Item3[srcIndex];
 
+					}
 				}
-			}
 			}
 			var resource1 = Engine.Interface.CreateDepthTexture(boundsSize, boundsSize);
 
@@ -250,11 +249,7 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 		}
 		);
 
-		while (stringStack.TryPop(out string result))
-		{
-			Log.Debug(result, "ShadowBakeTool");
-		}
-		Log.Info($"Bake Light took {DateTime.Now - startTime} seconds", "ShadowBakeTool");
+		Log.Info("ShadowBakeTool", $"Bake Light took {DateTime.Now - startTime} seconds");
 		Engine.Interface.CopyDepthTexture(resources.ToArray());
 		var tr = new Transaction();
 		tr.Add(new TrivialOperation(x => { }, x =>
