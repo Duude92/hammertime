@@ -1,9 +1,11 @@
 ﻿using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
-using Sledge.BspEditor.Modification.Operations;
 using Sledge.BspEditor.Modification;
+using Sledge.BspEditor.Modification.Operations;
+using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Tools.ShadowBake.BVH;
+using Sledge.Common.Logging;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Documents;
@@ -16,11 +18,9 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Numerics;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Sledge.Common.Logging;
-using System.Runtime.InteropServices;
-using Sledge.BspEditor.Primitives.MapObjectData;
 
 namespace Sledge.BspEditor.Tools.ShadowBake;
 [Export(typeof(ISidebarComponent))]
@@ -89,8 +89,10 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 		bvhRoot.GetLeafs((int)nestLevel, 0, solidChunks);
 		var facesChunks = solidChunks.Select(chunk => chunk.SelectMany(x => x.Faces).Where(x => !x.Texture.Name.ToLower().Equals("sky", StringComparison.InvariantCulture)).ToList());
 
+		var stringStack = new ConcurrentStack<string>();
 		Parallel.ForEach(facesChunks, (faceChunk) =>
 		{
+			var chunkData = new List<(uint, uint, float[])>();
 			foreach (var face in faceChunk)
 			{
 				var texFile = texturesCollection.FirstOrDefault(t => t.Name.ToLower().Equals(face.Texture.Name.ToLower()));
@@ -191,11 +193,21 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 					IntPtr dest = resource.MappedResource.MappedResource.Data + (int)(y * resource.MappedResource.MappedResource.RowPitch);
 					Marshal.Copy(data, (int)(y * width), dest, (int)width);
 				}
+				chunkData.Add((width, height, data));
 			}
+			var textureSize = BitOperations.RoundUpToPowerOf2((uint)MathF.Ceiling(MathF.Sqrt(chunkData.Count)));
+			var resource = Engine.Interface.CreateDepthTexture(textureSize, textureSize);
+
+
+			stringStack.Push($"Chunk data is {chunkData.Count}, texture size is {textureSize}");
 		}
 		);
 
-		Log.Info($"Bake Light took {DateTime.Now - startTime} seconds", " ");
+		while (stringStack.TryPop(out string result))
+		{
+			Log.Debug(result, "ShadowBakeTool");
+		}
+		Log.Info($"Bake Light took {DateTime.Now - startTime} seconds", "ShadowBakeTool");
 		Engine.Interface.CopyDepthTexture(resources.ToArray());
 		var tr = new Transaction();
 		tr.Add(new TrivialOperation(x => { }, x =>
