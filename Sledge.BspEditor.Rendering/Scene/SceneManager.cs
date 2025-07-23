@@ -86,6 +86,12 @@ namespace Sledge.BspEditor.Rendering.Scene
 		private async Task DocumentChangedEarly(Change change)
 		{
 			await LoadSkybox();
+			await UpdateEnvironmentLight();
+
+		}
+
+		private async Task UpdateEnvironmentLight()
+		{
 			_activeDocument.TryGetTarget(out var md);
 			var light = md.Map.Root.Hierarchy.OfType<Entity>().FirstOrDefault(Entity => Entity.EntityData.Name == "light_environment");
 			if (light != null)
@@ -125,7 +131,6 @@ namespace Sledge.BspEditor.Rendering.Scene
 					anglesValue.Y = yaw;
 				Engine.Interface.SetLightAngles(anglesValue);
 			}
-
 		}
 
 		private async Task DocumentChanged(Change change)
@@ -155,6 +160,7 @@ namespace Sledge.BspEditor.Rendering.Scene
 			_activeDocument = new WeakReference<MapDocument>(md);
 			await UpdateScene(md, null);
 			await LoadSkybox();
+			await UpdateEnvironmentLight();
 		}
 		private async Task LoadSkybox()
 		{
