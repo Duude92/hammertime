@@ -63,7 +63,6 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 
 		var texturesCollection = await textureCollection.GetTextureItems(textures.Select(x => x.Name));
 
-		var faces = solids.SelectMany(x => x.Faces).Where(x => !x.Texture.Name.ToLower().Equals("sky", StringComparison.InvariantCulture)).ToList();
 		var lightVectorRotation = Engine.Interface.GetLightAnglesRadians();
 
 		var mat_x = Matrix4x4.CreateRotationX(lightVectorRotation.Z);
@@ -83,105 +82,115 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 		var bvhRoot = new BVH.BVHNode.BVHBuilder().BuildBVHIterative(solids.ToList());
 
 		var startTime = DateTime.Now;
-		Parallel.ForEach(faces, (face) =>
+		var chunkCount = System.Environment.ProcessorCount;
+		var nestLevel = MathF.Ceiling(MathF.Sqrt(chunkCount));
+		var solidChunks = new List<List<Solid>>();
+		BVHAbstract.GroupId = 0;
+		bvhRoot.GetLeafs((int)nestLevel, 0, solidChunks);
+		var facesChunks = solidChunks.Select(chunk => chunk.SelectMany(x => x.Faces).Where(x => !x.Texture.Name.ToLower().Equals("sky", StringComparison.InvariantCulture)).ToList());
+
+		Parallel.ForEach(facesChunks, (faceChunk) =>
 		{
-			var texFile = texturesCollection.FirstOrDefault(t => t.Name.ToLower().Equals(face.Texture.Name.ToLower()));
-
-			uint width, height;
-
-			var size = face.GetTextureResolution(0.25f);
-			width = (uint)size.Width;
-			height = (uint)size.Height;
-
-
-			// IMPORTANT: Normalize UVs
-			var uvs = face.GetTextureCoordinates((int)width, (int)height);
-			float minU = uvs.Min(x => x.Item2);
-			float maxU = uvs.Max(x => x.Item2);
-			float minV = uvs.Min(x => x.Item3);
-			float maxV = uvs.Max(x => x.Item3);
-
-			var normalizedUvs = uvs.Select(x =>
+			foreach (var face in faceChunk)
 			{
-				float normU = (x.Item2 - minU) / (maxU - minU);
-				float normV = (x.Item3 - minV) / (maxV - minV);
-				return new Vector2(normU, normV);
-			}).ToArray();
-			face.Uv1 = normalizedUvs;
+				var texFile = texturesCollection.FirstOrDefault(t => t.Name.ToLower().Equals(face.Texture.Name.ToLower()));
 
-			var resource = Engine.Interface.CreateDepthTexture(width, height);
-			face.LightMap = resource.Texture;
-			var w = 0;
-			var cachedSolids = new LinkedList<Solid>();
-			var maxLightDistance = (lightDirection.Normalise() * LightMaxDistance);
-			var lines = new Line[width * height];
-			var data = new float[width * height];
+				uint width, height;
 
-			for (var x = 0; x < width; x++)
-			{
-				for (var y = 0; y < height; y++)
+				var size = face.GetTextureResolution(0.25f);
+				width = (uint)size.Width;
+				height = (uint)size.Height;
+
+
+				// IMPORTANT: Normalize UVs
+				var uvs = face.GetTextureCoordinates((int)width, (int)height);
+				float minU = uvs.Min(x => x.Item2);
+				float maxU = uvs.Max(x => x.Item2);
+				float minV = uvs.Min(x => x.Item3);
+				float maxV = uvs.Max(x => x.Item3);
+
+				var normalizedUvs = uvs.Select(x =>
 				{
-					w = (int)(y * width + x);
-					data[w] = 1f;
+					float normU = (x.Item2 - minU) / (maxU - minU);
+					float normV = (x.Item3 - minV) / (maxV - minV);
+					return new Vector2(normU, normV);
+				}).ToArray();
+				face.Uv1 = normalizedUvs;
 
-					var projection = face.ProjectedUVtoWorld((float)y / height, (float)x / width);
-					lines[w] = new Line(projection, projection - maxLightDistance);
-				}
-			}
-			var firstLine = lines[0];
-			var onPlane = face.Plane.OnPlane(firstLine.End);
-			if (onPlane < 0)
-			{
-				for (var i = 0; i < data.Length; i++)
-				{
-					data[i] = 0.5f;
-				}
-			}
-			else
-			{
-				w = 0;
+				var resource = Engine.Interface.CreateDepthTexture(width, height);
+				face.LightMap = resource.Texture;
+				var w = 0;
+				var cachedSolids = new LinkedList<Solid>();
+				var maxLightDistance = (lightDirection.Normalise() * LightMaxDistance);
+				var lines = new Line[width * height];
+				var data = new float[width * height];
+
 				for (var x = 0; x < width; x++)
 				{
 					for (var y = 0; y < height; y++)
 					{
 						w = (int)(y * width + x);
+						data[w] = 1f;
 
-						var found = false;
-						var line = lines[w];
-
-						foreach (var solid in cachedSolids)
+						var projection = face.ProjectedUVtoWorld((float)y / height, (float)x / width);
+						lines[w] = new Line(projection, projection - maxLightDistance);
+					}
+				}
+				var firstLine = lines[0];
+				var onPlane = face.Plane.OnPlane(firstLine.End);
+				if (onPlane < 0)
+				{
+					for (var i = 0; i < data.Length; i++)
+					{
+						data[i] = 0.5f;
+					}
+				}
+				else
+				{
+					w = 0;
+					for (var x = 0; x < width; x++)
+					{
+						for (var y = 0; y < height; y++)
 						{
-							if (solid.BoundingBox.IntersectsWith(line))
+							w = (int)(y * width + x);
+
+							var found = false;
+							var line = lines[w];
+
+							foreach (var solid in cachedSolids)
 							{
-								var intersect = solid.GetIntersectionPoint(line);
-								if (intersect.HasValue)
+								if (solid.BoundingBox.IntersectsWith(line))
 								{
-									data[w] = 0.5f;
-									found = true;
-									break;
+									var intersect = solid.GetIntersectionPoint(line);
+									if (intersect.HasValue)
+									{
+										data[w] = 0.5f;
+										found = true;
+										break;
+									}
 								}
 							}
-						}
-						if (!found)
-						{
-							var intersect = TraverseBVH(bvhRoot, line, face);
-							if (intersect.Item1)
+							if (!found)
 							{
-								cachedSolids.AddFirst((intersect.Item2 as BVHLeaf).Solid);
-								data[w] = 0.5f;
-							}
+								var intersect = TraverseBVH(bvhRoot, line, face);
+								if (intersect.Item1)
+								{
+									cachedSolids.AddFirst((intersect.Item2 as BVHLeaf).Solid);
+									data[w] = 0.5f;
+								}
 
+							}
 						}
 					}
 				}
-			}
-			resources.Push(resource);
-			i++;
+				resources.Push(resource);
+				i++;
 
-			for (int y = 0; y < height; y++)
-			{
-				IntPtr dest = resource.MappedResource.MappedResource.Data + (int)(y * resource.MappedResource.MappedResource.RowPitch);
-				Marshal.Copy(data, (int)(y * width), dest, (int)width);
+				for (int y = 0; y < height; y++)
+				{
+					IntPtr dest = resource.MappedResource.MappedResource.Data + (int)(y * resource.MappedResource.MappedResource.RowPitch);
+					Marshal.Copy(data, (int)(y * width), dest, (int)width);
+				}
 			}
 		}
 		);
