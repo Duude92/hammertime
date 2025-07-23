@@ -148,8 +148,8 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
 			float vWorld = MathHelper.Lerp(minV, maxV, x);
 
 			Vector3 worldPos = Vertices[0]
-							 + Texture.UAxis * uWorld * Texture.XScale
-							 + Texture.VAxis * vWorld * Texture.YScale;
+							 + Texture.UAxis * uWorld * Texture.YScale
+							 + Texture.VAxis * vWorld * Texture.XScale;
 
 			if (Plane.C != 0) // If is not verticall (wall)
 				worldPos.Z = -(Plane.A * worldPos.X + Plane.B * worldPos.Y + Plane.D) / Plane.C;
