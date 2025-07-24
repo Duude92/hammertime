@@ -90,7 +90,7 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 		bvhRoot.GetLeafs((int)nestLevel, 0, solidChunks);
 		var facesChunks = solidChunks.Select(chunk => chunk.SelectMany(x => x.Faces).Where(x => !x.Texture.Name.ToLower().Equals("sky", StringComparison.InvariantCulture)).ToList());
 
-		Parallel.ForEach(facesChunks, (faceChunk) =>
+		await Parallel.ForEachAsync(facesChunks, async (faceChunk,_) =>
 		{
 			var chunkData = new List<(uint, uint, float[])>();
 			foreach (var face in faceChunk)
@@ -172,7 +172,7 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 							}
 							if (!found)
 							{
-								var intersect = TraverseBVH(bvhRoot, line, face);
+								var intersect = await TraverseBVH(bvhRoot, line, face);
 								if (intersect.Item1)
 								{
 									cachedSolids.AddFirst((intersect.Item2 as BVHLeaf).Solid);
@@ -258,7 +258,7 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 		}));
 		await MapDocumentOperation.Perform(doc, tr);
 	}
-	private (bool, BVHAbstract) TraverseBVH(BVHAbstract bvhNode, Line line, Face solidToIgnore = null)
+	private async Task<(bool, BVHAbstract)> TraverseBVH(BVHAbstract bvhNode, Line line, Face solidToIgnore = null)
 	{
 		if (bvhNode.Bounds == null)
 		{
@@ -274,8 +274,8 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 			return (intersect.HasValue, leaf);
 		}
 		var node = bvhNode as BVHNode;
-		var left = TraverseBVH(node.Left, line, solidToIgnore);
-		var right = TraverseBVH(node.Right, line, solidToIgnore);
+		var left = await TraverseBVH(node.Left, line, solidToIgnore);
+		var right = await TraverseBVH(node.Right, line, solidToIgnore);
 		return left.Item1 ? left : right;
 	}
 
