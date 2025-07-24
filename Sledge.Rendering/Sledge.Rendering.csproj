@@ -119,8 +119,6 @@
     <None Remove="Shaders\ShadowOverlay.vert.hlsl" />
     <None Remove="Shaders\SwapchainOverlay.frag.hlsl" />
     <None Remove="Shaders\SwapchainOverlay.vert.hlsl" />
-    <None Remove="Shaders\ShadowDepth.frag.hlsl" />
-    <None Remove="Shaders\ShadowDepth.vert.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -162,8 +160,6 @@
     <PackageReference Include="Veldrid.ImageSharp" Version="4.9.0" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Shaders\ShadowDepth.frag.hlsl" />
-    <EmbeddedResource Include="Shaders\ShadowDepth.vert.hlsl" />
     <EmbeddedResource Include="Shaders\ShadowOverlay.frag.hlsl" />
     <EmbeddedResource Include="Shaders\ShadowOverlay.vert.hlsl" />
     <EmbeddedResource Include="Shaders\Skybox.frag.hlsl" />
