@@ -24,15 +24,7 @@ namespace Sledge.Rendering.Pipelines
 		private DeviceBuffer _projectionBuffer;
 		private ResourceSet _projectionResourceSet;
 		private ViewProjectionBuffer _lightData;
-		private ResourceSet _textureSet;
-		private Func<Resources.Texture> _shadowmapGetter;
-		private Func<TextureView> _viewGetter;
 
-		public Resources.Texture NearShadowResourceTexture { get; private set; }
-		public Veldrid.Texture NearShadowMap { get; private set; }
-
-		public TextureView NearShadowMapView { get; private set; }
-		public Framebuffer NearShadowMapFramebuffer { get; private set; }
 		private ResourceSet _lightDirectionSet;
 		private DeviceBuffer _lightProjection;
 		private ResourceSet _lightProjectionSet;
