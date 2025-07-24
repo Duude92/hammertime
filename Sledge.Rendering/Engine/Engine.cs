@@ -25,24 +25,6 @@ namespace Sledge.Rendering.Engine
 		public Scene Scene { get; }
 		internal bool IsShadowsEnabled { get; set; } = false;
 		internal Vector3 LightAngle { get; set; } = Vector3.Zero;
-
-
-		internal Vector3 LightSourcePosition
-		{
-			get { return lightPosition; }
-			set
-			{
-				lightPosition = value;
-
-				Quaternion rotationQuat = Quaternion.CreateFromYawPitchRoll(LightAngle.X, LightAngle.Z, LightAngle.Y);
-				Vector3 forward = Vector3.Transform(Vector3.UnitZ * 1000, rotationQuat);
-				Vector3 lightTarget = lightPosition + (forward);
-
-				Matrix4x4 lightView = Matrix4x4.CreateLookAt(lightPosition, lightTarget, Vector3.UnitY);
-
-				_lightData.View = lightView;
-			}
-		}
 		internal RenderContext Context { get; }
 
 		private CancellationTokenSource _token;
@@ -209,7 +191,6 @@ namespace Sledge.Rendering.Engine
 
 		private int _paused = 0;
 		private TextureSampleCount _sampleCount = TextureSampleCount.Count1;
-		private Vector3 lightPosition;
 		private readonly ManualResetEvent _pauseThreadEvent = new ManualResetEvent(false);
 
 		public IDisposable Pause()
@@ -279,8 +260,7 @@ namespace Sledge.Rendering.Engine
 					rt.Overlay.Build(overlays);
 					if (rt.IsFocused || (!rt.IsFocused && shouldRender))
 					{
-						_cameraBuffer = new ViewProjectionBuffer { Projection = rt.Camera.Projection, View = rt.Camera.View, RenderTarget = rt };
-						_lightData.RenderTarget = rt;
+						_cameraBuffer = new ViewProjectionBuffer { Projection = rt.Camera.Projection, View = rt.Camera.View };
 						Render(rt);
 					}
 				}
@@ -445,7 +425,6 @@ namespace Sledge.Rendering.Engine
 		{
 			public Matrix4x4 Projection;
 			public Matrix4x4 View;
-			public IViewport RenderTarget;
 		}
 	}
 }
