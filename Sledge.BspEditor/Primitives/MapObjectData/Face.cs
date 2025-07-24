@@ -125,9 +125,15 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
 			}
 			return so;
 		}
-
+		/// <summary>
+		/// Projects relative value [0..1] onto surface world coordinates
+		/// </summary>
+		/// <param name="x">Horizontal value</param>
+		/// <param name="y">Vertical value</param>
+		/// <returns>World position of projected relative coordinates onto surface</returns>
 		public Vector3 ProjectedUVtoWorld(float x, float y)
 		{
+			//TODO: Move min/max uv calculations, so it wouldn't recalculate those values each pixel again
 			float minU = float.MaxValue, maxU = float.MinValue;
 			float minV = float.MaxValue, maxV = float.MinValue;
 
@@ -156,21 +162,11 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
 
 			return worldPos;
 		}
-
-		public virtual IEnumerable<Tuple<Vector3, float, float>> GetTextureCoordinates(int width, int height)
-		{
-			if (width <= 0 || height <= 0 || Texture.XScale == 0 || Texture.YScale == 0)
-			{
-				return Vertices.Select(x => Tuple.Create(x, 0f, 0f));
-			}
-
-			var udiv = width * Texture.XScale;
-			var uadd = Texture.XShift / width;
-			var vdiv = height * Texture.YScale;
-			var vadd = Texture.YShift / height;
-
-			return Vertices.Select(x => Tuple.Create(x, x.Dot(Texture.UAxis) / udiv + uadd, x.Dot(Texture.VAxis) / vdiv + vadd));
-		}
+		/// <summary>
+		/// Compute surface texture size with set PPU, from polygon size
+		/// </summary>
+		/// <param name="pixelsPerUnit">How much pixels per unit should texture include</param>
+		/// <returns>Size of surface texture</returns>
 		public Size GetTextureResolution(float pixelsPerUnit)
 		{
 			var normal = Plane.Normal;
@@ -206,6 +202,21 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
 			var height = (int)BitOperations.RoundUpToPowerOf2((uint)Math.Max(1, rawHeight));
 			var size = new Size(width, height);
 			return size;
+		}
+
+		public virtual IEnumerable<Tuple<Vector3, float, float>> GetTextureCoordinates(int width, int height)
+		{
+			if (width <= 0 || height <= 0 || Texture.XScale == 0 || Texture.YScale == 0)
+			{
+				return Vertices.Select(x => Tuple.Create(x, 0f, 0f));
+			}
+
+			var udiv = width * Texture.XScale;
+			var uadd = Texture.XShift / width;
+			var vdiv = height * Texture.YScale;
+			var vadd = Texture.YShift / height;
+
+			return Vertices.Select(x => Tuple.Create(x, x.Dot(Texture.UAxis) / udiv + uadd, x.Dot(Texture.VAxis) / vdiv + vadd));
 		}
 
 		public void Transform(Matrix4x4 matrix)
