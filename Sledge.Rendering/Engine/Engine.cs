@@ -52,7 +52,6 @@ namespace Sledge.Rendering.Engine
 		private readonly object _lock = new object();
 		private readonly List<IViewport> _renderTargets;
 		private readonly Dictionary<PipelineGroup, List<IPipeline>> _pipelines;
-		private readonly Dictionary<PipelineGroup, List<IPipeline>> _customPipeline;
 		private readonly CommandList _commandList;
 
 		private RgbaFloat _clearColourPerspective;
@@ -107,7 +106,6 @@ namespace Sledge.Rendering.Engine
 
 			_renderTargets = new List<IViewport>();
 			_pipelines = new Dictionary<PipelineGroup, List<IPipeline>>();
-			_customPipeline = new Dictionary<PipelineGroup, List<IPipeline>>();
 			Context = new RenderContext(Device);
 			Scene.Add(Context);
 #if DEBUG
@@ -177,8 +175,6 @@ namespace Sledge.Rendering.Engine
 		{
 			_pipelines.SelectMany(x => x.Value).ToList().ForEach(x => x.Dispose());
 			_pipelines.Clear();
-			_customPipeline.SelectMany(x => x.Value).ToList().ForEach(x => x.Dispose());
-			_customPipeline.Clear();
 
 			_renderTargets.ForEach(x => x.Dispose());
 			_renderTargets.Clear();
@@ -296,18 +292,6 @@ namespace Sledge.Rendering.Engine
 		private void Render(IViewport renderTarget)
 		{
 			_commandList.Begin();
-			if (IsShadowsEnabled && false)
-			{
-				foreach (var group in _customPipeline)
-				{
-					foreach (var pipeline in group.Value)
-					{
-						pipeline.SetupFrame(Context, _cameraBuffer);
-						pipeline.Render(Context, renderTarget, _commandList, Scene.GetRenderables(pipeline, renderTarget));
-					}
-				}
-			}
-
 			_commandList.SetFramebuffer(renderTarget.ViewportFramebuffer);
 			_commandList.ClearDepthStencil(1);
 
