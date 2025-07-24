@@ -23,13 +23,6 @@ namespace Sledge.BspEditor.Rendering.Converters
 	public class DefaultSolidConverter : IMapObjectSceneConverter
 	{
 		public MapObjectSceneConverterPriority Priority => MapObjectSceneConverterPriority.DefaultLowest;
-		private static List<string> _shadowTextureIgnore = new List<string>
-		{
-			"sky",
-			"clip",
-			"origin",
-			"aaatrigger"
-		};
 
 		public bool ShouldStopProcessing(MapDocument document, IMapObject obj)
 		{
@@ -247,18 +240,16 @@ namespace Sledge.BspEditor.Rendering.Converters
 			   );
 
 				groups.Add(group);
-				if (!_shadowTextureIgnore.Contains(f.Texture.Name.ToLower()))
-				{
-					if (f.Uv1 != null)
-					{
-						group = new BufferGroup(
-		PipelineType.ShadowOverlay,
-		CameraType.Perspective, false, f.Origin, f.LightMap.GetHashCode().ToString(), texOffset, texInd
-		);
-						shadowGroups.Add(group);
-					}
 
+				if (f.Uv1 != null)
+				{
+					group = new BufferGroup(
+						PipelineType.ShadowOverlay,
+						CameraType.Perspective, false, f.Origin, f.LightMap.GetHashCode().ToString(), texOffset, texInd
+						);
+					shadowGroups.Add(group);
 				}
+
 				texOffset += texInd;
 
 				if (t != null) resourceCollector.RequireTexture(t.Name);
