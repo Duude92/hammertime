@@ -241,17 +241,6 @@ namespace Sledge.BspEditor.Rendering.Converters
 				var texture = t == null ? string.Empty : $"{document.Environment.ID}::{f.Texture.Name}";
 				BufferGroup group;
 
-				//				if (f.Texture.Name.ToLower() == "sky")
-				//				{
-				//					group = new BufferGroup(
-				//	PipelineType.ShadowDepth,
-				//   CameraType.Perspective, true, f.Origin, texture, texOffset, texInd
-				//);
-				//					flags |= VertexFlags.FlatColour;
-				//					points = points.Select(x => { x.Tint = new Vector4(1, 1, 1, 0.5f); return x; }).ToArray();
-				//				}
-				//				else
-
 				group = new BufferGroup(
 				   pipeline == PipelineType.TexturedOpaque && transparent ? PipelineType.TexturedAlpha : pipeline,
 				   CameraType.Perspective, transparent, f.Origin, texture, texOffset, texInd
@@ -260,11 +249,6 @@ namespace Sledge.BspEditor.Rendering.Converters
 				groups.Add(group);
 				if (!_shadowTextureIgnore.Contains(f.Texture.Name.ToLower()))
 				{
-					group = new BufferGroup(
-						PipelineType.ShadowDepth,
-						CameraType.Perspective, false, f.Origin, texture, texOffset, texInd
-						);
-					groups.Add(group);
 					if (f.Uv1 != null)
 					{
 						group = new BufferGroup(
