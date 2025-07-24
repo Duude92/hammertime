@@ -15,8 +15,6 @@
         WireframeModel,
         TexturedModel,
 
-        ShadowDepth,
-        Shadowmap,
         ShadowOverlay,
 
         Overlay,

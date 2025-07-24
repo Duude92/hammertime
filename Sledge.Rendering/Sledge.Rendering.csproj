@@ -164,8 +164,6 @@
     <EmbeddedResource Include="Shaders\ShadowOverlay.vert.hlsl" />
     <EmbeddedResource Include="Shaders\Skybox.frag.hlsl" />
     <EmbeddedResource Include="Shaders\Skybox.vert.hlsl" />
-    <EmbeddedResource Include="Shaders\SwapchainShadowOverlay.frag.hlsl" />
-    <EmbeddedResource Include="Shaders\SwapchainShadowOverlay.vert.hlsl" />
     <EmbeddedResource Include="Shaders\SwapchainOverlay.frag.hlsl" />
     <EmbeddedResource Include="Shaders\SwapchainOverlay.vert.hlsl" />
     <EmbeddedResource Include="Shaders\Wireframe.frag.hlsl" />
