@@ -63,6 +63,7 @@ namespace Sledge.Rendering.Pipelines
 
 		public void SetupFrame(RenderContext context, Engine.Engine.ViewProjectionBuffer viewProjectionBuffer)
 		{
+			// TODO: Same viewProjectionBuffer and setup it for rendering
 			// 
 		}
 
