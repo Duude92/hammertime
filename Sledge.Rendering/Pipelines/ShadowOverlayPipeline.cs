@@ -38,10 +38,8 @@ namespace Sledge.Rendering.Pipelines
 		private ResourceSet _lightProjectionSet;
 		private DeviceBuffer _lightDirection;
 
-		public ShadowOverlayPipeline(Func<Resources.Texture> bindingGetter, Func<TextureView> viewGetter, Engine.Engine.ViewProjectionBuffer lightData)
+		public ShadowOverlayPipeline(Engine.Engine.ViewProjectionBuffer lightData)
 		{
-			_shadowmapGetter = bindingGetter;
-			_viewGetter = viewGetter;
 			_lightData = lightData;
 		}
 
@@ -108,27 +106,6 @@ new BufferDescription((uint)Unsafe.SizeOf<Matrix4x4>(), BufferUsage.UniformBuffe
 				new ResourceSetDescription(context.ResourceLoader.ProjectionLayout, _lightDirection)
 			);
 
-
-
-			//            var factory = context.Device.ResourceFactory;
-			//			TextureDescription desc = TextureDescription.Texture2D(2048, 2048, 1, 1, PixelFormat.R32_Float, TextureUsage.DepthStencil | TextureUsage.Sampled);
-
-			//			NearShadowMap = factory.CreateTexture(desc);
-
-			//			NearShadowMap.Name = "Near Shadow Map";
-			//			NearShadowMapView = factory.CreateTextureView(NearShadowMap);
-			//			NearShadowMapFramebuffer = factory.CreateFramebuffer(new FramebufferDescription(
-			//				new FramebufferAttachmentDescription(NearShadowMap, 0), Array.Empty<FramebufferAttachmentDescription>() /*new FramebufferAttachmentDescription[] { new FramebufferAttachmentDescription(ColorShadowMap,1) }*/   ));
-			//			NearShadowMapFramebuffer.Name = "near shadowmap";
-
-			//			_textureSet = factory.CreateResourceSet(new ResourceSetDescription(
-			//	context.ResourceLoader.TextureLayout, NearShadowMapView, context.ResourceLoader.TextureSampler
-			//));
-
-			//			NearShadowResourceTexture = new Resources.Texture(context, NearShadowMap, Resources.TextureSampleType.Standard, _textureSet);
-			//			NearShadowResourceTexture.GenerateMips = false;
-
-
 			_pipeline = context.Device.ResourceFactory.CreateGraphicsPipeline(ref pDesc);
 			_pipeline.Name = "Shadow Overlay Pipeline";
 
@@ -160,7 +137,6 @@ new BufferDescription((uint)Unsafe.SizeOf<Matrix4x4>(), BufferUsage.UniformBuffe
 
 			cl.SetPipeline(_pipeline);
 			cl.SetGraphicsResourceSet(0, _projectionResourceSet);
-			_shadowmapGetter().BindTo(cl, 1);
 
 			cl.SetGraphicsResourceSet(2, _lightDirectionSet);
 			cl.SetGraphicsResourceSet(3, _lightProjectionSet);
@@ -176,11 +152,9 @@ new BufferDescription((uint)Unsafe.SizeOf<Matrix4x4>(), BufferUsage.UniformBuffe
 			if (target.Camera is not PerspectiveCamera) return;
 			cl.SetPipeline(_pipeline);
 			cl.SetGraphicsResourceSet(0, _projectionResourceSet);
-			//_shadowmapGetter().BindTo(cl, 1);
 
 			cl.SetGraphicsResourceSet(2, _lightDirectionSet);
 			cl.SetGraphicsResourceSet(3, _lightProjectionSet);
-
 
 			renderable.Render(context, this, target, cl, locationObject);
 		}
