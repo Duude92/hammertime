@@ -40,6 +40,7 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 		CreateHandle();
 
 		InitializeComponent();
+		progressBar1.Visible = false;
 	}
 
 	private void SetDocument(IDocument document)
@@ -55,6 +56,8 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 
 	private async void BakeButton_Click(object sender, System.EventArgs e)
 	{
+		progressBar1.Value = 0;
+		progressBar1.Visible = true;
 		_document.TryGetTarget(out var doc);
 
 		var solids = doc.Map.Root.Collect(x => true, x => x.Hierarchy.Parent != null && !x.Hierarchy.HasChildren && x is Solid solid && solid.Faces.Count() != solid.Faces.Where(face => face.Texture.Name.ToLower().Equals("sky", StringComparison.InvariantCulture)).Count()).OfType<Solid>();
@@ -88,7 +91,9 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 		BVHAbstract.GroupId = 0;
 		bvhRoot.GetLeafs((int)nestLevel, 0, solidChunks);
 		var facesChunks = solidChunks.Select(chunk => chunk.SelectMany(x => x.Faces).Where(x => !x.Texture.Name.ToLower().Equals("sky", StringComparison.InvariantCulture)).ToList());
-
+		progressBar1.Maximum = facesChunks.Select(facesChunk => facesChunk.Count()).Aggregate(0, (cur, next) => cur += next);
+		progressBar1.Step = 1;
+		progressBar1.Minimum = 0;
 		await Parallel.ForEachAsync(facesChunks, async (faceChunk,_) =>
 		{
 			var chunkData = new List<(uint, uint, float[])>();
@@ -184,6 +189,7 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 				}
 
 				chunkData.Add((width, height, data));
+				UpdateProgress();
 			}
 			var textureSize = BitOperations.RoundUpToPowerOf2((uint)MathF.Ceiling(MathF.Sqrt(chunkData.Count)));
 			List<PackingRectangle> rectangles = new();
@@ -256,6 +262,19 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 		}));
 		await MapDocumentOperation.Perform(doc, tr);
 	}
+	// In your Form class:
+	private void UpdateProgress()
+	{
+		if (progressBar1.InvokeRequired)
+		{
+			progressBar1.Invoke(() => progressBar1.PerformStep());
+		}
+		else
+		{
+			progressBar1.PerformStep();
+		}
+	}
+
 	private async Task<(bool, BVHAbstract)> TraverseBVH(BVHAbstract bvhNode, Line line, Face solidToIgnore = null)
 	{
 		if (bvhNode.Bounds == null)
