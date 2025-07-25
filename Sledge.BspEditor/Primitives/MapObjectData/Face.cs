@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Sledge.BspEditor.Primitives.MapObjects;
+using Sledge.Common.Transport;
+using Sledge.DataStructures.Geometric;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
@@ -6,10 +9,8 @@ using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.Serialization;
-using Sledge.BspEditor.Primitives.MapObjects;
-using Sledge.Common.Transport;
-using Sledge.DataStructures.Geometric;
 using Vortice.Mathematics;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using Plane = Sledge.DataStructures.Geometric.Plane;
 
 namespace Sledge.BspEditor.Primitives.MapObjectData
@@ -131,27 +132,8 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
 		/// <param name="x">Horizontal value</param>
 		/// <param name="y">Vertical value</param>
 		/// <returns>World position of projected relative coordinates onto surface</returns>
-		public Vector3 ProjectedUVtoWorld(float x, float y)
+		public Vector3 ProjectedUVtoWorld(float uWorld, float vWorld)
 		{
-			//TODO: Move min/max uv calculations, so it wouldn't recalculate those values each pixel again
-			float minU = float.MaxValue, maxU = float.MinValue;
-			float minV = float.MaxValue, maxV = float.MinValue;
-
-			foreach (var vertex in Vertices)
-			{
-				Vector3 local = vertex - Vertices[0];
-
-				float u = Vector3.Dot(local, Texture.UAxis) / Texture.YScale;
-				float v = Vector3.Dot(local, Texture.VAxis) / Texture.XScale;
-
-				minU = MathF.Min(minU, u);
-				maxU = MathF.Max(maxU, u);
-				minV = MathF.Min(minV, v);
-				maxV = MathF.Max(maxV, v);
-			}
-
-			float uWorld = MathHelper.Lerp(minU, maxU, y);
-			float vWorld = MathHelper.Lerp(minV, maxV, x);
 
 			Vector3 worldPos = Vertices[0]
 							 + Texture.UAxis * uWorld * Texture.YScale

@@ -12,6 +12,7 @@ using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Documents;
 using Sledge.Common.Shell.Hooks;
 using Sledge.DataStructures.Geometric;
+using Sledge.Formats.Bsp.Lumps;
 using Sledge.Rendering.Engine;
 using System;
 using System.Collections.Concurrent;
@@ -22,6 +23,7 @@ using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Vortice.Mathematics;
 
 namespace Sledge.BspEditor.Tools.ShadowBake;
 [Export(typeof(ISidebarComponent))]
@@ -129,6 +131,23 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 				var lines = new Line[width * height];
 				var data = new float[width * height];
 
+				//TODO: Move min/max uv calculations, so it wouldn't recalculate those values each pixel again
+				minU = float.MaxValue; maxU = float.MinValue;
+				minV = float.MaxValue; maxV = float.MinValue;
+
+				foreach (var vertex in face.Vertices)
+				{
+					Vector3 local = vertex - face.Vertices[0];
+
+					float u = Vector3.Dot(local, face.Texture.UAxis) / face.Texture.YScale;
+					float v = Vector3.Dot(local, face.Texture.VAxis) / face.Texture.XScale;
+
+					minU = MathF.Min(minU, u);
+					maxU = MathF.Max(maxU, u);
+					minV = MathF.Min(minV, v);
+					maxV = MathF.Max(maxV, v);
+				}
+
 				for (var x = 0; x < width; x++)
 				{
 					for (var y = 0; y < height; y++)
@@ -136,7 +155,13 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 						w = (int)(y * width + x);
 						data[w] = 1f;
 
-						var projection = face.ProjectedUVtoWorld((float)y / height, (float)x / width);
+						float relY = (float)y / height;
+						float relX= (float)x / width;
+						float uWorld = MathHelper.Lerp(minU, maxU, relX);
+						float vWorld = MathHelper.Lerp(minV, maxV, relY);
+
+
+						var projection = face.ProjectedUVtoWorld(uWorld, vWorld);
 						lines[w] = new Line(projection, projection - maxLightDistance);
 					}
 				}
@@ -267,7 +292,6 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 			progressBar1.Visible = false;
 		}))();
 	}
-	// In your Form class:
 	private void UpdateProgress()
 	{
 		if (progressBar1.InvokeRequired)
