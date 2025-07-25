@@ -84,6 +84,10 @@ namespace Sledge.BspEditor.Environment.Goldsource
 			lblBuildRAD = new System.Windows.Forms.Label();
 			btnBuildToolsBrowse = new System.Windows.Forms.Button();
 			grpTextures = new System.Windows.Forms.GroupBox();
+			nonRendTextBox = new System.Windows.Forms.TextBox();
+			label1 = new System.Windows.Forms.Label();
+			cordonTextureText = new System.Windows.Forms.TextBox();
+			cordonDefaultTextureLabel = new System.Windows.Forms.Label();
 			FilterBox = new System.Windows.Forms.TextBox();
 			lstAdditionalTextures = new System.Windows.Forms.ListView();
 			colWadName = new System.Windows.Forms.ColumnHeader();
@@ -94,8 +98,6 @@ namespace Sledge.BspEditor.Environment.Goldsource
 			lblTexturePackageExclusions = new System.Windows.Forms.Label();
 			cklTexturePackages = new System.Windows.Forms.CheckedListBox();
 			chkToggleAllTextures = new System.Windows.Forms.CheckBox();
-			cordonDefaultTextureLabel = new System.Windows.Forms.Label();
-			cordonTextureText = new System.Windows.Forms.TextBox();
 			((System.ComponentModel.ISupportInitialize)nudDefaultTextureScale).BeginInit();
 			grpDirectories.SuspendLayout();
 			grpFgds.SuspendLayout();
@@ -719,6 +721,8 @@ namespace Sledge.BspEditor.Environment.Goldsource
 			// 
 			// grpTextures
 			// 
+			grpTextures.Controls.Add(nonRendTextBox);
+			grpTextures.Controls.Add(label1);
 			grpTextures.Controls.Add(cordonTextureText);
 			grpTextures.Controls.Add(cordonDefaultTextureLabel);
 			grpTextures.Controls.Add(FilterBox);
@@ -735,10 +739,47 @@ namespace Sledge.BspEditor.Environment.Goldsource
 			grpTextures.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
 			grpTextures.Name = "grpTextures";
 			grpTextures.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-			grpTextures.Size = new System.Drawing.Size(536, 505);
+			grpTextures.Size = new System.Drawing.Size(536, 535);
 			grpTextures.TabIndex = 49;
 			grpTextures.TabStop = false;
 			grpTextures.Text = "Textures";
+			// 
+			// nonRendTextBox
+			// 
+			nonRendTextBox.Location = new System.Drawing.Point(191, 499);
+			nonRendTextBox.Name = "nonRendTextBox";
+			nonRendTextBox.Size = new System.Drawing.Size(336, 23);
+			nonRendTextBox.TabIndex = 50;
+			nonRendTextBox.TextChanged += nonRendTextBox_TextChanged;
+			// 
+			// label1
+			// 
+			label1.AutoSize = true;
+			label1.Location = new System.Drawing.Point(14, 499);
+			label1.Name = "label1";
+			label1.Size = new System.Drawing.Size(139, 15);
+			label1.TabIndex = 49;
+			label1.Text = "Non-renderable textures:";
+			// 
+			// cordonTextureText
+			// 
+			cordonTextureText.Location = new System.Drawing.Point(191, 465);
+			cordonTextureText.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			cordonTextureText.Name = "cordonTextureText";
+			cordonTextureText.Size = new System.Drawing.Size(116, 23);
+			cordonTextureText.TabIndex = 48;
+			cordonTextureText.TextChanged += cordonTextureText_TextChanged;
+			// 
+			// cordonDefaultTextureLabel
+			// 
+			cordonDefaultTextureLabel.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			cordonDefaultTextureLabel.Location = new System.Drawing.Point(14, 465);
+			cordonDefaultTextureLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			cordonDefaultTextureLabel.Name = "cordonDefaultTextureLabel";
+			cordonDefaultTextureLabel.Size = new System.Drawing.Size(366, 23);
+			cordonDefaultTextureLabel.TabIndex = 47;
+			cordonDefaultTextureLabel.Text = "Cordon tool wrap texture:";
+			cordonDefaultTextureLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// FilterBox
 			// 
@@ -839,26 +880,6 @@ namespace Sledge.BspEditor.Environment.Goldsource
 			chkToggleAllTextures.UseVisualStyleBackColor = true;
 			chkToggleAllTextures.CheckedChanged += ToggleAllTextures;
 			// 
-			// cordonDefaultTextureLabel
-			// 
-			cordonDefaultTextureLabel.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			cordonDefaultTextureLabel.Location = new System.Drawing.Point(14, 465);
-			cordonDefaultTextureLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-			cordonDefaultTextureLabel.Name = "cordonDefaultTextureLabel";
-			cordonDefaultTextureLabel.Size = new System.Drawing.Size(366, 23);
-			cordonDefaultTextureLabel.TabIndex = 47;
-			cordonDefaultTextureLabel.Text = "Cordon tool wrap texture:";
-			cordonDefaultTextureLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// cordonTextureText
-			// 
-			cordonTextureText.Location = new System.Drawing.Point(191, 465);
-			cordonTextureText.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-			cordonTextureText.Name = "cordonTextureText";
-			cordonTextureText.Size = new System.Drawing.Size(116, 23);
-			cordonTextureText.TabIndex = 48;
-			cordonTextureText.TextChanged += cordonTextureText_TextChanged;
-			// 
 			// GoldsourceEnvironmentEditor
 			// 
 			AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -869,7 +890,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
 			Controls.Add(grpDirectories);
 			Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
 			Name = "GoldsourceEnvironmentEditor";
-			Size = new System.Drawing.Size(551, 1439);
+			Size = new System.Drawing.Size(551, 1478);
 			((System.ComponentModel.ISupportInitialize)nudDefaultTextureScale).EndInit();
 			grpDirectories.ResumeLayout(false);
 			grpDirectories.PerformLayout();
@@ -951,5 +972,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
 		private GridUpDown gridUpDown;
 		private System.Windows.Forms.TextBox cordonTextureText;
 		private System.Windows.Forms.Label cordonDefaultTextureLabel;
+		private System.Windows.Forms.TextBox nonRendTextBox;
+		private System.Windows.Forms.Label label1;
 	}
 }
