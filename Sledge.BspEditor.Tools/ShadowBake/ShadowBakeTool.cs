@@ -62,7 +62,8 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 		progressBar1.Visible = true;
 		_document.TryGetTarget(out var doc);
 
-		var solids = doc.Map.Root.Collect(x => true, x => x.Hierarchy.Parent != null && !x.Hierarchy.HasChildren && x is Solid solid && solid.Faces.Count() != solid.Faces.Where(face => face.Texture.Name.ToLower().Equals("sky", StringComparison.InvariantCulture)).Count()).OfType<Solid>();
+		var nonRenderableTextures = doc.Environment.NonRenderableTextures;
+		var solids = doc.Map.Root.Collect(x => true, x => x.Hierarchy.Parent != null && !x.Hierarchy.HasChildren && x is Solid solid && solid.Faces.Count() != solid.Faces.Where(face => nonRenderableTextures.Contains(face.Texture.Name.ToLower())).Count()).OfType<Solid>();
 
 		var lightVectorRotation = Engine.Interface.GetLightAnglesRadians();
 
