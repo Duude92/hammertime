@@ -23,6 +23,7 @@ namespace Sledge.Rendering.Pipelines
 		private DeviceBuffer _projectionBuffer;
 		private ResourceSet _projectionResourceSet;
 		private ResourceLayout _transformsLayout;
+		private Engine.Engine.ViewProjectionBuffer _lastProjectionBuffer;
 
 		public void Create(RenderContext context, TextureSampleCount sampleCount)
 		{
@@ -63,8 +64,7 @@ namespace Sledge.Rendering.Pipelines
 
 		public void SetupFrame(RenderContext context, Engine.Engine.ViewProjectionBuffer viewProjectionBuffer)
 		{
-			// TODO: Same viewProjectionBuffer and setup it for rendering
-			// 
+			_lastProjectionBuffer = viewProjectionBuffer;
 		}
 
 		public void Render(RenderContext context, IViewport target, CommandList cl, IEnumerable<IRenderable> renderables)
@@ -78,8 +78,8 @@ namespace Sledge.Rendering.Pipelines
 				{
 					Selective = r.Flags.HasFlag(VertexFlags.SelectiveTransformed) ? context.SelectiveTransform : Matrix4x4.Identity,
 					Model = r.GetModelTransformation(),
-					View = target.Camera.View,
-					Projection = target.Camera.Projection,
+					View = _lastProjectionBuffer.View,
+					Projection = _lastProjectionBuffer.Projection,
 				});
 
 				r.Render(context, this, target, cl);
@@ -97,8 +97,8 @@ namespace Sledge.Rendering.Pipelines
 				{
 					Selective = context.SelectiveTransform,
 					Model = r.GetModelTransformation(),
-					View = target.Camera.View,
-					Projection = target.Camera.Projection,
+					View = _lastProjectionBuffer.View,
+					Projection = _lastProjectionBuffer.Projection,
 				});
 			}
 
