@@ -99,6 +99,9 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 		await Parallel.ForEachAsync(facesChunks, async (faceChunk, _) =>
 		{
 			var chunkData = new List<(uint, uint, float[])>();
+			var chunkDataId = 0;
+			List<PackingRectangle> rectangles = new();
+
 			foreach (var face in faceChunk)
 			{
 				var texFile = texturesCollection.FirstOrDefault(t => t.Name.ToLower().Equals(face.Texture.Name.ToLower()));
@@ -214,25 +217,22 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 				}
 
 				chunkData.Add((width, height, data));
-				UpdateProgress();
-			}
-			var textureSize = BitOperations.RoundUpToPowerOf2((uint)MathF.Ceiling(MathF.Sqrt(chunkData.Count)));
-			List<PackingRectangle> rectangles = new();
-			var chunkDataId = 0;
-			foreach (var data in chunkData)
-			{
 				var rect = new PackingRectangle
 				{
 					X = 0,
 					Y = 0,
-					Width = data.Item1,
-					Height = data.Item2,
+					Width = width,
+					Height = height,
 					Id = chunkDataId
 				};
 				rectangles.Add(rect);
+
 				chunkDataId++;
+				UpdateProgress();
 			}
+
 			var rects = rectangles.ToArray();
+
 			RectanglePacker.Pack(rects, out PackingRectangle bounds);
 			var boundsSize = BitOperations.RoundUpToPowerOf2((uint)MathF.Max(bounds.Width, bounds.Height));
 
@@ -255,16 +255,16 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 					}
 				}
 			}
-			var resource1 = Engine.Interface.CreateDepthTexture(boundsSize, boundsSize);
+			var resource = Engine.Interface.CreateDepthTexture(boundsSize, boundsSize);
 
 
-			IntPtr dest1 = resource1.MappedResource.MappedResource.Data;
-			Marshal.Copy(packedData, 0, dest1, packedData.Length);
+			IntPtr dest = resource.MappedResource.MappedResource.Data;
+			Marshal.Copy(packedData, 0, dest, packedData.Length);
 			for (int i = 0; i < chunkData.Count; i++)
 			{
 				var rect = rects[i];
 
-				faceChunk[rect.Id].LightMap = resource1.Texture;
+				faceChunk[rect.Id].LightMap = resource.Texture;
 				for (int k = 0; k < faceChunk[rect.Id].Uv1.Length; k++)
 				{
 					faceChunk[rect.Id].Uv1[k] = new Vector2(
@@ -273,7 +273,7 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 					);
 				}
 			}
-			resources.Push(resource1);
+			resources.Push(resource);
 
 		}
 		);
@@ -283,7 +283,7 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 		var tr = new Transaction();
 		tr.Add(new TrivialOperation(x => { }, x =>
 		{
-			x.UpdateRange(x.Document.Map.Root.Find(s => s is Solid));
+			x.UpdateRange(solids);
 		}));
 		await MapDocumentOperation.Perform(doc, tr);
 		await ((Func<Task>)(async () =>
