@@ -63,11 +63,6 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 		_document.TryGetTarget(out var doc);
 
 		var solids = doc.Map.Root.Collect(x => true, x => x.Hierarchy.Parent != null && !x.Hierarchy.HasChildren && x is Solid solid && solid.Faces.Count() != solid.Faces.Where(face => face.Texture.Name.ToLower().Equals("sky", StringComparison.InvariantCulture)).Count()).OfType<Solid>();
-		var textureCollection = await doc.Environment.GetTextureCollection();
-		var textures = solids.SelectMany(x => x.Faces).Select(f => f.Texture).DistinctBy(t => t.Name).ToList();
-
-
-		var texturesCollection = await textureCollection.GetTextureItems(textures.Select(x => x.Name));
 
 		var lightVectorRotation = Engine.Interface.GetLightAnglesRadians();
 
@@ -104,7 +99,6 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 
 			foreach (var face in faceChunk)
 			{
-				var texFile = texturesCollection.FirstOrDefault(t => t.Name.ToLower().Equals(face.Texture.Name.ToLower()));
 
 				uint width, height;
 
