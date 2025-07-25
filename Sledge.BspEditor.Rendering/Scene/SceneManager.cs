@@ -92,7 +92,7 @@ namespace Sledge.BspEditor.Rendering.Scene
 
 		private async Task UpdateEnvironmentLight()
 		{
-			_activeDocument.TryGetTarget(out var md);
+			if (!_activeDocument.TryGetTarget(out var md)) return;
 			var light = md.Map.Root.Hierarchy.OfType<Entity>().FirstOrDefault(Entity => Entity.EntityData.Name == "light_environment");
 			if (light != null)
 			{
