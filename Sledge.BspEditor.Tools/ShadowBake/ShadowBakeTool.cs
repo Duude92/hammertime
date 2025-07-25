@@ -94,7 +94,7 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 		progressBar1.Maximum = facesChunks.Select(facesChunk => facesChunk.Count()).Aggregate(0, (cur, next) => cur += next);
 		progressBar1.Step = 1;
 		progressBar1.Minimum = 0;
-		await Parallel.ForEachAsync(facesChunks, async (faceChunk,_) =>
+		await Parallel.ForEachAsync(facesChunks, async (faceChunk, _) =>
 		{
 			var chunkData = new List<(uint, uint, float[])>();
 			foreach (var face in faceChunk)
@@ -261,6 +261,11 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 			x.UpdateRange(x.Document.Map.Root.Find(s => s is Solid));
 		}));
 		await MapDocumentOperation.Perform(doc, tr);
+		await ((Func<Task>)(async () =>
+		{
+			await Task.Delay(1000);
+			progressBar1.Visible = false;
+		}))();
 	}
 	// In your Form class:
 	private void UpdateProgress()
