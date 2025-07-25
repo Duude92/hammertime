@@ -78,7 +78,6 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 		lightDirection.Z *= -1;
 
 		var resources = new ConcurrentStack<EngineInterface.DepthResource>();
-		var i = 0;
 		var rand = new Random(DateTime.Now.Millisecond);
 		var bvhRoot = new BVH.BVHNode.BVHBuilder().BuildBVHIterative(solids.ToList());
 
@@ -183,7 +182,6 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 						}
 					}
 				}
-				i++;
 
 				chunkData.Add((width, height, data));
 			}

@@ -23,49 +23,60 @@ partial class ShadowBakeTool
         base.Dispose(disposing);
     }
 
-    #region Windows Form Designer generated code
+	#region Windows Form Designer generated code
 
-    /// <summary>
-    /// Required method for Designer support - do not modify
-    /// the contents of this method with the code editor.
-    /// </summary>
-    private void InitializeComponent()
-    {
-        label1 = new System.Windows.Forms.Label();
-        bakeButton = new System.Windows.Forms.Button();
-        SuspendLayout();
-        // 
-        // label1
-        // 
-        label1.Location = new System.Drawing.Point(19, 8);
-        label1.Name = "label1";
-        label1.Size = new System.Drawing.Size(151, 23);
-        label1.TabIndex = 0;
-        label1.Text = "label1";
-        // 
-        // button1
-        // 
-        bakeButton.Location = new System.Drawing.Point(19, 34);
-        bakeButton.Name = "button1";
-        bakeButton.Size = new System.Drawing.Size(75, 23);
-        bakeButton.TabIndex = 1;
-        bakeButton.Text = "button1";
-        bakeButton.UseVisualStyleBackColor = true;
+	/// <summary>
+	/// Required method for Designer support - do not modify
+	/// the contents of this method with the code editor.
+	/// </summary>
+	private void InitializeComponent()
+	{
+		bakeButton = new System.Windows.Forms.Button();
+		progressBar1 = new System.Windows.Forms.ProgressBar();
+		label1 = new System.Windows.Forms.Label();
+		SuspendLayout();
+		// 
+		// bakeButton
+		// 
+		bakeButton.Location = new System.Drawing.Point(3, 44);
+		bakeButton.Name = "bakeButton";
+		bakeButton.Size = new System.Drawing.Size(75, 23);
+		bakeButton.TabIndex = 1;
+		bakeButton.Text = "Bake";
+		bakeButton.UseVisualStyleBackColor = true;
 		bakeButton.Click += BakeButton_Click;
-        // 
-        // ShadowBakeTool
-        // 
-        AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-        AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-        ClientSize = new System.Drawing.Size(800, 450);
-        Controls.Add(bakeButton);
-        Controls.Add(label1);
-        Text = "ShadowBakeTool";
-        ResumeLayout(false);
-    }
+		// 
+		// progressBar1
+		// 
+		progressBar1.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+		progressBar1.Location = new System.Drawing.Point(3, 105);
+		progressBar1.Name = "progressBar1";
+		progressBar1.Size = new System.Drawing.Size(133, 23);
+		progressBar1.TabIndex = 2;
+		// 
+		// label1
+		// 
+		label1.Location = new System.Drawing.Point(3, 18);
+		label1.Name = "label1";
+		label1.Size = new System.Drawing.Size(133, 23);
+		label1.TabIndex = 0;
+		label1.Text = "Shadows settings";
+		// 
+		// ShadowBakeTool
+		// 
+		AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+		AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+		Controls.Add(progressBar1);
+		Controls.Add(bakeButton);
+		Controls.Add(label1);
+		Name = "ShadowBakeTool";
+		Size = new System.Drawing.Size(139, 131);
+		ResumeLayout(false);
+	}
+	private System.Windows.Forms.Button bakeButton;
 
+	#endregion
+
+	private System.Windows.Forms.ProgressBar progressBar1;
 	private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.Button bakeButton;
-
-    #endregion
 }
