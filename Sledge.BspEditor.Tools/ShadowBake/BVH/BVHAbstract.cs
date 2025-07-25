@@ -10,30 +10,38 @@ namespace Sledge.BspEditor.Tools.ShadowBake.BVH
 		public Box Bounds;
 		public static int GroupId = 0;
 
-		public void GetLeafs(int nestLevel, int group, List<List<Solid>>solids)
+		public void GetLeafs(List<List<Solid>> groups, int maxDepth, int currentDepth = 0)
 		{
 			if (this is BVHLeaf leaf)
 			{
-				solids[group].Add(leaf.Solid);
+				if (groups.Count == 0)
+					groups.Add(new List<Solid>());
+				groups[^1].Add(leaf.Solid);
 			}
-			if(this is BVHNode node)
+			else if (this is BVHNode node)
 			{
-				if(nestLevel!=0)
+				if (currentDepth >= maxDepth)
 				{
-					node.Left.GetLeafs(nestLevel - 1, group, solids);
-					node.Right.GetLeafs(nestLevel - 1, group, solids);
+					var group = new List<Solid>();
+					node.CollectAllLeafs(group);
+					groups.Add(group);
 				}
-				if(nestLevel == 0)
+				else
 				{
-					solids.Add(new List<Solid>());
-					solids.Add(new List<Solid>());
-
-					node.Left.GetLeafs(nestLevel - 1, GroupId, solids);
-					node.Right.GetLeafs(nestLevel - 1, ++GroupId, solids);
-					GroupId++;
+					node.Left.GetLeafs(groups, maxDepth, currentDepth + 1);
+					node.Right.GetLeafs(groups, maxDepth, currentDepth + 1);
 				}
 			}
-
+		}
+		private void CollectAllLeafs(List<Solid> solids)
+		{
+			if (this is BVHLeaf leaf)
+				solids.Add(leaf.Solid);
+			else if (this is BVHNode node)
+			{
+				node.Left.CollectAllLeafs(solids);
+				node.Right.CollectAllLeafs(solids);
+			}
 		}
 	}
 }

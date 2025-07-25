@@ -87,7 +87,7 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 		var nestLevel = MathF.Ceiling(MathF.Sqrt(chunkCount));
 		var solidChunks = new List<List<Solid>>();
 		BVHAbstract.GroupId = 0;
-		bvhRoot.GetLeafs((int)nestLevel, 0, solidChunks);
+		bvhRoot.GetLeafs(solidChunks, (int)nestLevel, 0);
 		var facesChunks = solidChunks.Select(chunk => chunk.SelectMany(x => x.Faces).Where(x => !x.Texture.Name.ToLower().Equals("sky", StringComparison.InvariantCulture)).ToList());
 		progressBar1.Maximum = facesChunks.Select(facesChunk => facesChunk.Count()).Aggregate(0, (cur, next) => cur += next);
 		progressBar1.Step = 1;
