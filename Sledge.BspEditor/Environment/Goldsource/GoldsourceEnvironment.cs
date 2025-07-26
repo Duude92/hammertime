@@ -76,6 +76,9 @@ namespace Sledge.BspEditor.Environment.Goldsource
 		public bool MapCopyRes { get; set; }
 		public string CordonTexture { get; set; }
 
+		public string[] NonRenderableTextures { get; set; }
+
+
 		public List<string> ExcludedWads { get; set; }
 		public List<string> IncludedWads
 		{
@@ -142,6 +145,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
 				yield return Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
 			}
 		}
+
 
 		public GoldsourceEnvironment()
 		{

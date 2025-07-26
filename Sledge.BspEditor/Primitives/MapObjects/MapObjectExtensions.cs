@@ -268,7 +268,6 @@ namespace Sledge.BspEditor.Primitives.MapObjects
 		/// <returns>A list of child objects with their corresponding intersection points</returns>
 		public static IEnumerable<MapObjectIntersection> GetIntersectionsForVisibleObjects(this IMapObject obj, Line line, IgnoreOptions ignoreOptions = IgnoreOptions.None)
 		{
-			var a = obj.GetBoudingBoxIntersectionsForVisibleObjects(line);
 			return obj.GetBoudingBoxIntersectionsForVisibleObjects(line)
 				// Get the intersection points
 				.Select(x => new { Item = x, Intersection = x.GetIntersectionPoint(line, ignoreOptions) })

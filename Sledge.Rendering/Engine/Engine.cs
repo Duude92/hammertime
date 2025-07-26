@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Numerics;
 using System.Threading;
 using System.Windows.Forms;
 using SharpDX.Direct3D;
@@ -11,7 +12,6 @@ using Sledge.Rendering.Pipelines;
 using Sledge.Rendering.Renderables;
 using Sledge.Rendering.Viewports;
 using Veldrid;
-using Vulkan;
 
 namespace Sledge.Rendering.Engine
 {
@@ -23,6 +23,8 @@ namespace Sledge.Rendering.Engine
 		public GraphicsDevice Device { get; }
 		public Thread RenderThread { get; private set; }
 		public Scene Scene { get; }
+		internal bool IsShadowsEnabled { get; set; } = false;
+		internal Vector3 LightAngle { get; set; } = Vector3.Zero;
 		internal RenderContext Context { get; }
 
 		private CancellationTokenSource _token;
@@ -38,6 +40,8 @@ namespace Sledge.Rendering.Engine
 		private RgbaFloat _clearColourOrthographic;
 		internal int InactiveTargetFps { get; set; } = 10;
 		private long _previousFrameTime = DateTime.Now.Ticks;
+		private ViewProjectionBuffer _lightData;
+		private ViewProjectionBuffer _cameraBuffer;
 
 		private Engine()
 		{
@@ -55,6 +59,29 @@ namespace Sledge.Rendering.Engine
 			_commandList = Device.ResourceFactory.CreateCommandList();
 
 			SetClearColour(CameraType.Both, RgbaFloat.Black);
+
+			float orthoSize = 5000f; // Adjust based on scene size
+			float nearPlane = 0.01f;
+			float farPlane = 10000f;
+
+			var _lightProjection = Matrix4x4.CreateOrthographic(
+				orthoSize, // Width
+				orthoSize, // Height
+				nearPlane,
+				farPlane
+			);
+
+			Vector3 lightPosition = new Vector3(0, 0, 1000); // Light high above the scene
+			Vector3 lightTarget = new Vector3(0, 0, 0); // Looking at the scene center
+			Vector3 upVector = Vector3.UnitZ; // Adjust if needed
+
+
+			var _lightView = Matrix4x4.CreateLookAt(
+				lightPosition,
+				lightTarget,
+				upVector
+			);
+			_lightData = new ViewProjectionBuffer { Projection = _lightProjection, View = _lightView };
 
 			_timer = new Stopwatch();
 			_token = new CancellationTokenSource();
@@ -83,9 +110,12 @@ namespace Sledge.Rendering.Engine
 			AddPipeline(new TexturedAlphaPipeline());
 			AddPipeline(new TexturedAdditivePipeline());
 			AddPipeline(new BillboardAlphaPipeline());
-
+//#if DEBUG
+//			AddPipeline(new SwapchainShadowOverlay(shadowdepth.NearShadowResourceTexture));
+//#endif
 			AddPipeline(new SwapchainOverlayPipeline());
 			AddPipeline(new OverlayPipeline());
+			AddPipeline(new ShadowOverlayPipeline(_lightData));
 
 			Application.ApplicationExit += Shutdown;
 		}
@@ -159,7 +189,6 @@ namespace Sledge.Rendering.Engine
 			_token = new CancellationTokenSource();
 		}
 
-
 		private int _paused = 0;
 		private TextureSampleCount _sampleCount = TextureSampleCount.Count1;
 		private readonly ManualResetEvent _pauseThreadEvent = new ManualResetEvent(false);
@@ -231,6 +260,7 @@ namespace Sledge.Rendering.Engine
 					rt.Overlay.Build(overlays);
 					if (rt.IsFocused || (!rt.IsFocused && shouldRender))
 					{
+						_cameraBuffer = new ViewProjectionBuffer { Projection = rt.Camera.Projection, View = rt.Camera.View };
 						Render(rt);
 					}
 				}
@@ -289,14 +319,14 @@ namespace Sledge.Rendering.Engine
 
 			foreach (var opaque in _pipelines[PipelineGroup.Opaque])
 			{
-				opaque.SetupFrame(Context, renderTarget);
+				opaque.SetupFrame(Context, _cameraBuffer);
 				opaque.Render(Context, renderTarget, _commandList, Scene.GetRenderables(opaque, renderTarget));
 			}
 
 
 			foreach (var transparent in transparentPipelines)
 			{
-				transparent.SetupFrame(Context, renderTarget);
+				transparent.SetupFrame(Context, _cameraBuffer);
 			}
 			foreach (var lo in locationObjects)
 			{
@@ -305,10 +335,9 @@ namespace Sledge.Rendering.Engine
 
 			foreach (var pipeline in transparentPipelines)
 			{
-				if (pipeline.Type == PipelineType.BillboardAlpha)
+				if (pipeline.Type == PipelineType.BillboardAlpha || (IsShadowsEnabled && pipeline.Type == PipelineType.ShadowOverlay))
 					pipeline.Render(Context, renderTarget, _commandList, Scene.GetRenderables(pipeline, renderTarget));
 			}
-
 
 			_commandList.End();
 			Device.SubmitCommands(_commandList);
@@ -325,8 +354,8 @@ namespace Sledge.Rendering.Engine
 
 			foreach (var overlay in _pipelines[PipelineGroup.Overlay])
 			{
-				overlay.SetupFrame(Context, renderTarget);
-				overlay.Render(Context, renderTarget, _commandList, Scene.GetRenderables(overlay, renderTarget));
+				overlay.SetupFrame(Context, _cameraBuffer);
+					overlay.Render(Context, renderTarget, _commandList, Scene.GetRenderables(overlay, renderTarget));
 			}
 			_commandList.End();
 			Device.SubmitCommands(_commandList);
@@ -391,6 +420,11 @@ namespace Sledge.Rendering.Engine
 					rt.InitFramebuffer(_sampleCount);
 				}
 			}
+		}
+		public class ViewProjectionBuffer
+		{
+			public Matrix4x4 Projection;
+			public Matrix4x4 View;
 		}
 	}
 }

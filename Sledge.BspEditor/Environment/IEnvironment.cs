@@ -107,6 +107,6 @@ namespace Sledge.BspEditor.Environment
         /// Default texture name for cordon wrap
         /// </summary>
 		string CordonTexture { get; set; }
-
+        string[] NonRenderableTextures { get; set; }
 	}
 }

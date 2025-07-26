@@ -57,15 +57,16 @@ namespace Sledge.BspEditor.Rendering.Converters
 			var numWireframeIndices = numVertices * 2;
 
 			var points = new VertexStandard[numVertices];
+			var shadowPoints = new VertexStandard[numVertices];
 			var indices = new uint[numSolidIndices + numWireframeIndices];
 			Color? vColor = null;
 			var vId = obj.Data.GetOne<VisgroupID>();
 			if (vId != null)
 			{
-				vColor = document.Map.Data.Get<Visgroup>().FirstOrDefault(x=>x.ID == vId.ID)?.Colour;
+				vColor = document.Map.Data.Get<Visgroup>().FirstOrDefault(x => x.ID == vId.ID)?.Colour;
 			}
 
-			var colour = (obj.IsSelected ? Color.Red : vColor.HasValue? vColor.Value : obj.Data.GetOne<ObjectColor>()?.Color ?? Color.White).ToVector4();
+			var colour = (obj.IsSelected ? Color.Red : vColor.HasValue ? vColor.Value : obj.Data.GetOne<ObjectColor>()?.Color ?? Color.White).ToVector4();
 
 			var tint = Vector4.One;
 
@@ -169,7 +170,20 @@ namespace Sledge.BspEditor.Rendering.Converters
 				var normal = face.Plane.Normal;
 				for (var i = 0; i < face.Vertices.Count; i++)
 				{
+
 					var v = face.Vertices[i];
+					if (face.Uv1 != null)
+					{
+						shadowPoints[vi] = new VertexStandard
+						{
+							Position = v,
+							Colour = colour,
+							Normal = normal,
+							Texture = face.Uv1?[i] ?? new Vector2(textureCoords[i].Item2, textureCoords[i].Item3),
+							Tint = tint * tintModifier,
+							Flags = flags | extraFlags
+						};
+					}
 					points[vi++] = new VertexStandard
 					{
 						Position = v,
@@ -179,6 +193,8 @@ namespace Sledge.BspEditor.Rendering.Converters
 						Tint = tint * tintModifier,
 						Flags = flags | extraFlags
 					};
+
+
 				}
 
 				// Triangles - [0 1 2]  ... [0 n-1 n]
@@ -198,6 +214,7 @@ namespace Sledge.BspEditor.Rendering.Converters
 			}
 
 			var groups = new List<BufferGroup>();
+			var shadowGroups = new List<BufferGroup>();
 
 			uint texOffset = 0;
 			foreach (var f in faces)
@@ -217,24 +234,21 @@ namespace Sledge.BspEditor.Rendering.Converters
 				var texture = t == null ? string.Empty : $"{document.Environment.ID}::{f.Texture.Name}";
 				BufferGroup group;
 
-				//				if(skybox && f.Texture.Name.ToLower() == "sky")
-				//				{
-				//					group = new BufferGroup(
-				//    PipelineType.TexturedAlpha,
-				//   CameraType.Perspective, true, f.Origin, texture, texOffset, texInd
-				//);
-				//					flags |= VertexFlags.FlatColour;
-				//					points = points.Select(x => { x.Tint = new Vector4(1,1,1, 0.5f); return x; }).ToArray();
-				//				}
-				//else
-				{
-					group = new BufferGroup(
-					   pipeline == PipelineType.TexturedOpaque && transparent ? PipelineType.TexturedAlpha : pipeline,
-					   CameraType.Perspective, transparent, f.Origin, texture, texOffset, texInd
-				   );
-				}
+				group = new BufferGroup(
+				   pipeline == PipelineType.TexturedOpaque && transparent ? PipelineType.TexturedAlpha : pipeline,
+				   CameraType.Perspective, transparent, f.Origin, texture, texOffset, texInd
+			   );
+
 				groups.Add(group);
 
+				if (f.Uv1 != null)
+				{
+					group = new BufferGroup(
+						PipelineType.ShadowOverlay,
+						CameraType.Perspective, false, f.Origin, f.LightMap.GetHashCode().ToString(), texOffset, texInd
+						);
+					shadowGroups.Add(group);
+				}
 
 				texOffset += texInd;
 
@@ -244,6 +258,8 @@ namespace Sledge.BspEditor.Rendering.Converters
 			groups.Add(new BufferGroup(PipelineType.Wireframe, obj.IsSelected ? CameraType.Both : CameraType.Orthographic, numSolidIndices, numWireframeIndices));
 
 			builder.Append(points, indices, groups);
+			builder.Append(shadowPoints, indices, shadowGroups);
+
 			if (wireframe)
 			{
 				var wirePoints = points.ToList().Select(x => { x.Flags |= VertexFlags.Wireframed; return x; });

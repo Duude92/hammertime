@@ -12,19 +12,21 @@ using Sledge.Rendering.Overlay;
 using Sledge.Rendering.Resources;
 using Sledge.Rendering.Viewports;
 using Sledge.BspEditor.Primitives.MapObjects;
+using System.Collections.Concurrent;
+using Sledge.Common.Threading;
 
 namespace Sledge.BspEditor.Tools.Draggable
 {
     public abstract class BaseDraggableTool : BaseTool
     {
-        protected List<IDraggableState> States { get; }
+        protected ThreadSafeList<IDraggableState> States { get; }
 
         public IDraggable CurrentDraggable { get; private set; }
 		private Vector3? _lastDragPoint;
 
         protected BaseDraggableTool()
         {
-            States = new List<IDraggableState>();
+            States = new ThreadSafeList<IDraggableState>();
         }
 
         #region Virtual events

@@ -46,6 +46,41 @@ namespace Sledge.Rendering.Engine
 			return new BufferBuilder(Engine.Instance.Device, size);
 		}
 		public int InactiveTargetFps { get => Engine.Instance.InactiveTargetFps; set => Engine.Instance.InactiveTargetFps = value; }
+		public struct DepthResource
+		{
+			public Veldrid.Texture Texture { get; set; }
+			public Veldrid.Texture Staging { get; set; }
+			public MappedResourceView<float> MappedResource { get; set; }
+		}
+
+		/// <summary>
+		/// Create a new depth texture.
+		/// </summary>
+		/// <param name="width">Width of the texture</param>
+		/// <param name="height">Height of the texture</param>
+		/// <returns>
+		/// The created depth resource.
+		/// </returns>
+		public DepthResource CreateDepthTexture(uint width, uint height)
+		{
+			var staging = Engine.Instance.Context.Device.ResourceFactory.CreateTexture(TextureDescription.Texture2D(width, height, 1, 1, PixelFormat.R32_Float, TextureUsage.Staging, TextureSampleCount.Count1));
+			var texture = Engine.Instance.Context.Device.ResourceFactory.CreateTexture(TextureDescription.Texture2D(width, height, 1, 1, PixelFormat.R32_Float, TextureUsage.Sampled, TextureSampleCount.Count1));
+			Engine.Instance.Context.ResourceLoader.UploadTexture(texture.GetHashCode().ToString(), new Texture(Engine.Instance.Context, texture, TextureSampleType.Standard), TextureSampleType.Standard);
+			return new DepthResource {Texture= texture,Staging= staging,MappedResource = Engine.Instance.Context.Device.Map<float>(staging, MapMode.ReadWrite) };
+		}
+		public void CopyDepthTexture(DepthResource[] resources)
+		{
+			var cl = Engine.Instance.Context.Device.ResourceFactory.CreateCommandList();
+			cl.Begin();
+			for (int i = 0; i < resources.Length; i++)
+			{
+				Engine.Instance.Context.Device.Unmap(resources[i].Staging);
+				cl.CopyTexture(resources[i].Staging, resources[i].Texture);
+			}
+			cl.End();
+			Engine.Instance.Context.Device.SubmitCommands(cl);
+			Engine.Instance.Context.Device.WaitForIdle();
+		}
 
 		/// <summary>
 		/// Upload a texture to the engine.
@@ -149,5 +184,9 @@ namespace Sledge.Rendering.Engine
 		public void Remove(IOverlayRenderable overlayRenderable) => Engine.Instance.Scene.Remove(overlayRenderable);
 
 		public void SetMSAA(int mSAAoption) => Engine.Instance.SetMSAA(mSAAoption);
+		public void SetLightAngles(Vector3 angles) => Engine.Instance.LightAngle = Vector3.Multiply(angles, (float)Math.PI / 180f);
+		//TODO: Move this to the DisplayData? if baking approach be more reliable
+		public Vector3 GetLightAnglesRadians() => Engine.Instance.LightAngle;
+		public bool ShadowsEnabled { get => Engine.Instance.IsShadowsEnabled; set => Engine.Instance.IsShadowsEnabled = value; }
 	}
 }

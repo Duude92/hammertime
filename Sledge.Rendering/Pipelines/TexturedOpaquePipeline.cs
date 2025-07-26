@@ -52,14 +52,14 @@ namespace Sledge.Rendering.Pipelines
             );
         }
 
-        public void SetupFrame(RenderContext context, IViewport target)
+        public void SetupFrame(RenderContext context, Engine.Engine.ViewProjectionBuffer viewProjectionBuffer)
         {
             context.Device.UpdateBuffer(_projectionBuffer, 0, new UniformProjection
             {
                 Selective = context.SelectiveTransform,
                 Model = Matrix4x4.Identity,
-                View = target.Camera.View,
-                Projection = target.Camera.Projection,
+                View = viewProjectionBuffer.View,
+                Projection = viewProjectionBuffer.Projection,
             });
         }
 

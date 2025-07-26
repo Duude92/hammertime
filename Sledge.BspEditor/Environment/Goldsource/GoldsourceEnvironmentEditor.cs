@@ -184,6 +184,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
 			nudDefaultTextureScale.Value = env.DefaultTextureScale;
 
 			cordonTextureText.Text = env.CordonTexture;
+			nonRendTextBox.Text = env.NonRenderableTextures?.Aggregate("", (current, next) => current + (next + ";")).Trim();
 
 			cklTexturePackages.Items.Clear();
 			foreach (var exc in env.ExcludedWads)
@@ -241,7 +242,9 @@ namespace Sledge.BspEditor.Environment.Goldsource
 				ExcludedWads = _initialObjectCollection.Where(x => !x.Value).Select(x => x.Key).ToList(),
 				AdditionalTextureFiles = lstAdditionalTextures.Items.OfType<ListViewItem>().Select(x => x.SubItems[1].Text).Where(File.Exists).ToList(),
 
-				CordonTexture = cordonTextureText.Text
+				CordonTexture = cordonTextureText.Text,
+				NonRenderableTextures = nonRendTextBox.Text.Split(';').Select(texture => texture.Trim()).Where(texture => !string.IsNullOrEmpty(texture)).ToArray()
+
 			};
 		}
 
@@ -622,6 +625,11 @@ namespace Sledge.BspEditor.Environment.Goldsource
 		}
 
 		private void cordonTextureText_TextChanged(object sender, EventArgs e)
+		{
+			OnEnvironmentChanged(sender, e);
+		}
+
+		private void nonRendTextBox_TextChanged(object sender, EventArgs e)
 		{
 			OnEnvironmentChanged(sender, e);
 		}
