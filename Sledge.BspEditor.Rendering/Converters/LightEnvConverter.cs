@@ -1,28 +1,24 @@
 ﻿using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapObjects;
-using Sledge.BspEditor.Rendering.ChangeHandlers;
 using Sledge.BspEditor.Rendering.Resources;
-using Sledge.Common;
+using Sledge.DataStructures.GameData;
 using Sledge.Rendering.Cameras;
-using Sledge.Rendering.Engine;
 using Sledge.Rendering.Pipelines;
 using Sledge.Rendering.Primitives;
 using Sledge.Rendering.Resources;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Globalization;
 using System.Linq;
 using System.Numerics;
-using System.Text;
 using System.Threading.Tasks;
-using static Sledge.DataStructures.Geometric.NumericsExtensions;
 
 namespace Sledge.BspEditor.Rendering.Converters
 {
 	[Export(typeof(IMapObjectSceneConverter))]
 	public class LightEnvConverter : IMapObjectSceneConverter
 	{
-		[Import] private EngineInterface _engine;
 		public MapObjectSceneConverterPriority Priority => MapObjectSceneConverterPriority.DefaultLow;
 
 		public bool ShouldStopProcessing(MapDocument document, IMapObject obj)
@@ -38,17 +34,49 @@ namespace Sledge.BspEditor.Rendering.Converters
 		public async Task Convert(BufferBuilder builder, MapDocument document, IMapObject obj, ResourceCollector resourceCollector)
 		{
 			var entity = (Entity)obj;
-			var angled = entity.EntityData.GetVector3("angles").Value;
-			var pitch = entity.EntityData.Get<float>("pitch", angled.X) * MathF.PI / 180;
-			var yaw = entity.EntityData.Get<float>("angle", angled.Y) * MathF.PI / 180;
+			var data = entity.EntityData;
+			var angles = data.GetVector3("angles");
+			if (!angles.HasValue)
+			{
+				// Probably somewhere there is function to convert string to Vector3, but I don't remember for sure.
+				var gameData = await document.Environment.GetGameData();
+				var light_default = gameData.Classes.FirstOrDefault(x => x.ClassType != ClassType.Base && (x.Name ?? "").ToLower() == "light_environment");
+				var angleString = light_default.Properties.FirstOrDefault(x => x.Name == "angles").DefaultValue;
+				var pitchString = light_default.Properties.FirstOrDefault(x => x.Name == "pitch")?.DefaultValue;
+				var yawString = light_default.Properties.FirstOrDefault(x => x.Name == "angle")?.DefaultValue;
+
+				var spl = (angleString ?? "").Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+				var resultAngle = Vector3.Zero;
+
+				if (float.TryParse(spl[0], NumberStyles.Float, CultureInfo.InvariantCulture, out var x)
+					&& float.TryParse(spl[1], NumberStyles.Float, CultureInfo.InvariantCulture, out var y)
+					&& float.TryParse(spl[2], NumberStyles.Float, CultureInfo.InvariantCulture, out var z))
+				{
+					resultAngle = new Vector3(x, y, z);
+				}
+				if (!String.IsNullOrEmpty(pitchString))
+					resultAngle.X = int.Parse(pitchString);
+				if (!String.IsNullOrEmpty(yawString))
+					resultAngle.Y = int.Parse(yawString);
+				angles = resultAngle;
+			}
+			var anglesValue = angles.Value;
+			var pitch = data.Get<float>("pitch", angles.Value.X);
+			if (pitch != float.NaN)
+				anglesValue.X = pitch;
+			var yaw = data.Get<float>("angle", angles.Value.Y);
+			if (yaw != float.NaN)
+				anglesValue.Y = yaw;
+
+
 			var colourProp = entity.EntityData.GetVector3("_light").Value; // FIXME: Vector4
 			var colour = new Vector4(colourProp, 1);
 
-			var rad = angled;
+			var rad = anglesValue;
 
 			var mat_x = Matrix4x4.CreateRotationY(-pitch);
 			var mat_y = Matrix4x4.CreateRotationX(yaw);
-			var mat_z = Matrix4x4.CreateRotationZ(angled.Z);
+			var mat_z = Matrix4x4.CreateRotationZ(anglesValue.Z);
 			var rot = mat_x * mat_y * mat_z;
 			var lightRotation = Quaternion.CreateFromRotationMatrix(rot);
 			Vector3 lightDirection = Vector3.Transform(Vector3.UnitX, lightRotation);
