@@ -14,6 +14,7 @@ namespace Sledge.DataStructures.GameData
         Move,
         NPC,
         Point,
-        Solid
+        Solid,
+        Extend
     }
 }
