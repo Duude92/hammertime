@@ -880,7 +880,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
 			chkToggleAllTextures.UseVisualStyleBackColor = true;
 			chkToggleAllTextures.CheckedChanged += ToggleAllTextures;
 			// 
-			// GoldsourceEnvironmentEditor
+			// SourceEnvironmentEditor
 			// 
 			AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -889,7 +889,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
 			Controls.Add(grpFgds);
 			Controls.Add(grpDirectories);
 			Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-			Name = "GoldsourceEnvironmentEditor";
+			Name = "SourceEnvironmentEditor";
 			Size = new System.Drawing.Size(551, 1478);
 			((System.ComponentModel.ISupportInitialize)nudDefaultTextureScale).EndInit();
 			grpDirectories.ResumeLayout(false);

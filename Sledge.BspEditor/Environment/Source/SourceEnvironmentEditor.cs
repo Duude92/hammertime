@@ -20,7 +20,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
 		public Control Control => this;
 
 		private readonly IGameDataProvider _fgdProvider = Common.Container.Get<IGameDataProvider>("Fgd");
-		private readonly ITexturePackageProvider _wadProvider = Common.Container.Get<ITexturePackageProvider>("Wad3");
+		private readonly ITexturePackageProvider _wadProvider = Common.Container.Get<ITexturePackageProvider>("Vmt");
 
 		private Dictionary<string, bool> _initialObjectCollection = null;
 
@@ -495,9 +495,6 @@ namespace Sledge.BspEditor.Environment.Goldsource
 				directories.AddRange(new[]
 				{
 					Path.Combine(txtGameDir.Text, sbg),
-					Path.Combine(txtGameDir.Text, sbg + "_hd"),
-					Path.Combine(txtGameDir.Text, sbg + "_downloads"),
-					Path.Combine(txtGameDir.Text, sbg + "_addon"),
 				});
 			}
 			if (cmbGameMod.SelectedItem is string sgm)
