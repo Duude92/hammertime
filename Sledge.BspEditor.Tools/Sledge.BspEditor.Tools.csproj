@@ -190,7 +190,7 @@
     <PackageReference Include="RectpackSharp" Version="1.2.0" />
     <PackageReference Include="Sledge.Formats.Texture" Version="1.1.0" />
     <PackageReference Include="System.Numerics.Vectors">
-      <Version>4.5.0</Version>
+      <Version>4.6.1</Version>
     </PackageReference>
     <PackageReference Include="System.Reactive">
       <Version>4.1.0</Version>

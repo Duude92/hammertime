@@ -102,7 +102,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="System.Numerics.Vectors">
-      <Version>4.5.0</Version>
+      <Version>4.6.1</Version>
     </PackageReference>
     <PackageReference Include="System.Resources.Extensions" Version="7.0.0" />
   </ItemGroup>
