@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Sledge.Formats" Version="1.3.0" />
+    <PackageReference Include="Sledge.Formats" Version="1.3.3" />
     <PackageReference Include="Sledge.Formats.Bsp" Version="1.0.15" />
     <PackageReference Include="Sledge.Formats.Map" Version="1.2.3" />
   </ItemGroup>
