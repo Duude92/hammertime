@@ -5,6 +5,7 @@ using Sledge.Common;
 using Sledge.DataStructures.GameData;
 using Sledge.FileSystem;
 using Sledge.Providers.GameData;
+using Sledge.Providers.Texture;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -25,6 +26,7 @@ namespace Sledge.BspEditor.Environment.Source
 
 		private readonly Lazy<Task<GameData>> _gameData;
 		private readonly Lazy<Task<TextureCollection>> _textureCollection;
+		private readonly ITexturePackageProvider _materialsProvider;
 		private readonly IGameDataProvider _fgdProvider;
 		private readonly List<IEnvironmentData> _data;
 
@@ -83,7 +85,7 @@ namespace Sledge.BspEditor.Environment.Source
 
 		public SourceEnvironment()
 		{
-			//_wadProvider = Container.Get<ITexturePackageProvider>("Wad3");
+			_materialsProvider = Container.Get<ITexturePackageProvider>("Vmt");
 			//_spriteProvider = Container.Get<ITexturePackageProvider>("Spr");
 			_fgdProvider = Container.Get<IGameDataProvider>("Fgd");
 			//_envProvider = Container.Get<ITexturePackageProvider>("Env");
@@ -98,7 +100,17 @@ namespace Sledge.BspEditor.Environment.Source
 			IncludeToolsDirectoryInEnvironment = IncludeToolsDirectoryInEnvironment = true;
 		}
 
+		private async Task<TextureCollection> MakeTextureCollectionAsync()
+		{
+			var matRefs = _materialsProvider.GetPackagesInFile(Root).Where(x => !ExcludedWads.Contains(x.Name, StringComparer.InvariantCultureIgnoreCase));
+			var extraWads = AdditionalTextureFiles.SelectMany(x => _materialsProvider.GetPackagesInFile(new NativeFile(x)));
+			var wads = await _materialsProvider.GetTexturePackages(matRefs.Union(extraWads));
 
+			//var spriteRefs = _spriteProvider.GetPackagesInFile(Root);
+			//var sprites = await _spriteProvider.GetTexturePackages(spriteRefs);
+
+			return new SourceTextureCollection(wads);
+		}
 
 		//public string DefaultBrushEntity => throw new NotImplementedException();
 
@@ -163,7 +175,7 @@ namespace Sledge.BspEditor.Environment.Source
 			//var usedPackages = GetUsedTexturePackages(document, tc).Select(x => x.Location).ToHashSet(StringComparer.InvariantCultureIgnoreCase);
 
 			// Get the list of wad locations - for the wad texture provider, this is a quick operation
-			//var wads = _wadProvider.GetPackagesInFile(Root).Select(x => x.File.GetPathOnDisk()).Where(x => x != null).ToList();
+			var mats = _materialsProvider.GetPackagesInFile(Root).Select(x => x.File.GetPathOnDisk()).Where(x => x != null).ToList();
 
 			// Get the list of wads that are in the used set
 			//var usedWads = wads.Where(x => usedPackages.Contains(Path.GetFileName(x))).ToList();
