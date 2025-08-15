@@ -1,0 +1,101 @@
+﻿using Sledge.Common.Logging;
+using Sledge.FileSystem;
+using Sledge.Providers.Texture.Wad;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Sledge.Providers.Texture.Vmt
+{
+	[Export("Vmt", typeof(ITexturePackageProvider))]
+	internal class VmtMaterialPackageProvider : ITexturePackageProvider
+	{
+		private const int MATERIALS_INDEX = 11; // \\materials\\
+
+		private const int EXTENSION_COUNT = 4; // .vmt
+
+		public IEnumerable<TexturePackageReference> GetPackagesInFile(IFile file)
+		{
+			IFile materialsRoot = null;
+			try
+			{
+				materialsRoot = file.GetChild("materials");
+			}
+			catch
+			{
+				return new TexturePackageReference[0];
+			}
+			if (materialsRoot == null || !materialsRoot.Exists) return new TexturePackageReference[0];
+
+			var materials = materialsRoot.GetFiles("\\.vmt$", true).ToList();
+			var textures = materialsRoot.GetFiles("\\.vtf$", true).ToList();
+			var refs = materials.Select(m => new TexturePackageReference(m.Name, m, GetMaterialFile(m, textures)));
+			return refs;
+			return materials.Select(x => new TexturePackageReference(x.Name, x));
+		}
+		private IFile GetMaterialFile(IFile m, IEnumerable<IFile> textures)
+		{
+			var tName = ReadMaterialBaseTexture(m);
+			if(string.IsNullOrEmpty(tName)) return null;
+			tName =	Path.GetRelativePath(".", tName);
+			var tex = textures.FirstOrDefault(t => {
+				var pName = t.FullPathName.Split(':')[1];
+				pName = pName.Substring(MATERIALS_INDEX, pName.Length - MATERIALS_INDEX - EXTENSION_COUNT);
+				pName = Path.GetRelativePath(".", pName);
+				return pName.Equals(tName, StringComparison.InvariantCultureIgnoreCase);
+			});
+			if (tex != null) return tex;
+			return null;
+		}
+		private string ReadMaterialBaseTexture(IFile material)
+		{
+			using (var stream = material.Open())
+			{
+				using (var reader = new StreamReader(stream, Encoding.UTF8))
+				{
+					string line;
+					while ((line = reader.ReadLine()) != null)
+					{
+						if (line.Trim().StartsWith("\"$basetexture\"", StringComparison.InvariantCultureIgnoreCase))
+						{
+							var parts = line.Split(new[] { ' ' }, 2);
+							if (parts.Length > 1)
+							{
+								return parts[1].Trim('"');
+							}
+						}
+					}
+				}
+			}
+			return null;
+		}
+		public Task<TexturePackage> GetTexturePackage(TexturePackageReference reference)
+		{
+			throw new NotImplementedException();
+		}
+
+		public async Task<IEnumerable<TexturePackage>> GetTexturePackages(IEnumerable<TexturePackageReference> references)
+		{
+			return await Task.Factory.StartNew(() =>
+			{
+				return references.AsParallel().Select(reference =>
+				{
+					if (!reference.File.Exists || !string.Equals(reference.File.Extension, "vmt", StringComparison.InvariantCultureIgnoreCase)) return null;
+					try
+					{
+						return new VmtMaterialPackage(reference);
+					}
+					catch (Exception ex)
+					{
+						Log.Debug(nameof(VmtMaterialPackageProvider), $"Invalid VMT file: {reference.File.Name} - {ex.Message}");
+						return null;
+					}
+				}).Where(x => x != null);
+			});
+		}
+	}
+}
