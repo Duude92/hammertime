@@ -33,7 +33,7 @@ namespace Sledge.Providers.Texture.Vmt
 
 			var materials = materialsRoot.GetFiles("\\.vmt$", true).ToList();
 			var textures = materialsRoot.GetFiles("\\.vtf$", true).ToList();
-			var refs = materials.Select(m => new TexturePackageReference(m.Name, m, GetMaterialFile(m, textures)));
+			var refs = materials.Select(m => new MaterialTexturePackageReference(m.Name, m, GetMaterialFile(m, textures)));
 			return refs;
 			return materials.Select(x => new TexturePackageReference(x.Name, x));
 		}

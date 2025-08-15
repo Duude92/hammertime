@@ -14,13 +14,11 @@ namespace Sledge.Providers.Texture.Vmt
 {
 	internal class VmtMaterialPackage : TexturePackage
 	{
-		private TexturePackageReference _reference;
+		private MaterialTexturePackageReference _reference;
 		private IFile _file;
 
 		public class VtfTextureStreamSourceProvider : ITextureStreamSource
 		{
-			private IFile _file;
-			private VtfTextureStreamSourceProvider _streamSource;
 			private VtfFile _vtfFile;
 
 			public VtfTextureStreamSourceProvider(IFile file)
@@ -49,7 +47,7 @@ namespace Sledge.Providers.Texture.Vmt
 		}
 		public VmtMaterialPackage(TexturePackageReference reference) : base(reference.File.Name, "vmt")
 		{
-			_reference = reference;
+			_reference = reference as MaterialTexturePackageReference;
 			_file = reference.File;
 			Textures.Add(reference.File.Name);
 		}
