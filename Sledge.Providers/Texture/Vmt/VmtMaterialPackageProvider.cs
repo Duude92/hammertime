@@ -30,12 +30,11 @@ namespace Sledge.Providers.Texture.Vmt
 				return new TexturePackageReference[0];
 			}
 			if (materialsRoot == null || !materialsRoot.Exists) return new TexturePackageReference[0];
-
-			var materials = materialsRoot.GetFiles("\\.vmt$", true).ToList();
-			var textures = materialsRoot.GetFiles("\\.vtf$", true).ToList();
+			var files = materialsRoot.GetFiles("\\.v((tf)|(mt))$", true).GroupBy(x => x.Extension);
+			var materials = files.Single(x => x.Key.Equals("vmt", StringComparison.InvariantCultureIgnoreCase)).ToList();
+			var textures = files.Single(x => x.Key.Equals("vtf", StringComparison.InvariantCultureIgnoreCase)).ToList();
 			var refs = materials.Select(m => new MaterialTexturePackageReference(m.Name, m, GetMaterialFile(m, textures)));
 			return refs;
-			return materials.Select(x => new TexturePackageReference(x.Name, x));
 		}
 		private IFile GetMaterialFile(IFile m, IEnumerable<IFile> textures)
 		{
