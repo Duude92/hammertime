@@ -20,9 +20,11 @@ namespace Sledge.Providers.Texture.Vmt
 		public class VtfTextureStreamSourceProvider : ITextureStreamSource
 		{
 			private VtfFile _vtfFile;
+			private IFile _file;
 
 			public VtfTextureStreamSourceProvider(IFile file)
 			{
+				_file = file;
 				if (file != null)
 					_vtfFile = new VtfFile(file.Open());
 			}
@@ -45,16 +47,16 @@ namespace Sledge.Providers.Texture.Vmt
 				return _file.NameWithoutExtension.Equals(item, StringComparison.InvariantCultureIgnoreCase);
 			}
 		}
-		public VmtMaterialPackage(TexturePackageReference reference) : base(reference.File.Name, "vmt")
+		public VmtMaterialPackage(TexturePackageReference reference) : base(reference.File.NameWithoutExtension, "vmt")
 		{
 			_reference = reference as MaterialTexturePackageReference;
-			_file = reference.File;
+			_file = _reference.Material;
 			Textures.Add(_reference.Material.NameWithoutExtension);
 		}
 
 		public override ITextureStreamSource GetStreamSource()
 		{
-			return new VtfTextureStreamSourceProvider(_reference.Material);
+			return new VtfTextureStreamSourceProvider(_reference.File);
 		}
 
 		public override async Task<TextureItem> GetTexture(string name)
@@ -64,7 +66,7 @@ namespace Sledge.Providers.Texture.Vmt
 			var texturePath = ReadMaterialBaseTexture();
 			var file = _file as CompositeFile;
 			var fFile = file.FirstFile as InlinePackageFile;
-			return null;
+			return new TextureItem(name, TextureFlags.None, 100, 100, name);
 			//var textureFile = new NativeFile(_file.Parent, texturePath);
 
 

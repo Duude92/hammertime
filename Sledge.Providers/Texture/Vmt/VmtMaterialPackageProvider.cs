@@ -39,9 +39,10 @@ namespace Sledge.Providers.Texture.Vmt
 		private IFile GetMaterialFile(IFile m, IEnumerable<IFile> textures)
 		{
 			var tName = ReadMaterialBaseTexture(m);
-			if(string.IsNullOrEmpty(tName)) return null;
-			tName =	Path.GetRelativePath(".", tName);
-			var tex = textures.FirstOrDefault(t => {
+			if (string.IsNullOrEmpty(tName)) return null;
+			tName = Path.GetRelativePath(".", tName);
+			var tex = textures.FirstOrDefault(t =>
+			{
 				var pName = t.FullPathName.Split(':')[1];
 				pName = pName.Substring(MATERIALS_INDEX, pName.Length - MATERIALS_INDEX - EXTENSION_COUNT);
 				pName = Path.GetRelativePath(".", pName);
@@ -81,16 +82,16 @@ namespace Sledge.Providers.Texture.Vmt
 		{
 			return await Task.Factory.StartNew(() =>
 			{
-				return references.AsParallel().Select(reference =>
+				return references.AsParallel().Select(reference => reference as MaterialTexturePackageReference).Select(reference =>
 				{
-					if (!reference.File.Exists || !string.Equals(reference.File.Extension, "vmt", StringComparison.InvariantCultureIgnoreCase)) return null;
+					if (!reference.Material.Exists || !string.Equals(reference.Material.Extension, "vmt", StringComparison.InvariantCultureIgnoreCase)) return null;
 					try
 					{
 						return new VmtMaterialPackage(reference);
 					}
 					catch (Exception ex)
 					{
-						Log.Debug(nameof(VmtMaterialPackageProvider), $"Invalid VMT file: {reference.File.Name} - {ex.Message}");
+						Log.Debug(nameof(VmtMaterialPackageProvider), $"Invalid VMT file: {reference.Material.Name} - {ex.Message}");
 						return null;
 					}
 				}).Where(x => x != null);
