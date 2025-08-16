@@ -1,14 +1,15 @@
 ﻿using Sledge.FileSystem;
+using Sledge.Formats.Texture.Vtf;
 using Sledge.Providers.Texture.Wad.Format;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using Sledge.Formats;
-using Sledge.Formats.Texture.Vtf;
 
 namespace Sledge.Providers.Texture.Vmt
 {
@@ -35,11 +36,16 @@ namespace Sledge.Providers.Texture.Vmt
 
 			public async Task<ICollection<Bitmap>> GetImage(string item, int maxWidth, int maxHeight)
 			{
-				return await Task.Factory.StartNew(() => _vtfFile.Images.Select(x =>
+				return await Task.Factory.StartNew(() => new List<Bitmap>(){ _vtfFile.Images.Select(x =>
 				{
-					Stream stream = new MemoryStream(x.Data);
-					return new Bitmap(stream);
-				}).ToList());
+					var data = x.GetBgra32Data();
+					Bitmap bmp = new Bitmap(x.Width, x.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+					BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
+					Marshal.Copy(data, 0, bmpData.Scan0, data.Length);
+					bmp.UnlockBits(bmpData);
+
+					return  bmp ;
+				}).Last() });
 			}
 
 			public bool HasImage(string item)
