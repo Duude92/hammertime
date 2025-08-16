@@ -13,23 +13,26 @@ namespace Sledge.Providers.Texture.Vmt
 {
 	public class VtfTextureStreamSourceProvider : ITextureStreamSource
 	{
-		private VtfFile _vtfFile;
-		private IFile _file;
+		private VmtMaterialPackage _package;
 
-		public VtfTextureStreamSourceProvider(IFile file)
+		internal VtfTextureStreamSourceProvider(VmtMaterialPackage package)
 		{
-			_file = file;
-			if (file != null)
-				_vtfFile = new VtfFile(file.Open());
+			_package = package;
 		}
 		public void Dispose()
 		{
-			_vtfFile = null;
+			_package = null;
 		}
 
 		public async Task<ICollection<Bitmap>> GetImage(string item, int maxWidth, int maxHeight)
 		{
-			return await Task.Factory.StartNew(() => new List<Bitmap>(){ _vtfFile.Images.Select(x =>
+			return await Task.Factory.StartNew(() =>
+			{
+				var matRef = _package.GetTextureReference(item);
+				if (matRef.File == null) throw new NullReferenceException();
+				var vtfFile = new VtfFile(matRef?.File?.Open());
+				return new List<Bitmap>(){
+				vtfFile.Images.Select(x =>
 				{
 					var data = x.GetBgra32Data();
 					Bitmap bmp = new Bitmap(x.Width, x.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
@@ -38,12 +41,13 @@ namespace Sledge.Providers.Texture.Vmt
 					bmp.UnlockBits(bmpData);
 
 					return  bmp ;
-				}).Last() });
+				}).Last() };
+			});
 		}
 
 		public bool HasImage(string item)
 		{
-			return _file.NameWithoutExtension.Equals(item, StringComparison.InvariantCultureIgnoreCase);
+			return _package.Textures.Contains(item) && _package.GetTextureReference(item).File != null;
 		}
 	}
 

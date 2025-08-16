@@ -30,16 +30,11 @@ namespace Sledge.Providers.Texture.Vmt
 				return new TexturePackageReference[0];
 			}
 			if (materialsRoot == null || !materialsRoot.Exists) return new TexturePackageReference[0];
-			var files = materialsRoot.GetFiles("\\.v((tf)|(mt))$", true).GroupBy(x => x.Extension);
-			var materials = files.Single(x => x.Key.Equals("vmt", StringComparison.InvariantCultureIgnoreCase)).ToList();
-			var textures = files.Single(x => x.Key.Equals("vtf", StringComparison.InvariantCultureIgnoreCase)).ToDictionary(t =>
+
+			var refs = new List<TexturePackageReference>()
 			{
-				var pName = t.FullPathName.Split(':')[1];
-				pName = pName.Substring(MATERIALS_INDEX, pName.Length - MATERIALS_INDEX - EXTENSION_COUNT);
-				pName = Path.GetRelativePath(".", pName);
-				return pName;
-			});
-			var refs = materials.Select(m => new MaterialTexturePackageReference(m.NameWithoutExtension, GetTextureFile(m, textures), m)).ToList();
+				new TexturePackageReference("Materials", materialsRoot)
+			};
 			return refs;
 		}
 		private IFile GetTextureFile(IFile m, IDictionary<string, IFile> textures)
@@ -84,19 +79,24 @@ namespace Sledge.Providers.Texture.Vmt
 		{
 			return await Task.Factory.StartNew(() =>
 			{
-				return references.AsParallel().Select(reference => reference as MaterialTexturePackageReference).Select(reference =>
+				return references.AsParallel().Select(reference => reference).Select(reference =>
 				{
-					if (!reference.Material.Exists || !string.Equals(reference.Material.Extension, "vmt", StringComparison.InvariantCultureIgnoreCase)) return null;
-					try
+					var files = reference.File.GetFiles("\\.v((tf)|(mt))$", true).GroupBy(x => x.Extension);
+					var materials = files.Single(x => x.Key.Equals("vmt", StringComparison.InvariantCultureIgnoreCase)).ToList();
+					var textures = files.Single(x => x.Key.Equals("vtf", StringComparison.InvariantCultureIgnoreCase)).ToDictionary(t => GetRelativeName(t));
+					var refs = materials.Select(m => new MaterialTexturePackageReference(GetRelativeName(m), GetTextureFile(m, textures), m)).ToList();
+
+					static string GetRelativeName(IFile file)
 					{
-						return new VmtMaterialPackage(reference);
+						var pName = file.FullPathName.Split(':')[1];
+						pName = pName.Substring(MATERIALS_INDEX, pName.Length - MATERIALS_INDEX - EXTENSION_COUNT);
+						pName = Path.GetRelativePath(".", pName);
+						return pName;
 					}
-					catch (Exception ex)
-					{
-						Log.Debug(nameof(VmtMaterialPackageProvider), $"Invalid VMT file: {reference.Material.Name} - {ex.Message}");
-						return null;
-					}
-				}).Where(x => x != null);
+
+					return new VmtMaterialPackage(refs);
+
+				});
 			});
 		}
 	}
