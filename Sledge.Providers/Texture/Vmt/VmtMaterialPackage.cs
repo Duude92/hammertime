@@ -42,7 +42,7 @@ namespace Sledge.Providers.Texture.Vmt
 
 			public bool HasImage(string item)
 			{
-				return _vtfFile != null;
+				return _file.NameWithoutExtension.Equals(item, StringComparison.InvariantCultureIgnoreCase);
 			}
 		}
 		public VmtMaterialPackage(TexturePackageReference reference) : base(reference.File.Name, "vmt")
