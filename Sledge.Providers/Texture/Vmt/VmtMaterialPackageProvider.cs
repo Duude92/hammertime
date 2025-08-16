@@ -33,7 +33,7 @@ namespace Sledge.Providers.Texture.Vmt
 			var files = materialsRoot.GetFiles("\\.v((tf)|(mt))$", true).GroupBy(x => x.Extension);
 			var materials = files.Single(x => x.Key.Equals("vmt", StringComparison.InvariantCultureIgnoreCase)).ToList();
 			var textures = files.Single(x => x.Key.Equals("vtf", StringComparison.InvariantCultureIgnoreCase)).ToList();
-			var refs = materials.Select(m => new MaterialTexturePackageReference(m.Name, m, GetMaterialFile(m, textures)));
+			var refs = materials.Select(m => new MaterialTexturePackageReference(m.NameWithoutExtension, GetMaterialFile(m, textures), m)).ToList();
 			return refs;
 		}
 		private IFile GetMaterialFile(IFile m, IEnumerable<IFile> textures)
