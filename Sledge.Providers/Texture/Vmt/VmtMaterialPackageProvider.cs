@@ -32,23 +32,25 @@ namespace Sledge.Providers.Texture.Vmt
 			if (materialsRoot == null || !materialsRoot.Exists) return new TexturePackageReference[0];
 			var files = materialsRoot.GetFiles("\\.v((tf)|(mt))$", true).GroupBy(x => x.Extension);
 			var materials = files.Single(x => x.Key.Equals("vmt", StringComparison.InvariantCultureIgnoreCase)).ToList();
-			var textures = files.Single(x => x.Key.Equals("vtf", StringComparison.InvariantCultureIgnoreCase)).ToList();
-			var refs = materials.Select(m => new MaterialTexturePackageReference(m.NameWithoutExtension, GetMaterialFile(m, textures), m)).ToList();
-			return refs;
-		}
-		private IFile GetMaterialFile(IFile m, IEnumerable<IFile> textures)
-		{
-			var tName = ReadMaterialBaseTexture(m);
-			if (string.IsNullOrEmpty(tName)) return null;
-			tName = Path.GetRelativePath(".", tName);
-			var tex = textures.FirstOrDefault(t =>
+			var textures = files.Single(x => x.Key.Equals("vtf", StringComparison.InvariantCultureIgnoreCase)).ToDictionary(t =>
 			{
 				var pName = t.FullPathName.Split(':')[1];
 				pName = pName.Substring(MATERIALS_INDEX, pName.Length - MATERIALS_INDEX - EXTENSION_COUNT);
 				pName = Path.GetRelativePath(".", pName);
-				return pName.Equals(tName, StringComparison.InvariantCultureIgnoreCase);
+				return pName;
 			});
-			if (tex != null) return tex;
+			var refs = materials.Select(m => new MaterialTexturePackageReference(m.NameWithoutExtension, GetTextureFile(m, textures), m)).ToList();
+			return refs;
+		}
+		private IFile GetTextureFile(IFile m, IDictionary<string, IFile> textures)
+		{
+			var tName = ReadMaterialBaseTexture(m);
+			if (string.IsNullOrEmpty(tName)) return null;
+			tName = Path.GetRelativePath(".", tName);
+			if (textures.TryGetValue(tName, out var tex))
+			{
+				return tex;
+			}
 			return null;
 		}
 		private string ReadMaterialBaseTexture(IFile material)
