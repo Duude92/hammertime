@@ -39,6 +39,7 @@ namespace Sledge.Providers.Texture.Vmt
 			var tName = ReadMaterialBaseTexture(m);
 			if (string.IsNullOrEmpty(tName)) return null;
 			tName = Path.GetRelativePath(".", tName.ToLower());
+			tName = tName.Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
 			if (textures.TryGetValue(tName, out var tex))
 			{
 				return tex;
@@ -110,7 +111,8 @@ namespace Sledge.Providers.Texture.Vmt
 						var pName = file.GetRelativePath(reference.File);
 						pName = pName.Substring(MATERIALS_INDEX, pName.Length - MATERIALS_INDEX - EXTENSION_COUNT);
 
-						return Path.GetRelativePath(".", pName);
+						var rPath = Path.GetRelativePath(".", pName);
+						return rPath.Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
 					}
 
 					return new VmtMaterialPackage(reference.Name, refs);
