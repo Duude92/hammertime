@@ -12,7 +12,7 @@ namespace Sledge.Providers.Texture.Vmt
 	{
 		private ICollection<MaterialTexturePackageReference> _references;
 
-		public VmtMaterialPackage(ICollection<MaterialTexturePackageReference> references) : base("Materials", "vmt")
+		public VmtMaterialPackage(string name, ICollection<MaterialTexturePackageReference> references) : base(name, "vmt")
 		{
 			_references = references;
 			foreach (var reference in references)

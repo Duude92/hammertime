@@ -116,7 +116,7 @@ namespace Sledge.Providers.Texture.Vmt
 						return pName;
 					}
 
-					return new VmtMaterialPackage(refs);
+					return new VmtMaterialPackage(reference.Name, refs);
 
 				});
 			});
