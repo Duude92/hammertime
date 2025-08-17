@@ -14,7 +14,7 @@ namespace Sledge.Providers.Texture.Vmt
 	[Export("Vmt", typeof(ITexturePackageProvider))]
 	internal class VmtMaterialPackageProvider : ITexturePackageProvider
 	{
-		private const int MATERIALS_INDEX = 11; // \\materials\\
+		private const int MATERIALS_INDEX = 10; // materials\\
 
 		private const int EXTENSION_COUNT = 4; // .vmt
 
@@ -31,10 +31,7 @@ namespace Sledge.Providers.Texture.Vmt
 			}
 			if (materialsRoot == null || !materialsRoot.Exists) return new TexturePackageReference[0];
 
-			var refs = new List<TexturePackageReference>()
-			{
-				new TexturePackageReference("Materials", materialsRoot)
-			};
+			var refs = (materialsRoot as CompositeFile).GetCompositeFiles().Select(x => new TexturePackageReference(x.Parent?.Name ?? "Materials", x));
 			return refs;
 		}
 		private IFile GetTextureFile(IFile m, IDictionary<string, IFile> textures)
@@ -100,7 +97,7 @@ namespace Sledge.Providers.Texture.Vmt
 		{
 			return await Task.Factory.StartNew(() =>
 			{
-				return references.AsParallel().Select(reference => reference).Select(reference =>
+				return references.AsParallel().Select(reference =>
 				{
 					var files = reference.File.GetFiles("\\.v((tf)|(mt))$", true).GroupBy(x => x.Extension);
 					var materials = files.Single(x => x.Key.Equals("vmt", StringComparison.InvariantCultureIgnoreCase)).ToList();
@@ -108,12 +105,12 @@ namespace Sledge.Providers.Texture.Vmt
 					var refs = materials.Select(m => new MaterialTexturePackageReference(GetRelativeName(m), GetTextureFile(m, textures), m)).ToList();
 					refs.Sort((p, n) => p.Name.CompareTo(n.Name));
 
-					static string GetRelativeName(IFile file)
+					string GetRelativeName(IFile file)
 					{
-						var pName = file.FullPathName.Split(':')[1];
+						var pName = file.GetRelativePath(reference.File);
 						pName = pName.Substring(MATERIALS_INDEX, pName.Length - MATERIALS_INDEX - EXTENSION_COUNT);
-						pName = Path.GetRelativePath(".", pName);
-						return pName;
+
+						return Path.GetRelativePath(".", pName);
 					}
 
 					return new VmtMaterialPackage(reference.Name, refs);
