@@ -104,7 +104,7 @@ namespace Sledge.Providers.Texture.Vmt
 				{
 					var files = reference.File.GetFiles("\\.v((tf)|(mt))$", true).GroupBy(x => x.Extension);
 					var materials = files.Single(x => x.Key.Equals("vmt", StringComparison.InvariantCultureIgnoreCase)).ToList();
-					var textures = files.Single(x => x.Key.Equals("vtf", StringComparison.InvariantCultureIgnoreCase)).ToDictionary(t => GetRelativeName(t));
+					var textures = files.Single(x => x.Key.Equals("vtf", StringComparison.InvariantCultureIgnoreCase)).GroupBy(t => GetRelativeName(t)).ToDictionary(g => g.Key, g => g.First());
 					var refs = materials.Select(m => new MaterialTexturePackageReference(GetRelativeName(m), GetTextureFile(m, textures), m)).ToList();
 
 					static string GetRelativeName(IFile file)
