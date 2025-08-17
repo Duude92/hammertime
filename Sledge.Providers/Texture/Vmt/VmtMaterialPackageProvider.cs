@@ -48,13 +48,34 @@ namespace Sledge.Providers.Texture.Vmt
 			}
 			return null;
 		}
+		HashSet<string> types = new HashSet<string>
+			{
+				"unlitgeneric",
+				"lightmappedgeneric",
+				"lightmappedreflective",
+				"water",
+				"sprite",
+				"decalmodulate",
+				"modulate",
+				"subrect",
+				"worldvertextransition",
+				"lightmapped_4wayblend",
+				"unlittwotexture",
+				"worldtwotextureblend",
+				"skyfog"
+			};
 		private string ReadMaterialBaseTexture(IFile material)
 		{
+			var mName = material.NameWithoutExtension;
 			using (var stream = material.Open())
 			{
 				using (var reader = new StreamReader(stream, Encoding.UTF8))
 				{
-					string line;
+					string line = reader.ReadLine();
+					if (line != null && !types.Contains(line.Trim().Trim('\"').ToLowerInvariant()))
+					{
+						return null;
+					}
 					while ((line = reader.ReadLine()) != null)
 					{
 						if (line.Trim().StartsWith("\"$basetexture\"", StringComparison.InvariantCultureIgnoreCase))
