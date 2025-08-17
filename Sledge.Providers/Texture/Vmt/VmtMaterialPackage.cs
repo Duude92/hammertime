@@ -1,9 +1,7 @@
-﻿using Sledge.FileSystem;
+﻿using Sledge.Formats.Texture.Vtf;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Sledge.Providers.Texture.Vmt
@@ -38,10 +36,13 @@ namespace Sledge.Providers.Texture.Vmt
 			var texture = _references.FirstOrDefault(x => x.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
 			if(texture == null) return null;
 
+			var vtf = new VtfFile(texture.File.Open());
+			var im = vtf.Images.Last();
+
 			//var texturePath = ReadMaterialBaseTexture(texture.Material);
 			//var file = _file as CompositeFile;
 			//var fFile = file.FirstFile as InlinePackageFile;
-			return new TextureItem(name, TextureFlags.None, 100, 100, name);
+			return new TextureItem(name, TextureFlags.None, im.Width, im.Height, name);
 			//var textureFile = new NativeFile(_file.Parent, texturePath);
 
 
