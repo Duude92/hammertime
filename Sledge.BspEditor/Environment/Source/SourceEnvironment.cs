@@ -166,21 +166,6 @@ namespace Sledge.BspEditor.Environment.Source
 			}
 
 			ed.Name = "worldspawn";
-
-			// Set the wad usage - this required when exporting to map for compile
-
-			var tc = await GetTextureCollection();
-
-			// Get the list of used packages - the packages are abstracted away from the file system, so we don't know where they are located yet
-			//var usedPackages = GetUsedTexturePackages(document, tc).Select(x => x.Location).ToHashSet(StringComparer.InvariantCultureIgnoreCase);
-
-			// Get the list of wad locations - for the wad texture provider, this is a quick operation
-			var mats = _materialsProvider.GetPackagesInFile(Root).Select(x => x.File.GetPathOnDisk()).Where(x => x != null).ToList();
-
-			// Get the list of wads that are in the used set
-			//var usedWads = wads.Where(x => usedPackages.Contains(Path.GetFileName(x))).ToList();
-
-			//document.Map.Root.Data.GetOne<EntityData>()?.Set("wad", string.Join(";", usedWads));
 		}
 	}
 }
