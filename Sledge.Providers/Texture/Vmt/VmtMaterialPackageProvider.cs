@@ -59,7 +59,7 @@ namespace Sledge.Providers.Texture.Vmt
 					{
 						if (line.Trim().StartsWith("\"$basetexture\"", StringComparison.InvariantCultureIgnoreCase))
 						{
-							var parts = line.Split(new[] { ' ' }, 2);
+							var parts = line.Trim('\t').Split(new[] { ' ', '\t' }, 2);
 							if (parts.Length > 1)
 							{
 								return parts[1].Trim('"');
