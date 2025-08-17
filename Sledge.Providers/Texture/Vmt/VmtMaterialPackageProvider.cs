@@ -41,7 +41,7 @@ namespace Sledge.Providers.Texture.Vmt
 		{
 			var tName = ReadMaterialBaseTexture(m);
 			if (string.IsNullOrEmpty(tName)) return null;
-			tName = Path.GetRelativePath(".", tName);
+			tName = Path.GetRelativePath(".", tName.ToLower());
 			if (textures.TryGetValue(tName, out var tex))
 			{
 				return tex;
