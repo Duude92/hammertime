@@ -94,8 +94,11 @@ namespace Sledge.BspEditor.Editing.Components.Compile
             _data.Rows.Clear();
             foreach (var parameter in tool.Parameters)
             {
+				if (!tool.Custom)
+				{
                 _data.Rows.Add(parameter.Flag, false, parameter.Name, parameter.Value);
             }
+			}
 
             dataTable.Update();
             UpdatePreview();
