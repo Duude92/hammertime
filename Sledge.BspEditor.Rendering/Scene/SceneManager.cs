@@ -226,7 +226,10 @@ namespace Sledge.BspEditor.Rendering.Scene
 					{
 						var resourceCollector = new ResourceCollector();
 						waitTask = _converter.Value.Convert(md, _sceneBuilder, affected, resourceCollector)
-							.ContinueWith(t => HandleResources(md.Environment, resourceCollector));
+							.ContinueWith(t => {
+								if (t.IsFaulted) { throw t.Exception; }
+								return HandleResources(md.Environment, resourceCollector);
+							});
 						_converter.Value.ConvertSky(md, _sceneBuilder, resourceCollector).Wait();
 					}
 				}

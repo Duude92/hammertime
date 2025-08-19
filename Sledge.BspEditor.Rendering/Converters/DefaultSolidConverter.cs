@@ -87,29 +87,10 @@ namespace Sledge.BspEditor.Rendering.Converters
 				const int renderModeSolid = 4;
 				const int renderModeAdditive = 5;
 
-				var rendermodevalue = parentEntity.EntityData.GetStringProperty("rendermode", "0");
-				var renderamtvalue = parentEntity.EntityData.GetStringProperty("renderamt", "255");
-				int rendermode;
-				float renderamt;
-				if (!String.IsNullOrEmpty(rendermodevalue))
-				{
-					rendermode = int.Parse(rendermodevalue);
-				}
-				else
-				{
-					rendermode = 0;
-				}
-				if (!String.IsNullOrEmpty(renderamtvalue))
-				{
-					renderamt = float.Parse(renderamtvalue) / 255f;
-				}
-				else
-				{
-					renderamt = 1;
-				}
-
-				//var rendermode = renderModeSolid;
-				//var renderamt = 1;
+				var rendermodevalue = parentEntity.EntityData.Get<int>("rendermode", 0);
+				var renderamtvalue = (float)parentEntity.EntityData.Get<int>("renderamt", 255) / 255;
+				int rendermode = rendermodevalue;
+				float renderamt = renderamtvalue;
 
 				entityHasTransparency = renderamt < 0.99;
 
