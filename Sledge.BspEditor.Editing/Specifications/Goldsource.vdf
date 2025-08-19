@@ -45,6 +45,23 @@ Specification
 		    RAD "-extra -low -estimate -noinfo"
         }
 	}
+	Tool
+	{
+		Name "PreTool"
+		Description "Commads before compilation"
+		Order "0"
+        Enabled "True"
+		Custom "True"
+	}
+
+	Tool
+	{
+		Name "PostTool"
+		Description "Commads after compilation"
+		Order "5"
+        Enabled "True"
+		Custom "True"
+	}
 
 	Tool
 	{
