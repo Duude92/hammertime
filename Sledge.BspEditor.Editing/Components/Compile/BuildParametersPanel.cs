@@ -24,13 +24,16 @@ namespace Sledge.BspEditor.Editing.Components.Compile
             get => GetArguments();
             set => SetArguments(value);
         }
-
+		public BuildParametersPanel(bool editable = false)
         public BuildParametersPanel()
         {
             InitializeComponent();
 
             _data = new DataTable();
             _data.Columns.Add("Flag", typeof(string));
+			if (!editable)
+			{
+
             _data.Columns.Add("Selected", typeof(bool));
             _data.Columns.Add("Name", typeof(string));
             _data.Columns.Add("Value", typeof(object));
@@ -68,6 +71,18 @@ namespace Sledge.BspEditor.Editing.Components.Compile
                 DataPropertyName = "Value"
             };
             dataTable.Columns.Add(valueColumn);
+			}
+			else
+			{
+				var flagColumn = new DataGridViewTextBoxColumn
+				{
+					AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
+					DataPropertyName = "Flag",
+				};
+				dataTable.Columns.Add(flagColumn);
+				this.dataTable.AllowUserToAddRows = true;
+				this.dataTable.AllowUserToDeleteRows = true;
+			}
             
             dataTable.DataSource = _data;
         }
