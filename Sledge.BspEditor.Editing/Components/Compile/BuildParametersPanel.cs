@@ -108,7 +108,9 @@ namespace Sledge.BspEditor.Editing.Components.Compile
         {
             var list = new List<string>();
 
-            foreach (DataRow row in ((DataTable) dataTable.DataSource).Rows)
+			if (((DataTable)dataTable.DataSource).Columns.Count > 1)
+			{
+				foreach (DataRow row in ((DataTable)dataTable.DataSource).Rows)
             {
                 if (Convert.ToBoolean(row[1]))
                 {
@@ -118,9 +120,17 @@ namespace Sledge.BspEditor.Editing.Components.Compile
                     if (val.Length > 0) list.Add(val);
                 }
             }
-
             return String.Join(" ", list);
         }
+			else
+			{
+				foreach (DataRow row in ((DataTable)dataTable.DataSource).Rows)
+				{
+					list.Add(Convert.ToString(row[0]));
+				}
+				return String.Join("\n", list);
+			}
+		}
 
         private void SetArguments(string arguments)
         {
