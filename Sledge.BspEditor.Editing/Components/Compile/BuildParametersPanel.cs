@@ -161,9 +161,14 @@ namespace Sledge.BspEditor.Editing.Components.Compile
 			}
 			else
 			{
-				if(!String.IsNullOrEmpty(arguments) && !String.IsNullOrWhiteSpace(arguments))
+				if (!String.IsNullOrEmpty(arguments) && !String.IsNullOrWhiteSpace(arguments))
 				{
-					_data.Rows.Add(arguments);
+					var commands = arguments.Split('\n');
+					foreach (var command in commands)
+					{
+						if (!String.IsNullOrEmpty(command) && !String.IsNullOrWhiteSpace(command))
+							_data.Rows.Add(command);
+					}
 				}
 			}
 			dataTable.Update();
