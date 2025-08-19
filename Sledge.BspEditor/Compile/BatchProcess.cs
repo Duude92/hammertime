@@ -23,22 +23,15 @@ namespace Sledge.BspEditor.Compile
         private bool _continue = true;
 
         public BatchProcess(BatchStepType stepType, string process, string arguments)
-        {
+		{
             Process = process;
             Arguments = arguments;
             StepType = stepType;
             Oy.Subscribe("Compile:Interrupt", () => { if (_process != null) _process.Close(); _continue = false; });
-
-
 		}
-
-		public override async Task Run(Batch batch, MapDocument document)
+        public override async Task Run(Batch batch, MapDocument document)
         {
-            var pcs = Process;
-            var args = Arguments;
-            var wd = WorkingDirectory;
-
-            if (!File.Exists(pcs))
+            if (!File.Exists(Process))
             {
                 // Only show this notice once at most
                 if (batch.Successful)
@@ -48,9 +41,17 @@ namespace Sledge.BspEditor.Compile
                     MessageBox.Show(tlate.GetString(prefix, "ProgramNotFoundMessage"), tlate.GetString(prefix, "ProgramNotFoundTitle"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 batch.Successful = false;
-                await Oy.Publish("Compile:Error", "Process not found: " + pcs + "\n");
+                await Oy.Publish("Compile:Error", "Process not found: " + Process + "\n");
                 return;
             }
+            await RunInternal(batch, document);
+		}
+        internal async Task RunInternal(Batch batch, MapDocument document)
+        {
+			// Get the process, arguments and working directory
+			var pcs = Process;
+            var args = Arguments;
+            var wd = WorkingDirectory;
 
             // Replace {Variables} in the strings
             foreach (var kv in batch.Variables)
