@@ -109,7 +109,8 @@ namespace Sledge.BspEditor.Editing.Components.Compile
 
 					foreach (var kv in args)
 					{
-						batch.Add(new BatchArgument { Name = kv.Key, Arguments = kv.Value + shared });
+						var arguments = kv.Value + ((!kv.Key.Equals("PreTool") && !kv.Key.Equals("PostTool")) ? shared : "");
+						batch.Add(new BatchArgument { Name = kv.Key, Arguments = arguments });
 					}
 				}
 				else
@@ -137,7 +138,8 @@ namespace Sledge.BspEditor.Editing.Components.Compile
 					{
 						if (shouldRun.Contains(kv.Key))
 						{
-							batch.Add(new BatchArgument { Name = kv.Key, Arguments = kv.Value + shared });
+							var arguments = kv.Value + ((!kv.Key.Equals("PreTool") && !kv.Key.Equals("PostTool")) ? shared : "");
+							batch.Add(new BatchArgument { Name = kv.Key, Arguments = arguments });
 						}
 					}
 				}
