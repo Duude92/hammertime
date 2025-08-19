@@ -209,7 +209,7 @@ namespace Sledge.BspEditor.Editing.Components.Compile
                     Tag = tool
                 };
 
-                var bpp = new BuildParametersPanel
+				var bpp = new BuildParametersPanel(tool.Custom)
                 {
                     Dock = DockStyle.Fill,
                     Tool = tool
