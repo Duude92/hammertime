@@ -34,15 +34,19 @@ namespace Sledge.Providers.Texture.Vmt
 		{
 			//if (!_file.NameWithoutExtension.Equals(name, StringComparison.InvariantCultureIgnoreCase)) return null;
 			var texture = _references.FirstOrDefault(x => x.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
-			if(texture == null) return null;
+			if (texture == null) return null;
+			if (texture.File != null)
+			{
 
-			var vtf = new VtfFile(texture.File.Open());
-			var im = vtf.Images.Last();
+				var vtf = new VtfFile(texture.File.Open());
+				var im = vtf.Images.Last();
 
-			//var texturePath = ReadMaterialBaseTexture(texture.Material);
-			//var file = _file as CompositeFile;
-			//var fFile = file.FirstFile as InlinePackageFile;
-			return new TextureItem(name, TextureFlags.None, im.Width, im.Height, name);
+				//var texturePath = ReadMaterialBaseTexture(texture.Material);
+				//var file = _file as CompositeFile;
+				//var fFile = file.FirstFile as InlinePackageFile;
+				return new TextureItem(name, TextureFlags.None, im.Width, im.Height, name);
+			}
+			return new TextureItem(name, TextureFlags.None, 1, 1, name);
 			//var textureFile = new NativeFile(_file.Parent, texturePath);
 
 
