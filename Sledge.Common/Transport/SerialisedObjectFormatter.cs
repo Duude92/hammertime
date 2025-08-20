@@ -31,7 +31,8 @@ namespace Sledge.Common.Transport
         /// <param name="objects">The objects to serialise</param>
         public void Serialize(Stream serializationStream, IEnumerable<SerialisedObject> objects)
         {
-            using (var writer = new StreamWriter(serializationStream, Encoding.UTF8, 1024, true))
+            var encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
+            using (var writer = new StreamWriter(serializationStream, encoding, 1024, true))
             {
                 foreach (var obj in objects.Where(x => x != null))
                 {
