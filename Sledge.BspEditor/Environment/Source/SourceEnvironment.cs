@@ -1,6 +1,8 @@
-﻿using Sledge.BspEditor.Documents;
-using Sledge.BspEditor.Environment.Goldsource;
+﻿using Sledge.BspEditor.Compile;
+using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjectData;
+using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common;
 using Sledge.DataStructures.GameData;
 using Sledge.FileSystem;
@@ -16,13 +18,13 @@ using Path = System.IO.Path;
 
 namespace Sledge.BspEditor.Environment.Source
 {
-	internal class SourceEnvironment : GoldsourceEnvironment
+	internal class SourceEnvironment : IEnvironment
 	{
-		public override string Engine => "Source";
+		public string Engine => "Source";
 
-		//public string ID { get; set; }
+		public string ID { get; set; }
 
-		//public string Name { get; set; }
+		public string Name { get; set; }
 
 		private readonly Lazy<Task<GameData>> _gameData;
 		private readonly Lazy<Task<TextureCollection>> _textureCollection;
@@ -30,10 +32,9 @@ namespace Sledge.BspEditor.Environment.Source
 		private readonly IGameDataProvider _fgdProvider;
 		private readonly List<IEnvironmentData> _data;
 
-
 		private IFile _root;
 
-		public override IFile Root
+		public IFile Root
 		{
 			get
 			{
@@ -47,11 +48,16 @@ namespace Sledge.BspEditor.Environment.Source
 			}
 		}
 
-		//public string BaseDirectory { get; set; }
-		//public string GameDirectory { get; set; }
-		//public string ModDirectory { get; set; }
+		public string BaseDirectory { get; set; }
+		public string GameDirectory { get; set; }
+		public string ModDirectory { get; set; }
+		public bool IncludeToolsDirectoryInEnvironment { get; set; }
+		public string ToolsDirectory { get; set; }
+		public bool IncludeFgdDirectoriesInEnvironment { get; set; }
+		public List<string> FgdFiles { get; set; }
+		public List<string> AdditionalTextureFiles { get; set; }
 
-		public override IEnumerable<string> Directories
+		public IEnumerable<string> Directories
 		{
 			get
 			{
@@ -96,13 +102,32 @@ namespace Sledge.BspEditor.Environment.Source
 			_data = new List<IEnvironmentData>();
 			FgdFiles = new List<string>();
 			AdditionalTextureFiles = new List<string>();
-			ExcludedWads = new List<string>();
 			IncludeToolsDirectoryInEnvironment = IncludeToolsDirectoryInEnvironment = true;
+		}
+		private Task<GameData> MakeGameDataAsync()
+		{
+			Func<GameData> fgdFunc = () =>
+			{
+				var fgd = _fgdProvider.GetGameDataFromFiles(FgdFiles);
+				//_skyTextures = _envProvider.GetPackagesInFile(Root);
+
+				var worldSpawn = fgd.Classes.FirstOrDefault(c => c.Name.Equals("worldspawn"));
+				//if (worldSpawn != null)
+				//{
+				//	var skyProperty = worldSpawn.Properties.FirstOrDefault(c => c.Name.Equals("skyname"));
+				//	skyProperty.VariableType = DataStructures.GameData.VariableType.StringChoices;
+
+				//	skyProperty.Options = new List<DataStructures.GameData.Option>(_skyTextures.Select(x => new Option { Key = x.Name }).ToList());
+				//}
+				return fgd;
+			};
+
+			return Task.FromResult(fgdFunc());
 		}
 
 		private async Task<TextureCollection> MakeTextureCollectionAsync()
 		{
-			var matRefs = _materialsProvider.GetPackagesInFile(Root).Where(x => !ExcludedWads.Contains(x.Name, StringComparer.InvariantCultureIgnoreCase));
+			var matRefs = _materialsProvider.GetPackagesInFile(Root);
 			var extraWads = AdditionalTextureFiles.SelectMany(x => _materialsProvider.GetPackagesInFile(new NativeFile(x)));
 			var wads = await _materialsProvider.GetTexturePackages(matRefs.Union(extraWads));
 
@@ -112,49 +137,136 @@ namespace Sledge.BspEditor.Environment.Source
 			return new SourceTextureCollection(wads);
 		}
 
-		//public string DefaultBrushEntity => throw new NotImplementedException();
+		public string DefaultBrushEntity { get; set; }
 
-		//public string DefaultPointEntity => throw new NotImplementedException();
+		public string DefaultPointEntity { get; set; }
 
-		//public decimal DefaultTextureScale => throw new NotImplementedException();
+		public decimal DefaultTextureScale { get; set; } = 1;
+		public float DefaultGridSize { get; set; } = 16;
 
-		//public float DefaultGridSize => throw new NotImplementedException();
 
-		//public string CordonTexture { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-		//public string[] NonRenderableTextures { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+		public string CordonTexture { get; set; }
+		public string[] NonRenderableTextures { get; set; }
+		public string GameExe { get; internal set; }
+		public bool OverrideMapSize { get; internal set; }
+		public decimal MapSizeLow { get; internal set; }
+		public decimal MapSizeHigh { get; internal set; }
+		public string BspExe { get; internal set; }
+		public string VisExe { get; internal set; }
+		public string RadExe { get; internal set; }
+		public bool GameCopyBsp { get; internal set; }
+		public bool GameRun { get; internal set; }
+		public bool GameAsk { get; internal set; }
+		public bool MapCopyBsp { get; internal set; }
+		public bool MapCopyMap { get; internal set; }
+		public bool MapCopyLog { get; internal set; }
+		public bool MapCopyErr { get; internal set; }
+		public bool MapCopyRes { get; internal set; }
 
-		//public void AddData(IEnvironmentData data)
-		//{
-		//	throw new NotImplementedException();
-		//}
+		public void AddData(IEnvironmentData data)
+		{
+			if (!_data.Contains(data)) _data.Add(data);
+		}
 
-		//public Task<Batch> CreateBatch(IEnumerable<BatchArgument> arguments, BatchOptions options)
-		//{
-		//	throw new NotImplementedException();
-		//}
+		public Task<Batch> CreateBatch(IEnumerable<BatchArgument> arguments, BatchOptions options)
+		{
+			throw new NotImplementedException();
+		}
+		private static readonly string AutoVisgroupPrefix = typeof(SourceEnvironment).Namespace + ".AutomaticVisgroups";
 
-		//public IEnumerable<AutomaticVisgroup> GetAutomaticVisgroups()
-		//{
-		//	throw new NotImplementedException();
-		//}
+		public IEnumerable<AutomaticVisgroup> GetAutomaticVisgroups()
+		{
+			// Entities
+			yield return new AutomaticVisgroup(x => x is Entity && x.Hierarchy.HasChildren)
+			{
+				Path = $"{AutoVisgroupPrefix}.Entities",
+				Key = $"{AutoVisgroupPrefix}.BrushEntities"
+			};
+			yield return new AutomaticVisgroup(x => x is Entity && !x.Hierarchy.HasChildren)
+			{
+				Path = $"{AutoVisgroupPrefix}.Entities",
+				Key = $"{AutoVisgroupPrefix}.PointEntities"
+			};
+			yield return new AutomaticVisgroup(x => x is Entity e && e.EntityData.Name.StartsWith("light", StringComparison.InvariantCultureIgnoreCase))
+			{
+				Path = $"{AutoVisgroupPrefix}.Entities",
+				Key = $"{AutoVisgroupPrefix}.Lights"
+			};
+			yield return new AutomaticVisgroup(x => x is Entity e && e.EntityData.Name.StartsWith("trigger_", StringComparison.InvariantCultureIgnoreCase))
+			{
+				Path = $"{AutoVisgroupPrefix}.Entities",
+				Key = $"{AutoVisgroupPrefix}.Triggers"
+			};
+			yield return new AutomaticVisgroup(x => x is Entity e && e.EntityData.Name.IndexOf("_node", StringComparison.InvariantCultureIgnoreCase) >= 0)
+			{
+				Path = $"{AutoVisgroupPrefix}.Entities",
+				Key = $"{AutoVisgroupPrefix}.Nodes"
+			};
 
-		//public IEnumerable<T> GetData<T>() where T : IEnvironmentData
-		//{
-		//	throw new NotImplementedException();
-		//}
+			// Tool brushes
+			yield return new AutomaticVisgroup(x => x is Solid s && s.Faces.Any(f => string.Equals(f.Texture.Name, "bevel", StringComparison.InvariantCultureIgnoreCase)))
+			{
+				Path = $"{AutoVisgroupPrefix}.ToolBrushes",
+				Key = $"{AutoVisgroupPrefix}.Bevel"
+			};
+			yield return new AutomaticVisgroup(x => x is Solid s && s.Faces.Any(f => string.Equals(f.Texture.Name, "hint", StringComparison.InvariantCultureIgnoreCase)))
+			{
+				Path = $"{AutoVisgroupPrefix}.ToolBrushes",
+				Key = $"{AutoVisgroupPrefix}.Hint"
+			};
+			yield return new AutomaticVisgroup(x => x is Solid s && s.Faces.Any(f => string.Equals(f.Texture.Name, "origin", StringComparison.InvariantCultureIgnoreCase)))
+			{
+				Path = $"{AutoVisgroupPrefix}.ToolBrushes",
+				Key = $"{AutoVisgroupPrefix}.Origin"
+			};
+			yield return new AutomaticVisgroup(x => x is Solid s && s.Faces.Any(f => string.Equals(f.Texture.Name, "skip", StringComparison.InvariantCultureIgnoreCase)))
+			{
+				Path = $"{AutoVisgroupPrefix}.ToolBrushes",
+				Key = $"{AutoVisgroupPrefix}.Skip"
+			};
+			yield return new AutomaticVisgroup(x => x is Solid s && s.Faces.Any(f => string.Equals(f.Texture.Name, "aaatrigger", StringComparison.InvariantCultureIgnoreCase)))
+			{
+				Path = $"{AutoVisgroupPrefix}.ToolBrushes",
+				Key = $"{AutoVisgroupPrefix}.Trigger"
+			};
 
-		public override Task<GameData> GetGameData()
+			// World geometry
+			yield return new AutomaticVisgroup(x => x is Solid s && s.FindClosestParent(p => p is Entity) == null)
+			{
+				Path = $"{AutoVisgroupPrefix}.WorldGeometry",
+				Key = $"{AutoVisgroupPrefix}.Brushes"
+			};
+			yield return new AutomaticVisgroup(x => x is Solid s && s.FindClosestParent(p => p is Entity) == null && s.Faces.Any(f => string.Equals(f.Texture.Name, "null", StringComparison.InvariantCultureIgnoreCase)))
+			{
+				Path = $"{AutoVisgroupPrefix}.WorldGeometry",
+				Key = $"{AutoVisgroupPrefix}.Null"
+			};
+			yield return new AutomaticVisgroup(x => x is Solid s && s.FindClosestParent(p => p is Entity) == null && s.Faces.Any(f => string.Equals(f.Texture.Name, "sky", StringComparison.InvariantCultureIgnoreCase)))
+			{
+				Path = $"{AutoVisgroupPrefix}.WorldGeometry",
+				Key = $"{AutoVisgroupPrefix}.Sky"
+			};
+			yield return new AutomaticVisgroup(x => x is Solid s && s.FindClosestParent(p => p is Entity) == null && s.Faces.Any(f => f.Texture.Name.StartsWith("!")))
+			{
+				Path = $"{AutoVisgroupPrefix}.WorldGeometry",
+				Key = $"{AutoVisgroupPrefix}.Water"
+			};
+		}
+
+		public IEnumerable<T> GetData<T>() where T : IEnvironmentData
+		{
+			return _data.OfType<T>();
+		}
+		public Task<GameData> GetGameData()
 		{
 			return _gameData.Value;
 		}
-
-
-		public override Task<TextureCollection> GetTextureCollection()
+		public Task<TextureCollection> GetTextureCollection()
 		{
 			return _textureCollection.Value;
 		}
 
-		public override async Task UpdateDocumentData(MapDocument document)
+		public async Task UpdateDocumentData(MapDocument document)
 		{
 			// Ensure that worldspawn has the correct entity data
 			var ed = document.Map.Root.Data.GetOne<EntityData>();
