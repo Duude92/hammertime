@@ -1,19 +1,32 @@
 ﻿using Sledge.BspEditor.Environment.Goldsource;
 using System;
 using System.ComponentModel.Composition;
+using System.Globalization;
 using System.Linq;
+using static Sledge.BspEditor.Environment.EnvironmentHelper;
+
 
 namespace Sledge.BspEditor.Environment.Source
 {
 	[Export(typeof(IEnvironmentFactory))]
 
-	internal class SourceEnvironmentFactory : GoldsourceEnvironmentFactory
+	internal class SourceEnvironmentFactory : IEnvironmentFactory
 	{
-		public override Type Type => typeof(SourceEnvironment);
-		public override string TypeName => "SourceEnvironment";
-		public override string Description { get; set; } = "Source";
+		public Type Type => typeof(SourceEnvironment);
+		public string TypeName => "SourceEnvironment";
+		public string Description { get; set; } = "Source";
 
-		public override IEnvironment Deserialise(SerialisedEnvironment environment)
+		public IEnvironmentEditor CreateEditor()
+		{
+			return new SourceEnvironmentEditor();
+		}
+
+		public IEnvironment CreateEnvironment()
+		{
+			return new SourceEnvironment();
+		}
+
+		public IEnvironment Deserialise(SerialisedEnvironment environment)
 		{
 			var gse = new SourceEnvironment()
 			{
@@ -23,7 +36,6 @@ namespace Sledge.BspEditor.Environment.Source
 				GameDirectory = GetVal(environment.Properties, "GameDirectory", ""),
 				ModDirectory = GetVal(environment.Properties, "ModDirectory", ""),
 				GameExe = GetVal(environment.Properties, "GameExe", ""),
-				LoadHdModels = GetVal(environment.Properties, "LoadHdModels", true),
 
 				FgdFiles = GetVal(environment.Properties, "FgdFiles", "").Split(';').Where(x => !String.IsNullOrWhiteSpace(x)).ToList(),
 				DefaultPointEntity = GetVal(environment.Properties, "DefaultPointEntity", ""),
@@ -36,7 +48,6 @@ namespace Sledge.BspEditor.Environment.Source
 				ToolsDirectory = GetVal(environment.Properties, "ToolsDirectory", ""),
 				IncludeToolsDirectoryInEnvironment = GetVal(environment.Properties, "IncludeToolsDirectoryInEnvironment", true),
 				BspExe = GetVal(environment.Properties, "BspExe", ""),
-				CsgExe = GetVal(environment.Properties, "CsgExe", ""),
 				VisExe = GetVal(environment.Properties, "VisExe", ""),
 				RadExe = GetVal(environment.Properties, "RadExe", ""),
 
@@ -52,7 +63,6 @@ namespace Sledge.BspEditor.Environment.Source
 
 				DefaultTextureScale = GetVal(environment.Properties, "DefaultTextureScale", 1m),
 				DefaultGridSize = GetVal(environment.Properties, "DefaultGridSize", 16f),
-				ExcludedWads = GetVal(environment.Properties, "ExcludedWads", "").Split(';').Where(x => !String.IsNullOrWhiteSpace(x)).ToList(),
 				AdditionalTextureFiles = GetVal(environment.Properties, "AdditionalTextureFiles", "").Split(';').Where(x => !String.IsNullOrWhiteSpace(x)).ToList(),
 				CordonTexture = GetVal(environment.Properties, "CordonWrapTexture", "BLACK"),
 				NonRenderableTextures = GetVal(environment.Properties, "NonRenderableTexture", "aaatrigger;sky;null;clip;hint;skip;origin;bevel").Split(';').Select(texture => texture.Trim()).Where(texture => !String.IsNullOrEmpty(texture)).ToArray()
@@ -61,5 +71,58 @@ namespace Sledge.BspEditor.Environment.Source
 			return gse;
 		}
 
+		public SerialisedEnvironment Serialise(IEnvironment environment)
+		{
+			var env = (GoldsourceEnvironment)environment;
+			var se = new SerialisedEnvironment
+			{
+				ID = environment.ID,
+				Name = environment.Name,
+				Type = TypeName,
+				Properties =
+				{
+					{ "BaseDirectory", env.BaseDirectory },
+					{ "GameDirectory", env.GameDirectory },
+					{ "ModDirectory", env.ModDirectory },
+					{ "GameExe", env.GameExe },
+					{ "LoadHdModels", Convert.ToString(env.LoadHdModels, CultureInfo.InvariantCulture) },
+
+					{ "FgdFiles", String.Join(";", env.FgdFiles) },
+					{ "DefaultPointEntity", env.DefaultPointEntity },
+					{ "DefaultBrushEntity", env.DefaultBrushEntity },
+					{ "OverrideMapSize", Convert.ToString(env.OverrideMapSize, CultureInfo.InvariantCulture) },
+					{ "MapSizeLow", Convert.ToString(env.MapSizeLow, CultureInfo.InvariantCulture) },
+					{ "MapSizeHigh", Convert.ToString(env.MapSizeHigh, CultureInfo.InvariantCulture) },
+					{ "IncludeFgdDirectoriesInEnvironment", Convert.ToString(env.IncludeFgdDirectoriesInEnvironment, CultureInfo.InvariantCulture) },
+
+					{ "ToolsDirectory", env.ToolsDirectory },
+					{ "IncludeToolsDirectoryInEnvironment", Convert.ToString(env.IncludeToolsDirectoryInEnvironment, CultureInfo.InvariantCulture) },
+					{ "BspExe", env.BspExe },
+					{ "CsgExe", env.CsgExe },
+					{ "VisExe", env.VisExe },
+					{ "RadExe", env.RadExe },
+
+					{ "GameCopyBsp", Convert.ToString(env.GameCopyBsp, CultureInfo.InvariantCulture) },
+					{ "GameRun", Convert.ToString(env.GameRun, CultureInfo.InvariantCulture) },
+					{ "GameAsk", Convert.ToString(env.GameAsk, CultureInfo.InvariantCulture) },
+
+					{ "MapCopyBsp", Convert.ToString(env.MapCopyBsp, CultureInfo.InvariantCulture) },
+					{ "MapCopyMap", Convert.ToString(env.MapCopyMap, CultureInfo.InvariantCulture) },
+					{ "MapCopyLog", Convert.ToString(env.MapCopyLog, CultureInfo.InvariantCulture) },
+					{ "MapCopyErr", Convert.ToString(env.MapCopyErr, CultureInfo.InvariantCulture) },
+					{ "MapCopyRes", Convert.ToString(env.MapCopyRes, CultureInfo.InvariantCulture) },
+
+					{ "DefaultTextureScale", Convert.ToString(env.DefaultTextureScale, CultureInfo.InvariantCulture) },
+					{ "DefaultGridSize", Convert.ToString(env.DefaultGridSize, CultureInfo.InvariantCulture)},
+
+					{ "ExcludedWads", String.Join(";", env.ExcludedWads) },
+					{ "AdditionalTextureFiles", String.Join(";", env.AdditionalTextureFiles) },
+					{ "CordonWrapTexture", String.Join(";", env.CordonTexture) },
+					{ "NonRenderableTexture", String.Join(";", env.NonRenderableTextures) }
+
+				}
+			};
+			return se;
+		}
 	}
 }
