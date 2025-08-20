@@ -1,9 +1,9 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Globalization;
 using System.Linq;
 using Sledge.Common.Translations;
+using static Sledge.BspEditor.Environment.EnvironmentHelper;
 
 namespace Sledge.BspEditor.Environment.Goldsource
 {
@@ -14,22 +14,6 @@ namespace Sledge.BspEditor.Environment.Goldsource
 		public Type Type => typeof(GoldsourceEnvironment);
 		public string TypeName => "GoldsourceEnvironment";
 		public string Description { get; set; } = "Goldsource";
-
-		private T GetVal<T>(Dictionary<string, string> dictionary, string key, T def = default(T))
-		{
-			if (dictionary.TryGetValue(key, out var val))
-			{
-				try
-				{
-					return (T)Convert.ChangeType(val, typeof(T), CultureInfo.InvariantCulture);
-				}
-				catch
-				{
-					//
-				}
-			}
-			return def;
-		}
 
 		public IEnvironment Deserialise(SerialisedEnvironment environment)
 		{
