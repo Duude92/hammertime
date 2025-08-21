@@ -76,7 +76,7 @@ namespace Sledge.Providers.Texture.Vmt
 					}
 					while ((line = reader.ReadLine()) != null)
 					{
-						if (line.Trim().StartsWith("\"$basetexture\"", StringComparison.InvariantCultureIgnoreCase))
+						if (line.Trim().Trim('\t').StartsWith("\"$basetexture\"", StringComparison.InvariantCultureIgnoreCase))
 						{
 							var parts = line.Trim('\t').Split(new[] { ' ', '\t' }, 2);
 							if (parts.Length > 1)
