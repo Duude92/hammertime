@@ -14,8 +14,6 @@ using Sledge.Rendering.Primitives;
 using Sledge.Rendering.Resources;
 using Sledge.Rendering.Viewports;
 using Veldrid;
-using Vortice.Direct3D11;
-using Vortice.DXGI;
 using Buffer = Sledge.Rendering.Resources.Buffer;
 using PixelFormat = System.Drawing.Imaging.PixelFormat;
 
@@ -28,7 +26,7 @@ namespace Sledge.Providers.Model.Mdl10
 		public VertexFlags Flags { get; set; } = 0;
 
 		private readonly Guid _guid;
-		private uint[][] _bodyPartIndices;
+		private uint[][][] _bodyPartIndices;
 
 		private Rendering.Resources.Texture _textureResource;
 		private Buffer _buffer;
@@ -134,61 +132,69 @@ namespace Sledge.Providers.Model.Mdl10
 		{
 			_rectangles = CreateTexuture(engine, context);
 			_buffer = engine.CreateBuffer();
+			Init();
 		}
-		public void ReInitResources(int skinId = 0, int bodyPartId = 0)
+		private void Init()
 		{
 			var texHeight = _rectangles.Max(x => x.Bottom);
 			var texWidth = _rectangles.Max(x => x.Right);
 			var maxTexSize = new Vector2(texWidth, texHeight);
 			var vertices = new List<VertexModel3>();
 			var indices = new Dictionary<short, List<uint>>();
-			for (short i = 0; i < Model.Textures.Count; i++) indices[i] = new List<uint>();
+			for (short i = 0; i < Model.Textures.Count; i++) indices[i] = new List<uint>(Model.Skins.Count);
 
 			var wireframeIndices = new List<uint>();
 
 
-			var _bodyPartIndices1 = new uint[Model.BodyParts.Count][];
+			var _bodyPartIndices1 = new uint[Model.BodyParts.Count][][];
 
 			uint vi = 0;
-			var skinMax = Math.Max(0, Math.Min(skinId, Model.Skins.Count - 1));
-			bodyPartId = Math.Max(0, bodyPartId);
+			var skinMax = 0;
 
 			var skin = Model.Skins[skinMax].Textures;
 			for (var bpi = 0; bpi < Model.BodyParts.Count; bpi++)
 			{
 				var part = Model.BodyParts[bpi];
-				_bodyPartIndices1[bpi] = new uint[part.Models.Length];
+				_bodyPartIndices1[bpi] = new uint[part.Models.Length][];
 
-				var body = bodyPartId % part.Models.Length;
-				bodyPartId /= part.Models.Length;
-				var model = part.Models[body];
-				_bodyPartIndices1[bpi][0] = (uint)model.Meshes.Sum(x => x.Vertices.Length);
-				foreach (var mesh in model.Meshes)
+				for (var msh = 0; msh < part.Models.Length; msh++)
 				{
-					var texId = skin[mesh.Header.SkinRef];
-					var rec = _rectangles.Count > texId ? _rectangles[texId] : Rectangle.Empty;
-					for (var i = 0; i < mesh.Vertices.Length; i++)
-					{
-						var x = mesh.Vertices[i];
-						x.Texture = new Vector2(float.IsNaN(x.Texture.X) ? x.Vertex.X : x.Texture.X, float.IsNaN(x.Texture.Y) ? x.Vertex.Z : x.Texture.Y);
-						var origRect = _originalRectangles.Count > texId ? _originalRectangles[texId] : Rectangle.Empty;
+					_bodyPartIndices1[bpi][msh] = new uint[1];
 
-						var coeff = maxTexSize / new Vector2(origRect.Width, origRect.Height);
-						var texturePosition = new Vector3((x.Texture.X / maxTexSize.X) * coeff.X, (x.Texture.Y / maxTexSize.Y) * coeff.Y, mesh.Header.SkinRef);
-						vertices.Add(new VertexModel3
+					var model = part.Models[msh];
+					_bodyPartIndices1[bpi][msh][0] = (uint)model.Meshes.Sum(x => x.Vertices.Length);
+					if (_bodyPartIndices1[bpi][msh][0] == 0)
+					{
+						_bodyPartIndices1[bpi][msh][0] = _bodyPartIndices1[bpi - 1][msh][0];
+					}
+					foreach (var mesh in model.Meshes)
+					{
+						var texId = skin[mesh.Header.SkinRef];
+						var rec = _rectangles.Count > texId ? _rectangles[texId] : Rectangle.Empty;
+						for (var i = 0; i < mesh.Vertices.Length; i++)
 						{
-							Position = x.Vertex,
-							Normal = x.Normal,
-							Texture = texturePosition,
-							Bone = (uint)x.VertexBone,
-							Flags = Flags
-						});
-						indices[texId].Add(vi);
-						wireframeIndices.Add(vi);
-						wireframeIndices.Add(i % 3 == 2 ? vi - 2 : vi + 1);
-						vi++;
+							var x = mesh.Vertices[i];
+							x.Texture = new Vector2(float.IsNaN(x.Texture.X) ? x.Vertex.X : x.Texture.X, float.IsNaN(x.Texture.Y) ? x.Vertex.Z : x.Texture.Y);
+							var origRect = _originalRectangles.Count > texId ? _originalRectangles[texId] : Rectangle.Empty;
+
+							var coeff = maxTexSize / new Vector2(origRect.Width, origRect.Height);
+							var texturePosition = new Vector3((x.Texture.X / maxTexSize.X) * coeff.X, (x.Texture.Y / maxTexSize.Y) * coeff.Y, mesh.Header.SkinRef);
+							vertices.Add(new VertexModel3
+							{
+								Position = x.Vertex,
+								Normal = x.Normal,
+								Texture = texturePosition,
+								Bone = (uint)x.VertexBone,
+								Flags = Flags
+							});
+							indices[texId].Add(vi);
+							wireframeIndices.Add(vi);
+							wireframeIndices.Add(i % 3 == 2 ? vi - 2 : vi + 1);
+							vi++;
+						}
 					}
 				}
+
 			}
 			_bodyPartIndices = _bodyPartIndices1;
 
@@ -208,8 +214,9 @@ namespace Sledge.Providers.Model.Mdl10
 			_numWireframeIndices = (uint)wireframeIndices.Count;
 		}
 
-		public void Render(RenderContext context, IPipeline pipeline, IViewport viewport, CommandList cl)
+		public void Render(RenderContext context, IPipeline pipeline, IViewport viewport, CommandList cl, int skinId, int bodyGroup)
 		{
+			var body = bodyGroup % _bodyPartIndices.Length;
 			_buffer.Bind(cl, 0);
 
 			if (pipeline.Type == PipelineType.TexturedModel)
@@ -217,7 +224,7 @@ namespace Sledge.Providers.Model.Mdl10
 				_textureResource.BindTo(cl, 1);
 				uint ci = 0;
 
-				foreach (var bpi in _bodyPartIndices)
+				foreach (var bpi in _bodyPartIndices[body])
 				{
 					const int model = 0;
 					for (var j = 0; j < bpi.Length; j++)

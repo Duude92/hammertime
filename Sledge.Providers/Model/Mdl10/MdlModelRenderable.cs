@@ -35,7 +35,7 @@ namespace Sledge.Providers.Model.Mdl10
 		public int SkinId { get; set; }
 		public int BodyGroup { get; set; }
 
-        private int _lastSequence = -1;
+		private int _lastSequence = -1;
         public int Sequence { get; set; }
 
         public MdlModelRenderable(MdlModel model)
@@ -153,7 +153,7 @@ namespace Sledge.Providers.Model.Mdl10
                 cl.SetGraphicsResourceSet(2, _transformsResourceSet);
             }
 
-            _model.Render(context, pipeline, viewport, cl);
+            _model.Render(context, pipeline, viewport, cl, SkinId, BodyGroup);
         }
 
         public void Render(RenderContext context, IPipeline pipeline, IViewport viewport, CommandList cl, ILocation locationObject)
