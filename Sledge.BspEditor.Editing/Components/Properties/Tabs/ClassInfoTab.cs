@@ -322,7 +322,10 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 						bodyPart = int.Parse(body);
 					var em = obj.Data.GetOne<EntityModel>();
 					if (em != null)
-						((em.Renderable as Sledge.Providers.Model.Mdl10.MdlModelRenderable).Model as MdlModel).ReInitResources(skinId, bodyPart);
+					{
+						em.Renderable.SkinId = skinId;
+						em.Renderable.BodyGroup = bodyPart;
+					}
 				}
 
 

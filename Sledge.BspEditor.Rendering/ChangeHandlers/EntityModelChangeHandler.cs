@@ -71,7 +71,8 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
                 }
 
                 var renderable = _resourceCollection.Value.CreateModelRenderable(change.Document.Environment, model);
-                (model as MdlModel)?.ReInitResources(entity.EntityData.Get<int>("skin", 0), entity.EntityData.Get<int>("body", 0));
+                renderable.SkinId = entity.EntityData.Get<int>("skin", 0);
+                renderable.BodyGroup = entity.EntityData.Get<int>("body", 0);
 				var sd = new EntityModel(modelName, renderable);
                 UpdateSequence(sd, modelDetails);
 
