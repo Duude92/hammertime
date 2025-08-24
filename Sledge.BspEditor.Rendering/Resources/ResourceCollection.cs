@@ -58,12 +58,12 @@ namespace Sledge.BspEditor.Rendering.Resources
             var rlist = _resources[environment.ID];
             
             /// Since MdlModel class also provides code for rendering - we have duplicating renderers, that would affect each other same model file
-            /*
+            
             // Check if the model has already been loaded
             var existing = mlist.FirstOrDefault(x =>
                 string.Equals(x.Name, path, StringComparison.InvariantCultureIgnoreCase));
             if (existing != null) return existing.Model;
-            */
+            
             // Find the file
             var file = environment.Root.TraversePath(path);
             if (file == null || !file.Exists) return null;
