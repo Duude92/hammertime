@@ -32,6 +32,8 @@ namespace Sledge.Providers.Model.Mdl10
 
         public Vector3 Origin { get; set; }
         public Vector3 Angles { get; set; }
+		public int SkinId { get; set; }
+		public int BodyGroup { get; set; }
 
         private int _lastSequence = -1;
         public int Sequence { get; set; }
