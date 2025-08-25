@@ -29,6 +29,7 @@ namespace Sledge.Providers.Model.Mdl10
 		private uint[][] _bodyPartIndices;
 
 		private Rendering.Resources.Texture _textureResource;
+		private List<Rectangle> _originalRectangles;
 		private Buffer _buffer;
 		private uint _numTexturedIndices;
 		private uint _numWireframeIndices;
@@ -87,11 +88,9 @@ namespace Sledge.Providers.Model.Mdl10
 
 			return bmp;
 		}
-		List<Rectangle> _originalRectangles;
 		private List<Rectangle> CreateTexuture(EngineInterface engine, RenderContext context)
 		{
 			if (!Model.Textures.Any()) return new List<Rectangle>();
-
 			// Combine all the textures into one long texture
 			var textures = Model.Textures.Select(x => CreateBitmap(x.Header.Width, x.Header.Height, x.Data, x.Palette, x.Header.Flags.HasFlag(TextureFlags.Masked))).ToList();
 
@@ -127,21 +126,19 @@ namespace Sledge.Providers.Model.Mdl10
 
 			return rectangles;
 		}
-		private List<Rectangle> _rectangles;
 		public void CreateResources(EngineInterface engine, RenderContext context)
 		{
-			_rectangles = CreateTexuture(engine, context);
+			_originalRectangles = CreateTexuture(engine, context);
 			_buffer = engine.CreateBuffer();
 			Init();
 		}
 		private void Init()
 		{
-			var texHeight = _rectangles.Max(x => x.Bottom);
-			var texWidth = _rectangles.Max(x => x.Right);
+			var texHeight = _originalRectangles.Max(x => x.Bottom);
+			var texWidth = _originalRectangles.Max(x => x.Right);
 			var maxTexSize = new Vector2(texWidth, texHeight);
 			var vertices = new List<VertexModel3>();
-			var indices = new Dictionary<short, List<uint>>();
-			for (short i = 0; i < Model.Textures.Count; i++) indices[i] = new List<uint>(Model.Skins.Count);
+			var indices = new List<uint>();
 
 			var wireframeIndices = new List<uint>();
 
@@ -164,7 +161,6 @@ namespace Sledge.Providers.Model.Mdl10
 					foreach (var mesh in model.Meshes)
 					{
 						var texId = skin[mesh.Header.SkinRef];
-						var rec = _rectangles.Count > texId ? _rectangles[texId] : Rectangle.Empty;
 						for (var i = 0; i < mesh.Vertices.Length; i++)
 						{
 							var x = mesh.Vertices[i];
@@ -181,7 +177,7 @@ namespace Sledge.Providers.Model.Mdl10
 								Bone = (uint)x.VertexBone,
 								Flags = Flags
 							});
-							indices[texId].Add(vi);
+							indices.Add(vi);
 							wireframeIndices.Add(vi);
 							wireframeIndices.Add(i % 3 == 2 ? vi - 2 : vi + 1);
 							vi++;
@@ -194,12 +190,8 @@ namespace Sledge.Providers.Model.Mdl10
 
 			var flatIndices = new uint[vi + wireframeIndices.Count];
 			var currentIndexCount = 0;
-			foreach (var kv in indices.OrderBy(x => x.Key))
-			{
-				var num = kv.Value.Count;
-				Array.Copy(kv.Value.ToArray(), 0, flatIndices, currentIndexCount, num);
-				currentIndexCount += num;
-			}
+			Array.Copy(indices.ToArray(), 0, flatIndices, 0, indices.Count);
+			currentIndexCount = indices.Count;
 			Array.Copy(wireframeIndices.ToArray(), 0, flatIndices, currentIndexCount, wireframeIndices.Count);
 
 			_buffer.Update(vertices, flatIndices);
