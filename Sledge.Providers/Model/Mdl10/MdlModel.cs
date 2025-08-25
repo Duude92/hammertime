@@ -140,8 +140,7 @@ namespace Sledge.Providers.Model.Mdl10
 			var texWidth = _rectangles.Max(x => x.Right);
 			var maxTexSize = new Vector2(texWidth, texHeight);
 			var vertices = new List<VertexModel3>();
-			var indices = new Dictionary<short, List<uint>>();
-			for (short i = 0; i < Model.Textures.Count; i++) indices[i] = new List<uint>(Model.Skins.Count);
+			var indices = new List<uint>();
 
 			var wireframeIndices = new List<uint>();
 
@@ -181,7 +180,7 @@ namespace Sledge.Providers.Model.Mdl10
 								Bone = (uint)x.VertexBone,
 								Flags = Flags
 							});
-							indices[texId].Add(vi);
+							indices.Add(vi);
 							wireframeIndices.Add(vi);
 							wireframeIndices.Add(i % 3 == 2 ? vi - 2 : vi + 1);
 							vi++;
@@ -194,12 +193,8 @@ namespace Sledge.Providers.Model.Mdl10
 
 			var flatIndices = new uint[vi + wireframeIndices.Count];
 			var currentIndexCount = 0;
-			foreach (var kv in indices.OrderBy(x => x.Key))
-			{
-				var num = kv.Value.Count;
-				Array.Copy(kv.Value.ToArray(), 0, flatIndices, currentIndexCount, num);
-				currentIndexCount += num;
-			}
+			Array.Copy(indices.ToArray(), 0, flatIndices, 0, indices.Count);
+			currentIndexCount = indices.Count;
 			Array.Copy(wireframeIndices.ToArray(), 0, flatIndices, currentIndexCount, wireframeIndices.Count);
 
 			_buffer.Update(vertices, flatIndices);
