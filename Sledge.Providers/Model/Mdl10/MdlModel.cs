@@ -163,10 +163,6 @@ namespace Sledge.Providers.Model.Mdl10
 
 					var model = part.Models[msh];
 					_bodyPartIndices1[bpi][msh][0] = (uint)model.Meshes.Sum(x => x.Vertices.Length);
-					if (_bodyPartIndices1[bpi][msh][0] == 0)
-					{
-						_bodyPartIndices1[bpi][msh][0] = _bodyPartIndices1[bpi - 1][msh][0];
-					}
 					foreach (var mesh in model.Meshes)
 					{
 						var texId = skin[mesh.Header.SkinRef];
@@ -216,7 +212,6 @@ namespace Sledge.Providers.Model.Mdl10
 
 		public void Render(RenderContext context, IPipeline pipeline, IViewport viewport, CommandList cl, int skinId, int bodyGroup)
 		{
-			var body = bodyGroup % _bodyPartIndices.Length;
 			_buffer.Bind(cl, 0);
 
 			if (pipeline.Type == PipelineType.TexturedModel)
@@ -224,8 +219,10 @@ namespace Sledge.Providers.Model.Mdl10
 				_textureResource.BindTo(cl, 1);
 				uint ci = 0;
 
-				foreach (var bpi in _bodyPartIndices[body])
+				foreach (var bpi1 in _bodyPartIndices)
 				{
+					var body = bodyGroup % bpi1.Length;
+					var bpi = bpi1[body];
 					const int model = 0;
 					for (var j = 0; j < bpi.Length; j++)
 					{
