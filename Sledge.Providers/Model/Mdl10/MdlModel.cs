@@ -26,7 +26,7 @@ namespace Sledge.Providers.Model.Mdl10
 		public VertexFlags Flags { get; set; } = 0;
 
 		private readonly Guid _guid;
-		private uint[][][] _bodyPartIndices;
+		private uint[][] _bodyPartIndices;
 
 		private Rendering.Resources.Texture _textureResource;
 		private Buffer _buffer;
@@ -146,7 +146,7 @@ namespace Sledge.Providers.Model.Mdl10
 			var wireframeIndices = new List<uint>();
 
 
-			var _bodyPartIndices1 = new uint[Model.BodyParts.Count][][];
+			var _bodyPartIndices1 = new uint[Model.BodyParts.Count][];
 
 			uint vi = 0;
 			var skinMax = 0;
@@ -155,14 +155,12 @@ namespace Sledge.Providers.Model.Mdl10
 			for (var bpi = 0; bpi < Model.BodyParts.Count; bpi++)
 			{
 				var part = Model.BodyParts[bpi];
-				_bodyPartIndices1[bpi] = new uint[part.Models.Length][];
+				_bodyPartIndices1[bpi] = new uint[part.Models.Length];
 
-				for (var msh = 0; msh < part.Models.Length; msh++)
+				for (var mdlIndex = 0; mdlIndex < part.Models.Length; mdlIndex++)
 				{
-					_bodyPartIndices1[bpi][msh] = new uint[1];
-
-					var model = part.Models[msh];
-					_bodyPartIndices1[bpi][msh][0] = (uint)model.Meshes.Sum(x => x.Vertices.Length);
+					var model = part.Models[mdlIndex];
+					_bodyPartIndices1[bpi][mdlIndex] = (uint)model.Meshes.Sum(x => x.Vertices.Length);
 					foreach (var mesh in model.Meshes)
 					{
 						var texId = skin[mesh.Header.SkinRef];
@@ -229,12 +227,9 @@ namespace Sledge.Providers.Model.Mdl10
 					{
 						var model = bpi[model_index];
 
-						for (var j = 0; j < model.Length; j++)
-						{
-							if (model_index == body)
-								cl.DrawIndexed(model[j], 1, ci, 0, 0);
-							ci += model[j];
-						}
+						if (model_index == body)
+							cl.DrawIndexed(model, 1, ci, 0, 0);
+						ci += model;
 					}
 				}
 			}
