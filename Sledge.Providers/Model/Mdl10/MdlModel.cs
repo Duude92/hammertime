@@ -219,15 +219,22 @@ namespace Sledge.Providers.Model.Mdl10
 				_textureResource.BindTo(cl, 1);
 				uint ci = 0;
 
-				foreach (var bpi1 in _bodyPartIndices)
+				var bodyPartId = bodyGroup;
+
+				foreach (var bpi in _bodyPartIndices)
 				{
-					var body = bodyGroup % bpi1.Length;
-					var bpi = bpi1[body];
-					const int model = 0;
-					for (var j = 0; j < bpi.Length; j++)
+					var body = bodyPartId % bpi.Length;
+					bodyPartId /= bpi.Length;
+					for (var model_index = 0; model_index < bpi.Length; model_index++)
 					{
-						if (j == model) cl.DrawIndexed(bpi[j], 1, ci, 0, 0);
-						ci += bpi[j];
+						var model = bpi[model_index];
+
+						for (var j = 0; j < model.Length; j++)
+						{
+							if (model_index == body)
+								cl.DrawIndexed(model[j], 1, ci, 0, 0);
+							ci += model[j];
+						}
 					}
 				}
 			}
