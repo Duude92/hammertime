@@ -33,6 +33,7 @@ namespace Sledge.Providers.Model.Mdl10
 		private Buffer _buffer;
 		private uint _numTexturedIndices;
 		private uint _numWireframeIndices;
+		private uint[][] _skins;
 
 		private string TextureName => $"{nameof(MdlModel)}::{_guid}";
 
@@ -134,6 +135,8 @@ namespace Sledge.Providers.Model.Mdl10
 		}
 		private void Init()
 		{
+			_skins = Model.Skins.Select(x => x.Textures.Select(x => (uint)x).ToArray()).ToArray();
+
 			var texHeight = _originalRectangles.Max(x => x.Bottom);
 			var texWidth = _originalRectangles.Max(x => x.Right);
 			var maxTexSize = new Vector2(texWidth, texHeight);
@@ -241,6 +244,13 @@ namespace Sledge.Providers.Model.Mdl10
 		public void Dispose()
 		{
 			//
+		}
+
+		internal uint[] GetLayerSet(int skinId)
+		{
+			var skin = skinId % Model.Skins.Count;
+
+			return _skins[skin];
 		}
 	}
 }
