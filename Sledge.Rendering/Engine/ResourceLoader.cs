@@ -16,7 +16,11 @@ namespace Sledge.Rendering.Engine
 	public class ResourceLoader
 	{
 		private readonly RenderContext _context;
-
+#if DEBUG
+		private const bool DebugMode = true;
+#else
+		private const bool DebugMode = false;
+#endif
 		public ResourceLayout ProjectionLayout { get; }
 		public ResourceLayout TextureLayout { get; }
 		public Sampler TextureSampler { get; }
@@ -107,8 +111,8 @@ namespace Sledge.Rendering.Engine
 		public (Shader, Shader) LoadShaders(string name)
 		{
 			return (
-				_context.Device.ResourceFactory.CreateShader(new ShaderDescription(ShaderStages.Vertex, GetEmbeddedShader(name + ".vert.hlsl"), "main")),
-				_context.Device.ResourceFactory.CreateShader(new ShaderDescription(ShaderStages.Fragment, GetEmbeddedShader(name + ".frag.hlsl"), "main"))
+				_context.Device.ResourceFactory.CreateShader(new ShaderDescription(ShaderStages.Vertex, GetEmbeddedShader(name + ".vert.hlsl"), "main", DebugMode)),
+				_context.Device.ResourceFactory.CreateShader(new ShaderDescription(ShaderStages.Fragment, GetEmbeddedShader(name + ".frag.hlsl"), "main", DebugMode))
 			);
 		}
 
