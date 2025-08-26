@@ -55,9 +55,10 @@ namespace Sledge.Rendering.Engine
             VertexModel3LayoutDescription = new VertexLayoutDescription(
                 new VertexElementDescription("Position", VertexElementSemantic.Position, VertexElementFormat.Float3),
                 new VertexElementDescription("Normal", VertexElementSemantic.Normal, VertexElementFormat.Float3),
-                new VertexElementDescription("Texture", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float3),
-                new VertexElementDescription("Bone", VertexElementSemantic.Position, VertexElementFormat.UInt1),
-				new VertexElementDescription("Flags", VertexElementSemantic.Position, VertexElementFormat.UInt1)
+                new VertexElementDescription("Texture", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2),
+                new VertexElementDescription("Bone", VertexElementSemantic.Color, VertexElementFormat.UInt1),
+				new VertexElementDescription("Flags", VertexElementSemantic.TextureCoordinate, VertexElementFormat.UInt1),
+                new VertexElementDescription("TextureLayer", VertexElementSemantic.Color, VertexElementFormat.UInt1)
 			);
 
 			TextureSampler = context.Device.Aniso4xSampler;

@@ -3,7 +3,9 @@ struct VertexIn
     float3 Position : POSITION0;
     float3 Normal : NORMAL0;
     float2 Texture : TEXCOORD0;
-    uint1 Bone : POSITION1;
+    uint1 Bone : COLOR0;
+    uint1 Flags : TEXCOORD1;
+    uint1 TextureLayer : COLOR1;
 };
 
 struct FragmentIn

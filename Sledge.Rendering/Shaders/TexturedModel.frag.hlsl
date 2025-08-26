@@ -3,7 +3,6 @@ struct FragmentIn
     float4 fPosition : SV_Position;
     float4 fNormal : NORMAL0;
     float3 fTexture : TEXCOORD0;
-    uint1 fBone : POSITION1;
 };
 
 Texture2DArray Texture;

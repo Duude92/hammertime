@@ -2,9 +2,10 @@ struct VertexIn
 {
     float3 Position : POSITION0;
     float3 Normal : NORMAL0;
-    float3 Texture : TEXCOORD0;
-    uint1 Bone : POSITION1;
-    uint1 Flags : POSITION1;
+    float2 Texture : TEXCOORD0;
+    uint1 Bone : COLOR0;
+    uint1 Flags : TEXCOORD1;
+    uint1 TextureLayer : COLOR1;
 };
 
 struct FragmentIn
@@ -12,7 +13,6 @@ struct FragmentIn
     float4 fPosition : SV_Position;
     float4 fNormal : NORMAL0;
     float3 fTexture : TEXCOORD0;
-    uint1 fBone : POSITION1;
 };
 
 cbuffer Projection
@@ -53,8 +53,7 @@ FragmentIn main(VertexIn input)
 
     output.fPosition = viewportPos;
     output.fNormal = normal;
-    output.fTexture = input.Texture;
-    output.fBone = input.Bone;
+    output.fTexture = float3(input.Texture, input.TextureLayer);
 
     return output;
 }

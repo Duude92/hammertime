@@ -168,12 +168,13 @@ namespace Sledge.Providers.Model.Mdl10
 							var origRect = _originalRectangles.Count > texId ? _originalRectangles[texId] : Rectangle.Empty;
 
 							var coeff = maxTexSize / new Vector2(origRect.Width, origRect.Height);
-							var texturePosition = new Vector3((x.Texture.X / maxTexSize.X) * coeff.X, (x.Texture.Y / maxTexSize.Y) * coeff.Y, mesh.Header.SkinRef);
+							var texturePosition = new Vector2((x.Texture.X / maxTexSize.X) * coeff.X, (x.Texture.Y / maxTexSize.Y) * coeff.Y);
 							vertices.Add(new VertexModel3
 							{
 								Position = x.Vertex,
 								Normal = x.Normal,
 								Texture = texturePosition,
+								TextureLayer = (uint)mesh.Header.SkinRef,
 								Bone = (uint)x.VertexBone,
 								Flags = Flags
 							});
