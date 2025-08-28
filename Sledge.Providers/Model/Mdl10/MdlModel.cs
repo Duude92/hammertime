@@ -243,5 +243,15 @@ namespace Sledge.Providers.Model.Mdl10
 		{
 			//
 		}
+
+		public string GetTextureName()
+		{
+			return null ;
+		}
+
+		public void SetTexture(Rendering.Resources.Texture texture)
+		{
+			return;
+		}
 	}
 }
