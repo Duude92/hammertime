@@ -119,6 +119,15 @@ namespace Sledge.Rendering.Engine
 			return Engine.Instance.Context.ResourceLoader.UploadTexture(name, width, height, data, sampleType, layerCount);
 		}
 		/// <summary>
+		/// Retrieve a texture by name.
+		/// </summary>
+		/// <param name="name">Name of the texture</param>
+		/// <returns>Previously uploaded texture</returns>
+		public Texture GetTexture(string name)
+		{
+			return Engine.Instance.Context.ResourceLoader.GetTexture(name);
+		}
+		/// <summary>
 		/// Upload a cubemap to the engine.
 		/// A texture is a resource that is internally managed by the engine.
 		/// Call <see cref="DestroyResource"/> to destroy a texture.
