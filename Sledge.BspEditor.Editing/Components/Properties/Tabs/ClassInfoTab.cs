@@ -322,7 +322,8 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 						bodyPart = int.Parse(body);
 					var em = obj.Data.GetOne<EntityModel>();
 					if (em != null)
-						((em.Renderable as Sledge.Providers.Model.Mdl10.MdlModelRenderable).Model as MdlModel).ReInitResources(skinId, bodyPart);
+						if (em.Renderable is MdlModelRenderable renderable)
+							(renderable.Model as MdlModel).ReInitResources(skinId, bodyPart); //FIXME: 
 				}
 
 
@@ -405,7 +406,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 				lstKeyValues.Items.Add(new ListViewItem(keyText)
 				{
 					Tag = tv,
-					BackColor =  tv.Colour == Color.Transparent? lstKeyValues.BackColor :  tv.Colour
+					BackColor = tv.Colour == Color.Transparent ? lstKeyValues.BackColor : tv.Colour
 				}).SubItems.Add(valText);
 
 				if (tv.Key == "angles")
