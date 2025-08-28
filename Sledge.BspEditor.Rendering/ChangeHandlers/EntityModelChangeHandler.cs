@@ -124,7 +124,8 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
             if (cls == null) return null;
 
             var studio = cls.Behaviours.FirstOrDefault(x => String.Equals(x.Name, "studio", StringComparison.InvariantCultureIgnoreCase))
-                         ?? cls.Behaviours.FirstOrDefault(x => String.Equals(x.Name, "sprite", StringComparison.InvariantCultureIgnoreCase));
+                         ?? cls.Behaviours.FirstOrDefault(x => String.Equals(x.Name, "sprite", StringComparison.InvariantCultureIgnoreCase))
+						 ?? cls.Behaviours.FirstOrDefault(x => String.Equals(x.Name, "studioprop", StringComparison.InvariantCultureIgnoreCase));
             if (studio == null) return null;
 
             var details = new ModelDetails();
