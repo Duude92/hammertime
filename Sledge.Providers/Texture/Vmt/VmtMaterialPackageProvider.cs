@@ -60,7 +60,8 @@ namespace Sledge.Providers.Texture.Vmt
 				"lightmapped_4wayblend",
 				"unlittwotexture",
 				"worldtwotextureblend",
-				"skyfog"
+				"skyfog",
+				"vertexlitgeneric" //TODO: Do I need this for brushes?
 			};
 		private string ReadMaterialBaseTexture(IFile material)
 		{
