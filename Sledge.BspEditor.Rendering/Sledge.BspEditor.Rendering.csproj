@@ -147,6 +147,7 @@
     </PackageReference>
     <PackageReference Include="SharpDX" Version="4.2.0" />
     <PackageReference Include="SharpDX.Direct3D11" Version="4.2.0" />
+    <PackageReference Include="System.Linq.Async" Version="6.0.3" />
     <PackageReference Include="System.Numerics.Vectors">
       <Version>4.6.1</Version>
     </PackageReference>

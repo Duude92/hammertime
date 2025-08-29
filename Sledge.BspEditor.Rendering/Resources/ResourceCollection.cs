@@ -82,13 +82,14 @@ namespace Sledge.BspEditor.Rendering.Resources
 			var tName = res.GetTextureName();
 			if (tName != null)
 			{
-				var x = await tc.GetTextureItem(tName);
+				var textureItems = tName.ToAsyncEnumerable().SelectAwait(async texName => await tc.GetTextureItem(texName));
 
 				using var ss = tc.GetStreamSource();
-				var texture = await UploadTexture(environment, x, ss);
+
+				var texture = await textureItems.Where(item => item != null).SelectAwait(async item => await UploadTexture(environment, item, ss)).Select(x => x as Texture).ToArrayAsync();
 				if (texture != null)
 				{
-					res.SetTexture(texture as Texture);
+					res.SetTexture(texture);
 				}
 			}
 			if (res == null) return null;
