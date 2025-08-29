@@ -35,8 +35,8 @@ namespace Sledge.Providers.Texture.Vmt
 				vtfFile.Images.Select(x =>
 				{
 					var data = x.GetBgra32Data();
-					Bitmap bmp = new Bitmap(x.Width, x.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-					BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
+					Bitmap bmp = new Bitmap(x.Width, x.Height, System.Drawing.Imaging.PixelFormat.Format32bppRgb);
+					BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, PixelFormat.Format32bppRgb);
 					Marshal.Copy(data, 0, bmpData.Scan0, data.Length);
 					bmp.UnlockBits(bmpData);
 
