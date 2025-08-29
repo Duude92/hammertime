@@ -29,6 +29,7 @@ namespace Sledge.Providers.Model.Mdl44
 		private string[] _materials;
 		private uint _numWireframeIndices;
 		private uint _numTexturedIndices;
+		private List<(int vertexStart, int vertexCount, int materialNum)> Meshes = new();
 
 		public MdlModel(MdlFile model)
 		{
@@ -74,11 +75,11 @@ namespace Sledge.Providers.Model.Mdl44
 			var indicesList = new List<ushort>();
 			for (var meshIndex = 0; meshIndex < Model.VtxFile.BodyParts[0].Models[0].LOD[0].Meshes.Length; meshIndex++)
 			{
-				if (meshIndex < 0) continue;
 				var mesh = Model.VtxFile.BodyParts[0].Models[0].LOD[0].Meshes[meshIndex];
 				var vertexOffset = Model.Bodyparts[0].Models[0].Meshes[meshIndex].Data.vertexoffset;
 				var indices = mesh.StripGroups.SelectMany(sg => sg.Strips.SelectMany(s => s.Indices.Select(x => (ushort)(s.Verts[x].origMeshVertID + vertexOffset))));
 				indicesList.AddRange(indices);
+				Meshes.Add((vertexOffset, mesh.StripGroups.Sum(x=>x.StripGroupHeader.numIndices), Model.Bodyparts[0].Models[0].Meshes[meshIndex].Data.material));
 
 			}
 
@@ -159,9 +160,15 @@ namespace Sledge.Providers.Model.Mdl44
 
 			if (pipeline.Type == PipelineType.TexturedModel)
 			{
-				_textureResources[0].BindTo(cl, 1);
+				foreach (var mesh in Meshes)
+				{
+					if (mesh.materialNum < 0 || mesh.materialNum >= _textureResources.Length) continue;
+					_textureResources[mesh.materialNum].BindTo(cl, 1);
+					cl.DrawIndexed((uint)mesh.vertexCount, 1, (uint)(mesh.vertexStart), 0, 0);
+				}
+				//_textureResources[0].BindTo(cl, 1);
 				//uint ci = 0;
-				cl.DrawIndexed(_numTexturedIndices, 1, 0, 0, 0);
+				//cl.DrawIndexed(_numTexturedIndices, 1, 0, 0, 0);
 
 				//foreach (var bpi in _bodyPartIndices)
 				//{
