@@ -15,7 +15,7 @@ namespace Sledge.Rendering.Interfaces
         /// </summary>
         /// <returns>List of sequences</returns>
         List<string> GetSequences();
-        string GetTextureName();
-		void SetTexture(Texture texture);
+        string[] GetTextureName();
+		void SetTexture(Texture[] textures);
 	}
 }

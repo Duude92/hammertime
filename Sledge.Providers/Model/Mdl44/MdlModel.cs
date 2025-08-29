@@ -25,8 +25,8 @@ namespace Sledge.Providers.Model.Mdl44
 		private Rendering.Resources.Buffer _buffer;
 		private VertexModel3[] _vertices;
 		private uint[] _indices;
-		private Rendering.Resources.Texture _textureResource;
-		private string _material;
+		private Rendering.Resources.Texture[] _textureResources;
+		private string[] _materials;
 		private uint _numWireframeIndices;
 		private uint _numTexturedIndices;
 
@@ -97,17 +97,16 @@ namespace Sledge.Providers.Model.Mdl44
 			_numWireframeIndices = (uint)wireframeIndices.Count;
 			_numTexturedIndices = (uint)initIndices.Length;
 			_buffer.Update(_vertices, _indices);
-			_material = Path.Combine(Model.MaterialDirectory, Model.Materials.FirstOrDefault() ?? "");
-			_material = _material.Replace('\\', '/'); // Ensure forward slashes for consistency
+			_materials = Model.Materials.Select(m=> Path.Combine(Model.MaterialDirectory, m ?? "").Replace('\\', '/')).ToArray(); // Ensure forward slashes for consistency
 		}
 
-		public string GetTextureName()
+		public string[] GetTextureName()
 		{
-			return _material;
+			return _materials;
 		}
-		public void SetTexture(Rendering.Resources.Texture texture)
+		public void SetTexture(Rendering.Resources.Texture[] textures)
 		{
-			_textureResource = texture;
+			_textureResources = textures;
 		}
 
 		public (Vector3, Vector3) GetBoundingBox(int sequence, int frame, float subframe)
@@ -160,7 +159,7 @@ namespace Sledge.Providers.Model.Mdl44
 
 			if (pipeline.Type == PipelineType.TexturedModel)
 			{
-				_textureResource.BindTo(cl, 1);
+				_textureResources[0].BindTo(cl, 1);
 				//uint ci = 0;
 				cl.DrawIndexed(_numTexturedIndices, 1, 0, 0, 0);
 
