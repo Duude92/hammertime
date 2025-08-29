@@ -73,14 +73,16 @@ namespace Sledge.Providers.Model.Mdl44
 			}
 			var wireframeIndices = new List<uint>();
 			var indicesList = new List<ushort>();
+			var indicesCount = 0;
 			for (var meshIndex = 0; meshIndex < Model.VtxFile.BodyParts[0].Models[0].LOD[0].Meshes.Length; meshIndex++)
 			{
 				var mesh = Model.VtxFile.BodyParts[0].Models[0].LOD[0].Meshes[meshIndex];
 				var vertexOffset = Model.Bodyparts[0].Models[0].Meshes[meshIndex].Data.vertexoffset;
 				var indices = mesh.StripGroups.SelectMany(sg => sg.Strips.SelectMany(s => s.Indices.Select(x => (ushort)(s.Verts[x].origMeshVertID + vertexOffset))));
 				indicesList.AddRange(indices);
-				Meshes.Add((vertexOffset, mesh.StripGroups.Sum(x=>x.StripGroupHeader.numIndices), Model.Bodyparts[0].Models[0].Meshes[meshIndex].Data.material));
-
+				var thisIndicesCount = indices.Count();
+				Meshes.Add((indicesCount, thisIndicesCount, Model.Bodyparts[0].Models[0].Meshes[meshIndex].Data.material));
+				indicesCount += thisIndicesCount;
 			}
 
 			var initIndices = indicesList.ToArray();
