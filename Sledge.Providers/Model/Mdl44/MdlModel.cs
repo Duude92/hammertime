@@ -4,15 +4,12 @@ using Sledge.Rendering.Engine;
 using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.Pipelines;
 using Sledge.Rendering.Primitives;
-using Sledge.Rendering.Resources;
 using Sledge.Rendering.Viewports;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
 using System.Numerics;
-using System.Security.Cryptography.Xml;
 using Veldrid;
 
 namespace Sledge.Providers.Model.Mdl44
@@ -40,48 +37,25 @@ namespace Sledge.Providers.Model.Mdl44
 		public void CreateResources(EngineInterface engine, RenderContext context)
 		{
 			_buffer = engine.CreateBuffer();
-			if (Model.VvdFile.Header.numFixups != 0)
+			_vertices = Model.GetVertices().Select(v => new VertexModel3
 			{
-				var vertices = new List<VertexModel3>();
-				foreach (var fixup in Model.VvdFile.Fixups)
-				{
-					for (var vi = 0; vi < fixup.numVertexes; vi++)
-					{
-						var v = Model.VvdFile.Vertices[vi + fixup.sourceVertexID];
-						vertices.Add(new VertexModel3
-						{
-							Position = v.m_vecPosition,
-							Normal = v.m_vecNormal,
-							Texture = new Vector3(v.m_vecTexCoord, 0),
-							Bone = 0,//v.m_BoneWeights.bone[0],
-							Flags = VertexFlags.None
-						});
-					}
-				}
-				_vertices = vertices.ToArray();
-			}
-			else
-			{
-				_vertices = Model.VvdFile.Vertices.Select(v => new VertexModel3
-				{
-					Position = v.m_vecPosition,
-					Normal = v.m_vecNormal,
-					Texture = new Vector3(v.m_vecTexCoord, 0),
-					Bone = 0,//v.m_BoneWeights.bone[0],
-					Flags = VertexFlags.None
-				}).ToArray();
-			}
+				Position = v.Vertex,
+				Normal = v.Normal,
+				Texture = new Vector3(v.Texture, 0),
+				Bone = (uint)v.VertexBone,
+				Flags = VertexFlags.None
+			}).ToArray();
+
 			var wireframeIndices = new List<uint>();
 			var indicesList = new List<ushort>();
 			var indicesCount = 0;
-			for (var meshIndex = 0; meshIndex < Model.VtxFile.BodyParts[0].Models[0].LOD[0].Meshes.Length; meshIndex++)
+
+			for (var meshIndex = 0; meshIndex < Model.GetMeshCount(0, 0); meshIndex++)
 			{
-				var mesh = Model.VtxFile.BodyParts[0].Models[0].LOD[0].Meshes[meshIndex];
-				var vertexOffset = Model.Bodyparts[0].Models[0].Meshes[meshIndex].Data.vertexoffset;
-				var indices = mesh.StripGroups.SelectMany(sg => sg.Strips.SelectMany(s => s.Indices.Select(x => (ushort)(s.Verts[x].origMeshVertID + vertexOffset))));
+				var indices = Model.GetIndices(meshIndex);
 				indicesList.AddRange(indices);
-				var thisIndicesCount = indices.Count();
-				Meshes.Add((indicesCount, thisIndicesCount, Model.Bodyparts[0].Models[0].Meshes[meshIndex].Data.material));
+				var thisIndicesCount = indices.Length;
+				Meshes.Add((indicesCount, thisIndicesCount, Model.GetMaterialIndex(meshIndex, 0, 0)));
 				indicesCount += thisIndicesCount;
 			}
 
@@ -100,7 +74,7 @@ namespace Sledge.Providers.Model.Mdl44
 			_numWireframeIndices = (uint)wireframeIndices.Count;
 			_numTexturedIndices = (uint)initIndices.Length;
 			_buffer.Update(_vertices, _indices);
-			_materials = Model.Materials.Select(m=> Path.Combine(Model.MaterialDirectory, m ?? "").Replace('\\', '/')).ToArray(); // Ensure forward slashes for consistency
+			_materials = Model.Materials.Select(m => Path.Combine(Model.MaterialDirectory, m ?? "").Replace('\\', '/')).ToArray(); // Ensure forward slashes for consistency
 		}
 
 		public string[] GetTextureName()
