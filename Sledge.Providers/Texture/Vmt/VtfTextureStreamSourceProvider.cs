@@ -47,7 +47,7 @@ namespace Sledge.Providers.Texture.Vmt
 
 		public bool HasImage(string item)
 		{
-			return _package.Textures.Contains(item) && _package.GetTextureReference(item).File != null;
+			return _package.HasTexture(item) && _package.GetTextureReference(item).File != null;
 		}
 	}
 
