@@ -10,8 +10,8 @@ namespace Sledge.Providers.Texture
         public string Location { get; }
         public string Type { get; }
         public HashSet<string> Textures { get; }
-        
-        protected virtual IEqualityComparer<string> GetComparer => StringComparer.InvariantCultureIgnoreCase;
+
+		protected virtual IEqualityComparer<string> GetComparer => StringComparer.InvariantCultureIgnoreCase;
 
         public TexturePackage(string location, string type)
         {
@@ -20,7 +20,7 @@ namespace Sledge.Providers.Texture
             Type = type;
         }
 
-        public bool HasTexture(string name)
+        public virtual bool HasTexture(string name)
         {
             return Textures.Contains(name.ToLowerInvariant());
         }
