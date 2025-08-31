@@ -46,7 +46,7 @@ namespace Sledge.Providers.Texture.Vmt
 			}
 			return null;
 		}
-		HashSet<string> types = new HashSet<string>
+		private HashSet<string> _allowedTypes = new HashSet<string>
 			{
 				"unlitgeneric",
 				"lightmappedgeneric",
@@ -61,7 +61,6 @@ namespace Sledge.Providers.Texture.Vmt
 				"unlittwotexture",
 				"worldtwotextureblend",
 				"skyfog",
-				"vertexlitgeneric" //TODO: Do I need this for brushes?
 			};
 		private string ReadMaterialBaseTexture(IFile material)
 		{
