@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Threading;
 using Sledge.Shell;
+using Avalonia;
 
 namespace Sledge.Editor
 {
@@ -25,8 +26,13 @@ namespace Sledge.Editor
 
             Thread.CurrentThread.CurrentCulture = forceDecimalCulture;
 
-            // We're finished ruining the culture, let's run the app now.
-            Startup.Run();
+			AppBuilder.Configure<SingleInstanceAv>()
+	 .UseWin32()
+	 .UseSkia()
+	 .SetupWithoutStarting();
+
+			// We're finished ruining the culture, let's run the app now.
+			Startup.Run();
         }
     }
 }
