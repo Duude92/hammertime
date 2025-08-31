@@ -1,9 +1,6 @@
 ﻿using Sledge.Providers.Texture;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sledge.BspEditor.Environment.Source
 {
@@ -15,8 +12,8 @@ namespace Sledge.BspEditor.Environment.Source
 		public override IEnumerable<string> GetBrowsableTextures()
 		{
 			var hs = new HashSet<string>();
-			foreach (var pack in Packages.Where(x => x.Type == "Wad3")) hs.UnionWith(pack.Textures);
-			return Packages.SelectMany(x=>x.Textures);
+			foreach (var pack in Packages.Where(x => x.Type == "vmt")) hs.UnionWith(pack.Textures);
+			return hs;
 		}
 
 		public override IEnumerable<string> GetDecalTextures()
