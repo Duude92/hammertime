@@ -139,6 +139,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Avalonia" Version="11.3.4" />
+    <PackageReference Include="Avalonia.Skia" Version="11.3.4" />
+    <PackageReference Include="Avalonia.Win32" Version="11.3.4" />
     <PackageReference Include="LogicAndTrick.Oy" Version="1.2.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="System.Resources.Extensions" Version="7.0.0" />
