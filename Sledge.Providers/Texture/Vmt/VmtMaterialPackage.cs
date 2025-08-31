@@ -9,14 +9,21 @@ namespace Sledge.Providers.Texture.Vmt
 	internal class VmtMaterialPackage : TexturePackage
 	{
 		private ICollection<MaterialTexturePackageReference> _references;
+		private HashSet<string> _allTextures = new HashSet<string>();
 
 		public VmtMaterialPackage(string name, ICollection<MaterialTexturePackageReference> references) : base(name, "vmt")
 		{
 			_references = references;
 			foreach (var reference in references)
 			{
-				Textures.Add(reference.Name);
+				if (!reference.HideFromList)
+					Textures.Add(reference.Name);
+				_allTextures.Add(reference.Name);
 			}
+		}
+		public override bool HasTexture(string name)
+		{
+			return _allTextures.Contains(name.ToLowerInvariant());
 		}
 
 		public override ITextureStreamSource GetStreamSource()
@@ -67,7 +74,7 @@ namespace Sledge.Providers.Texture.Vmt
 		public override async Task<IEnumerable<TextureItem>> GetTextures(IEnumerable<string> names)
 		{
 			var textures = new HashSet<string>(names);
-			textures.IntersectWith(Textures);
+			textures.IntersectWith(_allTextures);
 			if (!textures.Any()) return new TextureItem[0];
 
 			var list = new List<TextureItem>();
