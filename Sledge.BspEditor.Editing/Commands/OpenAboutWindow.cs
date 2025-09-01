@@ -24,10 +24,12 @@ namespace Sledge.BspEditor.Editing.Commands
 
         public async Task Invoke(IContext context, CommandParameters parameters)
         {
-            using (var vg = new AboutDialog())
-            {
-                vg.ShowDialog();
-            }
-        }
+            //using (var vg = new AboutDialog())
+            //{
+            //    vg.ShowDialog();
+            //}
+            var ad = new AboutDialog();
+            ad.Show();
+		}
     }
 }

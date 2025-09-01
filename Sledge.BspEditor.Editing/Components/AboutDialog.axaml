@@ -1,0 +1,68 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="653" d:DesignHeight="352"
+        x:Class="Sledge.BspEditor.Editing.AboutDialog"
+        CanResize="false"
+        Width="653"
+        Height="352"
+        Title="About Hammertime">
+  <Window.Styles>
+    <!--
+    <Style Selector="HyperlinkButton TextBlock">
+      <Setter Property="Foreground" Value="Blue"/>
+      <Setter Property="TextDecorations" Value="Underline"/>
+    </Style>
+    -->
+
+  </Window.Styles>
+  <StackPanel Orientation="Vertical">
+    <Grid ColumnDefinitions="256, 377" RowDefinitions="auto">
+      <Image Source="avares://Sledge.BspEditor.Editing/Resources/Sledge_Large.png" Width="256" Height="256" Margin="10,10" Grid.Column="0"/>
+      <StackPanel Grid.Column="1" Margin="20,10">
+        <StackPanel Orientation="Horizontal">
+          <TextBlock Text="Hammertime"   FontSize="20" FontWeight="Bold"/>
+          <TextBlock Text="(version)" Name="VersionLabel" Margin="10,10,10,0"/>
+        </StackPanel>
+        <TextBlock Text="Hammertime fixes and new features by Yurii Hladyshenko"/>
+        <HyperlinkButton NavigateUri="http://logic-and-trick.com">
+          <TextBlock Text="Created by Daniel Walder - logic-and-trick.com"/>
+        </HyperlinkButton>
+        <TextBlock Text="Open source software - licensed under BSD-3"/>
+        <HyperlinkButton NavigateUri="https://github.com/Duude92/hammertime" Margin="10,0">
+          <TextBlock Text="Source:  https://github.com/Duude92/hammertime"/>
+        </HyperlinkButton>
+        <HyperlinkButton NavigateUri="https://opensource.org/licenses/BSD-3-Clause" Margin="10,0">
+          <TextBlock Text="License:  https://opensource.org/licenses/BSD-3-Clause"/>
+        </HyperlinkButton>
+        <TextBlock Text="Special Thanks" FontWeight="Bold"/>
+        <TextBlock Text="Strider and Instant Mix (from TWHL) - Graphics"/>
+        <HyperlinkButton NavigateUri="https://scrub-studios.com" >
+          <TextBlock Text="AJ Scarcella"/>
+        </HyperlinkButton>
+        <HyperlinkButton NavigateUri="https://twhl.info">
+          <TextBlock Text="The members of TWHL - Testing"/>
+        </HyperlinkButton>
+        <TextBlock Text="...and everyone else in the modding community!"/>
+      </StackPanel>
+    </Grid>
+    <Button Content="OK" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Bottom" Margin="0,30,10,10" Width="75" Click="OkButton_Click" BorderThickness="1" BorderBrush="Gray">
+      <!--
+      <Button.Styles>
+        <Style Selector="Button">
+          <Setter Property="Background" Value="LightGray"/>
+          <Setter Property="Transitions">
+            <Transitions>
+              <BrushTransition Property="Background" Duration="0:0:0.2"/>
+            </Transitions>
+          </Setter>
+        </Style>
+        <Style Selector="Button:pointerover">
+          <Setter Property="Background" Value="LightSlateGray"/>
+        </Style>
+      </Button.Styles>
+      -->
+    </Button>
+  </StackPanel>
+</Window>
