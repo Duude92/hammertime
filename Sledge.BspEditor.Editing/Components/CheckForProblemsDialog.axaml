@@ -2,9 +2,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="497" d:DesignHeight="437"
+        mc:Ignorable="d" d:DesignWidth="497" d:DesignHeight="415"
         Width="497"
-        Height="437"
+        Height="415"
         CanResize="False"
         x:Class="Sledge.BspEditor.Editing.CheckForProblemsDialog"
         Icon="avares://Sledge.BspEditor.Editing/Resources/Menu_CheckForProblems.png"
@@ -19,9 +19,11 @@
       
     </Style>
   </Window.Styles>
-  <StackPanel Orientation="Vertical" Margin="10">
-    <ListBox Height="169" Width="452" BorderBrush="Black" BorderThickness="1" Name="ProblemsList" SelectionChanged="UpdateSelectedProblem"/>
-    <HeaderedContentControl Header="Details" Name="grpDetails">
+  <StackPanel Orientation="Vertical">
+    <ListBox Height="169" Width="452" BorderBrush="Black" BorderThickness="1" Name="ProblemsList" SelectionChanged="UpdateSelectedProblem"
+             Margin="18,17,18,3"/>
+    <HeaderedContentControl Header="Details" Name="grpDetails" Margin="18,3,18,3"
+                            Width="453" Height="162">
       <StackPanel Orientation="Horizontal">
         <StackPanel Orientation="Vertical">
           <TextBox Text="Problem details" Height="108" Width="255" IsReadOnly="True" Name="DescriptionTextBox">
@@ -30,7 +32,7 @@
             <TextBlock Text="Click here for additional information"/>
           </HyperlinkButton>
         </StackPanel>
-        <StackPanel Orientation="Vertical" Margin="10,0">
+        <StackPanel Orientation="Vertical" Margin="10,2" Width="150" >
           <Button Content="Go to error" Click="GoToError" Name="btnGoToError"/>
           <Button Content="Fix error" Click="FixError" Name="btnFix"/>
           <Button Content="Fix all of type" Click="FixAllOfType" Name="btnFixAllOfType"/>
@@ -38,10 +40,11 @@
         </StackPanel>
       </StackPanel>
     </HeaderedContentControl>
-    <StackPanel Orientation="Horizontal">
+    <StackPanel Orientation="Horizontal" Margin="18,3,18,3" Width="453">
       <CheckBox Content="Visible objects only" IsChecked="True" Name="chkVisibleOnly" Checked="VisibleOnlyCheckboxChanged"/>
       <CheckBox Content="Selected objects only" Name="chkSelectedOnly" Checked="VisibleOnlyCheckboxChanged"/>
-      <Button Content="Close" HorizontalAlignment="Right" Click="Close" Width="75" Name="btnClose"/>
+      <!--TODO: FIX alignment-->
+      <Button Content="Close" HorizontalAlignment="Right" Click="Close" Width="75" Name="btnClose" Margin="10,5,-175,0"/>
       <StackPanel.Styles>
         <Style Selector="CheckBox, Button">
           <Setter Property="Margin" Value="10,5,0,0"/>
