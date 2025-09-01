@@ -131,10 +131,16 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="11.3.4" />
+    <PackageReference Include="Avalonia.Themes.Simple" Version="11.3.4" />
     <PackageReference Include="LogicAndTrick.Oy" Version="1.2.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="System.Composition" Version="8.0.0" />
     <PackageReference Include="System.Composition.Hosting" Version="8.0.0" />
     <PackageReference Include="System.Resources.Extensions" Version="7.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="SingleInstanceAv.axaml.cs">
+      <DependentUpon>SingleInstanceAv.axaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 </Project>
