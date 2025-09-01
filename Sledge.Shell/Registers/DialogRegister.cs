@@ -72,7 +72,14 @@ namespace Sledge.Shell.Registers
 
 			foreach (var component in _components)
 			{
-				ColorControlsRecursively((ContainerControl)component, _useDarkMode);
+				try
+				{
+					ColorControlsRecursively((ContainerControl)component, _useDarkMode);
+				}
+				catch
+				{
+					//TODO: To remove
+				}
 			}
 		}
 
@@ -114,7 +121,7 @@ namespace Sledge.Shell.Registers
 			}
 			else
 			{
-				control.BackColor = darkMode ? Color.FromArgb(50,50,50) : Control.DefaultBackColor;
+				control.BackColor = darkMode ? Color.FromArgb(50, 50, 50) : Control.DefaultBackColor;
 				control.ForeColor = darkMode ? Control.DefaultBackColor : Color.Black;
 			}
 		}
