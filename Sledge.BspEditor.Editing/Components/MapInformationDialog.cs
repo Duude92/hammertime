@@ -17,7 +17,7 @@ using Sledge.BspEditor.Primitives.MapObjects;
 
 namespace Sledge.BspEditor.Editing.Components
 {
-	[Export(typeof(IDialog))]
+	//[Export(typeof(IDialog))]
 	[AutoTranslate]
 	public partial class MapInformationDialog : Form, IDialog
 	{
