@@ -1,0 +1,69 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="616" d:DesignHeight="409"
+        Width="616"
+        Height="409"
+        x:Class="Sledge.BspEditor.Editing.EntityReportDialog"
+        Title="Entity Report">
+  <StackPanel Orientation="Vertical">
+    <StackPanel Orientation="Horizontal">
+        <DataGrid
+          Name="EntityList"
+          Width="359"
+          Height="271"
+          SelectionChanged="EntityList_SelectedIndexChanged"
+          AutoGenerateColumns="False"
+          CanUserSortColumns="True"
+          HeadersVisibility="Column"
+          IsReadOnly="True"
+          Margin="5"
+        >
+          <DataGrid.Columns>
+            <DataGridTextColumn Header="Name" Binding="{Binding ClassName}" Width="1*" />
+            <DataGridTextColumn Header="Target" Binding="{Binding TargetName}" Width="1*"/>
+          </DataGrid.Columns>
+        </DataGrid>
+      <!--
+      <ListBox Width="359" Height="271" Name="EntityList" SelectionChanged="EntityList_SelectedIndexChanged">
+      </ListBox>
+-->
+      <HeaderedContentControl Header="Filter" Name="FilterGroup" Width="208" Height="271">
+        <StackPanel Orientation="Vertical" Margin="5">
+          <RadioButton Content="Show All" IsChecked="True" Name="TypeAll" Click="FiltersChanged"/>
+          <RadioButton Content="Point Entities Only" Name="TypePoint" Click="FiltersChanged"/>
+          <RadioButton Content="Brush Entities Only" Name="TypeBrush" Click="FiltersChanged"/>
+          <CheckBox Content="Include hidden objects" IsChecked="True" Name="IncludeHidden"/>
+          <TextBlock Text="Filter by key/value:" Name="FilterByKeyValueLabel">
+            <CheckBox Content="Exact" Name="FilterKeyValueExact"/>
+          </TextBlock>
+          <StackPanel Orientation="Horizontal">
+            <TextBox Name="FilterKey"/>
+            <TextBlock Text="="/>
+            <TextBox Name="FilterValue"/>
+          </StackPanel>
+          <TextBlock Text="Filter by class:" Name="FilterByClassLabel">
+            <CheckBox Content="Exact" Name="FilterClassExact"/>
+          </TextBlock>
+          <TextBox Name="FilterClass"/>
+          <Button Content="Reset Filters" Name="ResetFiltersButton" Click="ResetFilters"/>
+        </StackPanel>
+      </HeaderedContentControl>
+    </StackPanel>
+    <StackPanel Orientation="Horizontal">
+      <Button Content="Go to" Name="GoToButton" Click="GoToSelectedEntity"/>
+      <Button Content="Delete" Name="DeleteButton" Click="DeleteSelectedEntity"/>
+      <Button Content="Properties" Name="PropertiesButton" Click="OpenEntityProperties"/>
+      <CheckBox Content="Follow selection" IsChecked="True" Name="FollowSelection"/>
+    </StackPanel>
+    <StackPanel Orientation="Horizontal">
+      <TextBlock Text="Total entities:"/>
+      <TextBlock Text="0" Name="totalEntityCount" Margin="5,0"/>
+      <TextBlock Text="Entities selected:"/>
+      <TextBlock Text="0" Name="selectedEntityCount" Margin="5,0"/>
+      <Button Content="Close" HorizontalAlignment="Right" Width="75" Name="CloseButton" Click="CloseButtonClicked"/>
+    </StackPanel>
+  </StackPanel>
+
+</Window>

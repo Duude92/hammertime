@@ -107,6 +107,7 @@ namespace Sledge.BspEditor.Editing.Components
 
 		public void SetVisible(IContext context, bool visible)
 		{
+			return;
 			this.InvokeLater(() =>
 			{
 				if (visible)
