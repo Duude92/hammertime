@@ -22,7 +22,7 @@ using Sledge.Shell;
 
 namespace Sledge.BspEditor.Editing.Components
 {
-    [Export(typeof(IDialog))]
+    //[Export(typeof(IDialog))]
     [AutoTranslate]
     public partial class CheckForProblemsDialog : Form, IDialog, IManualTranslate
     {

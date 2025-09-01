@@ -29,6 +29,7 @@ namespace Sledge.BspEditor.Editing.Commands
             //    vg.ShowDialog();
             //}
             var ad = new AboutDialog();
+            //FIXME: Show blocking window
             ad.Show();
 		}
     }
