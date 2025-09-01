@@ -2,27 +2,27 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="337" d:DesignHeight="385"
-        Width="337" Height="385"
+        mc:Ignorable="d" d:DesignWidth="337" d:DesignHeight="355"
+        Width="337" Height="355"
         x:Class="Sledge.BspEditor.Editing.MapInformationDialog"
         Title="Map Information">
-  <StackPanel Orientation="Vertical" Margin="10">
-    <Grid ColumnDefinitions="115,177" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto"  >
-      <TextBox Text="Solids:" Grid.Row="0" Grid.Column="0" Name="SolidsLabel"/>
-      <TextBox Text="12345" Grid.Row="0" Grid.Column="1" Name="NumSolids"/>
-      <TextBox Text="Faces:" Grid.Row="1" Grid.Column="0" Name="FacesLabel"/>
-      <TextBox Text="12345" Grid.Row="1" Grid.Column="1" Name="NumFaces"/>
-      <TextBox Text="Point Entities:" Grid.Row="2" Grid.Column="0" Name="PointEntitiesLabel"/>
-      <TextBox Text="12345" Grid.Row="2" Grid.Column="1" Name="NumPointEntities" />
-      <TextBox Text="Solid Entities:" Grid.Row="3" Grid.Column="0" Name="SolidEntitiesLabel"/>
-      <TextBox Text="12345" Grid.Row="3" Grid.Column="1" Name="NumSolidEntities"/>
-      <TextBox Text="Unique Textures:" Grid.Row="4" Grid.Column="0" Name="UniqueTexturesLabel"/>
-      <TextBox Text="12345" Grid.Row="4" Grid.Column="1" Name="NumUniqueTextures"/>
-      <TextBox Text="Texture Memory:" Grid.Row="5" Grid.Column="0" Name="TextureMemoryLabel"/>
-      <TextBox Text="12345" Grid.Row="5" Grid.Column="1" Name="TextureMemoryValue"/>
+  <StackPanel Orientation="Vertical" Margin="10" Width="292">
+    <Grid ColumnDefinitions="115,177"  RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" >
+      <TextBox BorderThickness="0" Text="Solids:" Grid.Row="0" Grid.Column="0" Name="SolidsLabel"/>
+      <TextBox BorderThickness="0" Text="12345" Grid.Row="0" Grid.Column="1" Name="NumSolids"/>
+      <TextBox BorderThickness="0" Text="Faces:" Grid.Row="1" Grid.Column="0" Name="FacesLabel"/>
+      <TextBox BorderThickness="0" Text="12345" Grid.Row="1" Grid.Column="1" Name="NumFaces"/>
+      <TextBox BorderThickness="0" Text="Point Entities:" Grid.Row="2" Grid.Column="0" Name="PointEntitiesLabel"/>
+      <TextBox BorderThickness="0" Text="12345" Grid.Row="2" Grid.Column="1" Name="NumPointEntities" />
+      <TextBox BorderThickness="0" Text="Solid Entities:" Grid.Row="3" Grid.Column="0" Name="SolidEntitiesLabel"/>
+      <TextBox BorderThickness="0" Text="12345" Grid.Row="3" Grid.Column="1" Name="NumSolidEntities"/>
+      <TextBox BorderThickness="0" Text="Unique Textures:" Grid.Row="4" Grid.Column="0" Name="UniqueTexturesLabel"/>
+      <TextBox BorderThickness="0" Text="12345" Grid.Row="4" Grid.Column="1" Name="NumUniqueTextures"/>
+      <TextBox BorderThickness="0" Text="Texture Memory:" Grid.Row="5" Grid.Column="0" Name="TextureMemoryLabel"/>
+      <TextBox BorderThickness="0" Text="12345" Grid.Row="5" Grid.Column="1" Name="TextureMemoryValue"/>
     </Grid>
-    <TextBox Text="Texture packages used:" Name="TexturePackagesUsedLabel"/>
+    <TextBox Text="Texture packages used:" BorderThickness="0" Name="TexturePackagesUsedLabel"/>
     <ListBox Width="292" Height="124" Name="TexturePackages"/>
-    <Button Content="Close" HorizontalAlignment="Right" Click="CloseButtonClicked" Width="75" Name="CloseDialogButton"/>
+    <Button Content="Close" HorizontalAlignment="Right" Click="CloseButtonClicked" Width="75" Name="CloseDialogButton" Margin="0,10"/>
   </StackPanel>
 </Window>
