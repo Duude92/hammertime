@@ -24,7 +24,7 @@ public partial class ViewportAv : UserControl
 	}
 }
 
-public class ViewportAvHost : NativeControlHost, IViewport
+public class ViewportAvHost : NativeControlHost, IViewportAv
 {
 	private static int _nextId = 1;
 	private static readonly IntPtr HInstance = Process.GetCurrentProcess().Handle;
@@ -55,8 +55,6 @@ public class ViewportAvHost : NativeControlHost, IViewport
 	public bool IsFocused => _isFocused;
 
 	public IntPtr Hwnd { get; private set; }
-
-	System.Windows.Forms.Control IViewport.Control => null;
 
 	private bool _isFocused;
 	private int _unfocusedCounter = 0;
