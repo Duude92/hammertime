@@ -148,9 +148,9 @@
     <PackageReference Include="SharpDX" Version="4.2.0" />
     <PackageReference Include="SharpDX.Direct3D11" Version="4.2.0" />
     <PackageReference Include="System.Numerics.Vectors">
-      <Version>4.5.0</Version>
+      <Version>4.6.1</Version>
     </PackageReference>
-    <PackageReference Include="System.Resources.Extensions" Version="7.0.0" />
+    <PackageReference Include="System.Resources.Extensions" Version="9.0.8" />
     <PackageReference Include="Veldrid">
       <Version>4.9.0</Version>
     </PackageReference>
