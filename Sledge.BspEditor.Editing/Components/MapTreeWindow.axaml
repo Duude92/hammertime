@@ -1,0 +1,35 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="696" d:DesignHeight="529"
+        Width="696" Height="529"
+        x:Class="Sledge.BspEditor.Editing.MapTreeWindow"
+        Title="Tree View">
+  <StackPanel Orientation="Horizontal">
+    <TreeView Margin="8,3,4,3" Width="317" Height="490" Name="MapTree"
+              SelectionChanged="TreeSelectionChanged">
+      <TreeView.Styles>
+        <Style Selector="TreeViewItem">
+          <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
+        </Style>
+      </TreeView.Styles>
+      <TreeView.ItemTemplate >
+        <TreeDataTemplate ItemsSource="{Binding Nodes}">
+          <TextBlock Text="{Binding Name}"/>
+        </TreeDataTemplate>
+      </TreeView.ItemTemplate>
+    </TreeView>
+    <DataGrid Margin="4,3,4,3" Width="355" Height="490"
+      AutoGenerateColumns="False"
+      CanUserSortColumns="False"
+      CanUserResizeColumns="True"
+      IsReadOnly="True"
+      Name="Properties">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Key" Binding="{Binding Key}" Width="1*" />
+        <DataGridTextColumn Header="Value" Binding="{Binding Value}" Width="2*"/>
+      </DataGrid.Columns>
+    </DataGrid>
+  </StackPanel>
+</Window>
