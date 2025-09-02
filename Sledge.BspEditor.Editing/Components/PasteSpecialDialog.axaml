@@ -1,0 +1,94 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="527" d:DesignHeight="371"
+        Width="527" Height="371"
+        x:Class="Sledge.BspEditor.Editing.PasteSpecialDialog"
+        Title="Paste Special">
+  <Window.Styles>
+    <Style Selector="HeaderedContentControl">
+      <Setter Property="Margin" Value="0,4"/>
+    </Style>
+    <Style Selector="HeaderedContentControl>StackPanel>RadioButton">
+      <Setter Property="Margin" Value="0,4,0,0"/>
+    </Style>
+    <Style Selector="HeaderedContentControl>StackPanel>StackPanel">
+      <Setter Property="Margin" Value="0,4,4,0"/>
+    </Style>
+    <Style Selector="HeaderedContentControl>StackPanel>StackPanel>Button">
+      <Setter Property="Margin" Value="4,0,0,0"/>
+      <Setter Property="MinWidth" Value="30"/>
+    </Style>
+  </Window.Styles>
+  <StackPanel Orientation="Vertical" Margin="8">
+    <StackPanel Orientation="Horizontal">
+      <TextBox Text="Number of copies to paste"/>
+      <NumericUpDown Margin="4,0,0,0" Name="NumCopies"/>
+    </StackPanel>
+    <Grid ColumnDefinitions="1*,1*" RowDefinitions="1*,1*">
+      <HeaderedContentControl Header="Start Point" Grid.Column="0" Grid.Row="0" >
+        <StackPanel>
+          <RadioButton Content="Start at map origin" Name="StartOrigin" />
+          <RadioButton Content="Start at center of original" IsChecked="true" Name="StartOriginal"/>
+          <RadioButton Content="Start at center of current selection" Name="StartSelection"/>
+        </StackPanel>
+      </HeaderedContentControl>
+      <HeaderedContentControl Header="Grouping" Grid.Column="1" Grid.Row="0">
+        <StackPanel>
+          <RadioButton Content="No grouping" Name="GroupNone" />
+          <RadioButton Content="Group individual copies" IsChecked="true" Name="GroupIndividual"/>
+          <RadioButton Content="Group all copies" Name="GroupAll"/>
+        </StackPanel>
+      </HeaderedContentControl>
+      <HeaderedContentControl Header="Offset (accumulative)" Grid.Column="0" Grid.Row="1">
+        <StackPanel>
+          <StackPanel Orientation="Horizontal">
+            <TextBox Text="X:" Grid.Column="0" Grid.Row="0" />
+            <NumericUpDown Grid.Column="1" Grid.Row="0" Name="OffsetX"/>
+            <Button Content="0" Grid.Column="2" Grid.Row="0" Name="ZeroOffsetXButton"/>
+            <Button Content="Source" Grid.Column="3" Grid.Row="0" Name="SourceOffsetXButton"/>
+          </StackPanel>
+          <StackPanel Orientation="Horizontal">
+            <TextBox Text="Y:" Grid.Column="0" Grid.Row="1" />
+            <NumericUpDown Grid.Column="1" Grid.Row="1" Name="OffsetY"/>
+            <Button Content="0" Grid.Column="2" Grid.Row="1" Name="ZeroOffsetYButton"/>
+            <Button Content="Source" Grid.Column="3" Grid.Row="1" Name="SourceOffsetYButton"/>
+          </StackPanel>
+          <StackPanel Orientation="Horizontal">
+            <TextBox Text="Z:" Grid.Column="0" Grid.Row="2" />
+            <NumericUpDown Grid.Column="1" Grid.Row="2" Name="OffsetZ"/>
+            <Button Content="0" Grid.Column="2" Grid.Row="2" Name="ZeroOffsetZButton"/>
+            <Button Content="Source" Grid.Column="3" Grid.Row="2" Name="SourceOffsetZButton"/>
+          </StackPanel>
+        </StackPanel>
+      </HeaderedContentControl>
+      <HeaderedContentControl Header="Rotation (accumulative)" Grid.Column="1" Grid.Row="1">
+        <StackPanel>
+          <StackPanel Orientation="Horizontal">
+            <TextBox Text="X:" Grid.Column="0" Grid.Row="0" />
+            <NumericUpDown Grid.Column="1" Grid.Row="0" Name="RotationX"/>
+            <Button Content="0" Grid.Column="2" Grid.Row="0" Name="ZeroRotationXButton"/>
+          </StackPanel>
+          <StackPanel Orientation="Horizontal">
+            <TextBox Text="Y:" Grid.Column="0" Grid.Row="1" />
+            <NumericUpDown Grid.Column="1" Grid.Row="1" Name="RotationY"/>
+            <Button Content="0" Grid.Column="2" Grid.Row="1" Name="ZeroRotationYButton"/>
+          </StackPanel>
+          <StackPanel Orientation="Horizontal">
+            <TextBox Text="Z:" Grid.Column="0" Grid.Row="2" />
+            <NumericUpDown Grid.Column="1" Grid.Row="2" Name="RotationZ"/>
+            <Button Content="0" Grid.Column="2" Grid.Row="2" Name="ZeroRotationZButton"/>
+          </StackPanel>
+        </StackPanel>
+      </HeaderedContentControl>
+    </Grid>
+    <CheckBox Content="Make entity names unique" Name="UniqueEntityNames"/>
+    <Grid ColumnDefinitions="auto,auto, 2*,1*">
+      <CheckBox Content="Prefix named entities with:" Grid.Column="0" Name="PrefixEntityNamesCheckbox"/>
+      <TextBox Width="100" Grid.Column="1" Margin="4,0" Name="EntityPrefix"/>
+      <Button Content="OK" HorizontalAlignment="Right" Width="75" Margin="10,0,0,0" Name="OkButton" Grid.Column="2" Click="OkButtonClicked"/>
+      <Button Content="Cancel" HorizontalAlignment="Right" Width="75" Margin="10,0,0,0" Name="CancelButton" Grid.Column="3"/>
+    </Grid>
+  </StackPanel>
+</Window>
