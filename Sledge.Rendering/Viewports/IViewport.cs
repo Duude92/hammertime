@@ -25,4 +25,23 @@ namespace Sledge.Rendering.Viewports
 		void Update(long frame);
         event EventHandler<long> OnUpdate;
     }
+	public interface IViewportAv : IRenderTarget
+	{
+		int ID { get; }
+
+		double Width { get; }
+		double Height { get; }
+		Avalonia.Controls.Control Control { get; }
+		bool IsFocused { get; }
+
+		ICamera Camera { get; set; }
+		ViewportOverlay Overlay { get; }
+		Framebuffer ViewportFramebuffer { get; }
+		public Resources.Texture ViewportRenderTexture { get; }
+		void InitFramebuffer(TextureSampleCount sampleCount);
+		void ResolveRenderTexture(CommandList commandList);
+
+		void Update(long frame);
+		event EventHandler<long> OnUpdate;
+	}
 }

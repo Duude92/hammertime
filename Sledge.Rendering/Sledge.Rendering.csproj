@@ -141,6 +141,7 @@
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Avalonia" Version="11.3.4" />
     <PackageReference Include="ImGui.NET">
       <Version>1.89.6</Version>
     </PackageReference>
