@@ -26,11 +26,6 @@ namespace Sledge.Editor
 
 			Thread.CurrentThread.CurrentCulture = forceDecimalCulture;
 
-			AppBuilder.Configure<SingleInstanceAv>()
-	 .UseWin32()
-	 .UseSkia()
-	 .SetupWithoutStarting();
-
 			// We're finished ruining the culture, let's run the app now.
 			Startup.Run();
 		}

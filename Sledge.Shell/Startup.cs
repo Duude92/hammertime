@@ -1,10 +1,13 @@
+using Avalonia;
+using LogicAndTrick.Oy;
+using Sledge.Common;
 using System;
 using System.ComponentModel;
 using System.ComponentModel.Composition.Hosting;
 using System.IO;
 using System.Windows.Forms;
-using LogicAndTrick.Oy;
-using Sledge.Common;
+using Application = System.Windows.Forms.Application;
+using static Avalonia.ClassicDesktopStyleApplicationLifetimeExtensions;
 
 namespace Sledge.Shell
 {
@@ -44,13 +47,13 @@ namespace Sledge.Shell
 					var path = Path.GetFullPath("./");
 					outputFile.WriteLine($"Directory: {Path.GetFullPath("./")}");
 					outputFile.WriteLine("Present files:");
-                    foreach (var file in Directory.GetFiles(path))
-                    {
+					foreach (var file in Directory.GetFiles(path))
+					{
 						outputFile.WriteLine(new FileInfo(file).Length);
 						outputFile.WriteLine(Path.GetFileName(file));
 						outputFile.WriteLine("----");
-                    }
-                    outputFile.WriteLine(e.Message);
+					}
+					outputFile.WriteLine(e.Message);
 					outputFile.WriteLine(e.ToString());
 				}
 			}
@@ -73,17 +76,23 @@ namespace Sledge.Shell
 
 			Oy.UnhandledException += (s, e) => UnhandledException(e.Exception);
 
-			var shell = container.GetExport<Forms.Shell>().Value;
-			var si = new SingleInstance(shell);
-			
 
-			si.UnhandledException += (s, e) =>
-			{
-				e.ExitApplication = false;
-				UnhandledException(e.Exception);
-			};
 
-			si.Run(Environment.GetCommandLineArgs());
+			AppBuilder.Configure(() => new SingleInstanceAv(container))
+				.UseWin32()
+				.UseSkia()
+				.LogToTrace()
+				.StartWithClassicDesktopLifetime(new string[0]);
+			//var si = new SingleInstance(shell);
+
+
+			//si.UnhandledException += (s, e) =>
+			//{
+			//	e.ExitApplication = false;
+			//	UnhandledException(e.Exception);
+			//};
+
+			//si.Run(Environment.GetCommandLineArgs());
 		}
 
 		private static void UnhandledException(Exception ex)
