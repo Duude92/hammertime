@@ -142,6 +142,9 @@
     <PackageReference Include="System.Resources.Extensions" Version="7.0.0" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="Forms\ExceptionWindowAv.axaml.cs">
+      <DependentUpon>ExceptionWindowAv.axaml</DependentUpon>
+    </Compile>
     <Compile Update="SingleInstanceAv.axaml.cs">
       <DependentUpon>SingleInstanceAv.axaml</DependentUpon>
     </Compile>
