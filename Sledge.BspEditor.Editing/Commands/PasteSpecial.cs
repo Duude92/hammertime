@@ -20,6 +20,7 @@ using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Shell.Menu;
 using Sledge.Common.Translations;
 using Sledge.DataStructures.Geometric;
+using Avalonia.Controls.ApplicationLifetimes;
 
 namespace Sledge.BspEditor.Editing.Commands
 {
@@ -57,7 +58,8 @@ namespace Sledge.BspEditor.Editing.Commands
 				var psd = new PasteSpecialDialog(new Box(content.Select(x => x.BoundingBox)));
 				{
 					_translator.Value.Translate(psd);
-					if (await psd.ShowDialog<DialogResult>(null) == DialogResult.OK) //FIXME: Owner couldn't be null
+					var parent = (Avalonia.Application.Current.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
+					if (await psd.ShowDialog<DialogResult>(parent) == DialogResult.OK) //FIXME: Owner couldn't be null
 					{
 						var objs = GetPastedContent(document, content, psd);
 						if (objs.Any())
