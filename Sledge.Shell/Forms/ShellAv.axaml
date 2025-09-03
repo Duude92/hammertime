@@ -37,7 +37,7 @@
         </TabControl>
         <Panel Name="DocumentContainer"/>
         <DockPanel Name="RightSidebar">
-          <StackPanel DockPanel.Dock="Right" Orientation="Vertical" Background="Black">
+          <StackPanel Name="RightSidebarContainer" DockPanel.Dock="Right" Orientation="Vertical" Background="Black">
           </StackPanel>
         </DockPanel>
         <DockPanel Name="BottomSidebar">
