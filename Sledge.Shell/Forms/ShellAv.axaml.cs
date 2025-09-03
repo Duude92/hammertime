@@ -103,8 +103,8 @@ namespace Sledge.Shell.Forms
 			//this.InvokeLater(() => {
 			Dispatcher.UIThread.InvokeAsync(() =>
 			{
-				var ed = new ExceptionWindow(obj);
-				//ed.ShowDialog(this);
+				var ed = new ExceptionWindowAv(obj);
+				ed.ShowDialog(this);
 			});
 			return Task.CompletedTask;
 		}

@@ -1,0 +1,39 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="581" d:DesignHeight="555"
+        Width="581" Height="555"
+        x:Class="Sledge.Shell.ExceptionWindowAv"
+        Title="This isn't good!">
+  <StackPanel Margin="18,13">
+    <TextBlock Text="Oops! Something went horribly wrong." FontSize="16" FontWeight="Bold" />
+    <TextBlock Text="Hammertime is still in alpha, so unfortunately we will experience some bugs every now and then!&#x0a;
+Help us fix the issues by submitting this bug to our reporting system!&#x0a;
+&#x0a;
+Your privacy is important - the only information we upload is:&#x0a;
+ - The error message&#x0a;
+ - The version of Sledge you are running&#x0a;
+ - Your version of .NET and your operating system&#x0a;
+ - The current time&#x0a;
+ - Whatever you type below!" Width="482" Height="135" TextWrapping="Wrap"/>
+    <Grid ColumnDefinitions="1*,1*" RowDefinitions="auto,auto,auto,auto,auto,auto">
+      <TextBlock Text=".NET Version" Grid.Column="0" Grid.Row="0"/>
+      <TextBox Name="FrameworkVersion" Grid.Column="1" Grid.Row="0" IsReadOnly="True" />
+      <TextBlock Text="Operating System" Grid.Column="0" Grid.Row="1"/>
+      <TextBox Name="OperatingSystem" Grid.Column="1" Grid.Row="1" IsReadOnly="True" />
+      <TextBlock Text="Hammertime Version" Grid.Column="0" Grid.Row="2"/>
+      <TextBox Name="SledgeVersion" Grid.Column="1" Grid.Row="2" IsReadOnly="True" />
+      <TextBlock Text="Full Error Message" Grid.Column="0" Grid.Row="3"/>
+      <TextBox Name="FullError" Grid.Column="1" Grid.Row="3" IsReadOnly="True" />
+      <TextBlock Text="Application Branch" Grid.Column="0" Grid.Row="4"/>
+      <TextBox Name="applicationBranch" Grid.Column="1" Grid.Row="4" IsReadOnly="True" />
+      <TextBlock Text="Can you tell us any extra information about what you were doing when this error happened?" Grid.Column="0" Grid.Row="5" TextWrapping="Wrap"/>
+      <TextBox Name="InfoTextBox" Grid.Column="1" Grid.Row="5" IsReadOnly="True" />
+    </Grid>
+    <Grid ColumnDefinitions="1*,auto">
+      <Button Content="Don't Submit Error :(" Width="141" Height="27"/>
+      <Button Content="Submit Error!" Name="SubmitButton" Grid.Column="1" Width="182" Height="48" FontWeight="Bold" FontSize="15"/>
+    </Grid>
+  </StackPanel>
+</Window>
