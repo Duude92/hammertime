@@ -30,6 +30,10 @@ namespace Sledge.Shell
 			else
 				Dispatcher.UIThread.Post(() => action());
 		}
+		public static void Invoke(this Control control, Action action)
+		{
+			control.InvokeSync(action);
+		}
 
 		/// <summary>
 		/// Invoke a delegate asynchronously on the UI thread and return an awaitable task.
@@ -82,5 +86,6 @@ namespace Sledge.Shell
 			await Task.Yield();
 			return form.ShowDialog<System.Windows.Forms.DialogResult>(parent).Result;
 		}
+
 	}
 }
