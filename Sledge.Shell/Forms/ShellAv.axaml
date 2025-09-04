@@ -50,9 +50,15 @@
                     <!--
                     <DockPanel Name="ContentPanel" Width="782" Height="452">
                     -->
-                    <TabControl DockPanel.Dock="Left" Name="DocumentTabs" Width="540" Height="28">
+                    <TabControl DockPanel.Dock="Left" Name="DocumentTabs" Width="540" Height="28" Margin="5,0,0,0">
                       <TabItem Header="Tab1"/>
                       <TabItem Header="Tab2"/>
+                      <TabControl.Styles>
+                        <Style Selector="TabItem">
+                          <Setter Property="FontSize" Value="10"/>
+                          <Setter Property="Padding" Value="5"/>
+                        </Style>
+                      </TabControl.Styles>
                     </TabControl>
                     <Panel Name="DocumentContainer" Width="540" Height="309"/>
                     <!--
