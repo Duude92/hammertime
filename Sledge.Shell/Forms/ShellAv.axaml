@@ -23,7 +23,7 @@
         </StackPanel>
         <local:DockedPanelAv Name="LeftSidebar">
           <StackPanel DockPanel.Dock="Left" Orientation="Vertical" Name="LeftToolStripPanel" MinWidth="20" >
-            <StackPanel Name="ToolsContainer" Width="36" >
+            <StackPanel Name="ToolsContainer" Orientation="Vertical" Width="36" >
               <!-- Left panel tools buttons-->
               <!--
               <Button>TestToolButton2</Button>
@@ -41,10 +41,11 @@
           </StackPanel>
         </DockPanel>
         <DockPanel Name="BottomSidebar">
+          <TabControl Name="BottomTabs"/>
         </DockPanel>
       </DockPanel>
 
-      <TextBlock Name="StatusStrip" Text="StatusBar" DockPanel.Dock="Bottom" FontSize="25" Height="30"/>
+      <StackPanel Name="StatusStrip" DockPanel.Dock="Bottom" Height="30"/>
     </StackPanel>
   </Grid>
 

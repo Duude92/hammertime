@@ -45,8 +45,8 @@ namespace Sledge.Shell.Forms
 		public string SaveChangesToFile { get; set; } = "Save changes to {0}?";
 		public bool ValuesLoaded { get; private set; } = false;
 
-		public void InvokeLater(Action action) => Dispatcher.UIThread.Post(action);
-		public async Task InvokeLaterAsync(Action action) => await Dispatcher.UIThread.InvokeAsync(action);
+		internal StackPanel ToolStrip => TopToolStripPanel;
+
 		public ShellAv()
 		{
 
