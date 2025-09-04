@@ -22,10 +22,12 @@ namespace Sledge.Common.Shell.Menu
         public string Group { get; }
         public string OrderHint { get; }
         public Image Icon { get; }
+        public string IconName { get; }
+        public string Namespace { get; }
         public string ShortcutText { get; }
         public bool IsToggle => (_command as IMenuItemExtendedProperties)?.IsToggle == true;
 
-        public CommandMenuItem(ICommand command, string section, string path, string group, string orderHint, Image icon, string shortcutText, bool allowedInToolbar)
+        public CommandMenuItem(ICommand command, string section, string path, string group, string orderHint, Image icon, string shortcutText, bool allowedInToolbar, string iconName, string @namespace)
         {
             Section = section;
             Path = path;
@@ -35,6 +37,8 @@ namespace Sledge.Common.Shell.Menu
             ShortcutText = shortcutText;
             AllowedInToolbar = allowedInToolbar;
             _command = command ?? this as ICommand;
+            IconName = iconName;
+            Namespace = @namespace;
         }
 
         public bool IsInContext(IContext context)

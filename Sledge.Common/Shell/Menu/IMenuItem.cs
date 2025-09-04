@@ -28,6 +28,8 @@ namespace Sledge.Common.Shell.Menu
         /// The icon for the menu item. Can be null.
         /// </summary>
         Image Icon { get; }
+        string IconName { get; }
+        string Namespace { get; }
         
         /// <summary>
         /// True if this item should be shown in the toolbar.
