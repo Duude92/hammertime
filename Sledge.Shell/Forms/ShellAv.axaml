@@ -77,7 +77,7 @@
         </StackPanel>
       </Border>
       <Border BorderBrush="Aquamarine" BorderThickness="1">
-        <StackPanel Name="StatusStrip" DockPanel.Dock="Bottom" Height="30"/>
+        <StackPanel Name="StatusStrip" Orientation="Horizontal" DockPanel.Dock="Bottom" Height="30"/>
       </Border>
     </StackPanel>
   </Grid>
