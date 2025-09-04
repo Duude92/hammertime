@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Avalonia.Controls;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Environment;
 using Sledge.BspEditor.Environment.Controls;
@@ -33,7 +34,7 @@ namespace Sledge.BspEditor.Documents
 		private IEnumerable<Lazy<IBspSourceProvider>> _providers;
 		private readonly IEnumerable<Lazy<IBspSourceProcessor>> _processors;
 		private readonly Lazy<EnvironmentRegister> _environments;
-		private readonly Lazy<Form> _shell;
+		private readonly Lazy<Window> _shell;
 
 		/// <inheritdoc />
 		public string FileTypeDescription { get; set; }
@@ -51,7 +52,7 @@ namespace Sledge.BspEditor.Documents
 			[ImportMany] IEnumerable<Lazy<IBspSourceProvider>> providers,
 			[ImportMany] IEnumerable<Lazy<IBspSourceProcessor>> processors,
 			[Import] Lazy<EnvironmentRegister> environments,
-			[Import("Shell")] Lazy<Form> shell
+			[Import("Shell")] Lazy<Window> shell
 		)
 		{
 			_providers = providers;
@@ -116,11 +117,11 @@ namespace Sledge.BspEditor.Documents
 			else if (envs.Count > 1)
 			{
 				DialogResult result = DialogResult.Cancel;
-				await _shell.Value.InvokeAsync(() =>
+				await _shell.Value.InvokeAsync(async () =>
 				{
 					using (var esf = new EnvironmentSelectionForm(envs))
 					{
-						result = esf.ShowDialog();
+						result = await esf.ShowDialog<DialogResult>(_shell.Value);
 						if (result == DialogResult.OK) chosenEnvironment = esf.SelectedEnvironment;
 					}
 				});
