@@ -19,8 +19,9 @@ using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Forms;
+using DialogResult = System.Windows.Forms.DialogResult;
 using static System.Net.Mime.MediaTypeNames;
+using Avalonia.Media;
 
 namespace Sledge.Shell.Forms
 {
@@ -61,7 +62,7 @@ namespace Sledge.Shell.Forms
 			[Import] Lazy<ITranslationStringProvider> translation
 		)
 		{
-
+			this.AttachDevTools();
 			_bootstrapper = bootstrapper;
 			_documentRegister = documentRegister;
 			_translation = translation;
@@ -319,11 +320,11 @@ namespace Sledge.Shell.Forms
 				if (currentControl != document.Control)
 				{
 					DocumentContainer.Children.Clear();
-					//DocumentContainer.Children.Add((Control)document.Control);
+					DocumentContainer.Children.Add((Control)document.Control);
 					//DocumentContainer.Children[0].Dock = DockStyle.Fill;
 				}
 
-				//Text = Title + @" - " + document.Name;
+				Title = Title + @" - " + document.Name;
 			}
 		}
 
@@ -351,7 +352,7 @@ namespace Sledge.Shell.Forms
 
 			if (((TabItem)DocumentTabs.SelectedItem)?.Tag is IDocument sd)
 			{
-				//Text = Title + @" - " + sd.Name;
+				Title = Title + @" - " + sd.Name;
 			}
 
 			return Task.CompletedTask;
