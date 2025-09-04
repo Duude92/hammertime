@@ -6,12 +6,12 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using LogicAndTrick.Oy;
 using Sledge.Common.Logging;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Translations;
+using Avalonia.Controls;
 
 namespace Sledge.Shell.Components
 {
@@ -31,12 +31,12 @@ namespace Sledge.Shell.Components
             _logs = new LogBuffer(100);
             _control = new TextBox
             {
-                Dock = DockStyle.Fill,
-                Multiline = true,
-                Font = new Font(FontFamily.GenericMonospace, 10),
-                ScrollBars = ScrollBars.Both,
-                WordWrap = false,
-                ReadOnly = true
+                //Dock = DockStyle.Fill,
+                //Multiline = true,
+                //Font = new Font(FontFamily.GenericMonospace, 10),
+                //ScrollBars = ScrollBars.Both,
+                //WordWrap = false,
+                IsReadOnly = true
             };
             Oy.Subscribe<LogMessage>("Log", AppendLog);
         }
@@ -50,13 +50,13 @@ namespace Sledge.Shell.Components
                 sb.AppendFormat("{0} [{1}]: {2}\r\n", lm.Type, lm.Source, lm.Message);
             }
 
-            if (_control.Created)
+            //if (_control.Created)
             {
                 _control.InvokeLater(() =>
                 {
                     _control.Text = sb.ToString();
                     _control.SelectionStart = 0;
-                    _control.ScrollToCaret();
+                    //_control.ScrollToCaret();
                 });
             }
 
