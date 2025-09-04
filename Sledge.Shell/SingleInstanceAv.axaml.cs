@@ -14,11 +14,11 @@ public partial class SingleInstanceAv : Application
 	private CompositionContainer _container;
 
 	internal ShellAv Shell { get; set; }
-	public SingleInstanceAv()
+	public SingleInstanceAv() : this(null)
 	{
-		
+		AvaloniaXamlLoader.Load(this);
 	}
-	public SingleInstanceAv(CompositionContainer container) :this()
+	public SingleInstanceAv(CompositionContainer container)
 	{
 		_container = container;
 		AvaloniaXamlLoader.Load(this);

@@ -11,6 +11,16 @@ public partial class ExceptionWindowAv : Window
 {
 	public ExceptionInfo Info { get; set; }
 
+	public ExceptionWindowAv()
+	{
+		InitializeComponent();
+		FrameworkVersion.Text = "info.RuntimeVersion";
+		OperatingSystem.Text = "info.OperatingSystem";
+		SledgeVersion.Text = "info.ApplicationVersion";
+		FullError.Text = "info.FullStackTrace";
+		applicationBranch.Text = "info.ApplicationBranch";
+	}
+
 	public ExceptionWindowAv(Exception ex)
 	{
 		InitializeComponent();

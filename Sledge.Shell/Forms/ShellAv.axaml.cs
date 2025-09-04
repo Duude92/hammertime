@@ -47,12 +47,12 @@ namespace Sledge.Shell.Forms
 
 		public void InvokeLater(Action action) => Dispatcher.UIThread.Post(action);
 		public async Task InvokeLaterAsync(Action action) => await Dispatcher.UIThread.InvokeAsync(action);
-		public async Task InvokeAsync(Action action) => await Dispatcher.UIThread.InvokeAsync(action);
-		public void InvokeSync(Action action) => Dispatcher.UIThread.Invoke(action);
-		public void Invoke(MethodInvoker action) => action.Invoke(); //Dispatcher.UIThread.Invoke(action);
+		public ShellAv()
+		{
 
+			InitializeComponent();
 
-		internal StackPanel ToolStrip => TopToolStripPanel;
+		}
 
 		[ImportingConstructor]
 		public ShellAv(
