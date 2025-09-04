@@ -42,7 +42,7 @@ namespace Sledge.Shell
 		/// <param name="control">The control to invoke upon</param>
 		/// <param name="action">The delegate to run</param>
 		/// <returns>The task that will resolve once the delegate is complete</returns>
-		public static async Task InvokeAsync(this Control control, Action action)
+		public static async Task InvokeAsync(this Control control, Func<Task> action)
 		{
 			await Dispatcher.UIThread.InvokeAsync(action);
 		}
@@ -58,14 +58,14 @@ namespace Sledge.Shell
 			control.InvokeSync(action);
 		}
 
-		public static Task InvokeLaterAsync(this Control control, Action action)
+		public static Task InvokeLaterAsync(this Control control, Func<Task> action)
 		{
 			var tcs = new TaskCompletionSource<int>();
-			control.InvokeAsync(() =>
+			control.InvokeAsync(async () =>
 			{
 				try
 				{
-					action();
+					await action();
 					tcs.SetResult(0);
 				}
 				catch (Exception ex)
@@ -83,8 +83,8 @@ namespace Sledge.Shell
 		/// <returns>The task that will resolve once the dialog is closed</returns>
 		public static async Task<System.Windows.Forms.DialogResult> ShowDialogAsync(this Window form, Window parent)
 		{
-			await Task.Yield();
-			return form.ShowDialog<System.Windows.Forms.DialogResult>(parent).Result;
+			var dialog = form.ShowDialog<System.Windows.Forms.DialogResult>(parent);
+			return await dialog;
 		}
 
 	}
