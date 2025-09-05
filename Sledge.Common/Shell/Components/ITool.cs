@@ -12,7 +12,8 @@ namespace Sledge.Common.Shell.Components
         /// The tool's icon
         /// </summary>
         Image Icon { get; }
-
+        string ImageName { get; }
+        string Namespace { get; }
         /// <summary>
         /// The tool's name
         /// </summary>
