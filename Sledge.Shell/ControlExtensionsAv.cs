@@ -1,4 +1,5 @@
 ﻿using Avalonia.Controls;
+using Avalonia.Data;
 using Avalonia.Threading;
 using System;
 using System.Threading.Tasks;
@@ -85,6 +86,24 @@ namespace Sledge.Shell
 		{
 			var dialog = form.ShowDialog<System.Windows.Forms.DialogResult>(parent);
 			return await dialog;
+		}
+
+		public static void Add(this Avalonia.Controls.Controls controls, Control newControl, int row, int column)
+		{
+			var rowBinding = new Binding($"{row}");
+			var colBinding = new Binding($"{column}");
+
+			for (var i = 0; i < controls.Count; i++)
+			{
+				var control = controls[i];
+				if (control[!Grid.RowProperty] == rowBinding && control[!Grid.ColumnProperty] == colBinding)
+				{
+					controls.Remove(control);
+				}
+			}
+			Grid.SetRow(newControl, row);
+			Grid.SetColumn(newControl, column);
+			controls.Add(newControl);
 		}
 
 	}
