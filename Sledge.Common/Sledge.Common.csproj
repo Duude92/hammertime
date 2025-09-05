@@ -93,6 +93,7 @@
     <GeneratedAssemblyInfoFile>assemblyinfo.cs</GeneratedAssemblyInfoFile>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Avalonia" Version="11.3.5" />
     <PackageReference Include="LogicAndTrick.Oy" Version="1.2.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="System.ComponentModel" Version="4.3.0" />
