@@ -130,8 +130,16 @@ namespace Sledge.Common
             var luminance = (0.299 * color.R + 0.587 * color.G + 0.114 * color.B) / 255;
             return luminance > 0.5 ? Color.Black : Color.White;
         }
+		public static  Avalonia.Media.Color ToAvaloniaColor(this System.Drawing.Color color)
+		{
+			return new Avalonia.Media.Color(color.A, color.R, color.G, color.B);
+		}
+		public static Avalonia.Media.SolidColorBrush ToBrush(this System.Drawing.Color color)
+		{
+			return new Avalonia.Media.SolidColorBrush(ToAvaloniaColor(color));
+		}
 
-        public static uint ToImGuiColor(this Color color)
+		public static uint ToImGuiColor(this Color color)
         {
             unchecked
             {
