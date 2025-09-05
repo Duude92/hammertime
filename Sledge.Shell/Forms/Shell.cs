@@ -64,18 +64,18 @@ namespace Sledge.Shell.Forms
 		{
 			DocumentTabs.TabPages.Clear();
 
-			Oy.Subscribe<List<string>>("Shell:InstanceOpened", async a => await this.InvokeAsync(() => InstanceOpened(a)));
+			//Oy.Subscribe<List<string>>("Shell:InstanceOpened", async a => await this.InvokeAsync(() => InstanceOpened(a)));
 
-			Oy.Subscribe<IDocument>("Document:Opened", async d => await this.InvokeAsync(() => OpenDocument(d)));
-			Oy.Subscribe<IDocument>("Document:Closed", async d => await this.InvokeLaterAsync(() => CloseDocument(d)));
-			Oy.Subscribe<IDocument>("Document:Changed", async d => await this.InvokeAsync(() => DocumentChanged(d)));
-			Oy.Subscribe<IDocument>("Document:Activated", async d => await this.InvokeAsync(() => DocumentActivated(d)));
-			Oy.Subscribe<DocumentCloseMessage>("Document:RequestClose", async d => await this.InvokeAsync(() => DocumentRequestClose(d)));
+			//Oy.Subscribe<IDocument>("Document:Opened", async d => await this.InvokeAsync(() => OpenDocument(d)));
+			//Oy.Subscribe<IDocument>("Document:Closed", async d => await this.InvokeLaterAsync(() => CloseDocument(d)));
+			//Oy.Subscribe<IDocument>("Document:Changed", async d => await this.InvokeAsync(() => DocumentChanged(d)));
+			//Oy.Subscribe<IDocument>("Document:Activated", async d => await this.InvokeAsync(() => DocumentActivated(d)));
+			//Oy.Subscribe<DocumentCloseMessage>("Document:RequestClose", async d => await this.InvokeAsync(() => DocumentRequestClose(d)));
 
-			Oy.Subscribe<string>("Shell:OpenCommandBox", async o => await this.InvokeAsync(() => OpenCommandBox(o)));
+			//Oy.Subscribe<string>("Shell:OpenCommandBox", async o => await this.InvokeAsync(() => OpenCommandBox(o)));
 
-			Oy.Subscribe<Exception>("Shell:UnhandledException", ShowExceptionDialog);
-			Oy.Subscribe<Exception>("Shell:UnhandledExceptionOnce", ShowExceptionDialogOnce);
+			//Oy.Subscribe<Exception>("Shell:UnhandledException", ShowExceptionDialog);
+			//Oy.Subscribe<Exception>("Shell:UnhandledExceptionOnce", ShowExceptionDialogOnce);
 		}
 
 		// Error handling
