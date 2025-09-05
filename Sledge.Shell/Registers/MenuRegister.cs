@@ -1,15 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.Drawing;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Media.Imaging;
+using Avalonia.Platform;
 using LogicAndTrick.Oy;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Hooks;
 using Sledge.Common.Shell.Menu;
-using Sledge.Shell.Components;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Sledge.Shell.Registers
 {
@@ -21,7 +22,7 @@ namespace Sledge.Shell.Registers
 	internal class MenuRegister : IStartupHook, IInitialiseHook
 	{
 		// The menu register needs direct access to the shell
-		[Import] private Forms.Shell _shell;
+		[Import] private Forms.ShellAv _shell;
 
 		// Store the context (the menu register is one of the few things that should need static access to the context)
 		[Import] private IContext _context;
@@ -135,39 +136,24 @@ namespace Sledge.Shell.Registers
 			private readonly IContext _context;
 			private readonly List<MenuSection> _declaredSections;
 			private readonly List<MenuGroup> _declaredGroups;
-			private bool _useDarkTheme = false;
-			public bool UseDarkTheme
-			{
-				get => _useDarkTheme; set
-				{
-					_useDarkTheme = value;
-					if (value)
-					{
-						MenuStrip.Renderer = new CustomToolStripRenderer(SystemColors.ControlDarkDark, _backColor);
-						return;
-					}
-					MenuStrip.Renderer = null;
-				}
-			}
-			private Color _systemDarkBackColor = Color.FromArgb(50, 50, 50);
-			private Color _backColor = Color.FromArgb(70, 70, 70);
+			public bool UseDarkTheme { get; set; }
 
 			/// <summary>
 			/// The toolstrip containing the toolbars
 			/// </summary>
-			private ToolStripPanel ToolStrip { get; set; }
+			private StackPanel ToolStrip { get; set; }
 
 			/// <summary>
 			/// The menu strip for the top level menus
 			/// </summary>
-			private MenuStrip MenuStrip { get; set; }
+			private Menu MenuStrip { get; set; }
 
 			/// <summary>
 			/// The root nodes of the virtual tree
 			/// </summary>
 			private Dictionary<string, MenuTreeRoot> RootNodes { get; set; }
 
-			public VirtualMenuTree(IContext context, MenuStrip menuStrip, ToolStripPanel toolStrip, List<MenuSection> declaredSections, List<MenuGroup> declaredGroups)
+			public VirtualMenuTree(IContext context, Menu menuStrip, StackPanel toolStrip, List<MenuSection> declaredSections, List<MenuGroup> declaredGroups)
 			{
 				_context = context;
 				_declaredSections = declaredSections;
@@ -176,7 +162,6 @@ namespace Sledge.Shell.Registers
 				ToolStrip = toolStrip;
 				RootNodes = new Dictionary<string, MenuTreeRoot>();
 				Clear();
-
 			}
 
 			public void ResetItems(IEnumerable<IMenuItem> items)
@@ -193,27 +178,23 @@ namespace Sledge.Shell.Registers
 
 			private void Render()
 			{
-				MenuStrip.SuspendLayout();
+
+				//MenuStrip.SuspendLayout();
 				MenuStrip.Items.Clear();
-				MenuStrip.Items.AddRange(RootNodes.Values.OrderBy(x => x.OrderHint).Select(x => x.MenuMenuItem).OfType<ToolStripItem>().ToArray());
-				MenuStrip.ResumeLayout();
-				ToolStrip.BeginInit();
-				ToolStrip.Controls.Clear();
-				foreach (var ts in RootNodes.Values.OrderByDescending(x => x.OrderHint))
+				var items = RootNodes.Values.OrderBy(x => x.OrderHint).Select(x => x.MenuMenuItem);//.OfType<ToolStripItem>();
+				foreach (var item in items)
 				{
-					if (ts.ToolStrip.Items.Count > 0) ToolStrip.Join(ts.ToolStrip);
+					MenuStrip.Items.Add(item);
+
+				}
+				//MenuStrip.ResumeLayout();
+				ToolStrip.BeginInit();
+				ToolStrip.Children.Clear();
+				foreach (var ts in RootNodes.Values.OrderBy(x => x.OrderHint))
+				{
+					if (ts.ToolStrip.Children.Count > 0) ToolStrip.Children.Add(ts.ToolStrip);
 				}
 				ToolStrip.EndInit();
-				if (UseDarkTheme)
-				{
-					ToolStrip.BackColor = _systemDarkBackColor;
-					ToolStrip.ForeColor = System.Drawing.Color.White;
-					foreach (Control item in ToolStrip.Controls)
-					{
-						item.BackColor = _systemDarkBackColor;
-						item.ForeColor = System.Drawing.Color.White;
-					}
-				}
 			}
 
 			/// <summary>
@@ -225,10 +206,11 @@ namespace Sledge.Shell.Registers
 				var rtn = new MenuTreeRoot(_context, ds.Description, ds);
 
 				// When the menu is closed, push an empty string to the status bar
-				rtn.MenuMenuItem.DropDownClosed += (s, a) => { Oy.Publish("Status:Information", ""); };
+				//rtn.MenuMenuItem.DropDownClosed += (s, a) => { Oy.Publish("Status:Information", ""); };
 
 				// When the menu is opened, update the state of all the menu items in this section
-				rtn.MenuMenuItem.DropDownOpening += (s, a) => { rtn.Update(); };
+				//rtn.MenuMenuItem.DropDownOpening += (s, a) => { rtn.Update(); };
+				rtn.MenuMenuItem.Click += (s, a) => { rtn.Update(); };
 
 				// Add the node, menu, and toolbar
 				RootNodes.Add(ds.Name, rtn);
@@ -250,7 +232,7 @@ namespace Sledge.Shell.Registers
 			public void Clear()
 			{
 				MenuStrip.Items.Clear();
-				ToolStrip.Controls.Clear();
+				ToolStrip.Children.Clear();
 				RootNodes.Clear();
 
 				// Add known sections straight away
@@ -265,187 +247,13 @@ namespace Sledge.Shell.Registers
 				}
 			}
 		}
-		public class CustomToolStripRenderer : ToolStripProfessionalRenderer
-		{
-			private readonly Color _pressedBackColor;
-			private readonly Color _backColor;
-			private readonly Brush _dropDownEnabledColor = new SolidBrush(Color.Black);
-			private readonly Brush _dropDownDisabledColor = new SolidBrush(Color.Gray);
-
-			public CustomToolStripRenderer(Color pressedBackColor, Color backColor)
-			{
-				_pressedBackColor = pressedBackColor;
-				_backColor = backColor;
-			}
-			protected override void OnRenderItemBackground(ToolStripItemRenderEventArgs e)
-			{
-				//base.OnRenderItemBackground(e);
-				using (var brush = new SolidBrush(Color.Black)) // Example color
-				{
-					e.Graphics.FillRectangle(brush, e.Item.ContentRectangle);
-				}
-			}
-			protected override void OnRenderToolStripPanelBackground(ToolStripPanelRenderEventArgs e)
-			{
-				//using (var brush = new SolidBrush(Color.Black))
-				//{
-				//	e.Graphics.FillRectangle(brush, e.ToolStripPanel.ClientRectangle);
-				//	e.Graphics.DrawRectangle(SystemPens.Highlight, e.ToolStripPanel.ClientRectangle);
-				//}
-				base.OnRenderToolStripPanelBackground(e);
-
-			}
-			protected override void OnRenderToolStripBorder(ToolStripRenderEventArgs e)
-			{
-				if (e.ToolStrip is ToolStripDropDown)
-				{
-					// Custom border for the drop-down menu
-					using (var pen = new Pen(ControlPaint.Dark(_backColor), 1)) // Border color
-					{
-						e.Graphics.DrawRectangle(pen, new Rectangle(Point.Empty, e.ToolStrip.ClientSize - new Size(1, 1)));
-					}
-				}
-				else
-				{
-					base.OnRenderToolStripBorder(e);
-				}
-			}
-			protected override void OnRenderImageMargin(ToolStripRenderEventArgs e)
-			{
-				return;
-				//using (var pen = new Pen(Color.Gold, 1)) // Separator color
-				//{
-				//	int y = e.ToolStrip.ClientRectangle.Top + e.ToolStrip.ClientRectangle.Height / 2;
-				//	e.Graphics.DrawLine(pen, e.ToolStrip.ClientRectangle.Left, y, e.ToolStrip.ClientRectangle.Right, y);
-				//}
-				//base.OnRenderImageMargin(e);
-			}
-			protected override void OnRenderItemImage(ToolStripItemImageRenderEventArgs e)
-			{
-				//using (var pen = new Pen(Color.Purple, 1)) // Separator color
-				//{
-				//	int y = e.ToolStrip.ClientRectangle.Top + e.ToolStrip.ClientRectangle.Height / 2;
-				//	e.Graphics.DrawLine(pen, e.ToolStrip.ClientRectangle.Left, y, e.ToolStrip.ClientRectangle.Right, y);
-				//}
-				base.OnRenderItemImage(e);
-			}
-			protected override void OnRenderSeparator(ToolStripSeparatorRenderEventArgs e)
-			{
-
-				// Custom separator rendering
-				using (var pen = new Pen(ControlPaint.Dark(_backColor), 1)) // Separator color
-				{
-					int y = e.Item.ContentRectangle.Top + e.Item.ContentRectangle.Height / 2;
-					e.Graphics.DrawLine(pen, e.Item.ContentRectangle.Left, y, e.Item.ContentRectangle.Right, y);
-				}
-			}
-			protected override void OnRenderToolStripBackground(ToolStripRenderEventArgs e)
-			{
-				// Custom background for the entire drop-down
-				if (e.ToolStrip is ToolStripDropDown)
-				{
-					e.ToolStrip.BackColor = _backColor;
-					using (var brush = new SolidBrush(_backColor))
-					{
-						e.Graphics.FillRectangle(brush, e.ToolStrip.DisplayRectangle);
-						e.Graphics.DrawRectangle(SystemPens.ControlDarkDark, e.ToolStrip.ClientRectangle);
-					}
-				}
-				//else if (e.ToolStrip is ToolStripDropDownItem)
-				//{
-				//	using (var brush = new SolidBrush(Color.Yellow))
-				//	{
-				//		e.Graphics.FillRectangle(brush, e.AffectedBounds);
-				//	}
-				//}
-				else
-				{
-					base.OnRenderToolStripBackground(e);
-				}
-			}
-			protected override void OnRenderItemText(ToolStripItemTextRenderEventArgs e)
-			{
-				if (e.Item.Owner is ToolStripDropDown) //Item is drop-down item
-				{
-					if (e.Item is ToolStripMenuItem menuItem)
-					{
-						if (!e.Item.Enabled)
-						{
-
-							e.Graphics.DrawString(menuItem.Text, e.TextFont, _dropDownDisabledColor, e.TextRectangle);
-						}
-						else
-						{
-							e.Graphics.DrawString(menuItem.Text, e.TextFont, _dropDownEnabledColor, e.TextRectangle);
-						}
-						if (!string.IsNullOrEmpty(menuItem.ShortcutKeyDisplayString)) //Item has shortcut
-						{
-							SizeF shortcutTextSize = e.Graphics.MeasureString(menuItem.ShortcutKeyDisplayString, e.TextFont);
-							float shortcutX = e.Item.ContentRectangle.Right - shortcutTextSize.Width - 10; // 10px padding from the right
-
-							RectangleF shortcutRect = new RectangleF(shortcutX, e.Item.ContentRectangle.Top, shortcutTextSize.Width, shortcutTextSize.Height);
-							if (e.Item.Enabled)
-							{
-
-								e.Graphics.DrawString(menuItem.ShortcutKeyDisplayString, e.TextFont, _dropDownEnabledColor, shortcutRect);
-								return;
-							}
-
-							e.Graphics.DrawString(menuItem.ShortcutKeyDisplayString, e.TextFont, _dropDownDisabledColor, shortcutRect);
-							return;
-						}
-					}
-
-				}
-				else if (e.Item.Owner is MenuStrip)
-				{
-					using (Brush textBrush = new SolidBrush(Color.White))
-					{
-						e.Graphics.DrawString(e.Text, e.TextFont, textBrush, e.TextRectangle);
-					}
-				}
-				else
-				{
-
-					base.OnRenderItemText(e);
-				}
-
-			}
-
-			protected override void OnRenderMenuItemBackground(ToolStripItemRenderEventArgs e)
-			{
-				// Check if the item is pressed or selected
-				if (e.Item.Pressed)
-				{
-					// Draw custom background for pressed state
-					using (var brush = new SolidBrush(_pressedBackColor))
-					{
-						e.Graphics.FillRectangle(brush, e.Item.ContentRectangle);
-					}
-				}
-				else if (e.Item.Selected)
-				{
-					// Draw custom background for selected state
-					using (var brush = new SolidBrush(Color.DimGray)) // Example color
-					{
-						e.Graphics.FillRectangle(brush, e.Item.ContentRectangle);
-					}
-				}
-				else
-				{
-					// Draw default background
-					base.OnRenderMenuItemBackground(e);
-				}
-			}
-		}
-
 		/// <summary>
 		/// A root node of a menu tree
 		/// </summary>
 		private class MenuTreeRoot : BaseMenuTreeNode
 		{
 			private MenuSection Section { get; }
-			public ToolStrip ToolStrip { get; }
+			public StackPanel ToolStrip { get; }
 
 			public override string OrderHint => Section.OrderHint;
 
@@ -454,8 +262,8 @@ namespace Sledge.Shell.Registers
 			public MenuTreeRoot(IContext context, string text, MenuSection section)
 			{
 				Section = section;
-				MenuMenuItem = new ToolStripMenuItem(text) { Tag = this };
-				ToolStrip = new ToolStrip { Tag = this, LayoutStyle = ToolStripLayoutStyle.Flow };
+				MenuMenuItem = new MenuItem { Header = text, Tag = this };
+				ToolStrip = new StackPanel { Orientation = Avalonia.Layout.Orientation.Horizontal, Tag = this, Margin = new Thickness(2, 0) };//, LayoutStyle = ToolStripLayoutStyle.Flow };
 				Context = context;
 				_toolbarGroups = new List<MenuTreeGroup>();
 			}
@@ -524,7 +332,7 @@ namespace Sledge.Shell.Registers
 
 				// Skip to the start of the node and insert
 				var idx = group.Nodes.IndexOf(menuTreeNode);
-				ToolStrip.Items.Insert(groupStart + idx, menuTreeNode.ToolbarButton);
+				ToolStrip.Children.Insert(groupStart + idx, menuTreeNode.ToolbarButton);
 
 				// Check groups for splitters
 				groupStart = 0;
@@ -536,7 +344,7 @@ namespace Sledge.Shell.Registers
 					// Add a splitter to the group if needed
 					if (!g.HasSplitter && g.Nodes.Count > 0)
 					{
-						ToolStrip.Items.Insert(groupStart, new ToolStripSeparator());
+						ToolStrip.Children.Insert(groupStart, new Separator { Margin = new Thickness(1, 30, 1, 0) });
 						g.HasSplitter = true;
 					}
 
@@ -544,7 +352,6 @@ namespace Sledge.Shell.Registers
 				}
 			}
 		}
-
 		/// <summary>
 		/// A dummy node of the virtual menu tree. This node is text only, always enabled, and does nothing.
 		/// </summary>
@@ -556,7 +363,7 @@ namespace Sledge.Shell.Registers
 			{
 				Context = context;
 				Group = group ?? new MenuGroup("", "", "", "T");
-				MenuMenuItem = new ToolStripMenuItem(text) { Tag = this };
+				MenuMenuItem = new MenuItem { Header = text, Tag = this };
 			}
 		}
 
@@ -578,51 +385,87 @@ namespace Sledge.Shell.Registers
 
 				MenuItem = menuItem;
 
-				MenuMenuItem = new ToolStripMenuItem(menuItem.Name, menuItem.Icon)
+				object icon = null;
+
+				if (!string.IsNullOrEmpty(menuItem.IconName))
 				{
+
+					var uri = new Uri($"avares://{menuItem.Namespace}/Resources/" + menuItem.IconName + ".png");
+					try
+					{
+						icon = new Bitmap(AssetLoader.Open(uri));
+					}
+					catch { }
+				}
+
+
+				MenuMenuItem = new MenuItem
+				{
+					Header = menuItem.Name,
+					Icon = new Image { Source = (Bitmap)icon },
 					Tag = this,
-					ShortcutKeyDisplayString = menuItem.ShortcutText,
-					Enabled = en
+					//TODO:: Implement HotKey
+					//ShortcutKeyDisplayString = menuItem.ShortcutText,
+					IsEnabled = en,
+
 				};
 				MenuMenuItem.Click += Fire;
-				MenuMenuItem.MouseEnter += (s, a) => { Oy.Publish("Status:Information", menuItem.Description); };
-				MenuMenuItem.MouseLeave += (s, a) => { Oy.Publish("Status:Information", ""); };
+				MenuMenuItem.PointerEntered += (s, a) => { Oy.Publish("Status:Information", menuItem.Description); };
+				MenuMenuItem.PointerExited += (s, a) => { Oy.Publish("Status:Information", ""); };
 
 				if (menuItem.AllowedInToolbar)
 				{
-					ToolbarButton = new ToolStripButton(menuItem.Name, menuItem.Icon)
+
+					object icon2 = null;
+
+					if (!string.IsNullOrEmpty(menuItem.IconName))
 					{
+
+						var uri = new Uri($"avares://{menuItem.Namespace}/Resources/" + menuItem.IconName + ".png");
+						try
+						{
+							icon2 = new Bitmap(AssetLoader.Open(uri));
+						}
+						catch { }
+					}
+
+					ToolbarButton = new Button//(menuItem.Name, menuItem.Icon)
+					{
+						Content = new Image { Source = (Bitmap)icon2 },
 						Tag = this,
-						DisplayStyle = ToolStripItemDisplayStyle.Image,
-						Enabled = en
+						Width = 20,
+						Height = 20,
+						Padding = new Thickness(0),
+						//DisplayStyle = ToolStripItemDisplayStyle.Image,
+						IsEnabled = en
 					};
 					ToolbarButton.Click += Fire;
-					ToolbarButton.MouseEnter += (s, a) => { Oy.Publish("Status:Information", menuItem.Description); };
-					ToolbarButton.MouseLeave += (s, a) => { Oy.Publish("Status:Information", ""); };
+					ToolbarButton.PointerEntered += (s, a) => { Oy.Publish("Status:Information", menuItem.Description); };
+					ToolbarButton.PointerExited += (s, a) => { Oy.Publish("Status:Information", ""); };
 				}
 
 				if (menuItem.IsToggle)
 				{
-					MenuMenuItem.CheckState = menuItem.GetToggleState(context) ? CheckState.Checked : CheckState.Unchecked;
-					if (ToolbarButton != null) ToolbarButton.CheckState = MenuMenuItem.CheckState;
+					MenuMenuItem.IsChecked = menuItem.GetToggleState(context);
+					//if (ToolbarButton != null) ToolbarButton.CheckState = MenuMenuItem.CheckState;
 				}
 			}
 
 			private void Fire(object sender, EventArgs e)
 			{
-				MenuItem?.Invoke(Context).ContinueWith(t => MenuMenuItem.GetCurrentParent()?.InvokeLater(Update));
+				MenuItem?.Invoke(Context).ContinueWith(t => MenuMenuItem.InvokeLater(Update));
 			}
 
 			public override void Update()
 			{
 				var en = MenuItem.IsInContext(Context);
-				MenuMenuItem.Enabled = en;
-				if (ToolbarButton != null) ToolbarButton.Enabled = en;
+				MenuMenuItem.IsEnabled = en;
+				if (ToolbarButton != null) ToolbarButton.IsEnabled = en;
 				if (MenuItem.IsToggle && en)
 				{
 					var ts = MenuItem.GetToggleState(Context);
-					MenuMenuItem.CheckState = ts ? CheckState.Checked : CheckState.Unchecked;
-					if (ToolbarButton != null) ToolbarButton.CheckState = MenuMenuItem.CheckState;
+					MenuMenuItem.IsChecked = ts;
+					//if (ToolbarButton != null) ToolbarButton.CheckState = MenuMenuItem.CheckState;
 				}
 				base.Update();
 			}
@@ -633,8 +476,8 @@ namespace Sledge.Shell.Registers
 			public MenuGroup Group { get; set; }
 			public IContext Context { get; set; }
 
-			public ToolStripMenuItem MenuMenuItem { get; set; }
-			public ToolStripButton ToolbarButton { get; set; }
+			public MenuItem MenuMenuItem { get; set; }
+			public Button ToolbarButton { get; set; }
 
 			public List<MenuTreeGroup> Groups { get; protected set; }
 			public Dictionary<string, BaseMenuTreeNode> Children { get; private set; }
@@ -673,7 +516,7 @@ namespace Sledge.Shell.Registers
 
 				// Skip to the start of the node and insert
 				var idx = group.Nodes.IndexOf(menuTreeNode);
-				MenuMenuItem.DropDownItems.Insert(groupStart + idx, menuTreeNode.MenuMenuItem);
+				MenuMenuItem.Items.Insert(groupStart + idx, menuTreeNode.MenuMenuItem);
 
 				// Check groups for splitters
 				groupStart = 0;
@@ -685,7 +528,7 @@ namespace Sledge.Shell.Registers
 					// Add a splitter to the group if needed
 					if (!g.HasSplitter && g.Nodes.Count > 0)
 					{
-						MenuMenuItem.DropDownItems.Insert(groupStart, new ToolStripSeparator());
+						MenuMenuItem.Items.Insert(groupStart, new Separator());
 						g.HasSplitter = true;
 					}
 
