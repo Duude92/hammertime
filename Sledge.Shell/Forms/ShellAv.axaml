@@ -8,84 +8,50 @@
         Height="562"
         x:Class="Sledge.Shell.Forms.ShellAv"
         Title="ShellAv">
-  <Grid>
-    <Grid.RowDefinitions>
-      <RowDefinition Height="*"/>
-    </Grid.RowDefinitions>
-    <StackPanel Grid.Row="0">
-      <Menu Name="MenuStrip">
-        <MenuItem Header="File">
-          <MenuItem Header="Open"/>
-        </MenuItem>
-      </Menu>
-      <Border BorderThickness="1" BorderBrush="Green">
-        <StackPanel>
-          <Border BorderThickness="1" BorderBrush="Yellow">
-            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Name="TopToolStripPanel">
-              <MenuItem Header="aboba" HorizontalAlignment="Left">
-                <MenuItem Header="Biboba"/>
-              </MenuItem>
-              <Button>TestToolButton</Button>
-            </StackPanel>
-          </Border>
-          <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-            <Border BorderBrush="Red" BorderThickness="1">
-              <!--
-              <local:DockedPanelAv Name="LeftSidebar">-->
-              <StackPanel DockPanel.Dock="Left" Orientation="Vertical" Name="LeftToolStripPanel" Width="32" >
-                <StackPanel Name="ToolsContainer" Orientation="Vertical">
-                  <!-- Left panel tools buttons-->
-                  <Button>TestToolButton2</Button>
-                </StackPanel>
-              </StackPanel>
-              <!--
-              </local:DockedPanelAv>-->
-            </Border>
-            <Border BorderThickness="1" BorderBrush="Black">
-              <StackPanel Width="782" Height="452">
-                <StackPanel Orientation="Horizontal">
-                  <StackPanel>
+  <Window.Styles>
+    <Style Selector="TabControl>TabItem">
+      <Setter Property="FontSize" Value="10"/>
+      <Setter Property="Padding" Value="5"/>
+      <Setter Property="CornerRadius" Value="5,5,0,0"/>
+    </Style>
 
+  </Window.Styles>
+  <DockPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
 
-                    <!--
-                    <DockPanel Name="ContentPanel" Width="782" Height="452">
-                    -->
-                    <TabControl DockPanel.Dock="Left" Name="DocumentTabs" Width="540" Height="28" Margin="5,0,0,0">
-                      <TabItem Header="Tab1"/>
-                      <TabItem Header="Tab2"/>
-                      <TabControl.Styles>
-                        <Style Selector="TabItem">
-                          <Setter Property="FontSize" Value="10"/>
-                          <Setter Property="Padding" Value="5"/>
-                        </Style>
-                      </TabControl.Styles>
-                    </TabControl>
-                    <Panel Name="DocumentContainer" Width="540" Height="309"/>
-                    <!--
-                    </DockPanel>-->
-                  </StackPanel>
-                  <Border BorderBrush="DarkBlue" BorderThickness="1">
-                    <DockPanel Name="RightSidebar" Width="233" Height="337">
-                      <StackPanel Name="RightSidebarContainer" DockPanel.Dock="Right" Orientation="Vertical" Background="Black">
-                      </StackPanel>
-                    </DockPanel>
-                  </Border>
-                </StackPanel>
-                <Border BorderBrush="Bisque" BorderThickness="1">
+    <Menu Name="MenuStrip" DockPanel.Dock="Top">
+      <MenuItem Header="File">
+        <MenuItem Header="Open"/>
+      </MenuItem>
+    </Menu>
 
-                  <DockPanel Name="BottomSidebar" Width="782" Height="115">
-                    <TabControl Name="BottomTabs"/>
-                  </DockPanel>
-                </Border>
-              </StackPanel>
-            </Border>
-          </StackPanel>
-        </StackPanel>
-      </Border>
-      <Border BorderBrush="Aquamarine" BorderThickness="1">
-        <StackPanel Name="StatusStrip" Orientation="Horizontal" DockPanel.Dock="Bottom" Height="30"/>
-      </Border>
+    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Name="TopToolStripPanel" >
+      <Button>TestToolButton</Button>
     </StackPanel>
-  </Grid>
 
+    <StackPanel Name="StatusStrip" Orientation="Horizontal"  VerticalAlignment="Bottom" DockPanel.Dock="Bottom" Height="30"/>
+
+    <StackPanel DockPanel.Dock="Left" Orientation="Vertical" Name="LeftToolStripPanel" Width="32"  >
+      <StackPanel Name="ToolsContainer" Orientation="Vertical">
+        <!-- Left panel tools buttons-->
+        <Button>TestToolButton2</Button>
+      </StackPanel>
+    </StackPanel>
+
+    <DockPanel Name="BottomSidebar" Height="115" DockPanel.Dock="Bottom" >
+      <TabControl Name="BottomTabs"/>
+    </DockPanel>
+
+    <StackPanel Name="RightSidebarContainer" Width="233"  Orientation="Vertical"  DockPanel.Dock="Right"/>
+
+    <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" DockPanel.Dock="Top" >
+      <TabControl Name="DocumentTabs" Height="28" Margin="5,0,0,0" DockPanel.Dock="Top">
+        <TabItem Header="Tab1"/>
+        <TabItem Header="Tab2"/>
+
+      </TabControl>
+
+      <Panel Name="DocumentContainer"  VerticalAlignment="Top" HorizontalAlignment="Left" Background="Blue"/>
+
+    </StackPanel>
+  </DockPanel>
 </Window>
