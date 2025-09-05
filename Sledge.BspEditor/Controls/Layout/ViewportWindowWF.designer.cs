@@ -1,7 +1,7 @@
 ﻿namespace Sledge.BspEditor.Controls.Layout
 {
-    partial class ViewportWindow
-    {
+    partial class ViewportWindowWF
+	{
         /// <summary>
         /// Required designer variable.
         /// </summary>

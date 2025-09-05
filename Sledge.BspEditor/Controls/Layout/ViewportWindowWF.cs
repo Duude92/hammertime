@@ -3,19 +3,19 @@ using Sledge.BspEditor.Components;
 
 namespace Sledge.BspEditor.Controls.Layout
 {
-    public partial class ViewportWindow : Form
+    public partial class ViewportWindowWF : Form
     {
         public MapDocumentContainer MapDocumentContainer { get; }
 
-        public ViewportWindow(MapDocumentControlWindowConfiguration config)
+        public ViewportWindowWF(MapDocumentControlWindowConfiguration config)
         {
             InitializeComponent();
 
             MapDocumentContainer = new MapDocumentContainer(config.WindowID)
             {
-                Dock = DockStyle.Fill
+                //Dock = DockStyle.Fill
             };
-            Controls.Add(MapDocumentContainer);
+            //Controls.Add(MapDocumentContainer);
 
             SetConfiguration(config);
         }
