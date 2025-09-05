@@ -28,7 +28,7 @@
       <Button>TestToolButton</Button>
     </StackPanel>
 
-    <StackPanel Name="StatusStrip" Orientation="Horizontal"  VerticalAlignment="Bottom" DockPanel.Dock="Bottom" Height="30"/>
+    <StackPanel Name="StatusStrip" Orientation="Horizontal"  VerticalAlignment="Bottom" HorizontalAlignment="Right" DockPanel.Dock="Bottom" Height="30"/>
 
     <StackPanel DockPanel.Dock="Left" Orientation="Vertical" Name="LeftToolStripPanel" Width="32"  >
       <StackPanel Name="ToolsContainer" Orientation="Vertical">
