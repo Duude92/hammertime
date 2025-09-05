@@ -16,7 +16,7 @@
     </Style>
 
   </Window.Styles>
-  <DockPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+  <DockPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Name="MainDockPanel" >
 
     <Menu Name="MenuStrip" DockPanel.Dock="Top">
       <MenuItem Header="File">

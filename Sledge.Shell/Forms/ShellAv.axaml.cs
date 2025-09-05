@@ -99,6 +99,11 @@ namespace Sledge.Shell.Forms
 
 		// Error handling
 
+		public Control[] GetDockPanels()
+		{
+			return MainDockPanel.Children.ToArray();
+		}
+
 		private Task ShowExceptionDialog(Exception obj)
 		{
 			//this.InvokeLater(() => {
