@@ -394,11 +394,10 @@ namespace Sledge.Shell.Registers
 				{
 
 					uri = new Uri($"avares://{menuItem.Namespace}/Resources/" + menuItem.IconName + ".png");
-					try
-					{
+					if (!AssetLoader.Exists(uri))
+						uri = new Uri($"avares://{menuItem.Namespace}/Resources/" + menuItem.IconName.ToLower() + ".png");
+					if (AssetLoader.Exists(uri))
 						icon = new Bitmap(AssetLoader.Open(uri));
-					}
-					catch { }
 				}
 
 
