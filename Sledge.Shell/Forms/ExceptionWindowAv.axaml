@@ -2,22 +2,26 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="581" d:DesignHeight="555"
-        Width="581" Height="555"
+        mc:Ignorable="d" d:DesignWidth="581" d:DesignHeight="700"
+        Width="581" Height="550"
+        MinWidth="581" MinHeight="550"
         x:Class="Sledge.Shell.ExceptionWindowAv"
         Title="This isn't good!">
-  <StackPanel Margin="18,13">
-    <TextBlock Text="Oops! Something went horribly wrong." FontSize="16" FontWeight="Bold" />
-    <TextBlock Text="Hammertime is still in alpha, so unfortunately we will experience some bugs every now and then!&#x0a;
-Help us fix the issues by submitting this bug to our reporting system!&#x0a;
-&#x0a;
-Your privacy is important - the only information we upload is:&#x0a;
+  <DockPanel Margin="18,13">
+    <TextBlock DockPanel.Dock="Top" Text="Oops! Something went horribly wrong." FontSize="20" FontWeight="Bold" Margin="0,5" />
+    <TextBlock DockPanel.Dock="Top" Text="Hammertime is still in alpha, so unfortunately we will experience some bugs every now and then!
+&#x0a;Help us fix the issues by submitting this bug to our reporting system!&#x0a;
+&#x0a;Your privacy is important - the only information we upload is:&#x0a;
  - The error message&#x0a;
  - The version of Sledge you are running&#x0a;
  - Your version of .NET and your operating system&#x0a;
  - The current time&#x0a;
- - Whatever you type below!" Width="482" Height="135" TextWrapping="Wrap"/>
-    <Grid ColumnDefinitions="1*,1*" RowDefinitions="auto,auto,auto,auto,auto,auto">
+ - Whatever you type below!" Width="482" Height="135" TextWrapping="Wrap" Margin="0,5" HorizontalAlignment="Left"/>
+    <Grid DockPanel.Dock="Bottom" ColumnDefinitions="1*,auto" Margin="5,10" >
+      <Button VerticalAlignment="Bottom" HorizontalAlignment="Left" Content="Don't Submit Error :(" Width="141" Height="27" Click="CancelButtonClicked"/>
+      <Button Content="Submit Error!" Name="SubmitButton" Grid.Column="1" Width="182" Height="48" FontWeight="Bold" FontSize="15" Click="SubmitButtonClicked" IsEnabled="False"/>
+    </Grid>
+    <Grid DockPanel.Dock="Top" ColumnDefinitions="191,1*" RowDefinitions="auto,auto,auto,1*,auto,auto">
       <TextBlock Text=".NET Version" Grid.Column="0" Grid.Row="0"/>
       <TextBox Name="FrameworkVersion" Grid.Column="1" Grid.Row="0" IsReadOnly="True" />
       <TextBlock Text="Operating System" Grid.Column="0" Grid.Row="1"/>
@@ -25,15 +29,17 @@ Your privacy is important - the only information we upload is:&#x0a;
       <TextBlock Text="Hammertime Version" Grid.Column="0" Grid.Row="2"/>
       <TextBox Name="SledgeVersion" Grid.Column="1" Grid.Row="2" IsReadOnly="True" />
       <TextBlock Text="Full Error Message" Grid.Column="0" Grid.Row="3"/>
-      <TextBox Name="FullError" Grid.Column="1" Grid.Row="3" IsReadOnly="True" />
+      <TextBox Name="FullError" Grid.Column="1" Grid.Row="3" IsReadOnly="True" MinHeight="73"/>
       <TextBlock Text="Application Branch" Grid.Column="0" Grid.Row="4"/>
       <TextBox Name="applicationBranch" Grid.Column="1" Grid.Row="4" IsReadOnly="True" />
       <TextBlock Text="Can you tell us any extra information about what you were doing when this error happened?" Grid.Column="0" Grid.Row="5" TextWrapping="Wrap"/>
-      <TextBox Name="InfoTextBox" Grid.Column="1" Grid.Row="5" IsReadOnly="True" />
+      <TextBox Name="InfoTextBox" Grid.Column="1" Grid.Row="5" IsReadOnly="False"/>
+      <Grid.Styles>
+        <Style Selector="TextBox">
+          <Setter Property="Margin" Value="5"/>
+        </Style>
+      </Grid.Styles>
     </Grid>
-    <Grid ColumnDefinitions="1*,auto">
-      <Button Content="Don't Submit Error :(" Width="141" Height="27"/>
-      <Button Content="Submit Error!" Name="SubmitButton" Grid.Column="1" Width="182" Height="48" FontWeight="Bold" FontSize="15"/>
-    </Grid>
-  </StackPanel>
+
+  </DockPanel>
 </Window>

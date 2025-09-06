@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -34,7 +35,7 @@ public partial class ExceptionWindowAv : Window
 		applicationBranch.Text = info.ApplicationBranch;
 	}
 
-	private void SubmitButtonClicked(object sender, EventArgs e)
+	private void SubmitButtonClicked(object sender, RoutedEventArgs e)
 	{
 		Submit();
 		Close();
@@ -64,7 +65,7 @@ public partial class ExceptionWindowAv : Window
 		}
 	}
 
-	private void CancelButtonClicked(object sender, EventArgs e)
+	private void CancelButtonClicked(object sender, RoutedEventArgs e)
 	{
 		Close();
 	}
