@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.Composition;
-using System.Drawing;
 using System.Threading.Tasks;
-using System.Windows.Forms;
+using Avalonia.Controls;
 using Sledge.BspEditor.Tools.Draggable;
 using Sledge.BspEditor.Tools.Vertex.Selection;
 
@@ -19,7 +18,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
         public VertexSelection Selection { get; set; }
         [Import] public VertexTool Parent { get; set; }
         
-        public override Image GetIcon() => null;
+        public override System.Drawing.Image GetIcon() => null;
         public abstract Task SelectionChanged();
         public abstract Control Control { get; }
         public string Title { get; set; }

@@ -6,7 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
-using System.Windows.Forms;
+using Avalonia.Controls;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Rendering.Viewport;
@@ -210,16 +210,16 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
 
 		private void HandleKeyDown(ViewportEvent e)
 		{
-			if (e.KeyCode == Keys.Enter)
-			{
-				Confirm();
-				e.Handled = true;
-			}
-			else if (e.KeyCode == Keys.Escape)
-			{
-				Cancel();
-				e.Handled = true;
-			}
+			//if (e.KeyCode == Keys.Enter)
+			//{
+			//	Confirm();
+			//	e.Handled = true;
+			//}
+			//else if (e.KeyCode == Keys.Escape)
+			//{
+			//	Cancel();
+			//	e.Handled = true;
+			//}
 
 
 
@@ -442,7 +442,8 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
 
 		private bool ConfirmMerge()
 		{
-			return MessageBox.Show("Merge vertices?", "Overlapping vertices detected", MessageBoxButtons.YesNo) == DialogResult.Yes;
+			return true;
+			//return MessageBox.Show("Merge vertices?", "Overlapping vertices detected", MessageBoxButtons.YesNo) == DialogResult.Yes;
 		}
 
 		private IEnumerable<VertexSolid> CheckMergedVertices()
@@ -958,7 +959,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
 
 			protected virtual void SetMoveCursor(MapViewport viewport)
 			{
-				viewport.Control.Cursor = Cursors.SizeAll;
+				viewport.Control.Cursor = new Avalonia.Input.Cursor(Avalonia.Input.StandardCursorType.SizeAll);
 			}
 
 			public override void Highlight(MapDocument document, MapViewport viewport)
@@ -970,7 +971,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
 			public override void Unhighlight(MapDocument document, MapViewport viewport)
 			{
 				IsHighlighted = false;
-				viewport.Control.Cursor = Cursors.Default;
+				viewport.Control.Cursor = Avalonia.Input.Cursor.Default;
 			}
 
 			public override void StartDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)

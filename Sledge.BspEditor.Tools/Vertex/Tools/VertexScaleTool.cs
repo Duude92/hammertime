@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
-using System.Windows.Forms;
+using Avalonia.Controls;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Rendering.Viewport;
@@ -93,16 +93,16 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
 
         private void HandleKeyDown(ViewportEvent e)
         {
-            if (e.KeyCode == Keys.Enter)
-            {
-                Confirm();
-                e.Handled = true;
-            }
-            else if (e.KeyCode == Keys.Escape)
-            {
-                Cancel();
-                e.Handled = true;
-            }
+            //if (e.KeyCode == Keys.Enter)
+            //{
+            //    Confirm();
+            //    e.Handled = true;
+            //}
+            //else if (e.KeyCode == Keys.Escape)
+            //{
+            //    Cancel();
+            //    e.Handled = true;
+            //}
         }
 
         protected override void KeyDown(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
