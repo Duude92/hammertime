@@ -22,10 +22,10 @@ using Sledge.Shell;
 
 namespace Sledge.BspEditor.Editing.Components.Visgroup
 {
-    [AutoTranslate]
-    [Export(typeof(ISidebarComponent))]
-    [Export(typeof(IInitialiseHook))]
-    [OrderHint("G")]
+    //[AutoTranslate]
+    //[Export(typeof(ISidebarComponent))]
+    //[Export(typeof(IInitialiseHook))]
+    //[OrderHint("G")]
     public partial class VisgroupSidebarPanel : UserControl, ISidebarComponent, IInitialiseHook
     {
         [Import] private ITranslationStringProvider _translation;

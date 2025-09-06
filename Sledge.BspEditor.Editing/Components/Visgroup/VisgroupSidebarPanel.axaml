@@ -1,0 +1,29 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="using:Sledge.BspEditor.Editing"
+             mc:Ignorable="d" d:DesignWidth="233" d:DesignHeight="245"
+             MaxHeight="288"
+             MinWidth="233" MinHeight="190"
+             Width="233" Height="245"
+             x:Class="Sledge.BspEditor.Editing.VisgroupSidebarPanel">
+  <StackPanel>
+    <local:VisgroupPanel Name="VisgroupPanel" Width="225" Height="185" Margin="4,3,4,0" VisgroupSelected="VisgroupSelected" VisgroupToggled="VisgroupToggled"/>
+    <StackPanel Orientation="Horizontal">
+      <Button Name="btnEdit" Content="Edit" Click="EditButtonClicked"/>
+      <Button Name="btnNew" Content="New" Click="NewButtonClicked"/>
+    </StackPanel>
+    <StackPanel Orientation="Horizontal">
+      <Button Name="btnSelect" Content="Select" Click="SelectButtonClicked"/>
+      <Button Name="btnShowAll" Content="Show all" Click="ShowAllButtonClicked"/>
+    </StackPanel>
+    <StackPanel.Styles>
+      <Style Selector="Button">
+        <Setter Property="Width" Value="111"/>
+        <Setter Property="Height" Value="25"/>
+        <Setter Property="Margin" Value="4, 3, 0, 0"/>
+      </Style>
+    </StackPanel.Styles>
+  </StackPanel>
+</UserControl>
