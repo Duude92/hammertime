@@ -7,7 +7,7 @@
              x:Class="Sledge.BspEditor.Tools.VertexSidebarPanel">
   <DockPanel Margin="4,3,4,3">
     <StackPanel Name="ButtonLayoutPanel" Background="Yellow" Orientation="Horizontal" DockPanel.Dock="Top" Width="230" Height="6"/>
-    <HeaderedContentControl Header="aboba" Name="ControlPanel" DockPanel.Dock="Top" Background="Blue" Width="230" Height="20"/>
+    <HeaderedContentControl Header="" Name="ControlPanel" DockPanel.Dock="Top" Background="Blue" Width="230" Height="20"/>
     <StackPanel Background="Cyan" Width="230" Height="39" Orientation="Horizontal">
       <Button Name="DeselectAllButton" Content="Deselect All"/>
       <Button Name="ResetButton" Content="Reset to Original"/>

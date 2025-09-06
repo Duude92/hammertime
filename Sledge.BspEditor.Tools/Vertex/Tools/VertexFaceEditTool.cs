@@ -212,7 +212,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
         protected override void MouseDown(MapDocument document, MapViewport viewport, PerspectiveCamera camera,
             ViewportEvent e)
         {
-            if (e.Button != MouseButtons.Left) return;
+            //if (e.Button != MouseButtons.Left) return;
 
             e.Handled = true;
 
