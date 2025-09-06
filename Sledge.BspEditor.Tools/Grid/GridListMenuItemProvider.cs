@@ -34,8 +34,8 @@ namespace Sledge.BspEditor.Tools.Grid
             public string Name => GridFactory.Name;
             public string Description => GridFactory.Details;
             public Image Icon => GridFactory.Icon;
-			public string IconName { get; }
-			public string Namespace { get; } = null;
+            public string IconName { get; } = "SquareGrid";
+			public string Namespace { get; } = "Sledge.Shell";
 
 
 			public bool AllowedInToolbar => false;
