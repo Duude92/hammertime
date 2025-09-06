@@ -303,7 +303,7 @@ namespace Sledge.Shell.Registers
 				// Add to the toolbar as well
 				// Items with no icon are never allowed
 				//TODO: When all items icons would be fixed - uncomment
-				if (item.AllowedInToolbar /*&& ((Image)itemNode.ToolbarButton.Content).Source != null*/)
+				if (item.AllowedInToolbar && ((Image)itemNode.ToolbarButton.Content).Source != null)
 				{
 					AddToolbarItem(itemNode);
 				}
