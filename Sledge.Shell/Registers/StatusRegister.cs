@@ -66,7 +66,6 @@ namespace Sledge.Shell.Registers
 			{
 				Item = item;
 				item.TextChanged += TextChanged;
-				Dispatcher.UIThread.Post(() =>
 				Label = new Label
 				{
 					Content = item.Text ?? "",
@@ -75,7 +74,7 @@ namespace Sledge.Shell.Registers
 					HorizontalContentAlignment = Avalonia.Layout.HorizontalAlignment.Left,
 					BorderThickness = item.HasBorder ? new Avalonia.Thickness(1) : new Avalonia.Thickness(0),
 					BorderBrush = Brushes.Black
-				});
+				};
 				//Label = new ToolStripStatusLabel
 				//{
 				//	Text = item.Text ?? "",
