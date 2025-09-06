@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
+using System.Security.Policy;
 using System.Threading.Tasks;
 
 namespace Sledge.Shell.Registers
@@ -386,12 +387,13 @@ namespace Sledge.Shell.Registers
 
 				MenuItem = menuItem;
 
-				object icon = null;
+				Bitmap icon = null;
+				Uri uri = null;
 
 				if (!string.IsNullOrEmpty(menuItem.IconName))
 				{
 
-					var uri = new Uri($"avares://{menuItem.Namespace}/Resources/" + menuItem.IconName + ".png");
+					uri = new Uri($"avares://{menuItem.Namespace}/Resources/" + menuItem.IconName + ".png");
 					try
 					{
 						icon = new Bitmap(AssetLoader.Open(uri));
@@ -403,7 +405,7 @@ namespace Sledge.Shell.Registers
 				MenuMenuItem = new MenuItem
 				{
 					Header = menuItem.Name,
-					Icon = new Image { Source = (Bitmap)icon },
+					Icon = new Image { Source = icon },
 					Tag = this,
 					//TODO:: Implement HotKey
 					//ShortcutKeyDisplayString = menuItem.ShortcutText,
@@ -417,22 +419,9 @@ namespace Sledge.Shell.Registers
 				if (menuItem.AllowedInToolbar)
 				{
 
-					object icon2 = null;
-
-					if (!string.IsNullOrEmpty(menuItem.IconName))
-					{
-
-						var uri = new Uri($"avares://{menuItem.Namespace}/Resources/" + menuItem.IconName + ".png");
-						try
-						{
-							icon2 = new Bitmap(AssetLoader.Open(uri));
-						}
-						catch { }
-					}
-
 					ToolbarButton = new Button//(menuItem.Name, menuItem.Icon)
 					{
-						Content = new Image { Source = (Bitmap)icon2 },
+						Content = new Image { Source = icon },
 						Tag = this,
 						Width = 20,
 						Height = 20,
