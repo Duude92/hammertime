@@ -78,6 +78,9 @@
     <GeneratedAssemblyInfoFile>assemblyinfo.cs</GeneratedAssemblyInfoFile>
   </PropertyGroup>
   <ItemGroup>
+    <AvaloniaResource Include="Resources\**"/>
+  </ItemGroup>
+  <ItemGroup>
     <None Remove="Resources\Tool_Path.png" />
     <None Remove="Resources\Tool_Prefab.png" />
     <None Remove="Translations\Sledge.BspEditor.Tools.zh_cn.json" />
