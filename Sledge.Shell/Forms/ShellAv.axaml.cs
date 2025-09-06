@@ -149,13 +149,14 @@ namespace Sledge.Shell.Forms
 			}
 		}
 
-		protected void OnLoaded1(RoutedEventArgs e)
+		protected async void OnLoaded1(RoutedEventArgs e)
 		{
 			// Bootstrap the shell
 			_bootstrapper.Value.UIStartup();
-			_bootstrapper.Value.Startup()
-				.ContinueWith(_ => _bootstrapper.Value.Initialise())
-				.ContinueWith(_ => PostLoad());
+
+			await _bootstrapper.Value.Startup();
+			await _bootstrapper.Value.Initialise();
+			await PostLoad();
 
 			// Set up bootstrapping for shutdown
 			Closing += DoClosing;
