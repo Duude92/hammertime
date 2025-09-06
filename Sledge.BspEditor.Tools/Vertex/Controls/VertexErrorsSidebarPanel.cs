@@ -13,7 +13,7 @@ using Sledge.Shell;
 
 namespace Sledge.BspEditor.Tools.Vertex.Controls
 {
-    [Export(typeof(ISidebarComponent))]
+    //[Export(typeof(ISidebarComponent))]
     [OrderHint("G")]
     [AutoTranslate]
     public partial class VertexErrorsSidebarPanel : UserControl, ISidebarComponent
