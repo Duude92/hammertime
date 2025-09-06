@@ -11,7 +11,7 @@ using Sledge.Shell;
 
 namespace Sledge.BspEditor.Tools.Vertex.Controls
 {
-    [Export]
+    //[Export]
     [AutoTranslate]
     public partial class VertexPointControl : UserControl
     {

@@ -1,0 +1,18 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="233" d:DesignHeight="141"
+             Width="233" Height="141"
+             x:Class="Sledge.BspEditor.Tools.VertexPointControl">
+  <StackPanel Margin="4,3,4,3">
+    <Button Name="MergeButton" Content="Merge overlapping vertices" Click="MergeButtonClicked"/>
+    <CheckBox Name="AutoMerge" Content="Merge automatically" IsChecked="True"/>
+    <Label Name="MergeResultsLabel" Content="Merge Results"/>
+    <Button Name="SplitButton" Content="Split face" Click="SplitButtonClicked"/>
+    <StackPanel Orientation="Horizontal">
+      <CheckBox Name="ShowPointsCheckbox" Content="Show points" IsChecked="True"/>
+      <CheckBox Name="ShowMidpointsCheckbox" Content="Show midpoints" IsChecked="True"/>
+    </StackPanel>
+  </StackPanel>
+</UserControl>
