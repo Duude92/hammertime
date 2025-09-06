@@ -8,7 +8,7 @@ using Sledge.Shell;
 namespace Sledge.BspEditor.Tools.Vertex.Controls
 {
     [AutoTranslate]
-    [Export]
+    //[Export]
     public partial class VertexScaleControl : UserControl
     {
         #region Translations
