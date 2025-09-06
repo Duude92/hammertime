@@ -22,7 +22,7 @@ namespace Sledge.Shell.Commands
     [CommandID("File:Save")]
     [DefaultHotkey("Ctrl+S")]
     [MenuItem("File", "", "File", "H")]
-    [MenuImage(typeof(Resources), nameof(Resources.Menu_Save))]
+    [MenuImage(typeof(Resources), "menu_save")]
     public class SaveFile : ICommand
     {
         private readonly Lazy<DocumentRegister> _documentRegister;

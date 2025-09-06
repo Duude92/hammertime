@@ -15,7 +15,7 @@ namespace Sledge.Shell.Commands
     [Export(typeof(ICommand))]
     [CommandID("File:Close")]
     [MenuItem("File", "", "File", "F")]
-    [MenuImage(typeof(Resources), nameof(Resources.Menu_Close))]
+    [MenuImage(typeof(Resources), "menu_close")]
     public class CloseFile : ICommand
     {
         private readonly Lazy<DocumentRegister> _documentRegister;

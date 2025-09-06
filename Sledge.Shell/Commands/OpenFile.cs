@@ -20,7 +20,7 @@ namespace Sledge.Shell.Commands
     [CommandID("File:Open")]
     [DefaultHotkey("Ctrl+O")]
     [MenuItem("File", "", "File", "D")]
-    [MenuImage(typeof(Resources), nameof(Resources.Menu_Open))]
+    [MenuImage(typeof(Resources), "menu_open")]
     public class OpenFile : ICommand
     {
         private readonly IEnumerable<Lazy<IDocumentLoader>> _loaders;

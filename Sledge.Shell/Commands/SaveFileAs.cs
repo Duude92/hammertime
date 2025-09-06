@@ -24,7 +24,7 @@ namespace Sledge.Shell.Commands
 	[CommandID("File:SaveAs")]
 	[DefaultHotkey("Ctrl+Shift+S")]
 	[MenuItem("File", "", "File", "J")]
-	[MenuImage(typeof(Resources), nameof(Resources.Menu_SaveAs))]
+	[MenuImage(typeof(Resources), "menu_saveas")]
 	public class SaveFileAs : ICommand, ISettingsContainer
 	{
 		private readonly Lazy<DocumentRegister> _documentRegister;
