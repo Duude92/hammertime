@@ -119,6 +119,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <AvaloniaResource Include="Resources\**"/>
+  </ItemGroup>
+  <ItemGroup>
     <None Include="app.config" />
     <None Include="Resources\SquareGrid.png" />
     <Content Include="Resources\DottedGrid.png" />
