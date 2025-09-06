@@ -4,21 +4,26 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Sledge.Shell"
         mc:Ignorable="d" d:DesignWidth="824" d:DesignHeight="562"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="PreferSystemChrome"
+        ExtendClientAreaTitleBarHeightHint="30"
         Width="824"
         Height="562"
         x:Class="Sledge.Shell.Forms.ShellAv"
-        Title="ShellAv">
+        Title="Shell">
   <Window.Styles>
     <Style Selector="TabControl>TabItem">
       <Setter Property="FontSize" Value="10"/>
       <Setter Property="Padding" Value="5"/>
       <Setter Property="CornerRadius" Value="5,5,0,0"/>
     </Style>
-
+    <Style Selector="Menu>MenuItem">
+      <!--<Setter Property="FontSize" Value="15"/>-->
+    </Style>
   </Window.Styles>
-  <DockPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Name="MainDockPanel" >
+  <DockPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Name="MainDockPanel" Margin="5,10,5,0" >
 
-    <Menu Name="MenuStrip" DockPanel.Dock="Top">
+    <Menu Name="MenuStrip" DockPanel.Dock="Top" >
       <MenuItem Header="File">
         <MenuItem Header="Open"/>
       </MenuItem>
@@ -30,7 +35,7 @@
 
     <StackPanel Name="StatusStrip" Orientation="Horizontal"  VerticalAlignment="Bottom" HorizontalAlignment="Right" DockPanel.Dock="Bottom" Height="30"/>
 
-    <StackPanel DockPanel.Dock="Left" Orientation="Vertical" Name="LeftToolStripPanel" Width="32"  >
+    <StackPanel DockPanel.Dock="Left" Orientation="Vertical" Name="LeftToolStripPanel" Width="36" Background="Yellow" >
       <StackPanel Name="ToolsContainer" Orientation="Vertical">
         <!-- Left panel tools buttons-->
         <Button>TestToolButton2</Button>
