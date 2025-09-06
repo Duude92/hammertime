@@ -21,7 +21,7 @@ namespace Sledge.Shell.Commands
     [CommandID("File:New")]
     [DefaultHotkey("Ctrl+N")]
     [MenuItem("File", "", "File", "B")]
-    [MenuImage(typeof(Resources), nameof(Resources.Menu_New))]
+    [MenuImage(typeof(Resources), "menu_new")]
     public class NewFile : ICommand
     {
         private readonly Lazy<DocumentRegister> _documentRegister;
