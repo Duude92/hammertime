@@ -16,7 +16,7 @@ namespace Sledge.BspEditor.Tools.Cordon
     [Export(typeof(ITool))]
     [OrderHint("R")]
     [DefaultHotkey("Shift+K")]
-    public class CordonTool : BaseDraggableTool
+	public class CordonTool : BaseDraggableTool
     {
         private readonly CordonBoxDraggableState _cordonBox;
 
@@ -31,7 +31,9 @@ namespace Sledge.BspEditor.Tools.Cordon
             Usage = ToolUsage.View2D;
         }
 
-        public override Image GetIcon()
+		public override string ImageName => "Tool_Cordon";
+
+		public override Image GetIcon()
         {
             return Resources.Tool_Cordon;
         }

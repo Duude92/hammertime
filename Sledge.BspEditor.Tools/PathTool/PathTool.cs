@@ -37,6 +37,8 @@ namespace Sledge.BspEditor.Tools.PathTool
 		private bool _shiftPressed;
 		private bool _controlPressed;
 		private MapDocument _lastDocument;
+		public override string ImageName => "Tool_Path";
+
 		public override Image GetIcon() => Resources.Tool_Path;
 		public override string GetName() => "Path Tool";
 

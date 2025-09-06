@@ -1,13 +1,13 @@
 using System;
 using System.Drawing;
 using System.Numerics;
-using System.Windows.Forms;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Overlay;
 using Sledge.Rendering.Resources;
 using Sledge.Rendering.Viewports;
+using Avalonia.Input;
 
 namespace Sledge.BspEditor.Tools.Draggable
 {
@@ -83,7 +83,7 @@ namespace Sledge.BspEditor.Tools.Draggable
 
         protected virtual void SetCursorForHandle(MapViewport viewport, ResizeHandle handle)
         {
-            viewport.Control.Cursor = handle.GetCursorType();
+            //viewport.Control.Cursor = handle.GetCursorType();
         }
 
         public override void Highlight(MapDocument document, MapViewport viewport)
@@ -95,7 +95,7 @@ namespace Sledge.BspEditor.Tools.Draggable
         public override void Unhighlight(MapDocument document, MapViewport viewport)
         {
             HighlightedViewport = null;
-            viewport.Control.Cursor = Cursors.Default;
+            viewport.Control.Cursor = Cursor.Default;
         }
 
         protected virtual Vector3 GetResizeOrigin(MapViewport viewport, OrthographicCamera camera, Vector3 position)

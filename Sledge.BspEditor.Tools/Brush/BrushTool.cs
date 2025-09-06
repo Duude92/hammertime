@@ -55,6 +55,7 @@ namespace Sledge.BspEditor.Tools.Brush
 
 		public bool ValuesLoaded { get; private set; } = false;
 
+		public override string ImageName => "tool_brush";
 
 		// Settings
 

@@ -37,7 +37,7 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
                     ct = Cursors.SizeNS;
                     break;
             }
-            viewport.Control.Cursor = ct;
+            //viewport.Control.Cursor = ct;
         }
 
         public override void StartDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera,

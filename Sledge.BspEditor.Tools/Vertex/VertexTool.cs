@@ -73,6 +73,8 @@ namespace Sledge.BspEditor.Tools.Vertex
 
 			return Task.FromResult(false);
 		}
+		public override string ImageName => "Tool_VM";
+
 		public override Image GetIcon()
 		{
 			return Resources.Tool_VM;

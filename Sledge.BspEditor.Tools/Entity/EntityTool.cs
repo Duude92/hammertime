@@ -5,7 +5,6 @@ using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
@@ -28,6 +27,8 @@ using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Pipelines;
 using Sledge.Rendering.Primitives;
 using Sledge.Rendering.Resources;
+using System.Windows.Forms;
+using Avalonia.Input;
 
 namespace Sledge.BspEditor.Tools.Entity
 {
@@ -137,6 +138,7 @@ namespace Sledge.BspEditor.Tools.Entity
 			}
 			_menu = items.ToArray();
 		}
+		public override string ImageName => "Tool_Entity";
 
 		public override System.Drawing.Image GetIcon()
 		{
@@ -184,12 +186,12 @@ namespace Sledge.BspEditor.Tools.Entity
 
 		protected override void MouseEnter(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
 		{
-			viewport.Control.Cursor = Cursors.Cross;
+			viewport.Control.Cursor = new Avalonia.Input.Cursor(StandardCursorType.Cross);
 		}
 
 		protected override void MouseLeave(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
 		{
-			viewport.Control.Cursor = Cursors.Cross;
+			viewport.Control.Cursor = new Avalonia.Input.Cursor(StandardCursorType.Cross);
 		}
 
 		protected override void MouseDown(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)

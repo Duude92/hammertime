@@ -34,7 +34,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
     {
         private readonly VertexEditFaceControl _control;
 
-        public override string OrderHint => "F";
+		public override string OrderHint => "F";
         public override string GetName() => "Face editing";
         public override Control Control => _control;
         

@@ -13,8 +13,9 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
             Active = false;
             Title = GetName() ?? GetType().Name;
         }
+		public override string ImageName => null;
 
-        public abstract string OrderHint { get; }
+		public abstract string OrderHint { get; }
         public VertexSelection Selection { get; set; }
         [Import] public VertexTool Parent { get; set; }
         

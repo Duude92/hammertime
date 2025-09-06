@@ -147,6 +147,7 @@ namespace Sledge.BspEditor.Tools.Selection
 		{
 			Oy.Publish("SelectTool:TransformationModeChanged", mode.ToString());
 		}
+		public override string ImageName => "Tool_Select";
 
 		public override Image GetIcon()
 		{

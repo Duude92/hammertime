@@ -44,8 +44,9 @@ namespace Sledge.BspEditor.Tools.Texture
         {
             Usage = ToolUsage.View3D;
         }
+		public override string ImageName => "Tool_Texture";
 
-        public override Image GetIcon()
+		public override Image GetIcon()
         {
             return Resources.Tool_Texture;
         }

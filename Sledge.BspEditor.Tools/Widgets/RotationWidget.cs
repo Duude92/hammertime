@@ -56,8 +56,8 @@ namespace Sledge.BspEditor.Tools.Widgets
             cache.CameraLocation = ccl;
             cache.CameraLookAt = ccla;
             cache.PivotPoint = Pivot;
-            cache.Width = viewport.Width;
-            cache.Height = viewport.Height;
+            cache.Width = (int)viewport.Width;
+            cache.Height = (int)viewport.Height;
 
             var normal = (ccl - origin).Normalise();
             var right = normal.Cross(Vector3.UnitZ).Normalise();

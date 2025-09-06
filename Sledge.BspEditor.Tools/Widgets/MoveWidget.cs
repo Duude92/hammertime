@@ -273,8 +273,8 @@ namespace Sledge.BspEditor.Tools.Widgets
 			cache.CameraLocation = ccl;
 			cache.CameraLookAt = ccla;
 			cache.PivotPoint = Pivot;
-			cache.Width = viewport.Width;
-			cache.Height = viewport.Height;
+			cache.Width = (int)	viewport.Width;
+			cache.Height = (int)viewport.Height;
 
 			cache.Cache[AxisType.Outer].Clear();
 			cache.Cache[AxisType.X].Clear();

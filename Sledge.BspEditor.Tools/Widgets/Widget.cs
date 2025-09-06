@@ -12,6 +12,7 @@ using Sledge.Rendering.Overlay;
 using Sledge.Rendering.Viewports;
 using static Sledge.BspEditor.Tools.Selection.SelectionBoxDraggableState;
 using Plane = Sledge.DataStructures.Geometric.Plane;
+using Cursor = Avalonia.Input.Cursor;
 
 
 namespace Sledge.BspEditor.Tools.Widgets
@@ -86,6 +87,7 @@ namespace Sledge.BspEditor.Tools.Widgets
 		{
 			Transformed?.Invoke(this, transformation);
 		}
+		public override string ImageName => null;
 
 		public override Image GetIcon() { return null; }
 		public override string GetName() { return "Widget"; }
@@ -111,7 +113,7 @@ namespace Sledge.BspEditor.Tools.Widgets
 		protected override void MouseLeave(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
 		{
 			ActiveViewport = null;
-			viewport.Control.Cursor = Cursors.Default;
+			viewport.Control.Cursor = Cursor.Default;
 
 			base.MouseLeave(document, viewport, camera, e);
 		}

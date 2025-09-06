@@ -11,11 +11,11 @@ using System.Collections.Generic;
 using System;
 using System.Drawing;
 using System.Numerics;
-using System.Windows.Forms;
 using System.Linq;
 using Sledge.Rendering.Primitives;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations.Mutation;
+using Avalonia.Input;
 
 namespace Sledge.BspEditor.Tools.Draggable
 {
@@ -81,13 +81,13 @@ namespace Sledge.BspEditor.Tools.Draggable
 		{
 			Subscribe();
 			IsHighlighted = true;
-			viewport.Control.Cursor = Cursors.SizeAll;
+			viewport.Control.Cursor = new Cursor(StandardCursorType.SizeAll);
 		}
 		public override void Unhighlight(MapDocument document, MapViewport viewport)
 		{
 			_subscription.Dispose();
 			IsHighlighted = false;
-			viewport.Control.Cursor = Cursors.Default;
+			viewport.Control.Cursor = Cursor.Default;
 		}
 
 		public override void Render(MapDocument document, BufferBuilder builder)

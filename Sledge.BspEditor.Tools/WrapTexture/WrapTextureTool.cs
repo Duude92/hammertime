@@ -24,6 +24,7 @@ namespace Sledge.BspEditor.Tools.WrapTexture
 	[AutoTranslate]
 	public class WrapTextureTool : BaseDraggableTool
 	{
+		public override string ImageName => "Tool_Wrap";
 
 		public override Image GetIcon()
 		{

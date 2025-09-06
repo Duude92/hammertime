@@ -33,8 +33,9 @@ namespace Sledge.BspEditor.Tools.Decal
         {
             Usage = ToolUsage.View3D;
         }
+		public override string ImageName => "Tool_Decal";
 
-        public override Image GetIcon()
+		public override Image GetIcon()
         {
             return Resources.Tool_Decal;
         }

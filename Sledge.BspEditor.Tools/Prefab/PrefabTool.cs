@@ -52,6 +52,7 @@ namespace Sledge.BspEditor.Tools.Prefab
 		private int _selectedPrefabIndex = 0;
 
 		private MapDocument _previewDocument = null;
+		public override string ImageName => "Tool_Prefab";
 
 		public override Image GetIcon() => Resources.Tool_Prefab;
 

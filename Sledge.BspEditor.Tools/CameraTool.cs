@@ -5,7 +5,6 @@ using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Components;
 using Sledge.BspEditor.Documents;
@@ -20,6 +19,7 @@ using Sledge.Rendering.Overlay;
 using Sledge.Rendering.Viewports;
 using Sledge.Shell.Input;
 using Camera = Sledge.BspEditor.Primitives.MapData.Camera;
+using Avalonia.Input;
 
 namespace Sledge.BspEditor.Tools
 {
@@ -39,6 +39,8 @@ namespace Sledge.BspEditor.Tools
 		private Camera _stateCamera;
 
 		private readonly Lazy<MapDocumentControlHost> _controlHost;
+
+		public override string ImageName => "Tool_Camera";
 
 		[ImportingConstructor]
 		public CameraTool(
@@ -228,13 +230,13 @@ namespace Sledge.BspEditor.Tools
 			if (vp == null) return;
 
 			var p = SnapIfNeeded(camera.ScreenToWorld(e.X, e.Y));
-			var cursor = Cursors.Default;
+			var cursor = Cursor.Default;
 
 			switch (_state)
 			{
 				case State.None:
 					var st = GetStateAtPoint(document, e.X, e.Y, camera, out _stateCamera);
-					if (st != State.None) cursor = Cursors.SizeAll;
+					if (st != State.None) cursor = new Cursor(StandardCursorType.SizeAll);
 					break;
 				case State.MovingPosition:
 					if (_stateCamera == null) break;

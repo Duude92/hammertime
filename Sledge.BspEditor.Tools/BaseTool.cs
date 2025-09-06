@@ -38,7 +38,7 @@ namespace Sledge.BspEditor.Tools
 		public bool RenderedByDefault = false;
 		public Image Icon => GetIcon();
 		public string Name => GetName();
-		public virtual string ImageName { get; }
+		public abstract string ImageName { get; }
 		public virtual string Namespace { get; } = Assembly.GetExecutingAssembly().GetName().Name;
 
 		public virtual bool IsInContext(IContext context)
