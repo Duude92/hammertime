@@ -1,0 +1,30 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="246" d:DesignHeight="113"
+             Width="246" Height="113"
+             x:Class="Sledge.BspEditor.Tools.VertexEditFaceControl">
+  <StackPanel Margin="4,3,4,3">
+    <Label Name="WithSelectedFacesLabel" Content="With selected faces:" Width="111" Height="15"/>
+    <Grid ColumnDefinitions="63,68,33,58" RowDefinitions="auto,auto,auto">
+      
+      <Label Grid.Row="0" Grid.Column="0" Name="PokeByLabel" Content="Poke by"/>
+      <NumericUpDown Grid.Row="0" Grid.Column="1" Name="PokeFaceCount"/>
+      <Label Grid.Row="0" Grid.Column="2" Name="UnitsLabel1" Content="units"/>
+      <Button Grid.Row="0" Grid.Column="3" Name="PokeFaceButton" Content="Poke" Click="PokeFaceButtonClicked"/>
+
+      <Label Grid.Row="1" Grid.Column="0" Name="BevelByLabel" Content="Bevel by"/>
+      <NumericUpDown Grid.Row="1" Grid.Column="1" Name="BevelValue"/>
+      <Label Grid.Row="1" Grid.Column="2" Name="UnitsLabel2" Content="units"/>
+      <Button Grid.Row="1" Grid.Column="3" Name="BevelButton" Content="Bevel" Click="BevelButtonClicked"/>
+
+      <Label Grid.Row="2" Grid.Column="0" Name="label2" Content="Extrude by"/>
+      <NumericUpDown Grid.Row="2" Grid.Column="1" Name="ExtrudeValue"/>
+      <Label Grid.Row="2" Grid.Column="2" Name="UnitsLabel3" Content="units"/>
+      <Button Grid.Row="2" Grid.Column="3" Name="ExtrudeButton" Content="Extrude" Click="ExtrudeButtonClicked"/>
+
+    </Grid>
+  </StackPanel>
+
+</UserControl>
