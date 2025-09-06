@@ -43,15 +43,14 @@
 
     <StackPanel Name="RightSidebarContainer" Width="233"  Orientation="Vertical"  DockPanel.Dock="Right"/>
 
-    <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" DockPanel.Dock="Top" >
+    <DockPanel HorizontalAlignment="Stretch" DockPanel.Dock="Top">
       <TabControl Name="DocumentTabs" Height="28" Margin="5,0,0,0" DockPanel.Dock="Top">
         <TabItem Header="Tab1"/>
         <TabItem Header="Tab2"/>
-
       </TabControl>
 
-      <Panel Name="DocumentContainer"  VerticalAlignment="Top" HorizontalAlignment="Left" Background="Blue"/>
+      <Panel Name="DocumentContainer" DockPanel.Dock="Top" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="LightGray" Margin="3,0"/>
 
-    </StackPanel>
+    </DockPanel>
   </DockPanel>
 </Window>
