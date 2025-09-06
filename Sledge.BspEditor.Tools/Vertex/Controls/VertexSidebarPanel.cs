@@ -12,7 +12,7 @@ using Sledge.Shell;
 
 namespace Sledge.BspEditor.Tools.Vertex.Controls
 {
-    [Export(typeof(ISidebarComponent))]
+    //[Export(typeof(ISidebarComponent))]
     [OrderHint("F")]
     [AutoTranslate]
     public partial class VertexSidebarPanel : UserControl, ISidebarComponent, IManualTranslate
@@ -81,9 +81,9 @@ namespace Sledge.BspEditor.Tools.Vertex.Controls
             ControlPanel.Text = t.Title;
             if (t.Control != null)
             {
-                ControlPanel.Controls.Add(t.Control);
-                ControlPanel.Height = t.Control.PreferredSize.Height;
-                t.Control.Dock = DockStyle.Top;
+                //ControlPanel.Controls.Add(t.Control);
+                //ControlPanel.Height = t.Control.PreferredSize.Height;
+                //t.Control.Dock = DockStyle.Top;
             }
         }
         
