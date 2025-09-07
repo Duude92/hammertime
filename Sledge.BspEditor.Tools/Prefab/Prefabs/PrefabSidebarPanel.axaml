@@ -1,0 +1,22 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="177" d:DesignHeight="220"
+             Width="177" Height="220"
+             x:Class="Sledge.BspEditor.Tools.PrefabSidebarPanel">
+  <StackPanel Margin="4,3,4,3">
+    <ComboBox Name="FileContainer"/>
+    <ComboBox Name="PrefabList"/>
+    <Button Name="CreateButton" Content="Create Prefab" Click=""/>
+    <TextBox Name="NewPrefabName" Text="New prefab name"/>
+    <Button Name="NewPrefab" Content="Save as new prefab"/>
+    <TextBox Name="NewLibName" Text="New Library name"/>
+    <Button Name="CreateLib" Content="Create library"/>
+    <StackPanel.Styles>
+      <Style Selector="Button,TextBox,ComboBox">
+        <Setter Property="Margin" Value="0,2"/>
+      </Style>
+    </StackPanel.Styles>
+  </StackPanel>
+</UserControl>

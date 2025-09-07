@@ -31,8 +31,8 @@ using System.Reflection;
 namespace Sledge.BspEditor.Tools.Prefab
 {
     [AutoTranslate]
-	[Export(typeof(ISidebarComponent))]
-	[Export(typeof(IInitialiseHook))]
+	//[Export(typeof(ISidebarComponent))]
+	//[Export(typeof(IInitialiseHook))]
 	[OrderHint("A")]
 
 
