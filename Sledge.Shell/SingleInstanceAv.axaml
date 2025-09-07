@@ -4,7 +4,10 @@
   <Application.Styles>
     <SimpleTheme />
     <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Simple.xaml" />
-
+    <Style Selector="NumericUpDown">
+      <Setter Property="Height" Value="25"/>
+      <Setter Property="Padding" Value="0"/>
+    </Style>
     <Style Selector="HeaderedContentControl">
       <Setter Property="Template">
         <ControlTemplate>
