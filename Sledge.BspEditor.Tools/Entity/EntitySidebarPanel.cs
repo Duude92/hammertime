@@ -14,7 +14,7 @@ using Sledge.Shell;
 namespace Sledge.BspEditor.Tools.Entity
 {
     [AutoTranslate]
-    [Export(typeof(ISidebarComponent))]
+    //[Export(typeof(ISidebarComponent))]
     [OrderHint("F")]
     public partial class EntitySidebarPanel : UserControl, ISidebarComponent
     {

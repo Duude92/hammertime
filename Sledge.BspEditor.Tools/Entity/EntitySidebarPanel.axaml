@@ -1,0 +1,13 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="233" d:DesignHeight="58"
+             Width="233" Height="58"
+             x:Class="Sledge.BspEditor.Tools.EntitySidebarPanel">
+  <StackPanel Margin="4,3,4,3">
+    <Label Name="EntityTypeLabel" Content="Entity Type:"/>
+    <ComboBox Name="EntityTypeList" SelectionChanged="EntityTypeList_SelectedIndexChanged"/>
+  </StackPanel>
+
+</UserControl>
