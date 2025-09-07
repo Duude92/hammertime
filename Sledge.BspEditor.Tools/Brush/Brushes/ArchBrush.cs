@@ -52,10 +52,10 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes
             _startAngle = new NumericControl(this) { LabelText = StartAngle, Minimum = 0, Maximum = 359, Value = 0 };
             _addHeight = new NumericControl(this) { LabelText = AddHeight, Minimum = -1024, Maximum = 1024, Value = 0, Precision = 1 };
             _curvedRamp = new BooleanControl(this) { LabelText = CurvedRamp, Checked = false };
-            _tiltAngle = new NumericControl(this) { LabelText = TiltAngle, Minimum = -Atan2, Maximum = Atan2, Value = 0, Enabled = false, Precision = 1 };
-            _tiltInterp = new BooleanControl(this) { LabelText = TiltInterpolation, Checked = false, Enabled = false };
+            _tiltAngle = new NumericControl(this) { LabelText = TiltAngle, Minimum = -Atan2, Maximum = Atan2, Value = 0, IsEnabled = false, Precision = 1 };
+            _tiltInterp = new BooleanControl(this) { LabelText = TiltInterpolation, Checked = false, IsEnabled = false };
 
-            _curvedRamp.ValuesChanged += (s, b) => _tiltAngle.Enabled = _tiltInterp.Enabled = _curvedRamp.GetValue();
+            _curvedRamp.ValuesChanged += (s, b) => _tiltAngle.IsEnabled = _tiltInterp.IsEnabled = _curvedRamp.GetValue();
         }
 
         public string Name { get; set; } = "Arch";
