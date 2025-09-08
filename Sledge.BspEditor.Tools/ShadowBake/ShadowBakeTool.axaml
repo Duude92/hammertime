@@ -1,0 +1,13 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="139" d:DesignHeight="131"
+             Width="139" Height="131"
+             x:Class="Sledge.BspEditor.Tools.ShadowBakeTool">
+  <DockPanel>
+    <Label DockPanel.Dock="Top" Content="Shadow bake settings"/>
+    <ProgressBar DockPanel.Dock="Bottom" Name="progressBar1" />
+    <Button DockPanel.Dock="Top" Name="bakeButton" Content="Bake" Width="75" Height="23" Click="BakeButton_Click"/>
+  </DockPanel>
+</UserControl>

@@ -1,33 +1,38 @@
-﻿using LogicAndTrick.Oy;
-using RectpackSharp;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Markup.Xaml;
+using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations;
-using Sledge.BspEditor.Primitives.MapObjectData;
-using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Tools.ShadowBake.BVH;
-using Sledge.Common.Logging;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Documents;
 using Sledge.Common.Shell.Hooks;
-using Sledge.DataStructures.Geometric;
-using Sledge.Formats.Bsp.Lumps;
 using Sledge.Rendering.Engine;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Linq;
 using System.Numerics;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using System.Windows.Forms;
+using Sledge.BspEditor.Primitives.MapObjects;
+using System.Linq;
+using RectpackSharp;
+using Sledge.DataStructures.Geometric;
 using Vortice.Mathematics;
+using Sledge.Common.Logging;
+using Sledge.Shell;
+using Sledge.BspEditor.Primitives.MapObjectData;
+using System.Runtime.InteropServices;
+using Avalonia.Interactivity;
 
-namespace Sledge.BspEditor.Tools.ShadowBake;
-//[Export(typeof(ISidebarComponent))]
-//[Export(typeof(IInitialiseHook))]
+
+namespace Sledge.BspEditor.Tools;
+
+[Export(typeof(ISidebarComponent))]
+[Export(typeof(IInitialiseHook))]
 public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialiseHook
 {
 	private WeakReference<MapDocument> _document = new WeakReference<MapDocument>(null);
@@ -39,10 +44,9 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 
 	public ShadowBakeTool()
 	{
-		CreateHandle();
 
 		InitializeComponent();
-		progressBar1.Visible = false;
+		progressBar1.IsVisible = false;
 	}
 
 	private void SetDocument(IDocument document)
@@ -56,10 +60,10 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 		return context.TryGet("ActiveTool", out CameraTool _);
 	}
 
-	private async void BakeButton_Click(object sender, System.EventArgs e)
+	private async void BakeButton_Click(object sender, RoutedEventArgs e)
 	{
 		progressBar1.Value = 0;
-		progressBar1.Visible = true;
+		progressBar1.IsVisible = true;
 		_document.TryGetTarget(out var doc);
 
 		var nonRenderableTextures = doc.Environment.NonRenderableTextures;
@@ -80,7 +84,7 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 
 		var resources = new ConcurrentStack<EngineInterface.DepthResource>();
 		var rand = new Random(DateTime.Now.Millisecond);
-		var bvhRoot = new BVH.BVHNode.BVHBuilder().BuildBVHIterative(solids.ToList());
+		var bvhRoot = new ShadowBake.BVH.BVHNode.BVHBuilder().BuildBVHIterative(solids.ToList());
 
 		var startTime = DateTime.Now;
 		var chunkCount = System.Environment.ProcessorCount;
@@ -90,7 +94,7 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 		bvhRoot.GetLeafs(solidChunks, (int)nestLevel, 0);
 		var facesChunks = solidChunks.Select(chunk => chunk.SelectMany(x => x.Faces).Where(x => !x.Texture.Name.ToLower().Equals("sky", StringComparison.InvariantCulture)).ToList());
 		progressBar1.Maximum = facesChunks.Select(facesChunk => facesChunk.Count()).Aggregate(0, (cur, next) => cur += next);
-		progressBar1.Step = 1;
+		//progressBar1.Step = 1;
 		progressBar1.Minimum = 0;
 		await Parallel.ForEachAsync(facesChunks, async (faceChunk, _) =>
 		{
@@ -154,7 +158,7 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 						data[w] = 1f;
 
 						float relY = (float)y / height;
-						float relX= (float)x / width;
+						float relX = (float)x / width;
 						float uWorld = MathHelper.Lerp(minU, maxU, relX);
 						float vWorld = MathHelper.Lerp(minV, maxV, relY);
 
@@ -284,19 +288,20 @@ public partial class ShadowBakeTool : UserControl, ISidebarComponent, IInitialis
 		await ((Func<Task>)(async () =>
 		{
 			await Task.Delay(1000);
-			progressBar1.Visible = false;
+			progressBar1.IsVisible = false;
 		}))();
 	}
 	private void UpdateProgress()
 	{
-		if (progressBar1.InvokeRequired)
-		{
-			progressBar1.Invoke(() => progressBar1.PerformStep());
-		}
-		else
-		{
-			progressBar1.PerformStep();
-		}
+		Avalonia.Threading.Dispatcher.UIThread.Post(()=> progressBar1.Value++ );
+		//if (progressBar1.InvokeRequired)
+		//{
+		//	progressBar1.Invoke(() => progressBar1.PerformStep());
+		//}
+		//else
+		//{
+		//	progressBar1.PerformStep();
+		//}
 	}
 
 	private async Task<(bool, BVHAbstract)> TraverseBVH(BVHAbstract bvhNode, Line line, Face solidToIgnore = null)
