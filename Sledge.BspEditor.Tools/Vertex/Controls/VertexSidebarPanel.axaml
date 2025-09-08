@@ -2,12 +2,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="234" d:DesignHeight="78"
-             Width="234" Height="78"
+             xmlns:local="using:Sledge.BspEditor.Tools"
+             mc:Ignorable="d" d:DesignWidth="234" d:DesignHeight="200"
+             Width="234" MinHeight="78"
              x:Class="Sledge.BspEditor.Tools.VertexSidebarPanel">
   <DockPanel Margin="4,3,4,3">
-    <StackPanel Name="ButtonLayoutPanel" Background="Yellow" Orientation="Horizontal" DockPanel.Dock="Top" Width="230" Height="6"/>
-    <HeaderedContentControl Header="" Name="ControlPanel" DockPanel.Dock="Top" Background="Blue" Width="230" Height="20"/>
+    <StackPanel Name="ButtonLayoutPanel" Background="Yellow" Orientation="Horizontal" DockPanel.Dock="Top" Width="230" MinHeight="6"/>
+    <HeaderedContentControl Header="" Name="ControlPanel" DockPanel.Dock="Top" Background="Blue" Width="230" MinHeight="5"/>
     <StackPanel Background="Cyan" Width="230" Height="39" Orientation="Horizontal">
       <Button Name="DeselectAllButton" Content="Deselect All"/>
       <Button Name="ResetButton" Content="Reset to Original"/>
