@@ -1,0 +1,83 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="271" d:DesignHeight="201"
+             Width="271" Height="201"
+             x:Class="Sledge.BspEditor.Tools.SelectToolSidebarPanel">
+  <UserControl.Styles>
+    <Style Selector="CheckBox.button">
+      <Setter Property="Background" Value="{DynamicResource ThemeControlMidBrush}"/>
+      <Setter Property="Foreground" Value="{DynamicResource ThemeForegroundBrush}"/>
+      <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderMidBrush}"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="Padding" Value="3"/>
+      <Setter Property="HorizontalContentAlignment" Value="Center"/>
+      <Setter Property="VerticalContentAlignment" Value="Center"/>
+      <Setter Property="Margin" Value="5,0"/>
+
+      <Setter Property="Template">
+        <ControlTemplate TargetType="CheckBox">
+          <Border
+                 Background="{TemplateBinding Background}"
+                 BorderBrush="{TemplateBinding BorderBrush}"
+                 BorderThickness="{TemplateBinding BorderThickness}"
+                 CornerRadius="{TemplateBinding CornerRadius}"
+                 Padding="1"
+            >
+            <Border BorderThickness="1"
+                 Padding="{TemplateBinding Padding}">
+              <ContentPresenter
+                Content="{TemplateBinding Content}"
+                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                RecognizesAccessKey="True"/>
+            </Border>
+          </Border>
+
+        </ControlTemplate>
+      </Setter>
+    </Style>
+    <Style Selector="CheckBox.button:checked">
+      <Setter Property="BorderBrush" Value="{DynamicResource ThemeAccentBrush}"/>
+    </Style>
+    <Style Selector="CheckBox.button:checked>Border>Border">
+      <Setter Property="BorderBrush" Value="{DynamicResource ThemeAccentBrush}"/>
+      <Setter Property="BorderThickness" Value="1"/>
+    </Style>
+    <Style Selector="CheckBox.button:hover">
+      <Setter Property="BorderBrush" Value="{DynamicResource ThemeAccentBrush3}"/>
+    </Style>
+
+    <!-- pressed state -->
+    <Style Selector="CheckBox.button:pressed">
+      <Setter Property="Background" Value="{DynamicResource ThemeControlHighBrush}"/>
+    </Style>
+
+    <!-- disabled state -->
+    <Style Selector="CheckBox.button:disabled">
+      <Setter Property="Opacity" Value="0.5" />
+      <Setter Property="IsHitTestVisible" Value="False" />
+    </Style>
+  </UserControl.Styles>
+  <StackPanel Margin="4,3,4,3">
+    <Label Name="lblMode" Content="Manipulation Mode:"/>
+    <WrapPanel Name="flowLayoutPanel1" Margin="0,5">
+      <CheckBox Name="TranslateModeCheckbox" Content="Translate" Classes="button" IsChecked="True"/>
+      <CheckBox Name="RotateModeCheckbox" Classes="button" Content="Rotate"/>
+      <CheckBox Name="SkewModeCheckbox" Classes="button" Content="Skew"/>
+    </WrapPanel>
+    <CheckBox Name="Show3DWidgetsCheckbox" Content="Show 3D Widgets" Margin="0,5"/>
+    <CheckBox Name="keepEntityAngle" Content="Keep entity angles" Margin="0,5" IsChecked="True"/>
+    <Label Name="lblActions" Content="Actions:"/>
+    <WrapPanel Name="flowLayoutPanel2" Orientation="Vertical">
+      <Button Name="MoveToWorldButton" Content="Move to World" Click="MoveToWorldButtonClicked"/>
+      <Button Name="MoveToEntityButton" Content="Tie to Entity" Click="TieToEntityButtonClicked"/>
+      <WrapPanel.Styles>
+        <Style Selector="Button">
+          <Setter Property="Margin" Value="2,1"/>
+        </Style>
+      </WrapPanel.Styles>
+    </WrapPanel>
+  </StackPanel>
+</UserControl>

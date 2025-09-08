@@ -13,7 +13,7 @@ using Sledge.Common.Shell.Documents;
 
 namespace Sledge.BspEditor.Tools.Selection
 {
-	[Export(typeof(ISidebarComponent))]
+	//[Export(typeof(ISidebarComponent))]
 	[OrderHint("F")]
 	[AutoTranslate]
 	public partial class SelectToolSidebarPanel : UserControl, ISidebarComponent, IManualTranslate
