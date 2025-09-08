@@ -436,7 +436,13 @@ namespace Sledge.Shell.Registers
 				if (menuItem.IsToggle)
 				{
 					MenuMenuItem.IsChecked = menuItem.GetToggleState(context);
-					//if (ToolbarButton != null) ToolbarButton.CheckState = MenuMenuItem.CheckState;
+					if (ToolbarButton != null)
+					{
+						if (MenuMenuItem.IsChecked)
+							ToolbarButton.Classes.Add("checked");
+						else
+							ToolbarButton.Classes.Remove("checked");
+					}
 				}
 			}
 
@@ -454,7 +460,13 @@ namespace Sledge.Shell.Registers
 				{
 					var ts = MenuItem.GetToggleState(Context);
 					MenuMenuItem.IsChecked = ts;
-					//if (ToolbarButton != null) ToolbarButton.CheckState = MenuMenuItem.CheckState;
+					if (ToolbarButton != null)
+					{
+						if (MenuMenuItem.IsChecked)
+							ToolbarButton.Classes.Add("checked");
+						else
+							ToolbarButton.Classes.Remove("checked");
+					}
 				}
 				base.Update();
 			}
