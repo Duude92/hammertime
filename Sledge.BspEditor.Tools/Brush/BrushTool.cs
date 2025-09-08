@@ -6,6 +6,7 @@ using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Avalonia.Input;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
@@ -178,8 +179,8 @@ namespace Sledge.BspEditor.Tools.Brush
 
 		protected override void KeyDown(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
 		{
-			if (e.KeyCode == Keys.Enter) Confirm(document, viewport);
-			else if (e.KeyCode == Keys.Escape) Cancel(document, viewport);
+			if (e.KeyCode == Key.Enter) Confirm(document, viewport);
+			else if (e.KeyCode == Key.Escape) Cancel(document, viewport);
 
 			base.KeyDown(document, viewport, camera, e);
 
@@ -196,8 +197,8 @@ namespace Sledge.BspEditor.Tools.Brush
 		}
 		protected override void KeyDown(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
 		{
-			if (e.KeyCode == Keys.Enter) Confirm(document, viewport);
-			else if (e.KeyCode == Keys.Escape) Cancel(document, viewport);
+			if (e.KeyCode == Key.Enter) Confirm(document, viewport);
+			else if (e.KeyCode == Key.Escape) Cancel(document, viewport);
 
 			base.KeyDown(document, viewport, camera, e);
 		}

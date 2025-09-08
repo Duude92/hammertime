@@ -14,6 +14,7 @@ using Sledge.Rendering.Viewports;
 using Sledge.BspEditor.Primitives.MapObjects;
 using System.Collections.Concurrent;
 using Sledge.Common.Threading;
+using Avalonia.Input;
 
 namespace Sledge.BspEditor.Tools.Draggable
 {
@@ -78,7 +79,7 @@ namespace Sledge.BspEditor.Tools.Draggable
 		{
 			if (CurrentDraggable == null) return;
 
-			if (e.Button != MouseButtons.Left) return;
+			if (e.Button != MouseButton.Left) return;
 
 			var intersection = GetMouseIntersectionPoint(document, camera, new Vector3(e.X, e.Y, 0));
 			if (!intersection.HasValue) return;
@@ -97,7 +98,7 @@ namespace Sledge.BspEditor.Tools.Draggable
 		}
 		protected override void DragStart(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
 		{
-			if (e.Button != MouseButtons.Left) return;
+			if (e.Button != MouseButton.Left) return;
 			if (CurrentDraggable == null) return;
 			var point = GetMouseIntersectionPoint(document, camera, new Vector3(e.X, e.Y, 0));
 			if (!point.HasValue) return;
@@ -109,7 +110,7 @@ namespace Sledge.BspEditor.Tools.Draggable
 
 		protected override void DragMove(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
 		{
-			if (e.Button != MouseButtons.Left) return;
+			if (e.Button != MouseButton.Left) return;
 			if (CurrentDraggable == null || !_lastDragPoint.HasValue) return;
 			var point = GetMouseIntersectionPoint(document, camera, new Vector3(e.X, e.Y, 0));
 			if (!point.HasValue) return;
@@ -122,7 +123,7 @@ namespace Sledge.BspEditor.Tools.Draggable
 
 		protected override void DragEnd(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
 		{
-			if (e.Button != MouseButtons.Left) return;
+			if (e.Button != MouseButton.Left) return;
 			if (CurrentDraggable == null) return;
 			var point = GetMouseIntersectionPoint(document, camera, new Vector3(e.X, e.Y, 0));
 
@@ -135,7 +136,7 @@ namespace Sledge.BspEditor.Tools.Draggable
 
 		protected override void MouseClick(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
         {
-            if (e.Dragging || e.Button != MouseButtons.Left) return;
+            if (e.Dragging || e.Button != MouseButton.Left) return;
             if (CurrentDraggable == null) return;
             var point = camera.ScreenToWorld(e.X, e.Y);
             point = camera.Flatten(point);
@@ -163,7 +164,7 @@ namespace Sledge.BspEditor.Tools.Draggable
 
         protected override void MouseMove(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
         {
-            if (e.Dragging || e.Button == MouseButtons.Left) return;
+            if (e.Dragging || e.Button == MouseButton.Left) return;
             var point = camera.ScreenToWorld(e.X, e.Y);
             point = camera.Flatten(point);
             IDraggable drag = null;
@@ -190,7 +191,7 @@ namespace Sledge.BspEditor.Tools.Draggable
         }
 		protected override void MouseMove(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
 		{
-			if (e.Dragging || e.Button == MouseButtons.Left) return;
+			if (e.Dragging || e.Button == MouseButton.Left) return;
             var point = GetMouseIntersectionPoint(document, camera, new Vector3(e.X, e.Y, 0));
             if (!point.HasValue) return;
 			IDraggable drag = null;
@@ -218,7 +219,7 @@ namespace Sledge.BspEditor.Tools.Draggable
 
 		protected override void DragStart(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
         {
-            if (e.Button != MouseButtons.Left) return;
+            if (e.Button != MouseButton.Left) return;
             if (CurrentDraggable == null) return;
             var point = camera.Flatten(camera.ScreenToWorld(e.X, e.Y));
             OnDraggableDragStarted(document, viewport, camera, e, point, CurrentDraggable);
@@ -228,7 +229,7 @@ namespace Sledge.BspEditor.Tools.Draggable
 
         protected override void DragMove(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
         {
-            if (e.Button != MouseButtons.Left) return;
+            if (e.Button != MouseButton.Left) return;
             if (CurrentDraggable == null || !_lastDragPoint.HasValue) return;
             var point = camera.Flatten(camera.ScreenToWorld(e.X, e.Y));
             var last = _lastDragPoint.Value;
@@ -240,7 +241,7 @@ namespace Sledge.BspEditor.Tools.Draggable
 
         protected override void DragEnd(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
         {
-            if (e.Button != MouseButtons.Left) return;
+            if (e.Button != MouseButton.Left) return;
             if (CurrentDraggable == null) return;
             var point = camera.ScreenToWorld(e.X, e.Y);
             point = camera.Flatten(point);

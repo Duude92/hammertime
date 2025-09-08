@@ -7,6 +7,7 @@ using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Avalonia.Input;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
@@ -138,7 +139,7 @@ namespace Sledge.BspEditor.Tools.Texture
         protected override void MouseDown(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
         {
             var vp = viewport;
-            if (vp == null || (e.Button != MouseButtons.Left && e.Button != MouseButtons.Right)) return;
+            if (vp == null || (e.Button != MouseButton.Left && e.Button != MouseButton.Right)) return;
 
             var (start, end) = camera.CastRayFromScreen(new Vector3(e.X, e.Y, 0));
             var ray = new Line(start, end);
@@ -158,8 +159,8 @@ namespace Sledge.BspEditor.Tools.Texture
 
             if (clickedFace == null) return;
 
-            if (e.Button == MouseButtons.Left) SelectFace(document, camera, clickedFace.Face, clickedFace.Solid);
-            else if (e.Button == MouseButtons.Right) ApplyFace(document, camera, clickedFace.Face, clickedFace.Solid);
+            if (e.Button == MouseButton.Left) SelectFace(document, camera, clickedFace.Face, clickedFace.Solid);
+            else if (e.Button == MouseButton.Right) ApplyFace(document, camera, clickedFace.Face, clickedFace.Solid);
         }
 
         private Task SelectFace(MapDocument document, PerspectiveCamera camera, Face face, IMapObject parent)

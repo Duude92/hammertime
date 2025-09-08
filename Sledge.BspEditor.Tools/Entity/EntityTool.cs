@@ -168,7 +168,7 @@ namespace Sledge.BspEditor.Tools.Entity
 
 		protected override void MouseDown(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
 		{
-			if (e.Button != MouseButtons.Left) return;
+			if (e.Button != MouseButton.Left) return;
 
 			// Get the ray that is cast from the clicked point along the viewport frustrum
 			var (rs, re) = camera.CastRayFromScreen(new Vector3(e.X, e.Y, 0));
@@ -196,7 +196,7 @@ namespace Sledge.BspEditor.Tools.Entity
 
 		protected override void MouseDown(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
 		{
-			if (e.Button != MouseButtons.Left && e.Button != MouseButtons.Right) return;
+			if (e.Button != MouseButton.Left && e.Button != MouseButton.Right) return;
 
 			_state = EntityState.Moving;
 			var loc = SnapIfNeeded(camera.ScreenToWorld(e.X, e.Y));
@@ -205,7 +205,7 @@ namespace Sledge.BspEditor.Tools.Entity
 
 		protected override void MouseUp(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
 		{
-			if (e.Button != MouseButtons.Left) return;
+			if (e.Button != MouseButton.Left) return;
 			_state = EntityState.Drawn;
 			var loc = SnapIfNeeded(camera.ScreenToWorld(e.X, e.Y));
 			_location = camera.GetUnusedCoordinate(_location) + loc;
@@ -213,7 +213,7 @@ namespace Sledge.BspEditor.Tools.Entity
 
 		protected override void MouseMove(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
 		{
-			if (!Control.MouseButtons.HasFlag(MouseButtons.Left)) return;
+			//if (!Control.MouseButton.HasFlag(MouseButton.Left)) return;
 			if (_state != EntityState.Moving) return;
 			var loc = SnapIfNeeded(camera.ScreenToWorld(e.X, e.Y));
 			_location = camera.GetUnusedCoordinate(_location) + loc;
@@ -223,11 +223,11 @@ namespace Sledge.BspEditor.Tools.Entity
 		{
 			switch (e.KeyCode)
 			{
-				case Keys.Enter:
+				case Key.Enter:
 					CreateEntity(document, _location);
 					_state = EntityState.None;
 					break;
-				case Keys.Escape:
+				case Key.Escape:
 					_state = EntityState.None;
 					break;
 			}

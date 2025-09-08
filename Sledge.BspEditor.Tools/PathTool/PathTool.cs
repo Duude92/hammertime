@@ -1,4 +1,5 @@
-﻿using LogicAndTrick.Oy;
+﻿using Avalonia.Input;
+using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations.Data;
@@ -129,7 +130,7 @@ namespace Sledge.BspEditor.Tools.PathTool
 		}
 		protected override void MouseDown(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
 		{
-			if (e.Button == MouseButtons.Left)
+			if (e.Button == MouseButton.Left)
 			{
 				var clicked = GetClicked(viewport, camera, e);
 				Select(clicked, false);
@@ -139,11 +140,11 @@ namespace Sledge.BspEditor.Tools.PathTool
 		}
 		protected override void MouseDown(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
 		{
-			if (e.Button == MouseButtons.Left)
+			if (e.Button == MouseButton.Left)
 			{
 				if (_shiftPressed)
 				{
-					if (e.Button != MouseButtons.Left && e.Button != MouseButtons.Right) return;
+					if (e.Button != MouseButton.Left && e.Button != MouseButton.Right) return;
 					var hl = States.OfType<PathState>().Where(s => s.IsSelected).ToList();
 					var loc = SnapIfNeeded(camera.ScreenToWorld(e.X, e.Y));
 
@@ -225,9 +226,9 @@ namespace Sledge.BspEditor.Tools.PathTool
 
 		protected override void KeyDown(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
 		{
-			_shiftPressed = e.KeyCode == Keys.ShiftKey;
-			_controlPressed = e.KeyCode == Keys.ControlKey;
-			if (e.KeyCode == Keys.Enter) ConfirmSelection(document, viewport);
+			_shiftPressed = e.KeyCode == Key.LeftShift || e.KeyCode == Key.RightShift;
+			_controlPressed = e.KeyCode == Key.LeftCtrl || e.KeyCode == Key.RightCtrl;
+			if (e.KeyCode == Key.Enter) ConfirmSelection(document, viewport);
 
 			base.KeyDown(document, viewport, camera, e);
 
@@ -268,8 +269,8 @@ namespace Sledge.BspEditor.Tools.PathTool
 		}
 		protected override void KeyUp(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
 		{
-			_shiftPressed = (!(e.KeyCode == Keys.ShiftKey) && _shiftPressed);
-			_controlPressed = (!(e.KeyCode == Keys.ControlKey) && _controlPressed);
+			_shiftPressed = (!(e.KeyCode == Key.LeftShift || e.KeyCode == Key.RightShift) && _shiftPressed);
+			_controlPressed = (!(e.KeyCode == Key.LeftCtrl || e.KeyCode == Key.RightCtrl) && _controlPressed);
 
 			base.KeyUp(document, viewport, camera, e);
 		}

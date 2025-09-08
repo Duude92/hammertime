@@ -31,6 +31,7 @@ using Sledge.Common.Shell.Context;
 using Sledge.Formats.Map.Formats;
 using System.Windows.Forms;
 using System.IO;
+using Avalonia.Input;
 
 namespace Sledge.BspEditor.Tools.Prefab
 {
@@ -324,7 +325,7 @@ namespace Sledge.BspEditor.Tools.Prefab
 			var tf = document.Map.Data.GetOne<DisplayFlags>() ?? new DisplayFlags();
 			IgnoreOptions iopt = (tf.HideClipTextures ? IgnoreOptions.IgnoreClip : IgnoreOptions.None) | (tf.HideNullTextures ? IgnoreOptions.IgnoreNull : IgnoreOptions.None);
 
-			if (e.Button == MouseButtons.Right) return;
+			if (e.Button == MouseButton.Right) return;
 
 			var (rayStart, rayEnd) = camera.CastRayFromScreen(new Vector3(e.X, e.Y, 0));
 			var ray = new Line(rayStart, rayEnd);

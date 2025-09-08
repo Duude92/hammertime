@@ -13,6 +13,7 @@ using Sledge.Rendering.Viewports;
 using static Sledge.BspEditor.Tools.Selection.SelectionBoxDraggableState;
 using Plane = Sledge.DataStructures.Geometric.Plane;
 using Cursor = Avalonia.Input.Cursor;
+using Avalonia.Input;
 
 
 namespace Sledge.BspEditor.Tools.Widgets
@@ -187,7 +188,7 @@ namespace Sledge.BspEditor.Tools.Widgets
 		{
 			if (viewport != ActiveViewport) return;
 
-			if (e.Button != MouseButtons.Left || _mouseOver == AxisType.None) return;
+			if (e.Button != MouseButton.Left || _mouseOver == AxisType.None) return;
 
 			State.OrigStart = State.Start;
 			State.OrigEnd = State.End;

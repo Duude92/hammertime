@@ -6,6 +6,7 @@ using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Avalonia.Input;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
@@ -204,7 +205,7 @@ namespace Sledge.BspEditor.Tools.Vertex
 		/// <param name="e">The click event</param>
 		protected override void MouseDown(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
 		{
-			if (e.Button != MouseButtons.Left) return;
+			if (e.Button != MouseButton.Left) return;
 			// First, get the ray that is cast from the clicked point along the viewport frustrum
 			var (start, end) = camera.CastRayFromScreen(new Vector3(e.X, e.Y, 0));
 			var ray = new Line(start, end);

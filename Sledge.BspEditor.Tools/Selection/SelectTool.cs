@@ -1,3 +1,4 @@
+using Avalonia.Input;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
@@ -466,11 +467,11 @@ namespace Sledge.BspEditor.Tools.Selection
 		/// <param name="e">The click event</param>
 		protected override void MouseDown(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
 		{
-			if (e.Button != MouseButtons.Left) return;
+			if (e.Button != MouseButton.Left) return;
 			var tf = document.Map.Data.GetOne<DisplayFlags>() ?? new DisplayFlags();
 			IgnoreOptions iopt = (tf.HideClipTextures ? IgnoreOptions.IgnoreClip : IgnoreOptions.None) | (tf.HideNullTextures ? IgnoreOptions.IgnoreNull : IgnoreOptions.None);
 
-			if (!document.Selection.IsEmpty && e.Button == MouseButtons.Right) return;
+			if (!document.Selection.IsEmpty && e.Button == MouseButton.Right) return;
 			// First, get the ray that is cast from the clicked point along the viewport frustrum
 			var (rayStart, rayEnd) = camera.CastRayFromScreen(new Vector3(e.X, e.Y, 0));
 			var ray = new Line(rayStart, rayEnd);
@@ -690,8 +691,8 @@ namespace Sledge.BspEditor.Tools.Selection
 
 		protected override void KeyDown(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
 		{
-			if (e.KeyCode == Keys.Enter) Confirm(document);
-			else if (e.KeyCode == Keys.Escape) Cancel(document);
+			if (e.KeyCode == Key.Enter) Confirm(document);
+			else if (e.KeyCode == Key.Escape) Cancel(document);
 
 			var nudge = GetNudgeValue(e.KeyCode);
 			if (nudge != null && (_selectionBox.State.Action == BoxAction.Drawn) && !document.Selection.IsEmpty)
@@ -710,8 +711,8 @@ namespace Sledge.BspEditor.Tools.Selection
 
 		protected override void KeyDown(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
 		{
-			if (e.KeyCode == Keys.Enter) Confirm(document);
-			else if (e.KeyCode == Keys.Escape) Cancel(document);
+			if (e.KeyCode == Key.Enter) Confirm(document);
+			else if (e.KeyCode == Key.Escape) Cancel(document);
 
 			base.KeyDown(document, viewport, camera, e);
 		}

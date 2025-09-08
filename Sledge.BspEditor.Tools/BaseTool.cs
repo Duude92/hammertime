@@ -6,6 +6,7 @@ using System.Numerics;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Avalonia.Input;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapData;
@@ -110,7 +111,7 @@ namespace Sledge.BspEditor.Tools
 			return closest;
 		}
 
-		protected Vector3? GetNudgeValue(Keys k)
+		protected Vector3? GetNudgeValue(Key k)
 		{
 			var gridData = GetDocument()?.Map.Data.GetOne<GridData>();
 			var useGrid = !KeyboardState.Ctrl && gridData?.SnapToGrid != false;
@@ -118,13 +119,13 @@ namespace Sledge.BspEditor.Tools
 			var val = grid != null && !useGrid ? grid.AddStep(Vector3.Zero, Vector3.One) : Vector3.One;
 			switch (k)
 			{
-				case Keys.Left:
+				case Key.Left:
 					return new Vector3(-val.X, 0, 0);
-				case Keys.Right:
+				case Key.Right:
 					return new Vector3(val.X, 0, 0);
-				case Keys.Up:
+				case Key.Up:
 					return new Vector3(0, val.Y, 0);
-				case Keys.Down:
+				case Key.Down:
 					return new Vector3(0, -val.Y, 0);
 			}
 			return null;

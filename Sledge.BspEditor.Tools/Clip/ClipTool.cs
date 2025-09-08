@@ -215,7 +215,7 @@ namespace Sledge.BspEditor.Tools.Clip
 
 		private void OnKeyDown(MapDocument document, MapViewport viewport, ViewportEvent e)
 		{
-			if (e.KeyCode == Keys.Enter && _state != ClipState.None)
+			if (e.KeyCode == Key.Enter && _state != ClipState.None)
 			{
 				if (!_clipPlanePoint1.Value.EquivalentTo(_clipPlanePoint2.Value)
 					&& !_clipPlanePoint2.Value.EquivalentTo(_clipPlanePoint3.Value)
@@ -224,7 +224,7 @@ namespace Sledge.BspEditor.Tools.Clip
 					PerformClip(document);
 				}
 			}
-			if (e.KeyCode == Keys.Escape || e.KeyCode == Keys.Enter) // Escape cancels, Enter commits and resets
+			if (e.KeyCode == Key.Escape || e.KeyCode == Key.Enter) // Escape cancels, Enter commits and resets
 			{
 				_clipPlanePoint1 = _clipPlanePoint2 = _clipPlanePoint3 = _drawingPoint = null;
 				_state = _prevState = ClipState.None;
