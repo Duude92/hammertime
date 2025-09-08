@@ -1,0 +1,16 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="271" d:DesignHeight="158"
+             Width="271" Height="158"
+             x:Class="Sledge.BspEditor.Tools.BrushSidebarPanel">
+  <StackPanel Margin="4,3,4,3" Name="MainPanel">
+    <DockPanel Width="259" Height="65">
+      <Label DockPanel.Dock="Left" Name="BrushTypeLabel" Content="Brush Type:"/>
+      <ComboBox DockPanel.Dock="Top" Name="BrushTypeList" SelectionChanged="SelectedBrushTypeChanged"/>
+      <CheckBox DockPanel.Dock="Bottom" Content="Round created vertices" Name="RoundCreatedVerticesCheckbox" Checked="RoundCreatedVerticesChanged"/>
+    </DockPanel>
+    
+  </StackPanel>
+</UserControl>

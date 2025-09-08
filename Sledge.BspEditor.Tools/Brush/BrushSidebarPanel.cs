@@ -14,8 +14,8 @@ using Sledge.Shell;
 
 namespace Sledge.BspEditor.Tools.Brush
 {
-    [Export(typeof(ISidebarComponent))]
-    [Export(typeof(IInitialiseHook))]
+    //[Export(typeof(ISidebarComponent))]
+    //[Export(typeof(IInitialiseHook))]
     [OrderHint("F")]
     [AutoTranslate]
     public partial class BrushSidebarPanel : UserControl, ISidebarComponent, IInitialiseHook
@@ -86,7 +86,7 @@ namespace Sledge.BspEditor.Tools.Brush
         private void UpdateControls()
         {
             _currentControls.ForEach(x => x.ValuesChanged -= ControlValuesChanged);
-            _currentControls.ForEach(x => Controls.Remove(x));
+            //_currentControls.ForEach(x => Controls.Remove(x));
             _currentControls.Clear();
 
             if (_selectedBrush == null) return;
@@ -94,14 +94,14 @@ namespace Sledge.BspEditor.Tools.Brush
             RoundCreatedVerticesCheckbox.Enabled = _selectedBrush.CanRound;
 
             _currentControls.AddRange(_selectedBrush.GetControls().Reverse());
-            for (var i = 0; i < _currentControls.Count; i++)
-            {
-                var ctrl = _currentControls[i];
-                ctrl.Dock = DockStyle.Top;
-                ctrl.ValuesChanged += ControlValuesChanged;
-                Controls.Add(ctrl);
-                Controls.SetChildIndex(ctrl, i);
-            }
+            //for (var i = 0; i < _currentControls.Count; i++)
+            //{
+            //    var ctrl = _currentControls[i];
+            //    ctrl.Dock = DockStyle.Top;
+            //    ctrl.ValuesChanged += ControlValuesChanged;
+            //    Controls.Add(ctrl);
+            //    Controls.SetChildIndex(ctrl, i);
+            //}
 
             OnBrushChange();
         }
