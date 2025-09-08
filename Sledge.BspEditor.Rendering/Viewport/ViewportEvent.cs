@@ -74,7 +74,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
 			}
 			if (e is PointerWheelEventArgs wheel)
 			{
-				delta = (int)wheel.Delta.Length;
+				delta = (int)wheel.Delta.Y;
 			}
 			Sender = sender;
 			//         Button = e.
