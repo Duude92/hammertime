@@ -1,0 +1,27 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="233" d:DesignHeight="215"
+             Width="233" Height="215"
+             MaxWidth="233" MaxHeight="280"
+             MinWidth="233" MinHeight="190"
+             x:Class="Sledge.BspEditor.Tools.TextureSidebarPanel">
+  <StackPanel Margin="4,3,4,3">
+    <Border BorderBrush="DarkGray" BorderThickness="1">
+      <Image Name="SelectionPictureBox" Width="226" Height="132"/>
+    </Border>
+    <Label Name="NameLabel" Content="Name"/>
+    <Grid ColumnDefinitions="1*,1*" RowDefinitions="auto,auto">
+      <Label  Grid.Column ="0" Grid.Row="0" Name="SizeLabel" Content="Size" Margin="2"/>
+      <Button Grid.Column ="1" Grid.Row="0" Name="BrowseButton" Content="Browse..." Click="BrowseButtonClicked"/>
+      <Button Grid.Column ="0" Grid.Row="1" Name="ApplyButton" Content="Apply" Click="ApplyButtonClicked"/>
+      <Button Grid.Column ="1" Grid.Row="1" Name="ReplaceButton" Content="Replace..." Click="ReplaceButtonClicked"/>
+      <Grid.Styles>
+        <Style Selector="Button">
+          <Setter Property="Margin" Value="2,1"/>
+        </Style>
+      </Grid.Styles>
+    </Grid>
+  </StackPanel>
+</UserControl>

@@ -20,8 +20,8 @@ using Sledge.Shell;
 namespace Sledge.BspEditor.Tools.Texture
 {
     [AutoTranslate]
-    [Export(typeof(ISidebarComponent))]
-    [Export(typeof(IInitialiseHook))]
+    //[Export(typeof(ISidebarComponent))]
+    //[Export(typeof(IInitialiseHook))]
     [OrderHint("B")]
     public partial class TextureSidebarPanel : UserControl, ISidebarComponent, IInitialiseHook
     {

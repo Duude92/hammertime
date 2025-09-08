@@ -1,0 +1,34 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="257" d:DesignHeight="215"
+             Width="257" Height="215"
+             x:Class="Sledge.BspEditor.Tools.TextureToolSidebarPanel">
+  <StackPanel Margin="4,5,4,3">
+    <HeaderedContentControl Header="Randomise shift values" Name="RandomiseShiftValuesGroup" Width="239" Height="84">
+      <Grid ColumnDefinitions="31,54,auto" ColumnSpacing="20" RowDefinitions="auto,auto" RowSpacing="2">
+        <Label Grid.Column="0" Grid.Row="0" Name="MinLabel" Content="Min:"/>
+        <NumericUpDown Grid.Column="1" Grid.Row="0" Name="RandomShiftMin" Value="0" Maximum="4096" Minimum="-4096"/>
+        <Button Grid.Column="2" Grid.Row="0" Name="RandomShiftXButton" Content="Randomise X" Click="RandomShiftXButtonClicked"/>
+        <Label Grid.Column="0" Grid.Row="1" Name="MaxLabel" Content="Max:"/>
+        <NumericUpDown Grid.Column="1" Grid.Row="1" Name="RandomShiftMax" Value="255" Maximum="4096" Minimum="-4096"/>
+        <Button Grid.Column="2" Grid.Row="1" Name="RandomShiftYButton" Content="Randomise Y" Click="RandomShiftYButtonClicked"/>
+      </Grid>
+    </HeaderedContentControl>
+    <HeaderedContentControl Header="Fit to multiple tiles" Name="FitGroup" Width="239" Height="110" Margin="0,5">
+      <StackPanel>
+        <Label Name="TimesToTileLabel" Content="Times to tile on face:"/>
+        <StackPanel Orientation="Horizontal">
+          <Grid ColumnDefinitions="31,54" ColumnSpacing="20" RowDefinitions="auto,auto" RowSpacing="5">
+            <Label Grid.Column="0" Grid.Row="0" Content="X:"/>
+            <NumericUpDown Grid.Column="1" Grid.Row="0" Name="TileFitX" Value="1" Maximum="100" Minimum="1"/>
+            <Label Grid.Column="0" Grid.Row="1" Content="Y:"/>
+            <NumericUpDown Grid.Column="1" Grid.Row="1" Name="TileFitY" Value="1" Maximum="100" Minimum="1"/>
+          </Grid>
+          <Button Name="TileFitButton" Content="Fit" Width="83" Height="27" Margin="20,0" Click="TileFitButtonClicked"/>
+        </StackPanel>
+      </StackPanel>
+    </HeaderedContentControl>
+  </StackPanel>
+</UserControl>

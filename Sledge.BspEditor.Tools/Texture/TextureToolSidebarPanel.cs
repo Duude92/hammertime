@@ -16,7 +16,7 @@ using Sledge.Shell;
 namespace Sledge.BspEditor.Tools.Texture
 {
     [AutoTranslate]
-    [Export(typeof(ISidebarComponent))]
+    //[Export(typeof(ISidebarComponent))]
     [OrderHint("F")]
     public partial class TextureToolSidebarPanel : UserControl, ISidebarComponent
     {
