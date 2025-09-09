@@ -20,6 +20,22 @@
     <Style Selector="Menu>MenuItem">
       <!--<Setter Property="FontSize" Value="15"/>-->
     </Style>
+    <Style Selector="StackPanel">
+      <Style Selector="^>Button.checked">
+        <Setter Property="Background" Value="{DynamicResource ThemeBorderLowBrush}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderMidBrush}"/>
+      </Style>
+      <Style Selector="^>Button">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+      </Style>
+      <Style Selector="^>Button:pointerover">
+        <Setter Property="Background" Value="{DynamicResource ThemeAccentBrush4}"/>
+      </Style>
+      <Style Selector="^>Button:pressed">
+        <Setter Property="Background" Value="{DynamicResource ThemeForegroundBrush}"/>
+      </Style>
+    </Style>
   </Window.Styles>
   <DockPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Name="MainDockPanel" Margin="5,10,5,0" >
 
@@ -29,16 +45,19 @@
       </MenuItem>
     </Menu>
 
-    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Name="TopToolStripPanel" >
+    <StackPanel Classes="tool_panel" DockPanel.Dock="Top" Orientation="Horizontal" Name="TopToolStripPanel" >
       <Button>TestToolButton</Button>
     </StackPanel>
 
     <StackPanel Name="StatusStrip" Orientation="Horizontal"  VerticalAlignment="Bottom" HorizontalAlignment="Right" DockPanel.Dock="Bottom" Height="30"/>
 
-    <StackPanel DockPanel.Dock="Left" Orientation="Vertical" Name="LeftToolStripPanel" Width="36" Background="Yellow" >
-      <StackPanel Name="ToolsContainer" Orientation="Vertical">
+    <StackPanel DockPanel.Dock="Left" Orientation="Vertical" Name="LeftToolStripPanel" Width="36" >
+      <StackPanel Classes="tool_panel" Name="ToolsContainer" Orientation="Vertical">
         <!-- Left panel tools buttons-->
-        <Button>TestToolButton2</Button>
+        <Button Classes="checked">
+          <Image Source="/Resources/Menu_Export.png" />
+        </Button>
+
       </StackPanel>
     </StackPanel>
 
@@ -46,7 +65,7 @@
       <TabControl Name="BottomTabs"/>
     </DockPanel>
 
-    <StackPanel Name="RightSidebarContainer" Width="233"  Orientation="Vertical"  DockPanel.Dock="Right"/>
+    <StackPanel Name="RightSidebarContainer" MinWidth="233"  Orientation="Vertical"  DockPanel.Dock="Right"/>
 
     <DockPanel HorizontalAlignment="Stretch" DockPanel.Dock="Top">
       <TabControl Name="DocumentTabs" Height="28" Margin="5,0,0,0" DockPanel.Dock="Top">
