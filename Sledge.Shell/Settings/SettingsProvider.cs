@@ -107,7 +107,7 @@ namespace Sledge.Shell.Settings
 			foreach (var container in _containers)
 			{
 				if (name != null && container.Name != name) continue;
-				container.LoadValues(_values.ContainsKey(container.Name) ? _values[container.Name] : new JsonSettingsStore());
+				container.LoadValues(_values.ContainsKey(container.Name??"") ? _values[container.Name] : new JsonSettingsStore());
 			}
 			Log.Debug("Settings", "Settings loaded.");
 			return Task.CompletedTask;
