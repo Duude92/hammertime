@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using LogicAndTrick.Oy;
 using Sledge.Common.Logging;
 using Sledge.Common.Shell.Components;
@@ -11,6 +10,8 @@ using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Hooks;
 using Sledge.Common.Shell.Settings;
 using Sledge.Shell.Controls;
+using Avalonia;
+using Avalonia.Controls;
 
 namespace Sledge.Shell.Registers
 {
@@ -22,17 +23,17 @@ namespace Sledge.Shell.Registers
 	[Export(typeof(ISettingsContainer))]
 	public class SidebarRegister : IStartupHook, IInitialiseHook, ISettingsContainer
 	{
-		private readonly Lazy<Form> _shell;
+		private readonly Lazy<Avalonia.Controls.Window> _shell;
 		private readonly IEnumerable<Lazy<ISidebarComponent>> _sidebarComponents;
 
 		private List<SidebarComponent> _left;
 		private List<SidebarComponent> _right;
 
-		private Forms.Shell Shell => (Forms.Shell)_shell.Value;
+		private Forms.ShellAv Shell => (Forms.ShellAv)_shell.Value;
 
 		[ImportingConstructor]
 		public SidebarRegister(
-			[Import("Shell")] Lazy<Form> shell,
+			[Import("Shell")] Lazy<Avalonia.Controls.Window> shell,
 			[ImportMany] IEnumerable<Lazy<ISidebarComponent>> sidebarComponents
 		)
 		{
@@ -45,6 +46,7 @@ namespace Sledge.Shell.Registers
 
 		public Task OnStartup()
 		{
+			Shell.RightSidebarContainer.Children.Clear();
 			// Register the exported sidebar components
 			foreach (var export in _sidebarComponents)
 			{
@@ -76,7 +78,7 @@ namespace Sledge.Shell.Registers
 			var sc = new SidebarComponent(component, orderHint);
 			_right.Add(sc);
 			_right = _right.OrderBy(x => x.OrderHint).ToList();
-			Shell.RightSidebarContainer.Insert(sc.Panel, _right.IndexOf(sc));
+			Shell.RightSidebarContainer.Children.Insert(_right.IndexOf(sc), sc.Panel);
 		}
 
 		private Task ContextChanged(IContext context)
@@ -103,7 +105,7 @@ namespace Sledge.Shell.Registers
 
 		public void LoadValues(ISettingsStore store)
 		{
-			_shell.Value.Invoke((MethodInvoker)delegate
+			((Forms.ShellAv)_shell.Value).Invoke(delegate
 			{
 				var controls = _left.Union(_right).ToDictionary(x => x.ID, x => x);
 				foreach (var sv in store.GetKeys())
@@ -184,15 +186,16 @@ namespace Sledge.Shell.Registers
 			{
 				OrderHint = orderHint ?? "T";
 				Component = component;
-				Panel = new SidebarPanel
+				var pnl = new SidebarPanel
 				{
 					Text = component.Title,
 					Name = component.Title,
-					Dock = DockStyle.Fill,
+					//Dock = DockStyle.Fill,
 					Hidden = false,
-					Visible = false,
+					IsVisible = false,
 					Tag = this
 				};
+				Panel = pnl;
 				Panel.AddControl((Control)component.Control);
 			}
 
@@ -214,7 +217,7 @@ namespace Sledge.Shell.Registers
 				{
 					var iic = Component.IsInContext(context);
 					Panel.Text = Component.Title;
-					if (iic != Panel.Visible) Panel.Visible = iic;
+					if (iic != Panel.IsVisible) Panel.IsVisible = iic;
 				});
 			}
 		}
