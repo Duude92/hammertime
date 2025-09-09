@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Forms;
+using Avalonia;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Controls;
 using Sledge.Shell;
 
 namespace Sledge.BspEditor.Components
 {
-    public class MapDocumentContainer : UserControl
+    public class MapDocumentContainer : Avalonia.Controls.Panel, IDisposable
     {
         public int WindowID { get; }
         public TableSplitControl Table { get; }
@@ -22,9 +22,10 @@ namespace Sledge.BspEditor.Components
             MapDocumentControls = new List<CellReference>();
             Table = new TableSplitControl
             {
-                Dock = DockStyle.Fill
+                //Dock = DockStyle.Fill
             };
-            Controls.Add(Table);
+
+            Children.Add(Table);
 
             _subscriptions = new List<Subscription>
             {
@@ -46,7 +47,7 @@ namespace Sledge.BspEditor.Components
         public void SetControl(IMapDocumentControl control, int column, int row)
         {
             var controlAt = Table.GetControlFromPosition(column, row);
-            if (controlAt != null) Table.Controls.Remove(controlAt);
+            if (controlAt != null) Table.Children.Remove(controlAt);
 
             foreach (var rem in MapDocumentControls.Where(x => x.Row == row && x.Column == column).ToList())
             {
@@ -55,13 +56,12 @@ namespace Sledge.BspEditor.Components
             }
 
             MapDocumentControls.Add(new CellReference(control, column, row));
-            Table.Controls.Add(control.Control, column, row);
+            Table.Children.Add(control.Control, column, row);
         }
-
-        protected override void Dispose(bool disposing)
+        public void Dispose() => Dispose(true);
+        protected void Dispose(bool disposing)
         {
             if (disposing) _subscriptions.ForEach(x => x.Dispose());
-            base.Dispose(disposing);
         }
 
         public class CellReference : IDisposable
