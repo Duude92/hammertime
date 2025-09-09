@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
-using System.Windows.Forms;
+using Avalonia.Controls;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Components;
 using Sledge.Common.Shell.Hotkeys;
@@ -47,7 +47,8 @@ namespace Sledge.BspEditor.Rendering.Viewport
 		{
 			_engine = engine;
 			_camera = new PerspectiveCamera();
-			Control = new Panel { Dock = DockStyle.Fill, BackColor = Color.Black };
+			var control = new Panel { /*Dock = DockStyle.Fill, BackColor = Color.Black*/ };
+			Control = control;
 
 			_subscriptions = new List<Subscription>
 			{
@@ -63,8 +64,8 @@ namespace Sledge.BspEditor.Rendering.Viewport
 
 			_viewport = _engine.CreateViewport();
 			_viewport.Camera = _camera;
-			_viewport.Control.Dock = DockStyle.Fill;
-			Control.Controls.Add(_viewport.Control);
+			//_viewport.Control.Dock = DockStyle.Fill;
+			control.Children.Add(_viewport.Control);
 
 			_mapViewport = new MapViewport(_viewport);
 			_mapViewport.Listeners.AddRange(listeners.SelectMany(x => x.Create(_mapViewport)));
