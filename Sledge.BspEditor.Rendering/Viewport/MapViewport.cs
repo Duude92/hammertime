@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.Linq;
-using System.Windows.Forms;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Input;
 using LogicAndTrick.Oy;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Engine;
@@ -18,8 +19,8 @@ namespace Sledge.BspEditor.Rendering.Viewport
 		public IViewport Viewport { get; private set; }
 
 		public Control Control => Viewport.Control;
-		public int Height => Control.Height;
-		public int Width => Control.Width;
+		public int Height => (int)Control.Height;
+		public int Width => (int)Control.Width;
 
 		public bool Is2D => Viewport.Camera.Type == CameraType.Orthographic;
 		public bool Is3D => Viewport.Camera.Type == CameraType.Perspective;
@@ -52,15 +53,32 @@ namespace Sledge.BspEditor.Rendering.Viewport
 			Viewport = viewport;
 			Listeners = new List<IViewportEventListener>();
 
-			viewport.Control.MouseWheel += OnMouseWheel;
-			viewport.Control.MouseEnter += OnMouseEnter;
-			viewport.Control.MouseLeave += OnMouseLeave;
-			viewport.Control.MouseMove += OnMouseMove;
-			viewport.Control.MouseUp += OnMouseUp;
-			viewport.Control.MouseDown += OnMouseDown;
-			viewport.Control.MouseDoubleClick += OnMouseDoubleClick;
-			viewport.Control.KeyDown += OnKeyDown;
-			viewport.Control.KeyUp += OnKeyUp;
+			viewport.Control.PointerWheelChanged += OnMouseWheel;
+			viewport.Control.PointerEntered += OnMouseEnter;
+			viewport.Control.PointerExited += OnMouseLeave;
+			viewport.Control.AttachedToLogicalTree += (s, e) =>
+			{
+				var top = e.Root as TopLevel;
+				if (top != null)
+				{
+					//top.PointerPressed += OnTopPointerPressed;
+					top.PointerMoved += (s1, e1) => OnMouseMove(s, e1);
+					top.PointerReleased += (s1, e1) => OnMouseUp(s, e1);
+					top.PointerPressed += (s1, e1) => OnMouseDown(s, e1);
+					top.KeyDown += OnKeyDown;
+					//top.MouseDoubleClick += OnMouseDoubleClick;
+					top.KeyUp += OnKeyUp;
+					//top.OnUpdate += OnUpdate;
+				}
+			};
+
+			//viewport.Control.PointerMoved += OnMouseMove;
+			//viewport.Control.MouseUp += OnMouseUp;
+			//viewport.Control.MouseDown += OnMouseDown;
+			//viewport.Control.MouseDoubleClick += OnMouseDoubleClick;
+			//viewport.Control.KeyDown += OnKeyDown;
+			//viewport.Control.KeyDown += (s, e) => { }
+			//viewport.Control.KeyUp += OnKeyUp;
 			viewport.OnUpdate += OnUpdate;
 			Oy.Subscribe("BspEditor:Viewport:Paste", async () =>
 			{
@@ -127,7 +145,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
 		}
 
 
-		private void OnMouseWheel(object sender, MouseEventArgs e)
+		private void OnMouseWheel(object sender, PointerWheelEventArgs e)
 		{
 			ListenerDoEvent(new ViewportEvent(this, e), (l, v) => l.MouseWheel(v));
 		}
@@ -148,28 +166,29 @@ namespace Sledge.BspEditor.Rendering.Viewport
 		}
 
 		private bool _dragging = false;
-		private MouseButtons _dragButton;
+		private MouseButton _dragButton;
 		private bool _lastMouseLocationKnown = false;
 		private Point _lastMouseLocation = new Point(-1, -1);
 		private Point _mouseDownLocation = new Point(-1, -1);
 
-		private void OnMouseMove(object sender, MouseEventArgs e)
+		private void OnMouseMove(object sender, PointerEventArgs ev)
 		{
+			var e = ev.GetPosition(sender as Control);
 			if (!_lastMouseLocationKnown)
 			{
 				_lastMouseLocation = new Point(e.X, e.Y);
 			}
-			var ve = new ViewportEvent(this, e)
+			var ve = new ViewportEvent(this, ev)
 			{
 				Dragging = _dragging,
-				StartX = _mouseDownLocation.X,
-				StartY = _mouseDownLocation.Y,
-				LastX = _lastMouseLocation.X,
-				LastY = _lastMouseLocation.Y,
+				StartX = (int)_mouseDownLocation.X,
+				StartY = (int)_mouseDownLocation.Y,
+				LastX = (int)_lastMouseLocation.X,
+				LastY = (int)_lastMouseLocation.Y,
 			};
 			if (!_dragging
-				&& (Math.Abs(_mouseDownLocation.X - e.Location.X) > 1
-					|| Math.Abs(_mouseDownLocation.Y - e.Location.Y) > 1)
+				&& (Math.Abs(_mouseDownLocation.X - e.X) > 1
+					|| Math.Abs(_mouseDownLocation.Y - e.Y) > 1)
 				&& _mouseDownLocation.X >= 0 && _mouseDownLocation.Y >= 0)
 			{
 				_dragging = ve.Dragging = true;
@@ -186,19 +205,20 @@ namespace Sledge.BspEditor.Rendering.Viewport
 			_lastMouseLocation = new Point(e.X, e.Y);
 		}
 
-		private void OnMouseUp(object sender, MouseEventArgs e)
+		private void OnMouseUp(object sender, PointerReleasedEventArgs ev)
 		{
+			var e = ev.GetPosition(sender as Control);
 			if (!_lastMouseLocationKnown)
 			{
 				_lastMouseLocation = new Point(e.X, e.Y);
 			}
-			var ve = new ViewportEvent(this, e)
+			var ve = new ViewportEvent(this, ev)
 			{
 				Dragging = _dragging,
-				StartX = _mouseDownLocation.X,
-				StartY = _mouseDownLocation.Y,
-				LastX = _lastMouseLocation.X,
-				LastY = _lastMouseLocation.Y,
+				StartX = (int)_mouseDownLocation.X,
+				StartY = (int)_mouseDownLocation.Y,
+				LastX = (int)_lastMouseLocation.X,
+				LastY = (int)_lastMouseLocation.Y,
 			};
 			if (_dragging && ve.Button == _dragButton)
 			{
@@ -206,8 +226,8 @@ namespace Sledge.BspEditor.Rendering.Viewport
 			}
 			ListenerDoEvent(ve, (l, v) => l.MouseUp(v));
 			if (!_dragging
-				&& Math.Abs(_mouseDownLocation.X - e.Location.X) <= 1
-				&& Math.Abs(_mouseDownLocation.Y - e.Location.Y) <= 1)
+				&& Math.Abs(_mouseDownLocation.X - e.X) <= 1
+				&& Math.Abs(_mouseDownLocation.Y - e.Y) <= 1)
 			{
 				// Mouse hasn't moved very much, trigger the click event
 				ListenerDoEvent(ve, (l, v) => l.MouseClick(v));
@@ -224,8 +244,9 @@ namespace Sledge.BspEditor.Rendering.Viewport
 			_lastMouseLocation = new Point(e.X, e.Y);
 		}
 
-		private void OnMouseDown(object sender, MouseEventArgs e)
+		private void OnMouseDown(object sender, PointerPressedEventArgs ev)
 		{
+			var e = ev.GetPosition(sender as Control);
 			Viewport.Control.Focus();
 
 			if (!_lastMouseLocationKnown)
@@ -236,17 +257,17 @@ namespace Sledge.BspEditor.Rendering.Viewport
 			{
 				_mouseDownLocation = new Point(e.X, e.Y);
 				_dragging = false;
-				_dragButton = e.Button;
+				_dragButton = ev.Properties.IsLeftButtonPressed ? MouseButton.Left : ev.Properties.IsRightButtonPressed ? MouseButton.Right : ev.Properties.IsMiddleButtonPressed ? MouseButton.Middle : MouseButton.None;
 			}
-			ListenerDoEvent(new ViewportEvent(this, e), (l, v) => l.MouseDown(v));
+			ListenerDoEvent(new ViewportEvent(this, ev), (l, v) => l.MouseDown(v));
 			_lastMouseLocationKnown = true;
 			_lastMouseLocation = new Point(e.X, e.Y);
 		}
 
-		private void OnMouseDoubleClick(object sender, EventArgs e)
-		{
-			ListenerDoEvent(new ViewportEvent(this, e), (l, v) => l.MouseDoubleClick(v));
-		}
+		//private void OnMouseDoubleClick(object sender, EventArgs e)
+		//{
+		//	ListenerDoEvent(new ViewportEvent(this, e), (l, v) => l.MouseDoubleClick(v));
+		//}
 
 		private void OnKeyDown(object sender, KeyEventArgs e)
 		{
