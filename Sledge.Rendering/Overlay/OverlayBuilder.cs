@@ -27,16 +27,17 @@ namespace Sledge.Rendering.Overlay
             _viewport = viewport;
             _width = -1;
             _height = -1;
-            _controller = new ImGuiController(Engine.Engine.Instance.Device, viewport.ViewportFramebuffer.OutputDescription, viewport.Width, viewport.Height);
+            _controller = new ImGuiController(Engine.Engine.Instance.Device, viewport.ViewportFramebuffer.OutputDescription, (int)viewport.Width, (int)viewport.Height);
         }
 
         private void Resize()
         {
-            var vpw = Math.Max(1, _viewport.Width);
-            var vph = Math.Max(1, _viewport.Height);
+            var wp = (_viewport as Avalonia.Controls.Control).Bounds;
+            var vpw = Math.Max(1, wp.Width);
+            var vph = Math.Max(1, wp.Height);
 
-            _width = vpw;
-            _height = vph;
+            _width = (int)vpw;
+            _height =(int) vph;
             
             _controller.WindowResized(_width, _height);
         }
