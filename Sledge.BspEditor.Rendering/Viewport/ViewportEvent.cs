@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Avalonia;
+using Avalonia.Input;
+using System;
 using System.Linq;
 using System.Numerics;
-using Avalonia;
-using Avalonia.Input;
 
 namespace Sledge.BspEditor.Rendering.Viewport
 {
@@ -53,31 +53,37 @@ namespace Sledge.BspEditor.Rendering.Viewport
 		public ViewportEvent(MapViewport sender, KeyEventArgs e)
 		{
 			Sender = sender;
-			KeyChar = e.KeySymbol.First();
+			KeyChar = e.KeySymbol?.First() ?? '\0';
 			Control = e.KeyModifiers.HasFlag(KeyModifiers.Control);
 			Shift = e.KeyModifiers.HasFlag(KeyModifiers.Shift);
 			Alt = e.KeyModifiers.HasFlag(KeyModifiers.Alt);
 			KeyCode = e.Key;
 			//KeyValue = e.ke;
 		}
-
 		public ViewportEvent(MapViewport sender, PointerEventArgs e)
 		{
-			var buttons = MouseButton.None;
 			var position = e.GetPosition(sender.Control);
 			var clicks = 0;
 			var delta = 0;
+			var buttons = MouseButton.None;
 			if (e is PointerPressedEventArgs e1)
 			{
-				//buttons = e1.
+				buttons = e.Properties.IsLeftButtonPressed ? MouseButton.Left : e.Properties.IsRightButtonPressed ? MouseButton.Right : e.Properties.IsMiddleButtonPressed ? MouseButton.Middle : MouseButton.None;
 				clicks = e1.ClickCount;
+
+			}
+			if (e is PointerReleasedEventArgs e2)
+			{
+				buttons = e.Properties.PointerUpdateKind == PointerUpdateKind.LeftButtonReleased ? MouseButton.Left :
+							e.Properties.PointerUpdateKind == PointerUpdateKind.RightButtonReleased ? MouseButton.Right :
+							e.Properties.PointerUpdateKind == PointerUpdateKind.MiddleButtonReleased ? MouseButton.Middle : MouseButton.None;
 			}
 			if (e is PointerWheelEventArgs wheel)
 			{
 				delta = (int)wheel.Delta.Y;
 			}
 			Sender = sender;
-			//         Button = e.
+			Button = buttons;
 			Clicks = clicks;
 			X = (int)position.X;
 			Y = (int)position.Y;
