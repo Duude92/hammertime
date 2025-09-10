@@ -215,10 +215,8 @@ public class ViewportAvHost : NativeControlHost, IViewport
 	{
 		if (_resizeRequired)
 		{
-			//var w = Math.Max(Width, 1);
-			//var h = Math.Max(Height, 1);
-			var w = 800;
-			var h = 600;
+			var w = Bounds.Width;
+			var h = Bounds.Height;
 			Swapchain.Resize((uint)w, (uint)h);
 			InitFramebuffer((uint)w, (uint)h, _sampleCount);
 			_resizeRequired = false;
