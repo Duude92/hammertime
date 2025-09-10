@@ -6,7 +6,7 @@ using Veldrid;
 
 namespace Sledge.Rendering.Viewports
 {
-    public interface IViewport : IRenderTarget
+    public interface IViewportWF : IRenderTarget
     {
         int ID { get; }
 
@@ -25,12 +25,12 @@ namespace Sledge.Rendering.Viewports
 		void Update(long frame);
         event EventHandler<long> OnUpdate;
     }
-	public interface IViewportAv : IRenderTarget
+	public interface IViewport : IRenderTarget
 	{
 		int ID { get; }
 
-		double Width { get; }
-		double Height { get; }
+		float Width { get; }
+		float Height { get; }
 		Avalonia.Controls.Control Control { get; }
 		bool IsFocused { get; }
 

@@ -8,7 +8,7 @@ using Veldrid;
 
 namespace Sledge.Rendering.Viewports
 {
-	public class Viewport : Control, IViewport
+	public class Viewport : Control, IViewportWF
 	{
 		private static int _nextId = 1;
 		private static readonly IntPtr HInstance = Process.GetCurrentProcess().Handle;
@@ -71,7 +71,7 @@ namespace Sledge.Rendering.Viewports
 
 			InitFramebuffer(w, h, sampleCount);
 
-			Overlay = new ViewportOverlay(this);
+			//Overlay = new ViewportOverlay(this);
 		}
 		public void InitFramebuffer(TextureSampleCount sampleCount)
 		{

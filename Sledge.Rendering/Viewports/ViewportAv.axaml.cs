@@ -1,38 +1,56 @@
+using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Controls.Platform;
 using Avalonia.Input;
+using Avalonia.Media;
 using Avalonia.Platform;
+using Avalonia.Platform;
+using Avalonia.Styling;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Overlay;
 using Sledge.Rendering.Viewports;
 using Sledge.Rendering.Viewports.ViewportResolver;
 using System;
 using System.Diagnostics;
+using System.Reflection.Metadata;
 using System.Runtime.InteropServices;
 using Veldrid;
+using Vortice.Mathematics;
+using Vulkan;
 using Vulkan.Win32;
-
+using static Sledge.Rendering.WinApi;
 namespace Sledge.Rendering;
 public partial class ViewportAv : UserControl
 {
 	public ViewportAv()
 	{
 		InitializeComponent();
+		this.Background = Brushes.Yellow;
+
+
+		this.PointerWheelChanged += (s, e) => Console.WriteLine(1); ;
+		this.PointerEntered += (s, e) => Console.WriteLine(1);
+		this.PointerExited += (s, e) => Console.WriteLine(1);
+
+		this.PointerMoved += (s, e) => Console.WriteLine(1);
+		this.KeyDown += (s, e) => Console.WriteLine(1);
+		this.PointerReleased += (s, e) => Console.WriteLine(1);
+		this.PointerPressed += (s, e) => Console.WriteLine(1);
 	}
 	public void CreateViewportHost(GraphicsDevice graphics, GraphicsDeviceOptions options, TextureSampleCount sampleCount)
 	{
 		ViewportHost.InitViewport(graphics, options, sampleCount);
+		ViewportHost.CreateOverlay();
 	}
 }
 
-public class ViewportAvHost : NativeControlHost, IViewportAv
+public class ViewportAvHost : NativeControlHost, IViewport
 {
 	private static int _nextId = 1;
 	private static readonly IntPtr HInstance = Process.GetCurrentProcess().Handle;
 
 	private bool _resizeRequired;
-
-	public new int Width => (int)base.Width;
-	public new int Height => (int)base.Height;
 
 	public int ID { get; private set; }
 	public Swapchain Swapchain { get; private set; }
@@ -43,23 +61,23 @@ public class ViewportAvHost : NativeControlHost, IViewportAv
 		set
 		{
 			_camera = value;
-			_camera.Width = (int)Width;
-			_camera.Height = (int)Height;
+			_camera.Width = (int)800;
+			_camera.Height = (int)600;
 		}
 	}
 
-	public Control Control => this;
+	public Control Control => this.Parent as Control;
 	public Framebuffer ViewportFramebuffer { get; private set; }
-	public ViewportOverlay Overlay { get; }
+	public ViewportOverlay Overlay { get; private set; }
 	public Resources.Texture ViewportRenderTexture { get; private set; }
-	public bool IsFocused => _isFocused;
+	public new bool IsFocused { get; set; }
 
 	public IntPtr Hwnd { get; private set; }
 
-	private bool _isFocused;
 	private int _unfocusedCounter = 0;
 	private ICamera _camera;
 	private GraphicsDevice _device;
+	private GraphicsDeviceOptions _options;
 	private TextureSampleCount _sampleCount;
 	private IViewportResolver _viewportResolver;
 	private Texture _mainSceneColorTexture;
@@ -67,40 +85,59 @@ public class ViewportAvHost : NativeControlHost, IViewportAv
 
 	public event EventHandler<long> OnUpdate;
 
+	public new float Width { get; set; }
+	public new float Height { get; set; }
+
 	protected override IPlatformHandle CreateNativeControlCore(IPlatformHandle parent)
 	{
-		// parent.Handle is the Avalonia window HWND (on Win32 backend)
 		var parentHwnd = parent.Handle;
 
-		// Use the builtin "STATIC" window class for a child host
-		const int WS_CHILD = 0x40000000;
-		const int WS_VISIBLE = 0x10000000;
+		SetWindowLongPtr(parentHwnd, GWL_EXSTYLE,
+			(IntPtr)(GetWindowLongPtr(parentHwnd, GWL_EXSTYLE).ToInt64() | WS_EX_TRANSPARENT));
 
-		var hwnd = CreateWindowExW(
-			0, "STATIC", "",
-			WS_CHILD | WS_VISIBLE,
-			0, 0,
-			Math.Max(1, (int)Bounds.Width),
-			Math.Max(1, (int)Bounds.Height),
-			parentHwnd,
-			IntPtr.Zero,
-			GetModuleHandle(null),
-			IntPtr.Zero);
+		Hwnd = parentHwnd;
+		InitViewport(_device, _options, TextureSampleCount.Count4);
 
-		if (hwnd == IntPtr.Zero)
-			throw new InvalidOperationException("CreateWindowExW failed: " + Marshal.GetLastWin32Error());
+		return new PlatformHandle(parentHwnd, "HWND");
 
-		Hwnd = hwnd;
-		// Return a handle Avalonia will track
-		return new PlatformHandle(hwnd, "HWND");
 	}
 	public ViewportAvHost()
 	{
-
+		this.SizeChanged += OnResize;
+		Camera = new PerspectiveCamera { Width = (int)800, Height = (int)600 };
+		this.AttachedToLogicalTree += (s, e) =>
+		{
+			var top = e.Root as TopLevel;
+			if (top != null)
+			{
+				top.PointerMoved += Top_PointerMoved;
+			}
+		};
 	}
+	private void Top_PointerMoved(object sender, PointerEventArgs e)
+	{
+		if (this.Bounds.Contains(e.GetPosition(this)) && !this.IsFocused)
+		{
+			this.OnPointerEntered(e);
+		}
+		else if (!this.Bounds.Contains(e.GetPosition(this)) && this.IsFocused)
+		{
+			this.OnPointerExited(e);
+		}
+	}
+
+	public void CreateOverlay() => Overlay = new ViewportOverlay(this);
+
 	public void InitViewport(GraphicsDevice graphics, GraphicsDeviceOptions options, TextureSampleCount sampleCount)
 	{
+		if (Hwnd == IntPtr.Zero)
+		{
+			//TODO: Refactor this, as it doesn't creates hwnd before
+			Hwnd = ((IClassicDesktopStyleApplicationLifetime)Application.Current.ApplicationLifetime).MainWindow.TryGetPlatformHandle().Handle;
+		}
+
 		_device = graphics;
+		_options = options;
 		//_sampleCount = sampleCount;
 		//SetStyle(ControlStyles.Opaque, true);
 		//SetStyle(ControlStyles.UserPaint, true);
@@ -118,28 +155,26 @@ public class ViewportAvHost : NativeControlHost, IViewportAv
 		//if (h <= 0) h = 1;
 
 		ID = _nextId++;
-		Camera = new PerspectiveCamera { Width = (int)w, Height = (int)h };
 		var source = SwapchainSource.CreateWin32(hWnd, hInstance);
 		var desc = new SwapchainDescription(source, (uint)w, (uint)h, options.SwapchainDepthFormat, options.SyncToVerticalBlank);
 		Swapchain = graphics.ResourceFactory.CreateSwapchain(desc);
 
-		sampleCount = TextureSampleCount.Count4;
 		InitFramebuffer((uint)w, (uint)h, sampleCount);
-
-		//Overlay = new ViewportOverlay(this);
 	}
 	public void InitFramebuffer(TextureSampleCount sampleCount)
 	{
-		return;
-		Avalonia.Threading.Dispatcher.UIThread.Invoke(() =>
 
-	InitFramebuffer((uint)Width, (uint)Height, sampleCount));
+		InitFramebuffer((uint)Width, (uint)Height, sampleCount);
 	}
 
 	private void InitFramebuffer(uint width, uint height, TextureSampleCount sampleCount)
 	{
 		_sampleCount = sampleCount;
 
+		//FIXME: viewport/camera sizes
+		var a = int.MaxValue;
+		if (width > 10000 && height > 10000) { width = 800; height = 600; }
+		if (width < 1 && height < 1) { width = 1; height = 1; }
 		var mainSceneDepthTexture = _device.ResourceFactory.CreateTexture(TextureDescription.Texture2D(
 			width,
 			height,
@@ -180,8 +215,10 @@ public class ViewportAvHost : NativeControlHost, IViewportAv
 	{
 		if (_resizeRequired)
 		{
-			var w = Math.Max(Width, 1);
-			var h = Math.Max(Height, 1);
+			//var w = Math.Max(Width, 1);
+			//var h = Math.Max(Height, 1);
+			var w = 800;
+			var h = 600;
 			Swapchain.Resize((uint)w, (uint)h);
 			InitFramebuffer((uint)w, (uint)h, _sampleCount);
 			_resizeRequired = false;
@@ -191,28 +228,30 @@ public class ViewportAvHost : NativeControlHost, IViewportAv
 	}
 	protected override void OnPointerEntered(PointerEventArgs e)
 	{
-		_isFocused = true;
+		Focus();
+		IsFocused = true;
 		base.OnPointerEntered(e);
 	}
 
 
 	protected override void OnPointerExited(PointerEventArgs e)
 	{
-		_isFocused = false;
+		IsFocused = false;
 		base.OnPointerExited(e);
 	}
 
-	//protected override void OnResize(EventArgs e)
-	//{
-	//	_resizeRequired = true;
-	//	Camera.Width = Width;
-	//	Camera.Height = Height;
-	//	base.OnResize(e);
-	//}
+	private void OnResize(object sender, SizeChangedEventArgs e)
+	{
+		Width = (float)base.Bounds.Width;
+		Height = (float)base.Bounds.Height;
+		_resizeRequired = true;
+		Camera.Width = (int)Bounds.Width;
+		Camera.Height = (int)Bounds.Height;
+	}
 
 	public bool ShouldRender(long frame)
 	{
-		if (!_isFocused)
+		if (!IsFocused)
 		{
 			_unfocusedCounter++;
 
@@ -248,23 +287,4 @@ public class ViewportAvHost : NativeControlHost, IViewportAv
 		Dispose(true);
 		GC.SuppressFinalize(this);
 	}
-
-	#region Win32 P/Invoke
-	[DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-	private static extern IntPtr CreateWindowExW(
-		int exStyle, string className, string windowName,
-		int style, int x, int y, int width, int height,
-		IntPtr parent, IntPtr menu, IntPtr hInstance, IntPtr lpParam);
-
-	[DllImport("user32.dll", SetLastError = true)]
-	private static extern bool DestroyWindow(IntPtr hWnd);
-
-	[DllImport("user32.dll", SetLastError = true)]
-	private static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter,
-		int X, int Y, int cx, int cy, uint uFlags);
-
-	[DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
-	private static extern IntPtr GetModuleHandle(string? lpModuleName);
-	#endregion
-
 }
