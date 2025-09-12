@@ -27,16 +27,6 @@ public partial class ViewportAv : UserControl
 	{
 		InitializeComponent();
 		this.Background = Brushes.Yellow;
-
-
-		this.PointerWheelChanged += (s, e) => Console.WriteLine(1); ;
-		this.PointerEntered += (s, e) => Console.WriteLine(1);
-		this.PointerExited += (s, e) => Console.WriteLine(1);
-
-		this.PointerMoved += (s, e) => Console.WriteLine(1);
-		this.KeyDown += (s, e) => Console.WriteLine(1);
-		this.PointerReleased += (s, e) => Console.WriteLine(1);
-		this.PointerPressed += (s, e) => Console.WriteLine(1);
 	}
 	public void CreateViewportHost(GraphicsDevice graphics, GraphicsDeviceOptions options, TextureSampleCount sampleCount)
 	{
