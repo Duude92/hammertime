@@ -1,6 +1,5 @@
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
@@ -9,8 +8,6 @@ using Sledge.Common.Shell.Documents;
 using Sledge.Common.Shell.Settings;
 using Sledge.Common.Translations;
 using Sledge.Common.Transport;
-using Sledge.Shell.Controls;
-using Sledge.Shell.Forms;
 using Sledge.Shell.Registers;
 using System;
 using System.Collections.Generic;
@@ -20,8 +17,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using DialogResult = System.Windows.Forms.DialogResult;
-using static System.Net.Mime.MediaTypeNames;
-using Avalonia.Media;
+using Sledge.Shell.Input;
 
 namespace Sledge.Shell.Forms
 {
@@ -72,6 +68,18 @@ namespace Sledge.Shell.Forms
 			InitializeComponent();
 			InitializeShell();
 			this.Opened += (s, e) => OnLoaded1(null);
+			this.KeyDown += (s, e) =>
+			{
+				KeyboardState.CurrentModifiers = e.KeyModifiers;
+				if (!KeyboardState.CurrentKeys.Contains(e.Key))
+					KeyboardState.CurrentKeys.Add(e.Key);
+
+			};
+			this.KeyUp += (s, e) =>
+			{
+				KeyboardState.CurrentModifiers = e.KeyModifiers;
+				KeyboardState.CurrentKeys.Remove(e.Key);
+			};
 		}
 		/// <summary>
 		/// Setup the shell pre-startup

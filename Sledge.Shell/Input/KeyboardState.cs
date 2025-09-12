@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Windows.Forms;
+using Avalonia.Input;
 
 namespace Sledge.Shell.Input
 {
@@ -12,6 +12,8 @@ namespace Sledge.Shell.Input
     /// http://www.switchonthecode.com/tutorials/winforms-accessing-mouse-and-keyboard-state
     public static class KeyboardState
     {
+		public static KeyModifiers CurrentModifiers { get; set; } = KeyModifiers.None;
+		public static List<Key> CurrentKeys { get; } = new List<Key>();
         private static readonly Dictionary<string, string> KeyStringReplacements;
 
         static KeyboardState()
@@ -58,36 +60,39 @@ namespace Sledge.Shell.Input
                                         };
         }
 
-        public static bool Ctrl => IsModifierKeyDown(Keys.Control);
-        public static bool Shift => IsModifierKeyDown(Keys.Shift);
-        public static bool Alt => IsModifierKeyDown(Keys.Alt);
-        public static bool CapsLocked => IsKeyToggled(Keys.CapsLock);
-        public static bool ScrollLocked => IsKeyToggled(Keys.Scroll);
-        public static bool NumLocked => IsKeyToggled(Keys.NumLock);
+		public static bool Ctrl => IsModifierKeyDown(KeyModifiers.Control);
+		public static bool Shift => IsModifierKeyDown(KeyModifiers.Shift);
+		public static bool Alt => IsModifierKeyDown(KeyModifiers.Alt);
+		public static bool CapsLocked => IsKeyToggled(Key.CapsLock);
+		public static bool ScrollLocked => IsKeyToggled(Key.Scroll);
+		public static bool NumLocked => IsKeyToggled(Key.NumLock);
 
-        private static bool IsModifierKeyDown(Keys k)
+		private static bool IsModifierKeyDown(KeyModifiers k)
         {
-            return (Control.ModifierKeys & k) == k;
+			return (CurrentModifiers & k) == k;
         }
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
-        private static extern short GetKeyState(int keyCode);
 
-        public static bool IsKeyDown(Keys key)
+		public static bool IsKeyDown(Key key)
         {
+			return CurrentKeys.Contains(key);
             // Key is down if the high bit is 1
-            return (GetKeyState((int)key) & 0x8000) == 0x8000;
         }
 
-        public static bool IsAnyKeyDown(params Keys[] keys)
+		public static bool IsAnyKeyDown(params Key[] keys)
         {
             return keys.Any(IsKeyDown);
         }
+		public static bool IsAnyKeyDown(params KeyModifiers[] keys)
+		{
+			return keys.Any(x => CurrentModifiers.HasFlag(x));
+		}
 
-        private static bool IsKeyToggled(Keys key)
+		private static bool IsKeyToggled(Key key)
         {
+			return CurrentKeys.Contains(key);
+
             // Key is toggled if the low bit is 1
-            return (GetKeyState((int) key) & 0x0001) == 0x0001;
         }
 
         public static string KeysToString(Keys key)
