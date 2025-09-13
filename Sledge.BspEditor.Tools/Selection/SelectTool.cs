@@ -242,20 +242,20 @@ namespace Sledge.BspEditor.Tools.Selection
 					var group = b.AddGroup(Align);
 
 					var l = b.CreateCommandItem($"BspEditor:Tools:{left}");
-					l.Text = Left;
-					group.DropDownItems.Add(l);
+					l.Header = Left;
+					group.Items.Add(l);
 
 					var r = b.CreateCommandItem($"BspEditor:Tools:{right}");
-					r.Text = Right;
-					group.DropDownItems.Add(r);
+					r.Header = Right;
+					group.Items.Add(r);
 
 					var u = b.CreateCommandItem($"BspEditor:Tools:{top}");
-					u.Text = Top;
-					group.DropDownItems.Add(u);
+					u.Header = Top;
+					group.Items.Add(u);
 
 					var d = b.CreateCommandItem($"BspEditor:Tools:{bottom}");
-					d.Text = Bottom;
-					group.DropDownItems.Add(d);
+					d.Header = Bottom;
+					group.Items.Add(d);
 
 					var horizontal = flat.X == 1 ? "FlipX" : (flat.X == 2 ? "FlipY" : "FlipZ");
 					var vertical = flat.Y == 2 ? "FlipY" : (flat.Y == 3 ? "FlipZ" : "FlipX");
@@ -263,24 +263,24 @@ namespace Sledge.BspEditor.Tools.Selection
 					group = b.AddGroup(Flip);
 
 					var h = b.CreateCommandItem($"BspEditor:Tools:{horizontal}");
-					h.Text = Horizontally;
-					group.DropDownItems.Add(h);
+					h.Header = Horizontally;
+					group.Items.Add(h);
 
 					var v = b.CreateCommandItem($"BspEditor:Tools:{vertical}");
-					v.Text = Vertically;
-					group.DropDownItems.Add(v);
+					v.Header = Vertically;
+					group.Items.Add(v);
 
 					group = b.AddGroup(Rotate);
 
 					var axis = expand.X == 0 ? Vector3.UnitX : (expand.Y == 0 ? -Vector3.UnitY : Vector3.UnitZ);
 
 					var cw = b.CreateCommandItem("BspEditor:Tools:Rotate", new { Axis = axis, Angle = -90f });
-					cw.Text = Clockwise;
-					group.DropDownItems.Add(cw);
+					cw.Header = Clockwise;
+					group.Items.Add(cw);
 
 					var acw = b.CreateCommandItem("BspEditor:Tools:Rotate", new { Axis = axis, Angle = 90f });
-					acw.Text = AntiClockwise;
-					group.DropDownItems.Add(acw);
+					acw.Header = AntiClockwise;
+					group.Items.Add(acw);
 				}
 
 				b.AddCommand("BspEditor:Map:Properties");
