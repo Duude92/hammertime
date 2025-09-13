@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.Drawing;
-using System.Linq;
-using System.Numerics;
-using System.Threading.Tasks;
+﻿using Avalonia.Controls;
+using Avalonia.Input;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
@@ -27,8 +22,15 @@ using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Pipelines;
 using Sledge.Rendering.Primitives;
 using Sledge.Rendering.Resources;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.Drawing;
+using System.Linq;
+using System.Numerics;
+using System.Threading.Tasks;
 using System.Windows.Forms;
-using Avalonia.Input;
+using static Sledge.BspEditor.Rendering.Viewport.RightClickMenuBuilder;
 
 namespace Sledge.BspEditor.Tools.Entity
 {
@@ -95,11 +97,12 @@ namespace Sledge.BspEditor.Tools.Entity
 
 		protected override void DocumentChanged()
 		{
-			Task.Factory.StartNew(BuildMenu);
+			//Task.Factory.StartNew(BuildMenu);
+			BuildMenu();
 			base.DocumentChanged();
 		}
 
-		private ToolStripItem[] _menu;
+		private MenuItem[] _menu;
 
 		private async void BuildMenu()
 		{
@@ -110,17 +113,17 @@ namespace Sledge.BspEditor.Tools.Entity
 			var gd = await document.Environment.GetGameData();
 			if (gd == null) return;
 
-			var items = new List<ToolStripItem>();
+			var items = new List<MenuItem>();
 			var classes = gd.Classes.Where(x => x.ClassType != ClassType.Base && x.ClassType != ClassType.Solid).ToList();
 			var groups = classes.GroupBy(x => x.Name.Split('_')[0]);
 			foreach (var g in groups)
 			{
-				var mi = new ToolStripMenuItem(g.Key);
+				var mi = new MenuItem { GroupName = g.Key, Header = g.Key };
 				var l = g.ToList();
 				if (l.Count == 1)
 				{
 					var cls = l[0];
-					mi.Text = cls.Name;
+					mi.Header = cls.Name;
 					mi.Tag = cls;
 					mi.Click += (s, e) => CreateEntity(_location, cls.Name);
 				}
@@ -128,11 +131,14 @@ namespace Sledge.BspEditor.Tools.Entity
 				{
 					var subs = l.Select(x =>
 					{
-						var item = new ToolStripMenuItem(x.Name) { Tag = x };
+						var item = new MenuItem { Header = x.Name, Tag = x };
 						item.Click += (s, e) => CreateEntity(_location, x.Name);
 						return item;
-					}).OfType<ToolStripItem>().ToArray();
-					mi.DropDownItems.AddRange(subs);
+					}).OfType<MenuItem>().ToArray();
+					foreach (var sub in subs)
+					{
+						mi.Items.Add(sub);
+					}
 				}
 				items.Add(mi);
 			}
