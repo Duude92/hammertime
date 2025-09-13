@@ -58,6 +58,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
 			Shift = e.KeyModifiers.HasFlag(KeyModifiers.Shift);
 			Alt = e.KeyModifiers.HasFlag(KeyModifiers.Alt);
 			KeyCode = e.Key;
+			KeyValue = (int)e.Key;
 			//KeyValue = e.ke;
 		}
 		public ViewportEvent(MapViewport sender, PointerEventArgs e)
