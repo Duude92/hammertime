@@ -1,19 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Numerics;
-using System.Threading.Tasks;
+﻿using Avalonia;
 using Avalonia.Input;
 using LogicAndTrick.Oy;
 using Sledge.Common;
 using Sledge.Common.Easings;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
+using Sledge.Rendering;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Overlay;
 using Sledge.Rendering.Viewports;
 using Sledge.Shell;
 using Sledge.Shell.Input;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Numerics;
+using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 
 namespace Sledge.BspEditor.Rendering.Viewport
 {
@@ -207,6 +210,12 @@ namespace Sledge.BspEditor.Rendering.Viewport
 				//FIXME
 				//CursorClip = Cursor.Clip;
 				//Cursor.Clip = Viewport.Control.RectangleToScreen(new Rectangle(0, 0, Viewport.Width, Viewport.Height));
+
+				var point = System.Drawing.Point.Empty;
+				ClientToScreen((Viewport.Viewport as ViewportAvHost).Hwnd, ref point);
+				GetClientRect((Viewport.Viewport as ViewportAvHost).Hwnd, out var rect);
+				rect = MoveAndExpandRect(point, rect);
+				ClipCursor(ref rect);
 				SetCapture(true);
 				Viewport.AquireInputLock(this);
 			}
@@ -215,9 +224,19 @@ namespace Sledge.BspEditor.Rendering.Viewport
 				//FIXME
 				//Cursor.Clip = CursorClip;
 				CursorClip = Rectangle.Empty;
+				ClipCursor(IntPtr.Zero);
 				SetCapture(false);
 				Viewport.ReleaseInputLock(this);
 			}
+		}
+
+		private static Rect MoveAndExpandRect(System.Drawing.Point point, Rect rect)
+		{
+			return new Rect(
+							rect.X + point.X + 2,
+							rect.Y + point.Y + 2,
+							rect.Width + point.X - 2,
+							rect.Height + point.Y - 2);
 		}
 
 		private void SetCapture(bool capture)
@@ -257,7 +276,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
 				if (dx != 0 || dy != 0)
 				{
 					MouseMoved(e, dx, dy);
-					//return;
+					return;
 				}
 			}
 			LastKnownX = e.X;
@@ -302,9 +321,11 @@ namespace Sledge.BspEditor.Rendering.Viewport
 				Camera.Tilt(dy * scale);
 			}
 
-			//LastKnownX = Viewport.Width/2;
-			//LastKnownY = Viewport.Height/2;
-			//Cursor.Position = Viewport.Control.PointToScreen(new Point(LastKnownX, LastKnownY));
+			LastKnownX = (int)Viewport.Control.Bounds.Width / 2;
+			LastKnownY = (int)Viewport.Control.Bounds.Height / 2;
+			var point = System.Drawing.Point.Empty;
+			var pt = Viewport.Control.PointToScreen(new Avalonia.Point(LastKnownX, LastKnownY));
+			SetCursorPos(pt.X, pt.Y);
 		}
 
 		public void MouseWheel(ViewportEvent e)
@@ -366,7 +387,10 @@ namespace Sledge.BspEditor.Rendering.Viewport
 			{
 				LastKnownX = (int)Viewport.Control.Bounds.Width / 2;
 				LastKnownY = (int)Viewport.Control.Bounds.Height / 2;
-				//Cursor.Position = Viewport.Control.PointToScreen(new Avalonia.Point(LastKnownX, LastKnownY));
+
+				var point = System.Drawing.Point.Empty;
+				var pt = Viewport.Control.PointToScreen(new Avalonia.Point(LastKnownX, LastKnownY));
+				SetCursorPos(pt.X, pt.Y);
 			}
 			else
 			{
@@ -428,5 +452,18 @@ namespace Sledge.BspEditor.Rendering.Viewport
 			im.AddLine(new Vector2((int)x, (int)y - size), new Vector2((int)x, (int)y + size + 1), Color.White, 1, false);
 			im.AddLine(new Vector2((int)x - size, (int)y), new Vector2((int)x + size + 1, (int)y), Color.White, 1, false);
 		}
+		[DllImport("user32.dll")]
+		static extern void ClipCursor(ref Rect rect);
+
+		[DllImport("user32.dll")]
+		static extern void ClipCursor(IntPtr rect); // Pass IntPtr.Zero to release
+
+		[DllImport("user32.dll")]
+		static extern bool GetClientRect(IntPtr hWnd, out Rect rect);
+
+		[DllImport("user32.dll")]
+		static extern bool ClientToScreen(IntPtr hWnd, ref System.Drawing.Point lpPoint);
+		[DllImport("user32.dll")]
+		static extern bool SetCursorPos(int X, int Y);
 	}
 }
