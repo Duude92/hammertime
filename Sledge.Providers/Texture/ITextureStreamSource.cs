@@ -9,5 +9,7 @@ namespace Sledge.Providers.Texture
     {
         bool HasImage(string item);
         Task<ICollection<Bitmap>> GetImage(string item, int maxWidth, int maxHeight);
+		Task<ICollection<Bitmap>> GetRawImage(string item, int maxWidth, int maxHeight);
+
 	}
 }

@@ -25,6 +25,10 @@ namespace Sledge.Providers.Texture
         {
             return _streams.FirstOrDefault(x => x.HasImage(item))?.GetImage(item, maxWidth, maxHeight);
         }
+		public Task<ICollection<Bitmap>> GetRawImage(string item, int maxWidth, int maxHeight)
+		{
+			return _streams.FirstOrDefault(x => x.HasImage(item))?.GetRawImage(item, maxWidth, maxHeight);
+		}
 
 		public void Dispose()
         {

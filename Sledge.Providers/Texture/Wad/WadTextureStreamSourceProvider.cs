@@ -39,7 +39,7 @@ namespace Sledge.Providers.Texture.Wad
             });
         }
 
-		public async Task<Bitmap> GetRawImage(string item, int maxWidth, int maxHeight)
+		public async Task<ICollection<Bitmap>> GetRawImage(string item, int maxWidth, int maxHeight)
 		{
 			var entry = _stream.GetEntry(item);
 			if (entry == null) return null;
@@ -48,7 +48,7 @@ namespace Sledge.Providers.Texture.Wad
 			{
 				using (var s = _stream.OpenEntry(entry))
 				{
-					return new Bitmap(s);
+					return new Collection<Bitmap>() { new Bitmap(s) } as ICollection<Bitmap>;
 				}
 			});
 		}

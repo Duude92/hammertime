@@ -35,7 +35,10 @@ namespace Sledge.Providers.Texture
                 }
             });
         }
-
+		public Task<ICollection<Bitmap>> GetRawImage(string item, int maxWidth, int maxHeight)
+		{
+			return GetImage(item, maxWidth, maxHeight);
+		}
 		public void Dispose()
         {
 
