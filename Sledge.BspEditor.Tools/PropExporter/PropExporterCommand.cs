@@ -38,13 +38,6 @@ namespace Sledge.BspEditor.Tools.PropExporter
 		public bool ValuesLoaded => true;
 		public string lastPath = null;
 
-		private string[] _filterTextures = new string[]
-		{
-			"null",
-			"sky",
-			"origin"
-		};
-
 		protected async override Task Invoke(MapDocument document, CommandParameters parameters)
 		{
 			if (document.Selection.IsEmpty || !document.Selection.OfType<Solid>().Any())
@@ -181,7 +174,8 @@ namespace Sledge.BspEditor.Tools.PropExporter
 				}
 			}
 			));
-			textures1 = textures1.Where(t => !_filterTextures.Contains(t.Header.Name)).ToArray();
+			var filterTextures = document.Environment.NonRenderableTextures;
+			textures1 = textures1.Where(t => !filterTextures.Contains(t.Header.Name.ToLower())).ToArray();
 			model.Textures = textures1.ToList();
 			model.Skins = new List<SkinFamily> { new SkinFamily {
 				Textures = new short[] {0,0,0,0,0,0,0},
@@ -199,7 +193,7 @@ namespace Sledge.BspEditor.Tools.PropExporter
 			}).ToList();
 			var filteredMeshes = faces
 				.GroupBy(f => f.Texture.Name)
-				.Where(g => !_filterTextures.Contains(g.First().Texture.Name.ToLower()));
+				.Where(g => !filterTextures.Contains(g.First().Texture.Name.ToLower()));
 			var allMeshVertices = filteredMeshes.SelectMany(g => g.SelectMany(f => f.Vertices)).Distinct();
 			meshVertices = meshVertices.Where(v => allMeshVertices.Contains(v.Vertex)).ToList();
 
