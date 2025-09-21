@@ -43,7 +43,7 @@ jobs:
       run: |
         Set-Content -Path ./Build/Sledge.Editor.New.Installer.nsi -Value ((Get-Content './Build/Sledge.Editor.New.Installer.nsi' -Raw) -replace "{version}", "$env:version")
     - name: Build installer
-      uses: joncloud/makensis-action@v4.1
+      uses: joncloud/makensis-action@v5.0
       with:
         script-file: ./Build/Sledge.Editor.New.Installer.nsi
     - name: Create Zip File
