@@ -9,14 +9,17 @@ Hammertime is an open-source Fork of Sledge which is an open-source Alternative 
 It is written in .NET and uses [Veldrid][2] for rendering, with DirectX 10.
 
 Hammertime supports Goldsource mapping, and is constantly being updated to add more Features, some of these Features include:
-- Prefab Support
-- Model exporting (Like Propper)
-- Dragging Brushes like in Hammer 5.2
+- Prefabs!
+- Lighting Preview inside the Editor (Just like Hammer++!)
+- Other various improvements!
 
 Here are also some good Community Editors if you need some:
-- [TrenchBroom](https://github.com/kduske/TrenchBroom) (TrenchBroom is very prominent in the Quake Mapping Community, it is used by some people for Half-Life mapping, but theres not a lot of people using it.)
-- Valve Hammer Editor (Found in the steam Library which you get when you own Half Life 1)
-- [JACK](http://jack.hlfx.ru/en/download.html) (Only get the paid Version if you want Steam Achivements.)
+- [TrenchBroom](https://github.com/kduske/TrenchBroom):
+  TrenchBroom is a free (GPLv3+), cross platform level editor for Quake-engine based games. It supports Quake, Quake 2, Hexen 2 and Half-Life
+- Valve Hammer Editor:
+  Found in the steam Library under HL1 SDK
+- [JACK](http://jack.hlfx.ru/en/download.html):
+  J.A.C.K is a Version of Hammer / Worldcraft that introduces lots of new features and improvements.
 
 The Hammertime Editor is licensed under BSD-3.
 
