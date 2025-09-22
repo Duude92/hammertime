@@ -193,6 +193,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 					var newKey = newClass.Properties.FirstOrDefault(x => (x.Name ?? "").ToLower() == splitvalue[0]);
 
 					// Brand new key, mark it as added and add it to the list.
+					if (newKey == null) newKey = new Property(splitvalue[0], VariableType.String);
 					var value = GetDefaultOption(newKey);
 					_tableValues.Add(new TableValue(newKey, splitvalue[0], new[] { splitvalue[1] ?? "" }) { IsAdded = value != null ? true : false });
 				}
