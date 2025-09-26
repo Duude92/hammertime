@@ -18,6 +18,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using DialogResult = System.Windows.Forms.DialogResult;
 using Sledge.Shell.Input;
+using Avalonia.Input;
 
 namespace Sledge.Shell.Forms
 {
@@ -80,6 +81,11 @@ namespace Sledge.Shell.Forms
 				KeyboardState.CurrentModifiers = e.KeyModifiers;
 				KeyboardState.CurrentKeys.Remove(e.Key);
 			};
+			this.PointerPressed += (s, e) => KeyboardState.MouseButtons = KeyboardState.MouseButtons | (e.Properties.IsLeftButtonPressed ? MouseButton.Left : e.Properties.IsRightButtonPressed ? MouseButton.Right : e.Properties.IsMiddleButtonPressed ? MouseButton.Middle : MouseButton.None);
+			this.PointerReleased += (s, e) => KeyboardState.MouseButtons = KeyboardState.MouseButtons &
+						~(e.Properties.PointerUpdateKind == PointerUpdateKind.LeftButtonReleased ? MouseButton.Left :
+							e.Properties.PointerUpdateKind == PointerUpdateKind.RightButtonReleased ? MouseButton.Right :
+							e.Properties.PointerUpdateKind == PointerUpdateKind.MiddleButtonReleased ? MouseButton.Middle : MouseButton.None);
 		}
 		/// <summary>
 		/// Setup the shell pre-startup
@@ -93,7 +99,7 @@ namespace Sledge.Shell.Forms
 			Oy.Subscribe<List<string>>("Shell:InstanceOpened", async a => await Dispatcher.UIThread.InvokeAsync(() => InstanceOpened(a)));
 
 			Oy.Subscribe<IDocument>("Document:Opened", async d => await Dispatcher.UIThread.InvokeAsync(() => OpenDocument(d)));
-			//Oy.Subscribe<IDocument>("Document:Closed", async d => await Dispatcher.UIThread.InvokeLaterAsync(() => CloseDocument(d)));
+			Oy.Subscribe<IDocument>("Document:Closed", async d => await this.InvokeLaterAsync(() => CloseDocument(d)));
 			Oy.Subscribe<IDocument>("Document:Closed", async d => await Dispatcher.UIThread.InvokeAsync(() => CloseDocument(d)));
 			Oy.Subscribe<IDocument>("Document:Changed", async d => await Dispatcher.UIThread.InvokeAsync(() => DocumentChanged(d)));
 			Oy.Subscribe<IDocument>("Document:Activated", async d => await Dispatcher.UIThread.InvokeAsync(() => DocumentActivated(d)));
