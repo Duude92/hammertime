@@ -179,7 +179,7 @@ namespace Sledge.Providers.Model.Mdl10
 								Texture = texturePosition,
 								TextureLayer = (uint)mesh.Header.SkinRef,
 								Bone = (uint)x.VertexBone,
-								Flags = Flags
+								Flags = Flags // Always 0 during ctor
 							});
 							indices.Add(vi);
 							wireframeIndices.Add(vi);

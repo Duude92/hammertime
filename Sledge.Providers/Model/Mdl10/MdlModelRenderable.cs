@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Numerics;
-using System.Runtime.CompilerServices;
-using Sledge.DataStructures.Geometric;
+﻿using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Engine;
 using Sledge.Rendering.Interfaces;
@@ -10,6 +6,10 @@ using Sledge.Rendering.Pipelines;
 using Sledge.Rendering.Primitives;
 using Sledge.Rendering.Renderables;
 using Sledge.Rendering.Viewports;
+using System;
+using System.Collections.Generic;
+using System.Numerics;
+using System.Runtime.CompilerServices;
 using Veldrid;
 
 namespace Sledge.Providers.Model.Mdl10
@@ -18,7 +18,16 @@ namespace Sledge.Providers.Model.Mdl10
 	{
 		private readonly MdlModel _model;
 		public IModel Model => _model;
-		public VertexFlags Flags { get => _model.Flags; set => _model.Flags = value; }
+		private VertexFlags _flags;
+
+		public VertexFlags Flags
+		{
+			get => _flags; set
+			{
+				_flags = value;
+				_model.Flags = value;
+			}
+		}
 
 		private DeviceBuffer _transformsBuffer;
 		private ResourceSet _transformsResourceSet;
@@ -35,7 +44,7 @@ namespace Sledge.Providers.Model.Mdl10
 		public Vector3 Origin { get; set; }
 		public Vector3 Angles { get; set; }
 		private int _skinId = 0;
-		public uint[] _skins = new uint[64];
+		private uint[] _skins = new uint[64];
 		public int SkinId
 		{
 			get => _skinId; set
