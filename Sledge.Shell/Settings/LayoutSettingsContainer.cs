@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Windows.Forms;
 using System;
 using System.Globalization;
 using Sledge.Common.Shell.Settings;
+using Avalonia.Controls;
 
 namespace Sledge.Shell.Settings
 {
@@ -14,7 +14,7 @@ namespace Sledge.Shell.Settings
 	[Export(typeof(ISettingsContainer))]
 	public class LayoutSettingsContainer : ISettingsContainer
 	{
-		[Import] private Forms.Shell _shell;
+		[Import] private Forms.ShellAv _shell;
 
 		// Settings provider
 
@@ -28,7 +28,7 @@ namespace Sledge.Shell.Settings
 
 		public void LoadValues(ISettingsStore store)
 		{
-			_shell.Invoke((MethodInvoker)delegate
+			_shell.Invoke(delegate
 			{
 				_shell.WindowState = store.Get("WindowState", _shell.WindowState);
 
@@ -36,8 +36,10 @@ namespace Sledge.Shell.Settings
 				{
 					var dph = $"DockPanel:{dp.Name}:Hidden";
 					var dps = $"DockPanel:{dp.Name}:Size";
-					dp.Hidden = store.Get(dph, dp.Hidden);
-					dp.DockDimension = store.Get(dps, dp.DockDimension);
+					//dp.Hidden = store.Get(dph, dp.Hidden);
+					//dp.DockDimension = store.Get(dps, dp.DockDimension);
+
+					//DockPanel.SetDock(dp, store.Get(dps, DockPanel.GetDock(dp)));
 				}
 				ValuesLoaded = true;
 			});
@@ -48,8 +50,8 @@ namespace Sledge.Shell.Settings
 			store.Set("WindowState", Convert.ToString(_shell.WindowState, CultureInfo.InvariantCulture));
 			foreach (var dp in _shell.GetDockPanels())
 			{
-				store.Set($"DockPanel:{dp.Name}:Hidden", dp.Hidden);
-				store.Set($"DockPanel:{dp.Name}:Size", dp.DockDimension);
+				//store.Set($"DockPanel:{dp.Name}:Hidden", dp.Hidden);
+				store.Set($"DockPanel:{dp.Name}:Size", DockPanel.GetDock(dp));
 			}
 		}
 	}
