@@ -31,7 +31,7 @@ namespace Sledge.Editor
 		}
 		public static AppBuilder BuildAvaloniaApp()
 		{
-			return AppBuilder.Configure<SingleInstanceAv>()
+			return AppBuilder.Configure<SingleInstanceAv>(()=>new SingleInstanceAv())
 			.UsePlatformDetect()
 			.LogToTrace();
 		}

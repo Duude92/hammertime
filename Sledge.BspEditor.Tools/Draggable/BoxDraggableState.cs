@@ -268,7 +268,7 @@ namespace Sledge.BspEditor.Tools.Draggable
         protected virtual void DrawBox(IViewport viewport, OrthographicCamera camera, I2DRenderer im, Vector3 start, Vector3 end)
         {
             start = Vector3.Max(start, new Vector3(-100, -100, -100));
-            end = Vector3.Min(end, new Vector3((int)viewport.Width + 100, (int)viewport.Height + 100, 100));
+            end = Vector3.Min(end, new Vector3(viewport.Width + 100, viewport.Height + 100, 100));
             
             im.AddRectFilled(start.ToVector2(), end.ToVector2(), GetRenderFillColour());
             im.AddRect(start.ToVector2(), end.ToVector2(), GetRenderBoxColour());
