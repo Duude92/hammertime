@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Numerics;
+using System.Windows.Forms;
 using SixLabors.ImageSharp.PixelFormats;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Interfaces;
@@ -160,9 +161,9 @@ namespace Sledge.Rendering.Engine
 		/// Create a new viewport for the engine.
 		/// </summary>
 		/// <returns>The viewport</returns>
-		public IViewport CreateViewport()
+		public IViewport CreateViewport(Control parent)
 		{
-			return Engine.Instance.CreateViewport();
+			return Engine.Instance.CreateViewport(parent);
 		}
 
 		public IDisposable Pause()

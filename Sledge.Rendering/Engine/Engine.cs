@@ -1,16 +1,16 @@
-﻿using System;
+﻿using SharpDX.Direct3D;
+using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Interfaces;
+using Sledge.Rendering.Pipelines;
+using Sledge.Rendering.Renderables;
+using Sledge.Rendering.Viewports;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Threading;
 using System.Windows.Forms;
-using SharpDX.Direct3D;
-using Sledge.Rendering.Cameras;
-using Sledge.Rendering.Interfaces;
-using Sledge.Rendering.Pipelines;
-using Sledge.Rendering.Renderables;
-using Sledge.Rendering.Viewports;
 using Veldrid;
 
 namespace Sledge.Rendering.Engine
@@ -367,11 +367,13 @@ namespace Sledge.Rendering.Engine
 		internal event EventHandler<IViewport> ViewportCreated;
 		internal event EventHandler<IViewport> ViewportDestroyed;
 
-		internal IViewport CreateViewport()
+		internal IViewport CreateViewport(Control parent)
 		{
 			lock (_lock)
 			{
 				var control = new Viewports.Viewport(Device, _options, _sampleCount);
+				parent.Controls.Add(control);
+				control.InitSwapchain();
 				control.Disposed += DestroyViewport;
 
 				if (!_renderTargets.Any()) Start();

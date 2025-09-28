@@ -4,6 +4,9 @@ using System.Windows.Forms;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Overlay;
 using Sledge.Rendering.Viewports.ViewportResolver;
+using System;
+using System.Diagnostics;
+using System.Windows.Forms;
 using Veldrid;
 
 namespace Sledge.Rendering.Viewports
@@ -16,7 +19,7 @@ namespace Sledge.Rendering.Viewports
 		private bool _resizeRequired;
 
 		public int ID { get; }
-		public Swapchain Swapchain { get; }
+		public Swapchain Swapchain { get; private set; }
 
 		public ICamera Camera
 		{
@@ -31,7 +34,7 @@ namespace Sledge.Rendering.Viewports
 
 		public Control Control => this;
 		public Framebuffer ViewportFramebuffer { get; private set; }
-		public ViewportOverlay Overlay { get; }
+		public ViewportOverlay Overlay { get; private set; }
 		public Resources.Texture ViewportRenderTexture { get; private set; }
 		public bool IsFocused => _isFocused;
 
@@ -40,6 +43,7 @@ namespace Sledge.Rendering.Viewports
 		private ICamera _camera;
 		private GraphicsDevice _device;
 		private TextureSampleCount _sampleCount;
+		private GraphicsDeviceOptions _options;
 		private IViewportResolver _viewportResolver;
 		private Texture _mainSceneColorTexture;
 		private Texture _viewportResolvedTexture;
@@ -50,11 +54,16 @@ namespace Sledge.Rendering.Viewports
 		{
 			_device = graphics;
 			_sampleCount = sampleCount;
+			_options = options;
 			SetStyle(ControlStyles.Opaque, true);
 			SetStyle(ControlStyles.UserPaint, true);
 			SetStyle(ControlStyles.AllPaintingInWmPaint, true);
 			DoubleBuffered = false;
+			ID = _nextId++;
 
+		}
+		public void InitSwapchain()
+		{
 			var hWnd = Handle; // Will call CreateHandle internally
 			var hInstance = HInstance;
 
@@ -62,14 +71,13 @@ namespace Sledge.Rendering.Viewports
 			if (w <= 0) w = 1;
 			if (h <= 0) h = 1;
 
-			ID = _nextId++;
-			Camera = new PerspectiveCamera { Width = Width, Height = Height };
+			Camera = new PerspectiveCamera { Width = (int)w, Height = (int)h };
 
 			var source = SwapchainSource.CreateWin32(hWnd, hInstance);
-			var desc = new SwapchainDescription(source, w, h, options.SwapchainDepthFormat, options.SyncToVerticalBlank);
-			Swapchain = graphics.ResourceFactory.CreateSwapchain(desc);
+			var desc = new SwapchainDescription(source, w, h, _options.SwapchainDepthFormat, _options.SyncToVerticalBlank);
+			Swapchain = _device.ResourceFactory.CreateSwapchain(desc);
 
-			InitFramebuffer(w, h, sampleCount);
+			InitFramebuffer(w, h, _sampleCount);
 
 			Overlay = new ViewportOverlay(this);
 		}

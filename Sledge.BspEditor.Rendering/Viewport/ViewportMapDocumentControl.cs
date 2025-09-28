@@ -61,10 +61,9 @@ namespace Sledge.BspEditor.Rendering.Viewport
 				Oy.Subscribe<int>("MapDocument:Viewport:SetFOV", SetFOV),
 			};
 
-			_viewport = _engine.CreateViewport();
+			_viewport = _engine.CreateViewport(Control);
 			_viewport.Camera = _camera;
 			_viewport.Control.Dock = DockStyle.Fill;
-			Control.Controls.Add(_viewport.Control);
 
 			_mapViewport = new MapViewport(_viewport);
 			_mapViewport.Listeners.AddRange(listeners.SelectMany(x => x.Create(_mapViewport)));
