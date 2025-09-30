@@ -35,7 +35,7 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
 			{
 				var sn = GetSpriteData(entity, gd);
 				var es = entity.Data.GetOne<EntitySprite>();
-				if(sn==null && es != null)
+				if (sn == null && es != null)
 				{
 					entity.Data.Remove(x => x == es);
 					continue;
@@ -49,6 +49,12 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
 				var sd = await CreateSpriteData(entity, change.Document, gd, tc, sn.Name);
 				if (es != null)
 					_resourceCollection.Value.DestroyModelRenderable(change.Document.Environment, es.Renderable);
+				var em = entity.Data.GetOne<EntityModel>();
+				if (em != null)
+				{
+					_resourceCollection.Value.DestroyModelRenderable(change.Document.Environment, em.Renderable);
+					entity.Data.Remove(x => x == em);
+				}
 
 				if (sd == null) entity.Data.Remove(x => x == es);
 				else entity.Data.Replace(sd);
@@ -110,7 +116,7 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
 				}
 			}
 			var renderable = await _resourceCollection.Value.CreateSpriteRenderable(doc.Environment, name);
-
+			if (renderable == null) return null;
 			return new EntitySprite(name, scale, color, size, framerate, renderable, isGizmo);
 		}
 

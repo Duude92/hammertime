@@ -118,6 +118,7 @@ namespace Sledge.BspEditor.Rendering.Resources
 
             using var ss = tc.GetStreamSource();
             var texture = await UploadTexture(environment, item, ss) as Texture;
+            if (texture == null) return null;
             tList.Add(item.Name);
             var resource = new SpriteRenderable(texture, item);
 
@@ -186,7 +187,11 @@ namespace Sledge.BspEditor.Rendering.Resources
             ITextureStreamSource source)
         {
             var bitmaps = await source.GetImage(item.Name, 512, 512);
-            var firstbitmap = bitmaps.First();
+            var firstbitmap = bitmaps?.First();
+            if(firstbitmap == null)
+            {
+                return null;
+            }
             var combinedBitmap = new Bitmap(firstbitmap.Width * bitmaps.Count, firstbitmap.Height);
             int i = 0;
             foreach (var bitmap in bitmaps)
