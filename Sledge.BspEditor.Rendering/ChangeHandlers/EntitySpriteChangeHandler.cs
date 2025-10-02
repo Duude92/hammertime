@@ -50,7 +50,7 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
 				if (es != null)
 					_resourceCollection.Value.DestroyModelRenderable(change.Document.Environment, es.Renderable);
 				var em = entity.Data.GetOne<EntityModel>();
-				if (em != null)
+				if (em != null && sd != null)
 				{
 					_resourceCollection.Value.DestroyModelRenderable(change.Document.Environment, em.Renderable);
 					entity.Data.Remove(x => x == em);
