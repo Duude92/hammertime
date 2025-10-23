@@ -771,7 +771,7 @@ namespace Sledge.BspEditor.Providers
             public VmfSide(SerialisedObject obj)
             {
                 ID = obj.Get("ID", 0L);
-                LightmapScale = obj.Get("lightmapscale", 0);
+                LightmapScale = obj.Get("lightmapscale", 16);
                 SmoothingGroups = obj.Get("smoothing_groups", "");
 
                 if (ParseDoubleArray(obj.Get("plane", ""), new[] {' ', '(', ')'}, 9, out double[] pl))
