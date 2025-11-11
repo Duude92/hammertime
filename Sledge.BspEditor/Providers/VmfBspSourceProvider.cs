@@ -691,6 +691,7 @@ namespace Sledge.BspEditor.Providers
 
 			private void CreateFaces(Solid solid, List<VmfSide> sides, UniqueNumberGenerator generator)
 			{
+
 				// If all the sides don't have enough vertices, calculate them
 				if (!sides.All(x => x.Vertices.Count >= 3))
 				{
@@ -723,6 +724,79 @@ namespace Sledge.BspEditor.Providers
 					};
 					face.Vertices.AddRange(side.Vertices);
 					if (face.Vertices.Any()) solid.Data.Add(face);
+				}
+
+				if (sides.Any(x => x.DisplacementData != null))
+				{
+					var displacementSide = sides.First(x => x.DisplacementData != null);
+					var face = new Displacement(generator.Next("Face"))
+					{
+						Plane = displacementSide.Plane.ToStandardPlane(),
+						Texture = displacementSide.Texture,
+					};
+					var power = (int)Math.Pow(2, displacementSide.DisplacementData.Power);
+					var power1 = displacementSide.DisplacementData.Power;
+					var rowCount = power + 1;
+					var begin = displacementSide.DisplacementData.StartPosition;
+					var rowEnd = displacementSide;
+					var mesh = new Vector3[rowCount, rowCount];
+
+					Vector3 v00 = displacementSide.Vertices[0];
+					Vector3 v10 = displacementSide.Vertices[1];
+					Vector3 v11 = displacementSide.Vertices[2];
+					Vector3 v01 = displacementSide.Vertices[3];
+					var res = rowCount;
+					var normals = displacementSide.DisplacementData.Normals.Values.ToArray();
+					var distances = displacementSide.DisplacementData.Distances.Values.ToArray();
+
+					var vertices1 = new List<Vector3>();
+
+					for (int i = 0; i < rowCount; i++)
+					{
+						float u = (float)i / (float)(rowCount - 1); // Interpolation factor along one axis
+						for (int j = 0; j < rowCount; j++)
+						{
+							float v = (float)j / (float)(rowCount - 1); // Interpolation factor along the other axis
+							mesh[i, j] = (1 - u) * (1 - v) * v00 +
+												 u * (1 - v) * v10 +
+												 u * v * v11 +
+												 (1 - u) * v * v01;
+							vertices1.Add(mesh[i, j]);
+							mesh[i, j] += normals[j][j] * distances[i][j];
+						}
+					}
+
+					Vector3[] vertices = new Vector3[res * res];
+					for (int i = 0; i < res; i++)
+					{
+						for (int j = 0; j < res; j++)
+						{
+							vertices[i * res + j] = mesh[i, j];
+						}
+					}
+					List<Vector3[]> trianglesVertices = new List<Vector3[]>();
+					for (int i = 0; i < power; i++)
+					{
+						for (int j = 0; j < power; j++)
+						{
+							trianglesVertices.Add(new Vector3[]
+							{
+								mesh[i, j],
+								mesh[i + 1, j],
+								mesh[i, j + 1],
+							});
+							trianglesVertices.Add(new Vector3[]
+							{
+								mesh[i + 1, j],
+								mesh[i + 1, j + 1],
+								mesh[i, j + 1],
+							});
+						}
+					}
+
+					solid.Data.Remove(x => x is Face);
+					face.Vertices.AddRange(vertices);
+					solid.Data.Add(face);
 				}
 
 				solid.DescendantsChanged();
