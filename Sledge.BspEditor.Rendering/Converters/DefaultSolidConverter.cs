@@ -193,31 +193,38 @@ namespace Sledge.BspEditor.Rendering.Converters
 						for (uint i = 1; i < rows; i++)
 						{
 							indices[si++] = (j * rows) + offs + i - 1;
-							indices[si++] = (j * rows) + offs + i + rows;
 							indices[si++] = (j * rows) + offs + i;
+							indices[si++] = (j * rows) + offs + i + rows;
 
 							indices[si++] = (j * rows) + offs + i - 1 + rows;
-							indices[si++] = (j * rows) + offs + i + rows;
 							indices[si++] = (j * rows) + offs + i - 1;
-
-							//indices[si++] = offs + (rows * j) - 1;
-							//indices[si++] = offs + (rows * j);
-							//indices[si++] = offs + i;
+							indices[si++] = (j * rows) + offs + i + rows;
 						}
 					}
 
-					for (uint i = 1; i < numFaceVerts; i++)
+					//for (uint i = 1; i < numFaceVerts; i++)
+					//{
+					//	indices[wi++] = offs + i - 1;
+					//	indices[wi++] = offs + i;
+					//	indices[wi++] = offs + i + rows;
+					//	indices[wi++] = offs + i;
+					//}
+
+					for (uint j = 0; j < rows - 1; j++)
 					{
-						indices[wi++] = offs + i - 1;
-						indices[wi++] = offs + i;
-						indices[wi++] = offs + i + rows;
-						indices[wi++] = offs + i;
-						//indices[wi++] = offs + i + rows;
-						//indices[wi++] = offs + i - 1;
+						for (uint i = 1; i < rows; i++)
+						{
+							indices[wi++] = (j * rows) + offs + i - 1;
+							indices[wi++] = (j * rows) + offs + i;
+							indices[wi++] = (j * rows) + offs + i;
+							indices[wi++] = (j * rows) + offs + i + rows;
 
+							indices[wi++] = (j * rows) + offs + i - 1 + rows;
+							indices[wi++] = (j * rows) + offs + i - 1;
+							indices[wi++] = (j * rows) + offs + i - 1;
+							indices[wi++] = (j * rows) + offs + i + rows;
+						}
 					}
-					Console.WriteLine(1);
-
 				}
 				else
 				{
