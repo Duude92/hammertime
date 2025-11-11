@@ -909,7 +909,7 @@ namespace Sledge.BspEditor.Providers
 				}
 				Dictionary<string, Vector3[]> ReadRowVector3Array(SerialisedObject obj, int power, string property)
 				{
-					int vertices = (power * power) + 1;
+					int vertices = (int)MathF.Pow(2, power) + 1;
 
 					if (obj.Children.Any(x => x.Name == property))
 					{
