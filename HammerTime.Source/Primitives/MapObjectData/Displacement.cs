@@ -12,8 +12,12 @@ using Sledge.BspEditor.Primitives;
 
 namespace HammerTime.Source.Primitives.MapObjectData
 {
-	public class Displacement : Face
+	public class Displacement : IMapObjectData, ITransformable, ITextured
 	{
+		public long ID { get; }
+		public Texture Texture { get; set; }
+		public VertexCollection Vertices { get; }
+		public Veldrid.Texture LightMap { get; set; }
 
 		/// <summary>
 		/// Used for lightmap UVs
@@ -28,14 +32,14 @@ namespace HammerTime.Source.Primitives.MapObjectData
 
 		public Vector3 Origin => Vertices.Origin;
 
-		public Displacement(long id) : base(id)
+		public Displacement(long id)
 		{
-			//ID = id;
-			//Texture = new Texture();
-			//Vertices = new VertexCollection();
+			ID = id;
+			Texture = new Texture();
+			Vertices = new VertexCollection();
 		}
 
-		public Displacement(SerialisedObject obj) : base(obj)
+		public Displacement(SerialisedObject obj)
 		{
 			//ID = obj.Get("ID", ID);
 
