@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Sledge.BspEditor.Rendering\Sledge.BspEditor.Rendering.csproj" />
     <ProjectReference Include="..\Sledge.BspEditor\Sledge.BspEditor.csproj" />
   </ItemGroup>
 
