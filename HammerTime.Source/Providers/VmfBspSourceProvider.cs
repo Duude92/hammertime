@@ -23,7 +23,7 @@ using Polygon = Sledge.DataStructures.Geometric.Precision.Polygon;
 using Polyhedron = Sledge.DataStructures.Geometric.Precision.Polyhedron;
 using PVector3 = Sledge.DataStructures.Geometric.Precision.Vector3;
 
-namespace Sledge.BspEditor.Providers
+namespace HammerTime.Source.Providers
 {
 	[Export(typeof(IBspSourceProvider))]
 	public class VmfBspSourceProvider : IBspSourceProvider

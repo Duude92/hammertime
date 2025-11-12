@@ -12,8 +12,10 @@ using System.Runtime.Serialization;
 using Vortice.Mathematics;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using Plane = Sledge.DataStructures.Geometric.Plane;
+using Sledge.BspEditor.Primitives.MapObjectData;
+using Sledge.BspEditor.Primitives;
 
-namespace Sledge.BspEditor.Primitives.MapObjectData
+namespace HammerTime.Source.Primitives.MapObjectData
 {
 	public class Displacement : Face
 	{
