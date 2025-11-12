@@ -53,7 +53,9 @@ namespace Sledge.BspEditor.Rendering.Converters
 			var numVertices = (uint)faces.Sum(x => x.Vertices.Count);
 
 			// Pack the indices like this [ solid1 ... solidn ] [ wireframe1 ... wireframe n ]
-			var hasDisplacement = faces.Any(x => x is Displacement);
+			var displacement = faces.FirstOrDefault(x => x is Displacement) as Displacement;
+			var hasDisplacement = displacement != null;
+
 			uint numSolidIndices;
 			if (!hasDisplacement)
 				numSolidIndices = (uint)faces.Sum(x => (x.Vertices.Count - 2) * 3);
@@ -202,28 +204,33 @@ namespace Sledge.BspEditor.Rendering.Converters
 						}
 					}
 
-					//for (uint i = 1; i < numFaceVerts; i++)
-					//{
-					//	indices[wi++] = offs + i - 1;
-					//	indices[wi++] = offs + i;
-					//	indices[wi++] = offs + i + rows;
-					//	indices[wi++] = offs + i;
-					//}
-
 					for (uint j = 0; j < rows - 1; j++)
 					{
+						var u = (j * rows) + offs;
 						for (uint i = 1; i < rows; i++)
 						{
-							indices[wi++] = (j * rows) + offs + i - 1;
-							indices[wi++] = (j * rows) + offs + i;
-							indices[wi++] = (j * rows) + offs + i;
-							indices[wi++] = (j * rows) + offs + i + rows;
+							var v = u + i;
+							//horizontal south
+							indices[wi++] = v - 1;
+							indices[wi++] = v;
 
-							indices[wi++] = (j * rows) + offs + i - 1 + rows;
-							indices[wi++] = (j * rows) + offs + i - 1;
-							indices[wi++] = (j * rows) + offs + i - 1;
-							indices[wi++] = (j * rows) + offs + i + rows;
+							//vertical right
+							indices[wi++] = v;
+							indices[wi++] = v + rows;
+
+							//diagonal
+							indices[wi++] = v - 1;
+							indices[wi++] = v + rows;
 						}
+						//vertical left single line
+						indices[wi++] = u;
+						indices[wi++] = u + rows;
+					}
+					for (uint i = 1; i < rows; i++)
+					{
+						//horizontal north single line
+						indices[wi++] = ((rows - 1) * rows) + i - 1;
+						indices[wi++] = ((rows - 1) * rows) + i;
 					}
 				}
 				else
