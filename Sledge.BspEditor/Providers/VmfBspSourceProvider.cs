@@ -741,10 +741,13 @@ namespace Sledge.BspEditor.Providers
 					var rowEnd = displacementSide;
 					var mesh = new Vector3[rowCount, rowCount];
 
-					Vector3 v00 = displacementSide.Vertices[3];
-					Vector3 v10 = displacementSide.Vertices[2];
-					Vector3 v11 = displacementSide.Vertices[1];
-					Vector3 v01 = displacementSide.Vertices[0];
+					var topleftIdx = displacementSide.Vertices.IndexOf(displacementSide.DisplacementData.StartPosition);
+					var quadIdxs = displacementSide.Vertices.Skip(topleftIdx).Concat(displacementSide.Vertices.Take(topleftIdx)).ToArray();
+
+					Vector3 v00 = quadIdxs[0];
+					Vector3 v10 = quadIdxs[1];
+					Vector3 v11 = quadIdxs[2];
+					Vector3 v01 = quadIdxs[3];
 					var res = rowCount;
 					var normals = displacementSide.DisplacementData.Normals.Values.ToArray();
 					var distances = displacementSide.DisplacementData.Distances.Values.ToArray();
@@ -761,7 +764,7 @@ namespace Sledge.BspEditor.Providers
 												 u * (1 - v) * v10 +
 												 u * v * v11 +
 												 (1 - u) * v * v01;
-							mesh[i, j] += normals[j][i] * distances[j][i];
+							mesh[i, j] += normals[i][j] * distances[i][j];
 							vertices1.Add(mesh[i, j]);
 						}
 					}

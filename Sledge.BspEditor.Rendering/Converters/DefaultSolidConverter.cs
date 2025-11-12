@@ -192,12 +192,12 @@ namespace Sledge.BspEditor.Rendering.Converters
 					{
 						for (uint i = 1; i < rows; i++)
 						{
-							indices[si++] = (j * rows) + offs + i - 1;
 							indices[si++] = (j * rows) + offs + i;
+							indices[si++] = (j * rows) + offs + i - 1;
 							indices[si++] = (j * rows) + offs + i + rows;
 
-							indices[si++] = (j * rows) + offs + i - 1 + rows;
 							indices[si++] = (j * rows) + offs + i - 1;
+							indices[si++] = (j * rows) + offs + i - 1 + rows;
 							indices[si++] = (j * rows) + offs + i + rows;
 						}
 					}
