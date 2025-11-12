@@ -11,4 +11,14 @@
     <ProjectReference Include="..\Sledge.BspEditor\Sledge.BspEditor.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="Environment\Source\SourceEnvironmentEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Providers\Texture\" />
+  </ItemGroup>
+
 </Project>

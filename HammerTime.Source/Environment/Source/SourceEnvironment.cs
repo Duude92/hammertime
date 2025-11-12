@@ -8,12 +8,7 @@ using Sledge.DataStructures.GameData;
 using Sledge.FileSystem;
 using Sledge.Providers.GameData;
 using Sledge.Providers.Texture;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using Path = System.IO.Path;
 
 namespace Sledge.BspEditor.Environment.Source
