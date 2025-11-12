@@ -53,8 +53,9 @@ namespace Sledge.BspEditor.Rendering.Converters
 			var numVertices = (uint)faces.Sum(x => x.Vertices.Count);
 
 			// Pack the indices like this [ solid1 ... solidn ] [ wireframe1 ... wireframe n ]
-			var displacement = faces.FirstOrDefault(x => x is Displacement) as Displacement;
-			var hasDisplacement = displacement != null;
+			//var displacement = faces.FirstOrDefault(x => x is Displacement) as Displacement;
+			//var hasDisplacement = displacement != null;
+			var hasDisplacement = false;
 
 			uint numSolidIndices;
 			if (!hasDisplacement)
@@ -187,7 +188,7 @@ namespace Sledge.BspEditor.Rendering.Converters
 
 
 				}
-				if (face is Displacement)
+				/*if (face is Displacement)
 				{
 					var rows = (uint)Math.Sqrt(numFaceVerts);
 					for (uint j = 0; j < rows - 1; j++)
@@ -234,7 +235,7 @@ namespace Sledge.BspEditor.Rendering.Converters
 						indices[wi++] = x + i;
 					}
 				}
-				else
+				else*/
 				{
 					// Triangles - [0 1 2]  ... [0 n-1 n]
 					for (uint i = 2; i < numFaceVerts; i++)
