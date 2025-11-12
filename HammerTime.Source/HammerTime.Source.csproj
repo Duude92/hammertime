@@ -17,8 +17,4 @@
     </Compile>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Providers\Texture\" />
-  </ItemGroup>
-
 </Project>
