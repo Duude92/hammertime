@@ -1,25 +1,21 @@
-﻿using Sledge.BspEditor.Documents;
+﻿using HammerTime.Source.Primitives.MapObjectData;
+using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Environment;
 using Sledge.BspEditor.Grid;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
+using Sledge.BspEditor.Providers;
 using Sledge.Common;
 using Sledge.Common.Shell.Documents;
 using Sledge.Common.Transport;
 using Sledge.DataStructures.Geometric;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Globalization;
-using System.IO;
-using System.Linq;
 using System.Numerics;
-using System.Threading.Tasks;
 using Plane = Sledge.DataStructures.Geometric.Precision.Plane;
-using Polygon = Sledge.DataStructures.Geometric.Precision.Polygon;
 using Polyhedron = Sledge.DataStructures.Geometric.Precision.Polyhedron;
 using PVector3 = Sledge.DataStructures.Geometric.Precision.Vector3;
 

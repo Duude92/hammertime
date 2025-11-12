@@ -1,16 +1,11 @@
 ﻿using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Transport;
 using Sledge.DataStructures.Geometric;
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
-using System.Linq;
 using System.Numerics;
 using System.Runtime.Serialization;
-using Vortice.Mathematics;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using Plane = Sledge.DataStructures.Geometric.Plane;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives;
