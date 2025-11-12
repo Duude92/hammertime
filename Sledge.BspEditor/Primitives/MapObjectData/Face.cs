@@ -262,7 +262,7 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
 			private readonly List<Vector3> _list = new List<Vector3>();
 			private Plane _plane = new Plane(Vector3.UnitZ, Vector3.Zero);
 
-			internal Plane Plane
+			public Plane Plane
 			{
 				get => _plane;
 				set
@@ -274,7 +274,7 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
 			public int Count => _list.Count;
 			public bool IsReadOnly => false;
 
-			internal Vector3 Origin => !_list.Any()
+			public Vector3 Origin => !_list.Any()
 				? Vector3.Zero
 				: _list.Aggregate(Vector3.Zero, (a, b) => a + b) / _list.Count;
 
