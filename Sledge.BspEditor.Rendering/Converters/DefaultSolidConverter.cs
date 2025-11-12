@@ -226,11 +226,12 @@ namespace Sledge.BspEditor.Rendering.Converters
 						indices[wi++] = u;
 						indices[wi++] = u + rows;
 					}
+					var x = ((rows - 1) * rows);
 					for (uint i = 1; i < rows; i++)
 					{
 						//horizontal north single line
-						indices[wi++] = ((rows - 1) * rows) + i - 1;
-						indices[wi++] = ((rows - 1) * rows) + i;
+						indices[wi++] = x + i - 1;
+						indices[wi++] = x + i;
 					}
 				}
 				else
