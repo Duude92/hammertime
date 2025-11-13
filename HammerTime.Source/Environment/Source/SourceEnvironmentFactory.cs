@@ -1,12 +1,11 @@
-﻿using Sledge.BspEditor.Environment.Goldsource;
-using System;
+﻿using Sledge.BspEditor.Environment;
+using Sledge.BspEditor.Environment.Goldsource;
 using System.ComponentModel.Composition;
 using System.Globalization;
-using System.Linq;
 using static Sledge.BspEditor.Environment.EnvironmentHelper;
 
 
-namespace Sledge.BspEditor.Environment.Source
+namespace HammerTime.Source.BspEditor.Environment.Source
 {
 	[Export(typeof(IEnvironmentFactory))]
 

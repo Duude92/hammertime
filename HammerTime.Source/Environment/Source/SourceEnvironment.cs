@@ -1,5 +1,6 @@
 ﻿using Sledge.BspEditor.Compile;
 using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Environment;
 using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
@@ -11,7 +12,7 @@ using Sledge.Providers.Texture;
 using System.Reflection;
 using Path = System.IO.Path;
 
-namespace Sledge.BspEditor.Environment.Source
+namespace HammerTime.Source.BspEditor.Environment.Source
 {
 	internal class SourceEnvironment : IEnvironment
 	{

@@ -1,6 +1,6 @@
 using Sledge.BspEditor.Environment.Controls;
 
-namespace Sledge.BspEditor.Environment.Goldsource
+namespace HammerTime.Source.BspEditor.Environment
 {
     partial class SourceEnvironmentEditor
     {

@@ -1011,7 +1011,7 @@ namespace HammerTime.Source.Providers
 			}
 			public long ID { get; set; }
 			public Plane Plane { get; set; }
-			public Texture Texture { get; set; }
+			public Sledge.BspEditor.Primitives.Texture Texture { get; set; }
 			public float LightmapScale { get; set; }
 			public string SmoothingGroups { get; set; } // ?
 			public List<Vector3> Vertices { get; set; }
@@ -1036,7 +1036,7 @@ namespace HammerTime.Source.Providers
 					Plane = new Plane(PVector3.UnitZ, 0);
 				}
 
-				Texture = new Texture
+				Texture = new Sledge.BspEditor.Primitives.Texture
 				{
 					Name = obj.Get("material", ""),
 					Rotation = obj.Get("rotation", 0f)

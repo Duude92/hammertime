@@ -1,15 +1,9 @@
-﻿using Sledge.Common.Logging;
-using Sledge.FileSystem;
-using Sledge.Providers.Texture.Wad;
-using System;
-using System.Collections.Generic;
+﻿using Sledge.FileSystem;
+using Sledge.Providers.Texture;
 using System.ComponentModel.Composition;
-using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace Sledge.Providers.Texture.Vmt
+namespace HammerTime.Source.Providers.Texture.Vmt
 {
 	[Export("Vmt", typeof(ITexturePackageProvider))]
 	internal class VmtMaterialPackageProvider : ITexturePackageProvider

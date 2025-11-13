@@ -6,15 +6,11 @@ using Sledge.Rendering.Pipelines;
 using Sledge.Rendering.Primitives;
 using Sledge.Rendering.Renderables;
 using Sledge.Rendering.Viewports;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
-using System.Security.Cryptography.Xml;
 using Veldrid;
 
-namespace Sledge.Providers.Model.Mdl44
+namespace HammerTime.Source.Providers.Model.Mdl44
 {
 	internal class SourceModelRenderable : IModelRenderable
 	{

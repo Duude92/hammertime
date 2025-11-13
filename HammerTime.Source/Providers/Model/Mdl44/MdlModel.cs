@@ -5,24 +5,20 @@ using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.Pipelines;
 using Sledge.Rendering.Primitives;
 using Sledge.Rendering.Viewports;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Numerics;
 using Veldrid;
 
-namespace Sledge.Providers.Model.Mdl44
+namespace HammerTime.Source.Providers.Model.Mdl44
 {
 	public class MdlModel : IModel
 	{
 		public MdlFile Model { get; }
 
 		private Guid _guid;
-		private Rendering.Resources.Buffer _buffer;
+		private Sledge.Rendering.Resources.Buffer _buffer;
 		private VertexModel3[] _vertices;
 		private uint[] _indices;
-		private Rendering.Resources.Texture[] _textureResources;
+		private Sledge.Rendering.Resources.Texture[] _textureResources;
 		private string[] _materials;
 		private uint _numWireframeIndices;
 		private uint _numTexturedIndices;
@@ -81,7 +77,7 @@ namespace Sledge.Providers.Model.Mdl44
 		{
 			return _materials;
 		}
-		public void SetTexture(Rendering.Resources.Texture[] textures)
+		public void SetTexture(Sledge.Rendering.Resources.Texture[] textures)
 		{
 			_textureResources = textures;
 		}

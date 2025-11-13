@@ -1,9 +1,7 @@
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
-using System.Linq;
 using System.Windows.Forms;
+using Sledge.BspEditor.Environment;
+using Sledge.BspEditor.Environment.Goldsource;
 using Sledge.Common.Logging;
 using Sledge.Common.Translations;
 using Sledge.DataStructures.GameData;
@@ -12,15 +10,15 @@ using Sledge.Providers.GameData;
 using Sledge.Providers.Texture;
 using Sledge.Shell;
 
-namespace Sledge.BspEditor.Environment.Goldsource
+namespace HammerTime.Source.BspEditor.Environment
 {
 	public partial class SourceEnvironmentEditor : UserControl, IEnvironmentEditor
 	{
 		public event EventHandler EnvironmentChanged;
 		public Control Control => this;
 
-		private readonly IGameDataProvider _fgdProvider = Common.Container.Get<IGameDataProvider>("Fgd");
-		private readonly ITexturePackageProvider _wadProvider = Common.Container.Get<ITexturePackageProvider>("Vmt");
+		private readonly IGameDataProvider _fgdProvider = Sledge.Common.Container.Get<IGameDataProvider>("Fgd");
+		private readonly ITexturePackageProvider _wadProvider = Sledge.Common.Container.Get<ITexturePackageProvider>("Vmt");
 
 		private Dictionary<string, bool> _initialObjectCollection = null;
 

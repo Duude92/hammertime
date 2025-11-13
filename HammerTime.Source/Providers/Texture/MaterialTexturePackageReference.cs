@@ -1,11 +1,7 @@
 ﻿using Sledge.FileSystem;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Sledge.Providers.Texture;
 
-namespace Sledge.Providers.Texture
+namespace HammerTime.Source.Providers.Texture
 {
 	internal class MaterialTexturePackageReference : TexturePackageReference
 	{

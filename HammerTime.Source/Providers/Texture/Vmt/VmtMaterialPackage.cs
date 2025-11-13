@@ -1,10 +1,7 @@
 ﻿using Sledge.Formats.Texture.Vtf;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Sledge.Providers.Texture;
 
-namespace Sledge.Providers.Texture.Vmt
+namespace HammerTime.Source.Providers.Texture.Vmt
 {
 	internal class VmtMaterialPackage : TexturePackage
 	{

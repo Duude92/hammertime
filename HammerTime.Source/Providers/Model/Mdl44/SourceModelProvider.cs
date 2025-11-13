@@ -1,6 +1,7 @@
 ﻿using Sledge.FileSystem;
 using Sledge.Formats.Model.Goldsource;
 using Sledge.Formats.Model.Source;
+using Sledge.Providers.Model;
 using Sledge.Providers.Model.Mdl10;
 using Sledge.Rendering.Interfaces;
 using System;
@@ -11,7 +12,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using MdlFile = Sledge.Formats.Model.Source.MdlFile;
 
-namespace Sledge.Providers.Model.Mdl44
+namespace HammerTime.Source.Providers.Model.Mdl44
 {
 	[Export(typeof(IModelProvider))]
 	public class SourceModelProvider : IModelProvider
