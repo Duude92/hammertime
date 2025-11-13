@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Windows.Forms;
+using HammerTime.Source.BspEditor.Environment.Source;
 using Sledge.BspEditor.Environment;
 using Sledge.BspEditor.Environment.Goldsource;
 using Sledge.Common.Logging;
@@ -25,7 +26,7 @@ namespace HammerTime.Source.BspEditor.Environment
 		public IEnvironment Environment
 		{
 			get => GetEnvironment();
-			set => SetEnvironment(value as GoldsourceEnvironment);
+			set => SetEnvironment(value as SourceEnvironment);
 		}
 
 		public SourceEnvironmentEditor()
@@ -136,15 +137,14 @@ namespace HammerTime.Source.BspEditor.Environment
 			EnvironmentChanged?.Invoke(this, e);
 		}
 
-		public void SetEnvironment(GoldsourceEnvironment env)
+		public void SetEnvironment(SourceEnvironment env)
 		{
-			if (env == null) env = new GoldsourceEnvironment();
+			if (env == null) env = new SourceEnvironment();
 
 			txtGameDir.Text = env.BaseDirectory;
 			cmbBaseGame.SelectedItem = env.GameDirectory;
 			cmbGameMod.SelectedItem = env.ModDirectory;
 			cmbGameExe.SelectedItem = env.GameExe;
-			chkLoadHdModels.Checked = env.LoadHdModels;
 
 			lstFgds.Items.Clear();
 			foreach (var fileName in env.FgdFiles)
@@ -163,7 +163,6 @@ namespace HammerTime.Source.BspEditor.Environment
 			txtBuildToolsDirectory.Text = env.ToolsDirectory;
 			chkIncludeToolsDirectory.Checked = env.IncludeToolsDirectoryInEnvironment;
 			cmbBspExe.SelectedItem = env.BspExe;
-			cmbCsgExe.SelectedItem = env.CsgExe;
 			cmbVisExe.SelectedItem = env.VisExe;
 			cmbRadExe.SelectedItem = env.RadExe;
 
@@ -185,10 +184,6 @@ namespace HammerTime.Source.BspEditor.Environment
 			nonRendTextBox.Text = env.NonRenderableTextures?.Aggregate("", (current, next) => current + (next + ";")).Trim();
 
 			cklTexturePackages.Items.Clear();
-			foreach (var exc in env.ExcludedWads)
-			{
-				cklTexturePackages.Items.Add(exc, false); // all wads not in this list will be excluded
-			}
 			UpdateTexturePackages();
 
 			lstAdditionalTextures.Items.Clear();
@@ -199,15 +194,14 @@ namespace HammerTime.Source.BspEditor.Environment
 			UpdateWadList();
 		}
 
-		public GoldsourceEnvironment GetEnvironment()
+		public SourceEnvironment GetEnvironment()
 		{
-			return new GoldsourceEnvironment()
+			return new SourceEnvironment()
 			{
 				BaseDirectory = txtGameDir.Text,
 				GameDirectory = Convert.ToString(cmbBaseGame.SelectedItem, CultureInfo.InvariantCulture),
 				ModDirectory = Convert.ToString(cmbGameMod.SelectedItem, CultureInfo.InvariantCulture),
 				GameExe = Convert.ToString(cmbGameExe.SelectedItem, CultureInfo.InvariantCulture),
-				LoadHdModels = chkLoadHdModels.Checked,
 
 				FgdFiles = lstFgds.Items.OfType<ListViewItem>().Select(x => x.SubItems[1].Text).Where(File.Exists).ToList(),
 				DefaultPointEntity = Convert.ToString(cmbDefaultPointEntity.SelectedItem, CultureInfo.InvariantCulture),
@@ -220,7 +214,6 @@ namespace HammerTime.Source.BspEditor.Environment
 				ToolsDirectory = txtBuildToolsDirectory.Text,
 				IncludeToolsDirectoryInEnvironment = chkIncludeToolsDirectory.Checked,
 				BspExe = Convert.ToString(cmbBspExe.SelectedItem, CultureInfo.InvariantCulture),
-				CsgExe = Convert.ToString(cmbCsgExe.SelectedItem, CultureInfo.InvariantCulture),
 				VisExe = Convert.ToString(cmbVisExe.SelectedItem, CultureInfo.InvariantCulture),
 				RadExe = Convert.ToString(cmbRadExe.SelectedItem, CultureInfo.InvariantCulture),
 
@@ -237,7 +230,6 @@ namespace HammerTime.Source.BspEditor.Environment
 				DefaultGridSize = (float)gridUpDown.Value,
 
 				DefaultTextureScale = nudDefaultTextureScale.Value,
-				ExcludedWads = _initialObjectCollection.Where(x => !x.Value).Select(x => x.Key).ToList(),
 				AdditionalTextureFiles = lstAdditionalTextures.Items.OfType<ListViewItem>().Select(x => x.SubItems[1].Text).Where(File.Exists).ToList(),
 
 				CordonTexture = cordonTextureText.Text,

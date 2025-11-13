@@ -14,7 +14,7 @@ using Path = System.IO.Path;
 
 namespace HammerTime.Source.BspEditor.Environment.Source
 {
-	internal class SourceEnvironment : IEnvironment
+	public class SourceEnvironment : IEnvironment
 	{
 		public string Engine => "Source";
 
