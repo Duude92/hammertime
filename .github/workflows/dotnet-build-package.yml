@@ -28,7 +28,7 @@ jobs:
     - name: Extract version from tag
       id: version
       run: |
-        $version = "${{ github.ref_name }}".TrimStart("v")
+        $version = "${{ github.ref_name }}".TrimStart("v").TrimEnd("-test")
         echo "version=$version" >> $env:GITHUB_ENV
     - name: Set assembly version
       run: |
