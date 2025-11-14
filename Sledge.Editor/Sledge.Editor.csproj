@@ -192,7 +192,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup Condition="'$(Platform)'=='AnyCPU'">
-    <Content Include="..\cimgui_x64.dll">
+    <Content Include="..\cimgui_x86.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Link>cimgui.dll</Link>
     </Content>
