@@ -44,6 +44,9 @@ jobs:
     - name: Set app version
       run: |
         Set-Content -Path ./Build/Sledge.Editor.New.Installer.nsi -Value ((Get-Content './Build/Sledge.Editor.New.Installer.nsi' -Raw) -replace "{version}", "$env:version")
+    - name: Set app arch
+      run: |
+        Set-Content -Path ./Build/Sledge.Editor.New.Installer.nsi -Value ((Get-Content './Build/Sledge.Editor.New.Installer.nsi' -Raw) -replace "{arch}", "${{ matrix.arch }}")
     - name: 'Install makensis (choco)'
       run: choco install nsis
     - name: Build installer
@@ -54,12 +57,14 @@ jobs:
       uses: vimtor/action-zip@v1.1
       with:
         files: ./bin/
-        dest: ./HammerTime.zip
+        dest: ./HammerTime.${{ matrix.arch }}.zip
     - name: Save Artifact
       uses: actions/upload-artifact@v4
       with:
         name: build-${{ matrix.arch }}
-        path: ./Hammertime*/\.(exe|zip)/*
+        path: |
+            ./Hammertime.*.exe
+            ./Hammertime.${{ matrix.arch }}.zip
 
   release:
     permissions: write-all
