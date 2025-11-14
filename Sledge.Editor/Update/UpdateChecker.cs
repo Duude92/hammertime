@@ -25,7 +25,7 @@ namespace Sledge.Editor.Update
 		private string _updateFileToInstall;
 
 		[Setting("CheckForUpdates")] private bool _checkForUpdates = true;
-
+		[Setting("Architecture")] private string _architecture = "x86";
 		public string UpdateDownloadedTitle { get; set; }
 		public string UpdateDownloadedMessage { get; set; }
 
