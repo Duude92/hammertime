@@ -3,7 +3,7 @@
 
 ; Installer Info
 Name "Hammertime"
-OutFile "../Hammertime.Editor.{version}.exe"
+OutFile "../Hammertime.Editor.{version}.{arch}.exe"
 InstallDir "$PROGRAMFILES\HammertimeEditor"
 InstallDirRegKey HKLM "Software\Hammertime\Editor" "InstallDir"
 RequestExecutionLevel admin
