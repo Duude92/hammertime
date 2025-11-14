@@ -53,20 +53,8 @@ namespace Sledge.BspEditor.Rendering.Converters
 			var numVertices = (uint)faces.Sum(x => x.Vertices.Count);
 
 			// Pack the indices like this [ solid1 ... solidn ] [ wireframe1 ... wireframe n ]
-			//var displacement = faces.FirstOrDefault(x => x is Displacement) as Displacement;
-			//var hasDisplacement = displacement != null;
-			var hasDisplacement = false;
-
-			uint numSolidIndices;
-			if (!hasDisplacement)
-				numSolidIndices = (uint)faces.Sum(x => (x.Vertices.Count - 2) * 3);
-			else
-				numSolidIndices = (uint)faces.Sum(x => (x.Vertices.Count - 1) * 4);
-			uint numWireframeIndices = 0;
-			if (!hasDisplacement)
-				numWireframeIndices = numVertices * 2;
-			else
-				numWireframeIndices = numVertices * 6;
+			var numSolidIndices = (uint)faces.Sum(x => (x.Vertices.Count - 2) * 3);
+			var numWireframeIndices = numVertices * 2;
 			var points = new VertexStandard[numVertices];
 			var shadowPoints = new VertexStandard[numVertices];
 			var indices = new uint[numSolidIndices + numWireframeIndices];
@@ -188,68 +176,20 @@ namespace Sledge.BspEditor.Rendering.Converters
 
 
 				}
-				/*if (face is Displacement)
+
+
+				// Triangles - [0 1 2]  ... [0 n-1 n]
+				for (uint i = 2; i < numFaceVerts; i++)
 				{
-					var rows = (uint)Math.Sqrt(numFaceVerts);
-					for (uint j = 0; j < rows - 1; j++)
-					{
-						for (uint i = 1; i < rows; i++)
-						{
-							indices[si++] = (j * rows) + offs + i;
-							indices[si++] = (j * rows) + offs + i - 1;
-							indices[si++] = (j * rows) + offs + i + rows;
-
-							indices[si++] = (j * rows) + offs + i - 1;
-							indices[si++] = (j * rows) + offs + i - 1 + rows;
-							indices[si++] = (j * rows) + offs + i + rows;
-						}
-					}
-
-					for (uint j = 0; j < rows - 1; j++)
-					{
-						var u = (j * rows) + offs;
-						for (uint i = 1; i < rows; i++)
-						{
-							var v = u + i;
-							//horizontal south
-							indices[wi++] = v - 1;
-							indices[wi++] = v;
-
-							//vertical right
-							indices[wi++] = v;
-							indices[wi++] = v + rows;
-
-							//diagonal
-							indices[wi++] = v - 1;
-							indices[wi++] = v + rows;
-						}
-						//vertical left single line
-						indices[wi++] = u;
-						indices[wi++] = u + rows;
-					}
-					var x = ((rows - 1) * rows);
-					for (uint i = 1; i < rows; i++)
-					{
-						//horizontal north single line
-						indices[wi++] = x + i - 1;
-						indices[wi++] = x + i;
-					}
+					indices[si++] = offs;
+					indices[si++] = offs + i - 1;
+					indices[si++] = offs + i;
 				}
-				else*/
+				// Lines - [0 1] ... [n-1 n] [n 0]
+				for (uint i = 0; i < numFaceVerts; i++)
 				{
-					// Triangles - [0 1 2]  ... [0 n-1 n]
-					for (uint i = 2; i < numFaceVerts; i++)
-					{
-						indices[si++] = offs;
-						indices[si++] = offs + i - 1;
-						indices[si++] = offs + i;
-					}
-					// Lines - [0 1] ... [n-1 n] [n 0]
-					for (uint i = 0; i < numFaceVerts; i++)
-					{
-						indices[wi++] = offs + i;
-						indices[wi++] = offs + (i == numFaceVerts - 1 ? 0 : i + 1);
-					}
+					indices[wi++] = offs + i;
+					indices[wi++] = offs + (i == numFaceVerts - 1 ? 0 : i + 1);
 				}
 
 			}
@@ -260,15 +200,7 @@ namespace Sledge.BspEditor.Rendering.Converters
 			uint texOffset = 0;
 			foreach (var f in faces)
 			{
-				uint texInd = 0;
-				if (!hasDisplacement)
-				{
-					texInd = (uint)(f.Vertices.Count - 2) * 3;
-				}
-				else
-				{
-					texInd = (uint)(f.Vertices.Count - 1) * (4);
-				}
+				var texInd  = (uint)(f.Vertices.Count - 2) * 3;
 
 				if ((hideNull && tc.IsNullTexture(f.Texture.Name)) || (hideClip && tc.IsClipTexture(f.Texture.Name) || (skybox && f.Texture.Name.ToLower() == "sky")))
 				{
