@@ -86,7 +86,7 @@ namespace Sledge.Editor.Update
 				form.Show(_shell);
 			});
 		}
-		private BuildInfo GetBuildInfo()
+		private static BuildInfo GetBuildInfo()
 		{
 			var path = "./build";
 			if (!File.Exists(path)) return new BuildInfo { BuildTime = new DateTime(), Tag = "latest" };
@@ -117,8 +117,13 @@ namespace Sledge.Editor.Update
 		{
 			return typeof(Program).Assembly.GetName().Version;
 		}
+		public static async Task<UpdateReleaseDetails> GetLatestReleaseDetails()
+		{
+			var buildInfo = GetBuildInfo();
+			return await GetLatestReleaseDetails(buildInfo.Tag);
+		}
 
-		private async Task<UpdateReleaseDetails> GetLatestReleaseDetails(string tag)
+		private static async Task<UpdateReleaseDetails> GetLatestReleaseDetails(string tag)
 		{
 			using (var wc = new WebClient())
 			{
@@ -126,7 +131,7 @@ namespace Sledge.Editor.Update
 				{
 					wc.Headers.Add(HttpRequestHeader.UserAgent, "Duude92/hammertime");
 					var str = await wc.DownloadStringTaskAsync(GithubReleasesApiUrl);
-					return new UpdateReleaseDetails(str, tag);
+					return new UpdateReleaseDetails(str, tag, UpdateChecker.Architecture);
 				}
 				catch (WebException ex)
 				{
