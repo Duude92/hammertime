@@ -28,7 +28,7 @@ jobs:
     - name: Extract version from tag
       id: version
       run: |
-        $version = "${{ github.ref_name }}".TrimStart("v").TrimEnd("-test")
+        $version = "${{ github.ref_name }}".TrimStart("v")
         echo "version=$version" >> $env:GITHUB_ENV
     - name: Set assembly version
       run: |
@@ -83,4 +83,4 @@ jobs:
         prerelease: false
         files: |
             ./dist/x86/*
-        automatic_release_tag: test-release
+        automatic_release_tag: latest
