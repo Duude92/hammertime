@@ -1,91 +1,102 @@
-﻿using System;
+﻿using LogicAndTrick.Oy;
+using Sledge.Common.Translations;
+using Sledge.Editor.Properties;
+using Sledge.Shell.Forms;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using LogicAndTrick.Oy;
-using Sledge.Common.Translations;
-using Sledge.Editor.Properties;
-using Sledge.Shell.Forms;
 
 namespace Sledge.Editor.Update
 {
 	public partial class UpdaterForm : BaseForm
-    {
-        private readonly UpdateReleaseDetails _details;
-        private readonly string _filename;
-        private readonly string _downloadingLabel;
-
+	{
+		private UpdateReleaseDetails _details;
+		private string _filename;
+		private readonly string _downloadingLabel;
 		public UpdaterForm(UpdateReleaseDetails details, ITranslationStringProvider translations)
-        {
-            _details = details;
-            _filename = Path.Combine(Path.GetTempPath(), details.FileName);
+		{
+			_details = details;
+			_filename = Path.Combine(Path.GetTempPath(), details.FileName);
 
-            InitializeComponent();
+			InitializeComponent();
+			archBox.Text = UpdateChecker.Architecture ?? "x86";
 
-            var prefix = GetType().FullName;
+			var prefix = GetType().FullName;
 
-            Icon = Resources.Sledge;
-            Text = translations.GetString(prefix + ".Title");
-            StatusLabel.Text = translations.GetString(prefix + ".UpdateAvailable");
-            _downloadingLabel = translations.GetString(prefix + ".Downloading") ?? "";
+			Icon = Resources.Sledge;
+			Text = translations.GetString(prefix + ".Title");
+			StatusLabel.Text = translations.GetString(prefix + ".UpdateAvailable");
+			_downloadingLabel = translations.GetString(prefix + ".Downloading") ?? "";
 
-            ReleaseDetails.Text = $"{_details.Name}\r\n\r\n{_details.Changelog.Replace("\r", "").Replace("\n", "\r\n")}";
-        }
+			ReleaseDetails.Text = $"{_details.Name}\r\n\r\n{_details.Changelog.Replace("\r", "").Replace("\n", "\r\n")}";
+		}
+		private async Task UpdateDetails()
+		{
+			_details = await CheckForUpdates.GetLatestReleaseDetails();
+			_filename = Path.Combine(Path.GetTempPath(), _details.FileName);
+		}
 
-        private readonly CancellationTokenSource _tokenSource = new CancellationTokenSource();
+		private readonly CancellationTokenSource _tokenSource = new CancellationTokenSource();
 
-        private void UpdaterFormFormClosing(object sender, FormClosingEventArgs e)
-        {
-            _tokenSource.Cancel();
-        }
+		private void UpdaterFormFormClosing(object sender, FormClosingEventArgs e)
+		{
+			_tokenSource.Cancel();
+		}
 
-        private void DownloadButtonClicked(object sender, EventArgs e)
-        {
-            DownloadUpdate(_details.DownloadUrl, _filename, _tokenSource.Token);
-        }
+		private void DownloadButtonClicked(object sender, EventArgs e)
+		{
+			DownloadUpdate(_details.DownloadUrl, _filename, _tokenSource.Token);
+		}
 
-        private Task DownloadUpdate(string url, string file, CancellationToken token)
-        {
-            StartButton.Enabled = false;
+		private Task DownloadUpdate(string url, string file, CancellationToken token)
+		{
+			StartButton.Enabled = false;
 
-            var tcs = new TaskCompletionSource<bool>();
-            var wc = new WebClient();
+			var tcs = new TaskCompletionSource<bool>();
+			var wc = new WebClient();
 
-            wc.Headers.Add(HttpRequestHeader.UserAgent, "LogicAndTrick/sledge");
-            wc.Headers.Remove(HttpRequestHeader.Accept);
-            wc.Headers.Add(HttpRequestHeader.Accept, "application/octet-stream");
+			wc.Headers.Add(HttpRequestHeader.UserAgent, "LogicAndTrick/sledge");
+			wc.Headers.Remove(HttpRequestHeader.Accept);
+			wc.Headers.Add(HttpRequestHeader.Accept, "application/octet-stream");
 
-            wc.DownloadFileCompleted += (obj, args) =>
-            {
-                tcs.SetResult(true);
-                Oy.Publish("Sledge:Editor:UpdateDownloaded", _filename);
-                if (InvokeRequired) BeginInvoke(new Action(Close));
-                else Close();
-            };
-            wc.DownloadProgressChanged += UpdateProgress;
-            token.Register(wc.CancelAsync);
-            wc.DownloadFileAsync(new Uri(url), file);
-            return tcs.Task;
-        }
+			wc.DownloadFileCompleted += (obj, args) =>
+			{
+				tcs.SetResult(true);
+				Oy.Publish("Sledge:Editor:UpdateDownloaded", _filename);
+				if (InvokeRequired) BeginInvoke(new Action(Close));
+				else Close();
+			};
+			wc.DownloadProgressChanged += UpdateProgress;
+			token.Register(wc.CancelAsync);
+			wc.DownloadFileAsync(new Uri(url), file);
+			return tcs.Task;
+		}
 
-        private void UpdateProgress(object sender, DownloadProgressChangedEventArgs e)
-        {
-            ProgressBar.Value = e.ProgressPercentage;
-            if (!ProgressBar.Visible) ProgressBar.Visible = true;
-            StatusLabel.Text = $"{_downloadingLabel} {Path.GetFileName(_filename)}, {e.ProgressPercentage:0}%";
-        }
+		private void UpdateProgress(object sender, DownloadProgressChangedEventArgs e)
+		{
+			ProgressBar.Value = e.ProgressPercentage;
+			if (!ProgressBar.Visible) ProgressBar.Visible = true;
+			StatusLabel.Text = $"{_downloadingLabel} {Path.GetFileName(_filename)}, {e.ProgressPercentage:0}%";
+		}
 
-        private void CancelButtonClicked(object sender, EventArgs e)
-        {
-            Close();
-        }
+		private void CancelButtonClicked(object sender, EventArgs e)
+		{
+			Close();
+		}
 
 		private void ReleaseNotesLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            Process.Start("https://github.com/Duude92/hammertime/pull/1");
-        }
+		{
+			Process.Start("https://github.com/Duude92/hammertime/pull/1");
+		}
+
+		private async void archBox_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			UpdateChecker.Architecture = archBox.Text;
+			await UpdateDetails();
+		}
 	}
 }
