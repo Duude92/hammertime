@@ -26,6 +26,15 @@ namespace Sledge.Editor.Update
 
 		[Setting("CheckForUpdates")] private bool _checkForUpdates = true;
 		[Setting("Architecture")] private string _architecture = "x86";
+		public static string Architecture
+		{
+			get => _instance._architecture;
+			set
+			{
+				_instance._architecture = value;
+			}
+		}
+		private static UpdateChecker _instance;
 		public string UpdateDownloadedTitle { get; set; }
 		public string UpdateDownloadedMessage { get; set; }
 
@@ -33,6 +42,7 @@ namespace Sledge.Editor.Update
 		public UpdateChecker([Import("Shell")] Form shell)
 		{
 			_shell = shell;
+			_instance = this;
 		}
 
 		public Task OnInitialise()
