@@ -7,6 +7,7 @@ namespace HammerTime.Source.Providers.Texture.Vmt
 	{
 		private ICollection<MaterialTexturePackageReference> _references;
 		private HashSet<string> _allTextures = new HashSet<string>();
+		public readonly HashSet<string> TranslucentTextures = new HashSet<string>();
 
 		public VmtMaterialPackage(string name, ICollection<MaterialTexturePackageReference> references) : base(name, "vmt")
 		{
@@ -36,36 +37,21 @@ namespace HammerTime.Source.Providers.Texture.Vmt
 
 		public override async Task<TextureItem> GetTexture(string name)
 		{
-			//if (!_file.NameWithoutExtension.Equals(name, StringComparison.InvariantCultureIgnoreCase)) return null;
-			var texture = _references.FirstOrDefault(x => x.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
-			if (texture == null) return null;
-			if (texture.File != null)
+			var materialReference = _references.FirstOrDefault(x => x.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
+			if (materialReference == null) return null;
+			var textureFlags = TextureFlags.None;
+			if (materialReference.File != null)
 			{
-
-				var vtf = new VtfFile(texture.File.Open());
+				var vtf = new VtfFile(materialReference.File.Open());
 				var im = vtf.Images.Last();
+				var translucent = materialReference.Material.GetFloat("$translucent");
+				textureFlags |= (translucent > 0) ? TextureFlags.Transparent : TextureFlags.None;
+				if (translucent > 0)
+					TranslucentTextures.Add(name);
 
-				//var texturePath = ReadMaterialBaseTexture(texture.Material);
-				//var file = _file as CompositeFile;
-				//var fFile = file.FirstFile as InlinePackageFile;
-				return new TextureItem(name, TextureFlags.None, im.Width, im.Height, name);
+				return new TextureItem(name, textureFlags, im.Width, im.Height, name);
 			}
-			return new TextureItem(name, TextureFlags.None, 1, 1, name);
-			//var textureFile = new NativeFile(_file.Parent, texturePath);
-
-
-			//var entry = wp.GetEntry(name);
-			//if (entry == null) return null;
-			//string wadname;
-			//try
-			//{
-			//	wadname = wp.File.Name.Substring(0, wp.File.Name.LastIndexOf('.'));
-			//}
-			//catch (Exception ex)
-			//{
-			//	wadname = wp.File.Name;
-			//}
-			//return new TextureItem(entry.Name, TextureFlags.None, (int)entry.Width, (int)entry.Height, wp.File.Name);
+			return new TextureItem(name, textureFlags, 1, 1, name);
 		}
 
 		public override async Task<IEnumerable<TextureItem>> GetTextures(IEnumerable<string> names)

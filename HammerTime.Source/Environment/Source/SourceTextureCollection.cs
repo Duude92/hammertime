@@ -1,4 +1,5 @@
-﻿using Sledge.BspEditor.Environment;
+﻿using HammerTime.Source.Providers.Texture.Vmt;
+using Sledge.BspEditor.Environment;
 using Sledge.Providers.Texture;
 
 namespace HammerTime.Source.BspEditor.Environment.Source
@@ -22,7 +23,8 @@ namespace HammerTime.Source.BspEditor.Environment.Source
 
 		public override float GetOpacity(string name)
 		{
-			return 1;
+			var hasTransparency = Packages.OfType<VmtMaterialPackage>().Select(p => p.TranslucentTextures.FirstOrDefault(t => t.Equals(name, StringComparison.InvariantCultureIgnoreCase))).Where(x => x != null).Any();
+			return hasTransparency ? 0.5f : 1;
 		}
 
 		public override IEnumerable<string> GetSpriteTextures()
