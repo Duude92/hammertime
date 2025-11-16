@@ -30,13 +30,16 @@ namespace HammerTime.Source.Providers.Texture.Vmt
 		}
 		private (bool hide, IFile file) GetTextureFile(IFile m, IDictionary<string, IFile> textures)
 		{
-			var texture = ReadMaterialBaseTexture(m);
-			if (string.IsNullOrEmpty(texture.path)) return (true, null);
-			var texturePath = Path.GetRelativePath(".", texture.path.ToLower());
+			var texture = ReadMaterial(m);
+			var baseTexture = texture?.GetValue("$basetexture");
+
+			if (string.IsNullOrEmpty(baseTexture)) return (true, null);
+			var texturePath = Path.GetRelativePath(".", baseTexture.ToLower());
 			texturePath = texturePath.Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+
 			if (textures.TryGetValue(texturePath, out var tex))
 			{
-				return (texture.hide, tex);
+				return (!_allowedTypes.Contains(texture?.Node!), tex);
 			}
 			return (true, null);
 		}
@@ -56,34 +59,65 @@ namespace HammerTime.Source.Providers.Texture.Vmt
 				"worldtwotextureblend",
 				"skyfog",
 			};
-		private (bool hide, string path) ReadMaterialBaseTexture(IFile material)
+		class KVNode
+		{
+			public readonly string Node;
+			public readonly string? Value;
+			public readonly List<KVNode> Children = new();
+			public KVNode(StreamReader reader)
+			{
+				bool objectMode = false;
+				string line;
+				while (true)
+				{
+					if (objectMode)
+					{
+						var child = new KVNode(reader);
+						if (!string.IsNullOrEmpty(child.Node))
+							Children.Add(child);
+						else
+							objectMode = false;
+						continue;
+					}
+
+					line = reader.ReadLine();
+					if (line == null) return;
+					var trimmed = line?.Trim()?.Trim('\"').ToLowerInvariant();
+					if (string.IsNullOrEmpty(trimmed) || trimmed.StartsWith("//")) continue;
+					if (trimmed.StartsWith("{"))
+					{
+						objectMode = true;
+						continue;
+					}
+
+					if (trimmed.StartsWith("}")) return;
+					var spl = trimmed.Split(new[] { ' ', '\t' }, 2);
+					if (spl.Length < 2)
+					{
+						Node = trimmed;
+						continue;
+					}
+
+					var split = trimmed.Split(new[] { ' ', '\t' }, 2);
+
+					Node = split[0].Replace("\"", "");
+					Value = split[1].Replace("\"", "");
+					return;
+				}
+			}
+			public string? GetValue(string key) => Children.FirstOrDefault(x => x.Node.Equals(key))?.Value;
+		}
+		private KVNode? ReadMaterial(IFile material)
 		{
 			var mName = material.NameWithoutExtension;
 			using (var stream = material.Open())
 			{
 				using (var reader = new StreamReader(stream, Encoding.UTF8))
 				{
-					string line = reader.ReadLine();
-					var shaderType = line?.Trim()?.Trim('\"').ToLowerInvariant();
-
-						while ((line = reader.ReadLine()) != null)
-					{
-						if (line.Trim().Trim('\t').StartsWith("\"$basetexture\"", StringComparison.InvariantCultureIgnoreCase))
-						{
-							var parts = line.Trim('\t').Split(new[] { ' ', '\t' }, 2);
-							if (parts.Length > 1)
-							{
-								if (!_allowedTypes.Contains(shaderType))
-								{
-									return (true, parts[1].Trim('"'));
-								}
-								return (false, parts[1].Trim('"'));
-							}
-						}
-					}
+					var root = new KVNode(reader);
+					return root;
 				}
 			}
-			return (false, null);
 		}
 		public Task<TexturePackage> GetTexturePackage(TexturePackageReference reference)
 		{
