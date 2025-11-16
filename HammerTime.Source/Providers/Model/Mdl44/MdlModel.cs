@@ -38,7 +38,7 @@ namespace HammerTime.Source.Providers.Model.Mdl44
 				Position = v.Vertex,
 				Normal = v.Normal,
 				Texture = new Vector3(v.Texture, 0),
-				Bone = (uint)v.VertexBone,
+				Bone = 0, //(uint)v.VertexBone, FIXME
 				Flags = VertexFlags.None
 			}).ToArray();
 
@@ -61,7 +61,6 @@ namespace HammerTime.Source.Providers.Model.Mdl44
 			{
 				var vi = initIndices[i];
 				wireframeIndices.Add(vi);
-				//wireframeIndices.Add((uint)(i % 3 == 2 ? vi - 2 : vi + 1));
 			}
 
 			_indices = new uint[initIndices.Length + wireframeIndices.Count];
