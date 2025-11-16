@@ -25,17 +25,14 @@ namespace HammerTime.Source.Providers.Texture.Vmt
 			{
 				var matRef = _package.GetTextureReference(item);
 
-				var alphaString = matRef.Material.GetValue("$alpha");
+				var alphaVal = matRef.Material.GetFloat("$alpha");
 				var alpha = false;
-				if(alphaString == null)
+				if (alphaVal == 0)
 				{
-					alphaString = matRef.Material.GetValue("$alphatest");
+					alphaVal = matRef.Material.GetFloat("$alphatest");
 				}
 
-				if (int.TryParse(alphaString, out var alphaNum))
-				{
-					alpha = alphaNum == 1;
-				}
+				alpha = alphaVal > 0;
 
 				if (matRef.File == null) throw new NullReferenceException();
 				var vtfFile = new VtfFile(matRef?.File?.Open());
