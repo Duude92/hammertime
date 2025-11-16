@@ -24,14 +24,29 @@ namespace HammerTime.Source.Providers.Texture.Vmt
 			return await Task.Factory.StartNew(() =>
 			{
 				var matRef = _package.GetTextureReference(item);
+
+				var alphaString = matRef.Material.GetValue("$alpha");
+				var alpha = false;
+				if(alphaString == null)
+				{
+					alphaString = matRef.Material.GetValue("$alphatest");
+				}
+
+				if (int.TryParse(alphaString, out var alphaNum))
+				{
+					alpha = alphaNum == 1;
+				}
+
 				if (matRef.File == null) throw new NullReferenceException();
 				var vtfFile = new VtfFile(matRef?.File?.Open());
 				return new List<Bitmap>(){
 				vtfFile.Images.Select(x =>
 				{
 					var data = x.GetBgra32Data();
-					Bitmap bmp = new Bitmap(x.Width, x.Height, System.Drawing.Imaging.PixelFormat.Format32bppRgb);
-					BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, PixelFormat.Format32bppRgb);
+					// Fixme: Should always be argb and controlled by shader?
+					var pixelFormat = alpha? PixelFormat.Format32bppArgb: PixelFormat.Format32bppRgb;
+					Bitmap bmp = new Bitmap(x.Width, x.Height, pixelFormat);
+					BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, pixelFormat);
 					Marshal.Copy(data, 0, bmpData.Scan0, data.Length);
 					bmp.UnlockBits(bmpData);
 
