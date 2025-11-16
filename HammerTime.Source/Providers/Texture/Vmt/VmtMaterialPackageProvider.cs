@@ -28,21 +28,6 @@ namespace HammerTime.Source.Providers.Texture.Vmt
 			var refs = (materialsRoot as CompositeFile).GetCompositeFiles().Select(x => new TexturePackageReference(x.Parent?.Name ?? "Materials", x));
 			return refs;
 		}
-		private (bool hide, IFile file) GetTextureFile(IFile m, IDictionary<string, IFile> textures)
-		{
-			var texture = ReadMaterial(m);
-			var baseTexture = texture?.GetValue("$basetexture");
-
-			if (string.IsNullOrEmpty(baseTexture)) return (true, null);
-			var texturePath = Path.GetRelativePath(".", baseTexture.ToLower());
-			texturePath = texturePath.Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-
-			if (textures.TryGetValue(texturePath, out var tex))
-			{
-				return (!_allowedTypes.Contains(texture?.Node!), tex);
-			}
-			return (true, null);
-		}
 		private HashSet<string> _allowedTypes = new HashSet<string>
 			{
 				"unlitgeneric",
@@ -59,7 +44,7 @@ namespace HammerTime.Source.Providers.Texture.Vmt
 				"worldtwotextureblend",
 				"skyfog",
 			};
-		class KVNode
+		public class KVNode
 		{
 			public readonly string Node;
 			public readonly string? Value;
@@ -107,7 +92,7 @@ namespace HammerTime.Source.Providers.Texture.Vmt
 			}
 			public string? GetValue(string key) => Children.FirstOrDefault(x => x.Node.Equals(key))?.Value;
 		}
-		private KVNode? ReadMaterial(IFile material)
+		public KVNode? ReadMaterial(IFile material)
 		{
 			var mName = material.NameWithoutExtension;
 			using (var stream = material.Open())
@@ -135,8 +120,23 @@ namespace HammerTime.Source.Providers.Texture.Vmt
 					var textures = files.Single(x => x.Key.Equals("vtf", StringComparison.InvariantCultureIgnoreCase)).GroupBy(t => GetRelativeName(t)).ToDictionary(g => g.Key, g => g.First());
 					var refs = materials.Select(m =>
 					{
-						var (hide, f) = GetTextureFile(m, textures);
-						return new MaterialTexturePackageReference(GetRelativeName(m), f, m, hide);
+						bool hide = false;
+						var mat = ReadMaterial(m);
+
+						var baseTexture = mat?.GetValue("$basetexture");
+
+						if (string.IsNullOrEmpty(baseTexture))
+							return new MaterialTexturePackageReference(GetRelativeName(m), null, mat, true);
+
+						var texturePath = Path.GetRelativePath(".", baseTexture.ToLower());
+						texturePath = texturePath.Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+
+						if (!textures.TryGetValue(texturePath, out var tex))
+						{
+							return new MaterialTexturePackageReference(GetRelativeName(m), null, mat, true);
+						}
+
+						return new MaterialTexturePackageReference(GetRelativeName(m), tex, mat, !_allowedTypes.Contains(mat?.Node!));
 					}).ToList();
 					refs.Sort((p, n) => p.Name.CompareTo(n.Name));
 
