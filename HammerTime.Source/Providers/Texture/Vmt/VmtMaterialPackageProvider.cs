@@ -91,6 +91,11 @@ namespace HammerTime.Source.Providers.Texture.Vmt
 				}
 			}
 			public string? GetValue(string key) => Children.FirstOrDefault(x => x.Node.Equals(key))?.Value;
+			public float GetFloat(string key)
+			{
+				if (float.TryParse(Children.FirstOrDefault(x => x.Node.Equals(key))?.Value, out var result)) return result;
+				return 0;
+			}
 		}
 		public KVNode? ReadMaterial(IFile material)
 		{
