@@ -76,6 +76,11 @@ jobs:
       with: 
         name: build-x86
         path: ./dist/x86
+    - name: Download x64 artifact
+      uses: actions/download-artifact@v5
+      with: 
+        name: build-x64
+        path: ./dist/x64
     - name: Release
       uses: marvinpinto/action-automatic-releases@latest
       with:
@@ -83,4 +88,5 @@ jobs:
         prerelease: false
         files: |
             ./dist/x86/*
+            ./dist/x64/*
         automatic_release_tag: latest
