@@ -1,15 +1,9 @@
 ﻿using Sledge.FileSystem;
-using Sledge.Formats.Model.Goldsource;
 using Sledge.Formats.Model.Source;
 using Sledge.Providers.Model;
-using Sledge.Providers.Model.Mdl10;
+using Sledge.Providers.Model.Mdl10.Format;
 using Sledge.Rendering.Interfaces;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using MdlFile = Sledge.Formats.Model.Source.MdlFile;
 
 namespace HammerTime.Source.Providers.Model.Mdl44

@@ -17,4 +17,8 @@
     </Compile>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Formats\" />
+  </ItemGroup>
+
 </Project>
