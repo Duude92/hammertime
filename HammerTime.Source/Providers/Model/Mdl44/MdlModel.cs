@@ -99,13 +99,6 @@ namespace HammerTime.Source.Providers.Model.Mdl44
 	let transform = transforms[0]
 	select Vector3.Transform(Model.VvdFile.Vertices[vertex.origMeshVertID].m_vecPosition, transform);
 
-			//var list = Model.VtxFile.BodyParts[0].Models[0].LOD[0].Meshes[0].StripGroups[0].Strips[0].Verts.Select(x => Vector3.Transform( Model.VvdFile.Vertices[x.origMeshVertID].m_vecPosition, transforms[0])).ToList();
-
-
-			//var list =
-			//	from vertex in Model.VvdFile.Vertices
-			//	select vertex.m_vecPosition;
-
 			var box = new Box(list);
 			return (box.Start, box.End); // FIXME: Placeholder, implement actual bounding box calculation
 		}
@@ -137,24 +130,9 @@ namespace HammerTime.Source.Providers.Model.Mdl44
 					_textureResources[mesh.materialNum].BindTo(cl, 1);
 					cl.DrawIndexed((uint)mesh.vertexCount, 1, (uint)(mesh.vertexStart), 0, 0);
 				}
-				//_textureResources[0].BindTo(cl, 1);
-				//uint ci = 0;
-				//cl.DrawIndexed(_numTexturedIndices, 1, 0, 0, 0);
-
-				//foreach (var bpi in _bodyPartIndices)
-				//{
-				//	const int model = 0;
-				//	for (var j = 0; j < bpi.Length; j++)
-				//	{
-				//		if (j == model) cl.DrawIndexed(bpi[j], 1, ci, 0, 0);
-				//		ci += bpi[j];
-				//	}
-				//}
 			}
 			else if (pipeline.Type == PipelineType.WireframeModel)
 			{
-				//cl.DrawIndexed((uint)_indices.Length, 1, 0, 0, 0);
-
 				cl.DrawIndexed(_numWireframeIndices, 1, _numTexturedIndices, 0, 0);
 			}
 		}
