@@ -13,7 +13,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
 		public bool ValuesLoaded { get; private set; } = false;
 
 		[Setting("ForwardKey")] public Keys ForwardKey = Keys.W;
-		[Setting("BaskwardKey")] public Keys BackwardKey = Keys.S;
+		[Setting("BackwardKey")] public Keys BackwardKey = Keys.S;
 		[Setting("LeftMoveKey")] public Keys LeftKey = Keys.A;
 		[Setting("RightMoveKey")] public Keys RightKey = Keys.D;
 		[Setting("UpMoveKey")] public Keys UpKey = Keys.Q;
@@ -27,7 +27,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
 		public IEnumerable<SettingKey> GetKeys()
 		{
 			yield return new SettingKey("Controls", "ForwardKey", typeof(Keys));
-			yield return new SettingKey("Controls", "BaskwardKey", typeof(Keys));
+			yield return new SettingKey("Controls", "BackwardKey", typeof(Keys));
 			yield return new SettingKey("Controls", "LeftMoveKey", typeof(Keys));
 			yield return new SettingKey("Controls", "RightMoveKey", typeof(Keys));
 			yield return new SettingKey("Controls", "UpMoveKey", typeof(Keys));
