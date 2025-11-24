@@ -17,8 +17,8 @@ using Sledge.Shell.Input;
 
 namespace Sledge.BspEditor.Rendering.Viewport
 {
-    public class PerspectiveCameraNavigationViewportListener : IViewportEventListener, IOverlayRenderable
-    {
+	public class PerspectiveCameraNavigationViewportListener : IViewportEventListener, IOverlayRenderable
+	{
         public string OrderHint => FreeLook ? "A" : "W";
         public MapViewport Viewport { get; set; }
 
@@ -31,13 +31,25 @@ namespace Sledge.BspEditor.Rendering.Viewport
         private Rectangle CursorClip { get; set; }
         private bool Focus { get; set; }
         private PerspectiveCamera Camera => Viewport.Viewport.Camera as PerspectiveCamera;
-        private long _downMillis;
+		private long _downMillis;
         private long _lastMillis;
         private readonly Easing _easing;
         private readonly List<Keys> _downKeys;
         private readonly IContext _context;
 
-        public PerspectiveCameraNavigationViewportListener(MapViewport vp)
+        private Keys _forwardKey = Keys.W;
+        private Keys _backwardKey = Keys.S;
+        private Keys _leftKey = Keys.A;
+        private Keys _rightKey = Keys.D;
+        private Keys _upKey = Keys.Q;
+        private Keys _downKey = Keys.E;
+		private Keys _panRightKey = Keys.Right;
+		private Keys _panLeftKey = Keys.Left;
+		private Keys _tiltUpKey = Keys.Up;
+		private Keys _tiltDownKey = Keys.Down;
+        private Keys _freeLookKey = Keys.Z;
+
+		public PerspectiveCameraNavigationViewportListener(MapViewport vp)
         {
             LastKnownX = 0;
             LastKnownY = 0;
@@ -107,21 +119,21 @@ namespace Sledge.BspEditor.Rendering.Viewport
 
             // These keys are used for hotkeys, don't want the 3D view to move about when trying to use hotkeys.
             var ignore = !FreeLook && KeyboardState.IsAnyKeyDown(Keys.ShiftKey, Keys.ControlKey, Keys.Alt);
-            IfKey(Keys.W, () => Camera.Advance(move), ignore);
-            IfKey(Keys.S, () => Camera.Advance(-move), ignore);
-            IfKey(Keys.A, () => Camera.Strafe(-move), ignore);
-            IfKey(Keys.D, () => Camera.Strafe(move), ignore);
-            IfKey(Keys.Q, () => Camera.AscendAbsolute(move), ignore);
-            IfKey(Keys.E, () => Camera.AscendAbsolute(-move), ignore);
+            IfKey(_forwardKey, () => Camera.Advance(move), ignore);
+            IfKey(_backwardKey, () => Camera.Advance(-move), ignore);
+            IfKey(_leftKey, () => Camera.Strafe(-move), ignore);
+            IfKey(_rightKey, () => Camera.Strafe(move), ignore);
+            IfKey(_upKey, () => Camera.AscendAbsolute(move), ignore);
+            IfKey(_downKey, () => Camera.AscendAbsolute(-move), ignore);
 
             // Arrow keys are not really used for hotkeys all that much, so we allow shift+arrows to match Hammer's keys
             var shiftDown = KeyboardState.IsKeyDown(Keys.ShiftKey);
             var otherDown = KeyboardState.IsAnyKeyDown(Keys.ControlKey, Keys.Alt);
 
-            IfKey(Keys.Right, () => { if (shiftDown) Camera.Strafe(move); else Camera.Pan(-tilt); }, otherDown);
-            IfKey(Keys.Left, () => { if (shiftDown) Camera.Strafe(-move); else Camera.Pan(tilt); }, otherDown);
-            IfKey(Keys.Up, () => { if (shiftDown) Camera.Ascend(move); else Camera.Tilt(-tilt); }, otherDown);
-            IfKey(Keys.Down, () => { if (shiftDown) Camera.Ascend(-move); else Camera.Tilt(tilt); }, otherDown);
+            IfKey(_panRightKey, () => { if (shiftDown) Camera.Strafe(move); else Camera.Pan(-tilt); }, otherDown);
+            IfKey(_panLeftKey, () => { if (shiftDown) Camera.Strafe(-move); else Camera.Pan(tilt); }, otherDown);
+            IfKey(_tiltUpKey, () => { if (shiftDown) Camera.Ascend(move); else Camera.Tilt(-tilt); }, otherDown);
+            IfKey(_tiltDownKey, () => { if (shiftDown) Camera.Ascend(-move); else Camera.Tilt(tilt); }, otherDown);
         }
 
         private void IfKey(Keys key, Action action, bool ignoreKeyboard)
@@ -154,7 +166,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
         public void KeyDown(ViewportEvent e)
         {
             if (!Focus || !Viewport.IsUnlocked(this)) return;
-            if (e.KeyCode == Keys.Z && !e.Alt && !e.Control && !e.Shift)
+            if (e.KeyCode == _freeLookKey && !e.Alt && !e.Control && !e.Shift)
             {
                 FreeLookToggle = !FreeLookToggle;
                 SetFreeLook();
@@ -416,5 +428,5 @@ namespace Sledge.BspEditor.Rendering.Viewport
             im.AddLine(new Vector2(x, y - size), new Vector2(x, y + size + 1), Color.White, 1, false);
             im.AddLine(new Vector2(x - size, y), new Vector2(x + size + 1, y), Color.White, 1, false);
         }
-    }
+	}
 }
