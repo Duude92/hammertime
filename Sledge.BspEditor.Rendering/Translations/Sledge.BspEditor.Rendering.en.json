@@ -1,8 +1,8 @@
 ﻿{
     "@Meta": {
-        "Base": "Sledge.BspEditor.Rendering", 
+        "Base": "Sledge.BspEditor.Rendering",
         "Language": "en",
-        "LanguageDescription":  "English",
+        "LanguageDescription": "English",
         "Inherit": ""
     },
     "@Settings": {
@@ -11,6 +11,7 @@
         "@Group.Navigation/3D": "3D",
         "@Group.Rendering": "Rendering",
         "@Group.Rendering/Grid": "Grid",
+        "@Group.Controls": "3D viewport controls",
         "CameraNavigationViewportSettings": {
             "Camera2DPanRequiresMouseClick": "Moving the 2D camera (when space is pressed) requires a mouse click",
             "Camera3DPanRequiresMouseClick": "Moving the 3D camera (when space is pressed) requires a mouse click",
@@ -44,7 +45,20 @@
             "UnfocusedViewportTargetFps": "Target FPS for inactive viewports (1 to 100)",
             "MSAAoption": "MSAA",
             "GizmoScale": "Gizmos scale (entity icon scale)"
-        } 
+        },
+        "Viewport.ViewportSettingContainer": {
+            "ForwardKey": "Forward key for 3D view movement",
+            "BackwardKey": "Backward key for 3D view movement",
+            "LeftMoveKey": "Left key for 3D view strafe",
+            "RightMoveKey": "Right key for 3D view strafe",
+            "UpMoveKey": "Up key for 3D view up movement",
+            "DownMoveKey": "Down key for 3D view down movement",
+            "PanRightKey": "Right key for 3D view movement pan",
+            "PanLeftKey": "Left key for 3D view movement pan",
+            "TiltUpKey": "Up key for 3D view movement tilt",
+            "TiltDownKey": "Down key for 3D view movement tilt",
+            "FreeLookKey": "Key for 3D view free look"
+        }
     },
     "Components": {
         "ViewportZoomStatusItem": {
@@ -55,7 +69,7 @@
         "MapViewportControlFactory": {
             "Perspective": "3D View",
             "PerspectiveWf": "3D Wireframe",
-            "PerspectiveSky":  "Skybox",
+            "PerspectiveSky": "Skybox",
             "OrthographicTop": "2D Top",
             "OrthographicFront": "2D Front",
             "OrthographicSide": "2D Side"
