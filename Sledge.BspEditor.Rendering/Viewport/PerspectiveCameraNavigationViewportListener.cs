@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -9,6 +10,7 @@ using Sledge.Common;
 using Sledge.Common.Easings;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
+using Sledge.Common.Shell.Settings;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Overlay;
 using Sledge.Rendering.Viewports;
@@ -37,17 +39,19 @@ namespace Sledge.BspEditor.Rendering.Viewport
         private readonly List<Keys> _downKeys;
         private readonly IContext _context;
 
-        private Keys _forwardKey = Keys.W;
-        private Keys _backwardKey = Keys.S;
-        private Keys _leftKey = Keys.A;
-        private Keys _rightKey = Keys.D;
-        private Keys _upKey = Keys.Q;
-        private Keys _downKey = Keys.E;
-		private Keys _panRightKey = Keys.Right;
-		private Keys _panLeftKey = Keys.Left;
-		private Keys _tiltUpKey = Keys.Up;
-		private Keys _tiltDownKey = Keys.Down;
-        private Keys _freeLookKey = Keys.Z;
+		private ViewportSettingContainer _settingsContainer;
+
+		private Keys _forwardKey => _settingsContainer.ForwardKey;
+        private Keys _backwardKey => _settingsContainer.BackwardKey;
+        private Keys _leftKey => _settingsContainer.LeftKey;
+        private Keys _rightKey => _settingsContainer.RightKey;
+        private Keys _upKey => _settingsContainer.UpKey;
+        private Keys _downKey => _settingsContainer.DownKey;
+		private Keys _panRightKey => _settingsContainer.PanRightKey;
+		private Keys _panLeftKey => _settingsContainer.PanLeftKey;
+		private Keys _tiltUpKey => _settingsContainer.TiltUpKey;
+		private Keys _tiltDownKey => _settingsContainer.TiltDownKey;
+        private Keys _freeLookKey => _settingsContainer.FreeLookKey;
 
 		public PerspectiveCameraNavigationViewportListener(MapViewport vp)
         {
@@ -65,6 +69,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
 
             _context = Container.Get<IContext>();
             Oy.Subscribe<ITool>("Tool:Activated", ToolSelected);
+			_settingsContainer = Common.Container.GetMany<ISettingsContainer>().OfType<ViewportSettingContainer>().FirstOrDefault();
         }
 
         private Task ToolSelected(ITool tool)
