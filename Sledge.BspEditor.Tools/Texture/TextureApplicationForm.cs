@@ -108,7 +108,7 @@ namespace Sledge.BspEditor.Tools.Texture
 
 		public void Translate(ITranslationStringProvider strings)
 		{
-			if(Handle == null) CreateHandle();
+			if (Handle == null) CreateHandle();
 			var prefix = GetType().FullName;
 			this.InvokeLater(() =>
 			{
@@ -869,6 +869,11 @@ namespace Sledge.BspEditor.Tools.Texture
 		private void RLeftButton_Click(object sender, EventArgs e)
 		{
 			RotateFaceTexture(-90);
+		}
+
+		private async void apply_null_Click(object sender, EventArgs e)
+		{
+			await ApplyTexture("null");
 		}
 	}
 }
