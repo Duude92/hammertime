@@ -409,7 +409,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 				lstKeyValues.Items.Add(new ListViewItem(keyText)
 				{
 					Tag = tv,
-					BackColor =  tv.Colour == Color.Transparent? lstKeyValues.BackColor :  tv.Colour
+					BackColor = tv.Colour == Color.Transparent ? lstKeyValues.BackColor : tv.Colour
 				}).SubItems.Add(valText);
 
 				if (tv.Key == "angles")
@@ -571,7 +571,8 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 			if (_tableValues.NewClass == null && string.Equals(txt, _tableValues.OriginalClass.ToLower(), StringComparison.InvariantCultureIgnoreCase)) return;
 
 			var newClass = _gameData.Classes.FirstOrDefault(x => x.ClassType != ClassType.Base && (x.Name ?? "").ToLower() == txt) ?? new GameDataObject(txt, "", ClassType.Any);
-			_tableValues.NewClass = newClass;
+			if (!txt.StartsWith(MultipleClassesText))
+				_tableValues.NewClass = newClass;
 
 			var keys = _tableValues.Select(x => x.NewKey.ToLower()).Union(newClass.Properties.Select(x => (x.Name ?? "").ToLower())).ToList();
 			foreach (var key in keys)
@@ -581,24 +582,40 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 
 				var origKey = _tableValues.FirstOrDefault(x => x.NewKey.ToLower() == key);
 				var newKey = newClass.Properties.FirstOrDefault(x => (x.Name ?? "").ToLower() == key);
+				// This should be fixed. Temporary code
+				var classes = _tableValues.OriginalClasses;
+				if (classes.Count > 1)
+				{
+					if (classes.Select(x => x.Properties.Find(y => y.Name == origKey.OriginalKey)).Count(x => x != null) == classes.Count)
+					{
+						origKey.IsRemoved = false;
 
-				if (origKey != null && newKey != null)
-				{
-					// Key was present originally, so if it's marked as removed we should undo that.
-					origKey.IsRemoved = false;
+					}
+					else
+					{
+						_tableValues.Remove(origKey);
+					}
 				}
-				else if (origKey != null)
+				else
 				{
-					// Key was present but isn't anymore. If it's a new key, remove it entirely, otherwise, mark it as removed.
-					if (origKey.IsAdded) _tableValues.Remove(origKey);
-					else origKey.IsRemoved = true;
-				}
-				else if (newKey != null)
-				{
-					// Brand new key, mark it as added and add it to the list.
-					var value = GetDefaultOption(newKey);
+					if (origKey != null && newKey != null)
+					{
+						// Key was present originally, so if it's marked as removed we should undo that.
+						origKey.IsRemoved = false;
+					}
+					else if (origKey != null)
+					{
+						// Key was present but isn't anymore. If it's a new key, remove it entirely, otherwise, mark it as removed.
+						if (origKey.IsAdded) _tableValues.Remove(origKey);
+						else origKey.IsRemoved = true;
+					}
+					else if (newKey != null)
+					{
+						// Brand new key, mark it as added and add it to the list.
+						var value = GetDefaultOption(newKey);
 
-					_tableValues.Add(new TableValue(newKey, key, new[] { value }) { IsAdded = value != null ? true : false });
+						_tableValues.Add(new TableValue(newKey, key, new[] { value }) { IsAdded = value != null ? true : false });
+					}
 				}
 			}
 
