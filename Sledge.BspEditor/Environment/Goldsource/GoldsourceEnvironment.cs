@@ -45,6 +45,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
 		public string ModDirectory { get; set; }
 		public string GameExe { get; set; }
 		public bool LoadHdModels { get; set; }
+		public bool LoadFromDownloads { get; set; }
 
 		public List<string> FgdFiles { get; set; }
 		public bool IncludeFgdDirectoriesInEnvironment { get; set; }
@@ -110,9 +111,11 @@ namespace Sledge.BspEditor.Environment.Goldsource
 			{
 				// mod_addon (custom content)
 				yield return Path.Combine(BaseDirectory, ModDirectory + "_addon");
-
-				//mod_downloads (downloaded content)
-				yield return Path.Combine(BaseDirectory, ModDirectory + "_downloads");
+				if (LoadFromDownloads)
+				{
+					//mod_downloads (downloaded content)
+					yield return Path.Combine(BaseDirectory, ModDirectory + "_downloads");
+				}
 
 				// mod_hd (high definition content)
 				yield return Path.Combine(BaseDirectory, ModDirectory + "_hd");
@@ -123,7 +126,10 @@ namespace Sledge.BspEditor.Environment.Goldsource
 				if (!String.Equals(GameDirectory, ModDirectory, StringComparison.CurrentCultureIgnoreCase))
 				{
 					yield return Path.Combine(BaseDirectory, GameDirectory + "_addon");
-					yield return Path.Combine(BaseDirectory, GameDirectory + "_downloads");
+					if (LoadFromDownloads)
+					{
+						yield return Path.Combine(BaseDirectory, GameDirectory + "_downloads");
+					}
 					yield return Path.Combine(BaseDirectory, GameDirectory + "_hd");
 					yield return Path.Combine(BaseDirectory, GameDirectory);
 				}
@@ -260,7 +266,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
 
 		private async Task ExportDocumentForBatch(MapDocument doc, string path, Box cordonBounds)
 		{
-			var cordonTextureName = String.IsNullOrWhiteSpace(CordonTexture)? "BLACK" : CordonTexture;
+			var cordonTextureName = String.IsNullOrWhiteSpace(CordonTexture) ? "BLACK" : CordonTexture;
 
 			if (cordonBounds != null && !cordonBounds.IsEmpty())
 			{
@@ -327,7 +333,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
 			}));
 
 			// Run the compile tools
-			if (args.ContainsKey("PreTool")) batch.Steps.AddRange(args["PreTool"].Split('\n').Select(x => new CommandProcess(BatchStepType.RunBuildExecutable,x)));
+			if (args.ContainsKey("PreTool")) batch.Steps.AddRange(args["PreTool"].Split('\n').Select(x => new CommandProcess(BatchStepType.RunBuildExecutable, x)));
 			if (args.ContainsKey("CSG")) batch.Steps.Add(new BatchProcess(BatchStepType.RunBuildExecutable, Path.Combine(ToolsDirectory, CsgExe), args["CSG"] + " \"{MapFile}\""));
 			if (args.ContainsKey("BSP")) batch.Steps.Add(new BatchProcess(BatchStepType.RunBuildExecutable, Path.Combine(ToolsDirectory, BspExe), args["BSP"] + " \"{MapFile}\""));
 			if (args.ContainsKey("VIS")) batch.Steps.Add(new BatchProcess(BatchStepType.RunBuildExecutable, Path.Combine(ToolsDirectory, VisExe), args["VIS"] + " \"{MapFile}\""));

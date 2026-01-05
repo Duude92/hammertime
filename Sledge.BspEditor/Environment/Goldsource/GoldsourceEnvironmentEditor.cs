@@ -39,6 +39,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
 			cmbGameMod.SelectedIndexChanged += OnEnvironmentChanged;
 			cmbGameExe.SelectedIndexChanged += OnEnvironmentChanged;
 			chkLoadHdModels.CheckedChanged += OnEnvironmentChanged;
+			chkIncludeDownloads.CheckedChanged += OnEnvironmentChanged;
 
 			cmbDefaultPointEntity.SelectedIndexChanged += OnEnvironmentChanged;
 			cmbDefaultBrushEntity.SelectedIndexChanged += OnEnvironmentChanged;
@@ -111,6 +112,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
 			lblGameMod.Text = strings.GetString(prefix, "ModDirectory");
 			lblGameExe.Text = strings.GetString(prefix, "GameExecutable");
 			chkLoadHdModels.Text = strings.GetString(prefix, "LoadHDModels");
+			chkIncludeDownloads.Text = strings.GetString(prefix, "LoadFromDownloads");
 
 			lblDefaultPointEntity.Text = strings.GetString(prefix, "DefaultPointEntity");
 			lblDefaultBrushEntity.Text = strings.GetString(prefix, "DefaultBrushEntity");
@@ -131,6 +133,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
 			chkToggleAllTextures.Text = strings.GetString(prefix, "ToggleAll");
 			lblAdditionalTexturePackages.Text = strings.GetString(prefix, "AdditionalTexturePackages");
 			//cordonDefaultTextureLabel.Text = strings.GetString(prefix, "CordonToolTextureText");
+
 		}
 
 		private void OnEnvironmentChanged(object sender, EventArgs e)
@@ -147,6 +150,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
 			cmbGameMod.SelectedItem = env.ModDirectory;
 			cmbGameExe.SelectedItem = env.GameExe;
 			chkLoadHdModels.Checked = env.LoadHdModels;
+			chkIncludeDownloads.Checked = env.LoadFromDownloads;
 
 			lstFgds.Items.Clear();
 			foreach (var fileName in env.FgdFiles)
@@ -210,6 +214,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
 				ModDirectory = Convert.ToString(cmbGameMod.SelectedItem, CultureInfo.InvariantCulture),
 				GameExe = Convert.ToString(cmbGameExe.SelectedItem, CultureInfo.InvariantCulture),
 				LoadHdModels = chkLoadHdModels.Checked,
+				LoadFromDownloads = chkIncludeDownloads.Checked,
 
 				FgdFiles = lstFgds.Items.OfType<ListViewItem>().Select(x => x.SubItems[1].Text).Where(File.Exists).ToList(),
 				DefaultPointEntity = Convert.ToString(cmbDefaultPointEntity.SelectedItem, CultureInfo.InvariantCulture),

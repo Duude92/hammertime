@@ -58,6 +58,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
 			lblMapSizeOverrideLow = new System.Windows.Forms.Label();
 			chkLoadHdModels = new System.Windows.Forms.CheckBox();
 			grpDirectories = new System.Windows.Forms.GroupBox();
+			chkIncludeDownloads = new System.Windows.Forms.CheckBox();
 			grpFgds = new System.Windows.Forms.GroupBox();
 			gridUpDown = new GridUpDown();
 			DefaultGridSizeLabel = new System.Windows.Forms.Label();
@@ -393,6 +394,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
 			// 
 			// grpDirectories
 			// 
+			grpDirectories.Controls.Add(chkIncludeDownloads);
 			grpDirectories.Controls.Add(lblGameDir);
 			grpDirectories.Controls.Add(cmbGameMod);
 			grpDirectories.Controls.Add(chkLoadHdModels);
@@ -411,6 +413,18 @@ namespace Sledge.BspEditor.Environment.Goldsource
 			grpDirectories.TabIndex = 46;
 			grpDirectories.TabStop = false;
 			grpDirectories.Text = "Directories";
+			// 
+			// chkIncludeDownloads
+			// 
+			chkIncludeDownloads.AutoSize = true;
+			chkIncludeDownloads.Checked = true;
+			chkIncludeDownloads.CheckState = System.Windows.Forms.CheckState.Checked;
+			chkIncludeDownloads.Location = new System.Drawing.Point(64, 147);
+			chkIncludeDownloads.Name = "chkIncludeDownloads";
+			chkIncludeDownloads.Size = new System.Drawing.Size(160, 19);
+			chkIncludeDownloads.TabIndex = 46;
+			chkIncludeDownloads.Text = "Include downloads folder";
+			chkIncludeDownloads.UseVisualStyleBackColor = true;
 			// 
 			// grpFgds
 			// 
@@ -974,5 +988,6 @@ namespace Sledge.BspEditor.Environment.Goldsource
 		private System.Windows.Forms.Label cordonDefaultTextureLabel;
 		private System.Windows.Forms.TextBox nonRendTextBox;
 		private System.Windows.Forms.Label label1;
+		private System.Windows.Forms.CheckBox chkIncludeDownloads;
 	}
 }

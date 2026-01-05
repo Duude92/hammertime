@@ -42,6 +42,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
 				ModDirectory = GetVal(environment.Properties, "ModDirectory", ""),
 				GameExe = GetVal(environment.Properties, "GameExe", ""),
 				LoadHdModels = GetVal(environment.Properties, "LoadHdModels", true),
+				LoadFromDownloads = GetVal(environment.Properties, "LoadFromDownloads", true),
 
 				FgdFiles = GetVal(environment.Properties, "FgdFiles", "").Split(';').Where(x => !String.IsNullOrWhiteSpace(x)).ToList(),
 				DefaultPointEntity = GetVal(environment.Properties, "DefaultPointEntity", ""),
@@ -89,6 +90,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
 				ModDirectory = GetVal(environment.Properties, "ModDirectory", ""),
 				GameExe = GetVal(environment.Properties, "GameExe", ""),
 				LoadHdModels = GetVal(environment.Properties, "LoadHdModels", true),
+				LoadFromDownloads = GetVal(environment.Properties, "LoadFromDownloads", true),
 
 				DefaultPointEntity = GetVal(environment.Properties, "DefaultPointEntity", ""),
 				DefaultBrushEntity = GetVal(environment.Properties, "DefaultBrushEntity", ""),
@@ -139,6 +141,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
 					{ "ModDirectory", env.ModDirectory },
 					{ "GameExe", env.GameExe },
 					{ "LoadHdModels", Convert.ToString(env.LoadHdModels, CultureInfo.InvariantCulture) },
+					{ "LoadFromDownloads", Convert.ToString(env.LoadFromDownloads, CultureInfo.InvariantCulture) },
 
 					{ "DefaultPointEntity", env.DefaultPointEntity },
 					{ "DefaultBrushEntity", env.DefaultBrushEntity },
@@ -192,6 +195,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
 					{ "ModDirectory", env.ModDirectory },
 					{ "GameExe", env.GameExe },
 					{ "LoadHdModels", Convert.ToString(env.LoadHdModels, CultureInfo.InvariantCulture) },
+					{ "LoadFromDownloads", Convert.ToString(env.LoadFromDownloads, CultureInfo.InvariantCulture) },
 
 					{ "FgdFiles", String.Join(";", env.FgdFiles) },
 					{ "DefaultPointEntity", env.DefaultPointEntity },
