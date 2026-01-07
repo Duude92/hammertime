@@ -150,17 +150,14 @@ namespace Sledge.Rendering.Overlay
             _projMatrixBuffer = factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
             _projMatrixBuffer.Name = "ImGui.NET Projection Buffer";
             
-            byte[] vertexShaderBytes = ResourceLoader.GetEmbeddedShader("imgui.vert.hlsl");
-            byte[] fragmentShaderBytes = ResourceLoader.GetEmbeddedShader("imgui.frag.hlsl");
-            _vertexShader = factory.CreateShader(new ShaderDescription(ShaderStages.Vertex, vertexShaderBytes, "main"));
-            _fragmentShader = factory.CreateShader(new ShaderDescription(ShaderStages.Fragment, fragmentShaderBytes, "main"));
+            var (_vertexShader, _fragmentShader) = Engine.Engine.Instance.Context.ResourceLoader.LoadShaders("imgui");
 
             VertexLayoutDescription[] vertexLayouts = new VertexLayoutDescription[]
             {
                 new VertexLayoutDescription(
-                    new VertexElementDescription("in_position", VertexElementSemantic.Position, VertexElementFormat.Float2),
+                    new VertexElementDescription("in_position", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2),
                     new VertexElementDescription("in_texCoord", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2),
-                    new VertexElementDescription("in_color", VertexElementSemantic.Color, VertexElementFormat.Byte4_Norm))
+                    new VertexElementDescription("in_color", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Byte4_Norm))
             };
 
             _layout = factory.CreateResourceLayout(new ResourceLayoutDescription(
@@ -340,7 +337,7 @@ namespace Sledge.Rendering.Overlay
         /// </summary>
         public void Render(GraphicsDevice gd, CommandList cl)
         {
-            if (_frameBegun)
+			if (_frameBegun)
             {
                 _frameBegun = false;
                 ImGui.Render();
