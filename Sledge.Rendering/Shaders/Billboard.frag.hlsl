@@ -7,12 +7,13 @@ struct FragmentIn
     float4 fTint : COLOR1;
 };
 
-Texture2D Texture;
-SamplerState Sampler;
+Texture2D Texture : register(t0, space2);
+SamplerState Sampler : register(s1, space2);
 
 float4 main(FragmentIn input) : SV_Target0
 {
     float4 tex = input.fColour * Texture.Sample(Sampler, input.fTexture);
-    if (tex.w < 0.05) discard;
+    if (tex.w < 0.05)
+        discard;
     return tex * input.fTint;
 }

@@ -24,7 +24,7 @@ cbuffer Projection
     matrix Projection;
 };
 
-cbuffer BoneTransforms
+cbuffer BoneTransforms : register(b0, space1)
 {
     matrix uTransforms[128];
 };
