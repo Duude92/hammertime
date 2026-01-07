@@ -95,7 +95,7 @@ namespace Sledge.Rendering.Pipelines
 		public void Bind(RenderContext context, CommandList cl, string binding)
 		{
 			var tex = context.ResourceLoader.GetTexture(binding);
-			tex?.BindTo(cl, 1);
+			tex?.BindTo(cl, 2);
 		}
 
 		public void Dispose()
