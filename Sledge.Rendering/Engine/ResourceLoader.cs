@@ -109,46 +109,72 @@ namespace Sledge.Rendering.Engine
 		}
 
 		// Shaders
-		public (Shader, Shader) LoadShaders(string name)
+		private byte[] CompileShadersToSpirV(byte[] shaderCode, DxcShaderStage stage)
 		{
+			var vShader = shaderCode;
+			var str = System.Text.Encoding.Default.GetString(vShader);
+
+			var options = new DxcCompilerOptions
+			{
+				GenerateSpirv = true,
+				SpirvTargetEnvMinor = 0,
+				SpvTargetEnvMajor = 1,
+				OptimizationLevel = 0,
+			};
+
 			IDxcUtils Utils = Dxc.CreateDxcUtils();
 			var includeHandler = Utils.CreateDefaultIncludeHandler();
-			byte[] CompileShaders(byte[] shaderCode, DxcShaderStage stage)
+
+			var result = DxcCompiler.Compile(stage, str, "main", options, includeHandler: includeHandler);
+			if (result.GetStatus() != 0)
 			{
-				var vShader = shaderCode;
-				var str = System.Text.Encoding.Default.GetString(vShader);
+				var errors = result.GetErrors();
+				throw new Exception($"Error compiling shader\n{errors}");
+			}
 
-				var options = new DxcCompilerOptions
-				{
-					GenerateSpirv = true,
-					SpirvTargetEnvMinor = 1,
-					OptimizationLevel = 0,
-				};
+			return result.GetObjectBytecodeArray();
+		}
+		public (Shader, Shader) LoadShaders(string name)
+		{
+			if (_context.Device.BackendType == GraphicsBackend.Direct3D11)
+			{
+				return (
+					_context.Device.ResourceFactory.CreateShader(new ShaderDescription(ShaderStages.Vertex, GetEmbeddedShader(name + ".vert.hlsl"), "main", DebugMode)),
+					_context.Device.ResourceFactory.CreateShader(new ShaderDescription(ShaderStages.Fragment, GetEmbeddedShader(name + ".frag.hlsl"), "main", DebugMode))
+				);
+			}
 
-				var result = DxcCompiler.Compile(stage, str, "main", options, includeHandler: includeHandler);
-				return result.GetObjectBytecodeArray();
+
+			var options = new CrossCompileOptions
+			{
+				FixClipSpaceZ = true,
+				InvertVertexOutputY = false,
+			};
+			var vertex = _context.Device.ResourceFactory.CreateFromSpirv(new ShaderDescription(ShaderStages.Vertex, CompileShadersToSpirV(GetEmbeddedShader(name + ".vert.hlsl"), DxcShaderStage.Vertex), "main"), options);
+			var fragment = _context.Device.ResourceFactory.CreateFromSpirv(new ShaderDescription(ShaderStages.Fragment, CompileShadersToSpirV(GetEmbeddedShader(name + ".frag.hlsl"), DxcShaderStage.Pixel), "main"), options);
+			return (vertex, fragment);
+
+		}
+
+		public (Shader, Shader, Shader) LoadShadersGeometry(string name)
+		{
+			if (_context.Device.BackendType == GraphicsBackend.Direct3D11)
+			{
+				return (
+				_context.Device.ResourceFactory.CreateShader(new ShaderDescription(ShaderStages.Vertex, GetEmbeddedShader(name + ".vert.hlsl"), "main")),
+				_context.Device.ResourceFactory.CreateShader(new ShaderDescription(ShaderStages.Geometry, GetEmbeddedShader(name + ".geom.hlsl"), "main")),
+				_context.Device.ResourceFactory.CreateShader(new ShaderDescription(ShaderStages.Fragment, GetEmbeddedShader(name + ".frag.hlsl"), "main"))
+				);
 			}
 			var options = new CrossCompileOptions
 			{
 				FixClipSpaceZ = true,
 				InvertVertexOutputY = false,
 			};
-			var vertex = _context.Device.ResourceFactory.CreateFromSpirv(new ShaderDescription(ShaderStages.Vertex, CompileShaders(GetEmbeddedShader(name + ".vert.hlsl"), DxcShaderStage.Vertex), "main"), options);
-			var fragment = _context.Device.ResourceFactory.CreateFromSpirv(new ShaderDescription(ShaderStages.Fragment, CompileShaders(GetEmbeddedShader(name + ".frag.hlsl"), DxcShaderStage.Pixel), "main"), options);
-			return (vertex, fragment);
-			return (
-				_context.Device.ResourceFactory.CreateShader(new ShaderDescription(ShaderStages.Vertex, GetEmbeddedShader(name + ".vert.hlsl"), "main", DebugMode)),
-				_context.Device.ResourceFactory.CreateShader(new ShaderDescription(ShaderStages.Fragment, GetEmbeddedShader(name + ".frag.hlsl"), "main", DebugMode))
-			);
-		}
-
-		public (Shader, Shader, Shader) LoadShadersGeometry(string name)
-		{
-			return (
-				_context.Device.ResourceFactory.CreateShader(new ShaderDescription(ShaderStages.Vertex, GetEmbeddedShader(name + ".vert.hlsl"), "main")),
-				_context.Device.ResourceFactory.CreateShader(new ShaderDescription(ShaderStages.Geometry, GetEmbeddedShader(name + ".geom.hlsl"), "main")),
-				_context.Device.ResourceFactory.CreateShader(new ShaderDescription(ShaderStages.Fragment, GetEmbeddedShader(name + ".frag.hlsl"), "main"))
-			);
+			var vertex = _context.Device.ResourceFactory.CreateFromSpirv(new ShaderDescription(ShaderStages.Vertex, CompileShadersToSpirV(GetEmbeddedShader(name + ".vert.hlsl"), DxcShaderStage.Vertex), "main"), options);
+			var fragment = _context.Device.ResourceFactory.CreateFromSpirv(new ShaderDescription(ShaderStages.Fragment, CompileShadersToSpirV(GetEmbeddedShader(name + ".frag.hlsl"), DxcShaderStage.Pixel), "main"), options);
+			var geom = _context.Device.ResourceFactory.CreateFromSpirv(new ShaderDescription(ShaderStages.Geometry, CompileShadersToSpirV(GetEmbeddedShader(name + ".geom.hlsl"), DxcShaderStage.Geometry), "main"), options);
+			return (vertex, geom, fragment);
 		}
 
 		private static readonly Assembly ResourceAssembly = Assembly.GetExecutingAssembly();
