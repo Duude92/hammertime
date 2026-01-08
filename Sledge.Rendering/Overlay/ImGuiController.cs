@@ -149,18 +149,22 @@ namespace Sledge.Rendering.Overlay
 
             _projMatrixBuffer = factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
             _projMatrixBuffer.Name = "ImGui.NET Projection Buffer";
-            
-            var (_vertexShader, _fragmentShader) = Engine.Engine.Instance.Context.ResourceLoader.LoadShaders("imgui");
 
-            VertexLayoutDescription[] vertexLayouts = new VertexLayoutDescription[]
-            {
-                new VertexLayoutDescription(
-                    new VertexElementDescription("in_position", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2),
-                    new VertexElementDescription("in_texCoord", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2),
-                    new VertexElementDescription("in_color", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Byte4_Norm))
-            };
+            var rl = Engine.Engine.Instance.Context.ResourceLoader;
 
-            _layout = factory.CreateResourceLayout(new ResourceLayoutDescription(
+			var (_vertexShader, _fragmentShader) = rl.LoadShaders("imgui");
+
+            VertexLayoutDescription vertexLayouts = rl.ImGUILayoutDescription;
+
+			//VertexLayoutDescription[] vertexLayouts = new VertexLayoutDescription[]
+			//{
+			//    new VertexLayoutDescription(
+			//        new VertexElementDescription("in_position", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2),
+			//        new VertexElementDescription("in_texCoord", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2),
+			//        new VertexElementDescription("in_color", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Byte4_Norm))
+			//};
+
+			_layout = factory.CreateResourceLayout(new ResourceLayoutDescription(
                 new ResourceLayoutElementDescription("ProjectionMatrixBuffer", ResourceKind.UniformBuffer, ShaderStages.Vertex),
                 new ResourceLayoutElementDescription("MainSampler", ResourceKind.Sampler, ShaderStages.Fragment)));
             _textureLayout = factory.CreateResourceLayout(new ResourceLayoutDescription(
@@ -171,7 +175,7 @@ namespace Sledge.Rendering.Overlay
                 new DepthStencilStateDescription(false, false, ComparisonKind.Always),
                 new RasterizerStateDescription(FaceCullMode.None, PolygonFillMode.Solid, FrontFace.Clockwise, false, true),
                 PrimitiveTopology.TriangleList,
-                new ShaderSetDescription(vertexLayouts, new[] { _vertexShader, _fragmentShader }),
+                new ShaderSetDescription(new[]{ vertexLayouts }, new[] { _vertexShader, _fragmentShader }),
                 new ResourceLayout[] { _layout, _textureLayout },
                 outputDescription);
             _pipeline = factory.CreateGraphicsPipeline(ref pd);
