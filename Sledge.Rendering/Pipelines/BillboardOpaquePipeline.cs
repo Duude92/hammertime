@@ -26,20 +26,17 @@ namespace Sledge.Rendering.Pipelines
 
 		public void Create(RenderContext context, TextureSampleCount sampleCount)
 		{
-			(_vertex, _geometry, _fragment) = context.ResourceLoader.LoadShadersGeometry("Billboard");
-			_uvLayout = context.Device.ResourceFactory.CreateResourceLayout(new ResourceLayoutDescription(
-			new ResourceLayoutElementDescription("UVS", ResourceKind.UniformBuffer, ShaderStages.Geometry)));
+			(_vertex, _fragment) = context.ResourceLoader.LoadShaders("Billboard");
 
 			var pDesc = new GraphicsPipelineDescription
 			{
 				BlendState = BlendStateDescription.SingleAlphaBlend,
 				DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
 				RasterizerState = RasterizerStateDescription.Default,
-				PrimitiveTopology = PrimitiveTopology.PointList,
+				PrimitiveTopology = PrimitiveTopology.TriangleList,
 				ResourceLayouts = new[] { context.ResourceLoader.ProjectionLayout,
-					_uvLayout,
 					context.ResourceLoader.TextureLayout },
-				ShaderSet = new ShaderSetDescription(new[] { context.ResourceLoader.VertexStandardLayoutDescription }, new[] { _vertex, _geometry, _fragment }),
+				ShaderSet = new ShaderSetDescription(new[] { context.ResourceLoader.VertexStandardLayoutDescription }, new[] { _vertex, _fragment }),
 				Outputs = new OutputDescription
 				{
 					ColorAttachments = new[] { new OutputAttachmentDescription(PixelFormat.B8_G8_R8_A8_UNorm) },
@@ -95,7 +92,7 @@ namespace Sledge.Rendering.Pipelines
 		public void Bind(RenderContext context, CommandList cl, string binding)
 		{
 			var tex = context.ResourceLoader.GetTexture(binding);
-			tex?.BindTo(cl, 2);
+			tex?.BindTo(cl, 1);
 		}
 
 		public void Dispose()

@@ -7,8 +7,8 @@ struct FragmentIn
     float4 fTint : COLOR1;
 };
 
-Texture2D Texture : register(t0, space2);
-SamplerState Sampler : register(s1, space2);
+Texture2D Texture : register(t0, space1);
+SamplerState Sampler : register(s1, space1);
 
 float4 main(FragmentIn input) : SV_Target0
 {

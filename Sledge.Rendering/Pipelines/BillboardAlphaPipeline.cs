@@ -38,8 +38,9 @@ namespace Sledge.Rendering.Pipelines
 				RasterizerState = RasterizerStateDescription.Default,
 				PrimitiveTopology = PrimitiveTopology.PointList,
 				ResourceLayouts = new[] { context.ResourceLoader.ProjectionLayout,
+					context.ResourceLoader.TextureLayout,
 					_uvLayout,
-					context.ResourceLoader.TextureLayout },
+				},
 				ShaderSet = new ShaderSetDescription(new[] { context.ResourceLoader.VertexStandardLayoutDescription }, new[] { _vertex, _geometry, _fragment }),
 				Outputs = new OutputDescription
 				{
@@ -97,7 +98,7 @@ namespace Sledge.Rendering.Pipelines
 		public void Bind(RenderContext context, CommandList cl, string binding)
 		{
 			var tex = context.ResourceLoader.GetTexture(binding);
-			tex?.BindTo(cl, 2);
+			tex?.BindTo(cl, 1);
 		}
 
 		public void Dispose()
