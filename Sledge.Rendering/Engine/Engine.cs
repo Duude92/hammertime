@@ -260,6 +260,13 @@ namespace Sledge.Rendering.Engine
 				double millisecondsPerFrame = 1000.0 / InactiveTargetFps;
 				bool shouldRender = (elapsedTime >= millisecondsPerFrame * TimeSpan.TicksPerMillisecond);
 
+				_commandList.Begin();
+				_commandList.SetFramebuffer(Swapchain.Framebuffer);
+				_commandList.ClearColorTarget(0, RgbaFloat.Grey);
+				_commandList.End();
+				Device.SubmitCommands(_commandList);
+
+
 				foreach (var rt in _renderTargets)
 				{
 					rt.Update(frame);
