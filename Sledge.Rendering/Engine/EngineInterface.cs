@@ -188,6 +188,12 @@ namespace Sledge.Rendering.Engine
 		public void SetLightAngles(Vector3 angles) => Engine.Instance.LightAngle = Vector3.Multiply(angles, (float)Math.PI / 180f);
 		//TODO: Move this to the DisplayData? if baking approach be more reliable
 		public Vector3 GetLightAnglesRadians() => Engine.Instance.LightAngle;
+
+		public void CreateSwapChain(Control table)
+		{
+			Engine.Instance.CreateSwapChain(table);
+		}
+
 		public bool ShadowsEnabled { get => Engine.Instance.IsShadowsEnabled; set => Engine.Instance.IsShadowsEnabled = value; }
 	}
 }

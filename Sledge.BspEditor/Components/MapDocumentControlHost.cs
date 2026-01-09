@@ -14,6 +14,7 @@ using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.Common.Shell.Documents;
 using Sledge.Common.Shell.Hooks;
 using Sledge.Common.Shell.Settings;
+using Sledge.Rendering.Engine;
 using Sledge.Shell;
 using Message = System.Windows.Forms.Message;
 
@@ -274,6 +275,7 @@ namespace Sledge.BspEditor.Components
 				{
 					controls = HostedControl.Default(0);
 				}
+				Engine.Interface.CreateSwapChain(MainWindow.Table);
 
 				foreach (var hc in controls)
 				{
