@@ -39,6 +39,7 @@ namespace Sledge.Rendering.Engine
 		private RgbaFloat _clearColourPerspective;
 		private RgbaFloat _clearColourOrthographic;
 		internal int InactiveTargetFps { get; set; } = 10;
+		public Swapchain Swapchain { get; private set; }
 		private long _previousFrameTime = DateTime.Now.Ticks;
 		private ViewProjectionBuffer _lightData;
 		private ViewProjectionBuffer _cameraBuffer;
@@ -366,6 +367,20 @@ namespace Sledge.Rendering.Engine
 
 		internal event EventHandler<IViewport> ViewportCreated;
 		internal event EventHandler<IViewport> ViewportDestroyed;
+		//TODO: Create swapchain at ctor
+		internal void CreateSwapChain(Control control)
+		{
+			IntPtr HInstance = Process.GetCurrentProcess().Handle;
+			var source = SwapchainSource.CreateWin32(control.Handle, HInstance);
+			uint w = (uint)control.Width, h = (uint)control.Height;
+			if (w <= 0) w = 1;
+			if (h <= 0) h = 1;
+			var desc = new SwapchainDescription(source, w, h, _options.SwapchainDepthFormat, _options.SyncToVerticalBlank);
+			Swapchain = Device.ResourceFactory.CreateSwapchain(desc);
+			//FIXME: dynamic cast to avoid making Control a known type here
+			//This needed to control swapchain resizing from the control itself
+			(control as dynamic).SetSwapchain(Swapchain);
+		}
 
 		internal IViewport CreateViewport(Control parent)
 		{
