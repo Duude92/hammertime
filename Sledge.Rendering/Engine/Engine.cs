@@ -40,6 +40,8 @@ namespace Sledge.Rendering.Engine
 		private RgbaFloat _clearColourOrthographic;
 		internal int InactiveTargetFps { get; set; } = 10;
 		public Swapchain Swapchain { get; private set; }
+		internal SwapchainOverlayPipeline SwapchainOverlayPipeline { get; }
+
 		private long _previousFrameTime = DateTime.Now.Ticks;
 		private ViewProjectionBuffer _lightData;
 		private ViewProjectionBuffer _cameraBuffer;
@@ -111,10 +113,13 @@ namespace Sledge.Rendering.Engine
 			AddPipeline(new TexturedAlphaPipeline());
 			AddPipeline(new TexturedAdditivePipeline());
 			AddPipeline(new BillboardAlphaPipeline());
-//#if DEBUG
-//			AddPipeline(new SwapchainShadowOverlay(shadowdepth.NearShadowResourceTexture));
-//#endif
-			AddPipeline(new SwapchainOverlayPipeline());
+			//#if DEBUG
+			//			AddPipeline(new SwapchainShadowOverlay(shadowdepth.NearShadowResourceTexture));
+			//#endif
+			SwapchainOverlayPipeline = new SwapchainOverlayPipeline();
+			SwapchainOverlayPipeline.Create(Context, TextureSampleCount.Count1);
+
+			//AddPipeline(new SwapchainOverlayPipeline());
 			AddPipeline(new OverlayPipeline());
 			AddPipeline(new ShadowOverlayPipeline(_lightData));
 
@@ -265,6 +270,7 @@ namespace Sledge.Rendering.Engine
 						Render(rt);
 					}
 				}
+				Device.SwapBuffers(Swapchain);
 				if (shouldRender)
 					_previousFrameTime = currentTime;
 			}
@@ -344,23 +350,31 @@ namespace Sledge.Rendering.Engine
 			Device.SubmitCommands(_commandList);
 
 			_commandList.Begin();
+			_commandList.SetFramebuffer(renderTarget.ViewportFramebuffer);
+
+			foreach (var overlay in _pipelines[PipelineGroup.Overlay])
+			{
+				overlay.SetupFrame(Context, _cameraBuffer);
+				overlay.Render(Context, renderTarget, _commandList, Scene.GetRenderables(overlay, renderTarget));
+			}
+			_commandList.End();
+			Device.SubmitCommands(_commandList);
+
+			_commandList.Begin();
 			renderTarget.ResolveRenderTexture(_commandList);
 			_commandList.End();
 			Device.SubmitCommands(_commandList);
 
 			_commandList.Begin();
-			_commandList.SetFramebuffer(renderTarget.Swapchain.Framebuffer);
-			_commandList.ClearDepthStencil(1);
-			_commandList.ClearColorTarget(0, cc);
-
-			foreach (var overlay in _pipelines[PipelineGroup.Overlay])
-			{
-				overlay.SetupFrame(Context, _cameraBuffer);
-					overlay.Render(Context, renderTarget, _commandList, Scene.GetRenderables(overlay, renderTarget));
-			}
+			_commandList.SetFramebuffer(Swapchain.Framebuffer);
+			var vp = renderTarget.GetViewport();
+			_commandList.SetViewport(0, vp);
+			_commandList.SetScissorRect(0, (uint)vp.X, (uint)vp.Y, (uint)vp.Width, (uint)vp.Height);
+			SwapchainOverlayPipeline.SetupFrame(Context, _cameraBuffer);
+			SwapchainOverlayPipeline.Render(Context, renderTarget, _commandList, Scene.GetRenderables(SwapchainOverlayPipeline, renderTarget));
 			_commandList.End();
 			Device.SubmitCommands(_commandList);
-			Device.SwapBuffers(renderTarget.Swapchain);
+
 		}
 
 		// Viewports
