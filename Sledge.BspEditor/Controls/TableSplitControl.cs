@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Veldrid;
 
 namespace Sledge.BspEditor.Controls
 {
@@ -109,7 +110,15 @@ namespace Sledge.BspEditor.Controls
             _configuration = TableSplitConfiguration.Default();
             ResetLayout();
         }
-
+        public void SetSwapchain(Swapchain swapchain)
+        {
+            _swapchain = swapchain;
+		}
+		protected override void OnResize(EventArgs eventargs)
+		{
+			base.OnResize(eventargs);
+            _swapchain?.Resize((uint)Math.Max(1, Width), (uint)Math.Max(1, Height));
+		}
         protected override void OnControlAdded(ControlEventArgs e)
         {
             var r = GetPositionFromControl(e.Control);
@@ -201,8 +210,9 @@ namespace Sledge.BspEditor.Controls
 
         private float[] _memoryWidth;
         private float[] _memoryHeight;
+		private Swapchain _swapchain;
 
-        protected override void OnMouseMove(MouseEventArgs e)
+		protected override void OnMouseMove(MouseEventArgs e)
         {
             if (_resizing)
             {
