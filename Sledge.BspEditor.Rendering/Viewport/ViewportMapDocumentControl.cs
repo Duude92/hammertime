@@ -42,12 +42,25 @@ namespace Sledge.BspEditor.Rendering.Viewport
 				if (_viewport != null) _viewport.Camera = value;
 			}
 		}
+		private class TransparentPanel : Panel
+		{
+			protected override CreateParams CreateParams
+			{
+				get
+				{
+					var cp = base.CreateParams;
+					cp.ExStyle |= 0x00000020; // WS_EX_TRANSPARENT
+
+					return cp;
+				}
+			}
+		}
 
 		public ViewportMapDocumentControl(EngineInterface engine, IEnumerable<IViewportEventListenerFactory> listeners)
 		{
 			_engine = engine;
 			_camera = new PerspectiveCamera();
-			Control = new Panel { Dock = DockStyle.Fill, BackColor = Color.Black };
+			Control = new TransparentPanel { Dock = DockStyle.Fill, BackColor = Color.Black };
 
 			_subscriptions = new List<Subscription>
 			{
