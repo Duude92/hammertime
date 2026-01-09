@@ -4,9 +4,6 @@ using System.Windows.Forms;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Overlay;
 using Sledge.Rendering.Viewports.ViewportResolver;
-using System;
-using System.Diagnostics;
-using System.Windows.Forms;
 using Veldrid;
 
 namespace Sledge.Rendering.Viewports
@@ -19,8 +16,6 @@ namespace Sledge.Rendering.Viewports
 		private bool _resizeRequired;
 
 		public int ID { get; }
-		public Swapchain Swapchain { get; private set; }
-
 		public ICamera Camera
 		{
 			get => _camera;
@@ -72,10 +67,6 @@ namespace Sledge.Rendering.Viewports
 			if (h <= 0) h = 1;
 
 			Camera = new PerspectiveCamera { Width = (int)w, Height = (int)h };
-
-			var source = SwapchainSource.CreateWin32(hWnd, hInstance);
-			var desc = new SwapchainDescription(source, w, h, _options.SwapchainDepthFormat, _options.SyncToVerticalBlank);
-			Swapchain = _device.ResourceFactory.CreateSwapchain(desc);
 
 			InitFramebuffer(w, h, _sampleCount);
 
@@ -133,7 +124,6 @@ namespace Sledge.Rendering.Viewports
 			{
 				var w = Math.Max(Width, 1);
 				var h = Math.Max(Height, 1);
-				Swapchain.Resize((uint)w, (uint)h);
 				InitFramebuffer((uint)w, (uint)h, _sampleCount);
 				_resizeRequired = false;
 
@@ -188,7 +178,6 @@ namespace Sledge.Rendering.Viewports
 			if (disposing)
 			{
 				Overlay.Dispose();
-				Swapchain.Dispose();
 				_viewportResolvedTexture.Dispose();
 				ViewportFramebuffer.Dispose();
 				ViewportRenderTexture.Dispose();
