@@ -47,7 +47,7 @@ namespace Sledge.Rendering.Viewports
 		private IViewportResolver _viewportResolver;
 		private Texture _mainSceneColorTexture;
 		private Texture _viewportResolvedTexture;
-
+		private Veldrid.Viewport _viewport;
 		public event EventHandler<long> OnUpdate;
 
 		public Viewport(GraphicsDevice graphics, GraphicsDeviceOptions options, TextureSampleCount sampleCount)
@@ -60,7 +60,7 @@ namespace Sledge.Rendering.Viewports
 			SetStyle(ControlStyles.AllPaintingInWmPaint, true);
 			DoubleBuffered = false;
 			ID = _nextId++;
-
+			_viewport = new Veldrid.Viewport(0, 0, Width, Height, 0, 1);
 		}
 		public void InitSwapchain()
 		{
@@ -81,6 +81,7 @@ namespace Sledge.Rendering.Viewports
 
 			Overlay = new ViewportOverlay(this);
 		}
+		public Veldrid.Viewport GetViewport() => _viewport;
 		public void InitFramebuffer(TextureSampleCount sampleCount)
 		{
 			InitFramebuffer((uint)Width, (uint)Height, sampleCount);
@@ -135,6 +136,9 @@ namespace Sledge.Rendering.Viewports
 				Swapchain.Resize((uint)w, (uint)h);
 				InitFramebuffer((uint)w, (uint)h, _sampleCount);
 				_resizeRequired = false;
+
+				var loc = this.Parent.Location;
+				_viewport = new Veldrid.Viewport(loc.X, loc.Y, Width, Height, 0, 1);
 			}
 
 			OnUpdate?.Invoke(this, frame);

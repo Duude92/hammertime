@@ -7,5 +7,6 @@ namespace Sledge.Rendering.Viewports
     {
         Swapchain Swapchain { get; }
         bool ShouldRender(long frame);
+        Veldrid.Viewport GetViewport();
     }
 }
