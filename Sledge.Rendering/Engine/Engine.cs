@@ -104,13 +104,13 @@ namespace Sledge.Rendering.Engine
 
 			Application.ApplicationExit += Shutdown;
 			InitPipelines();
+			_pipelines.Add(PipelineGroup.Opaque, new List<IPipeline>());
+			_pipelines.Add(PipelineGroup.Transparent, new List<IPipeline>());
+			_pipelines.Add(PipelineGroup.Overlay, new List<IPipeline>());
 		}
 
 		private void InitPipelines()
 		{
-			_pipelines.Add(PipelineGroup.Opaque, new List<IPipeline>());
-			_pipelines.Add(PipelineGroup.Transparent, new List<IPipeline>());
-			_pipelines.Add(PipelineGroup.Overlay, new List<IPipeline>());
 
 			AddPipeline(new SkyboxPipeline());
 			AddPipeline(new WireframePipeline());
