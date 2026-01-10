@@ -357,6 +357,17 @@ namespace Sledge.Rendering.Engine
 			Device.SubmitCommands(_commandList);
 
 			_commandList.Begin();
+			_commandList.SetFramebuffer(renderTarget.ViewportFramebuffer);
+
+			foreach (var overlay in _pipelines[PipelineGroup.Overlay])
+			{
+				overlay.SetupFrame(Context, _cameraBuffer);
+				overlay.Render(Context, renderTarget, _commandList, Scene.GetRenderables(overlay, renderTarget));
+			}
+			_commandList.End();
+			Device.SubmitCommands(_commandList);
+
+			_commandList.Begin();
 			renderTarget.ResolveRenderTexture(_commandList);
 			_commandList.End();
 			Device.SubmitCommands(_commandList);
@@ -368,11 +379,6 @@ namespace Sledge.Rendering.Engine
 			_commandList.SetScissorRect(0, (uint)vp.X, (uint)vp.Y, (uint)vp.Width, (uint)vp.Height);
 			SwapchainOverlayPipeline.SetupFrame(Context, _cameraBuffer);
 			SwapchainOverlayPipeline.Render(Context, renderTarget, _commandList, Scene.GetRenderables(SwapchainOverlayPipeline, renderTarget));
-			foreach (var overlay in _pipelines[PipelineGroup.Overlay])
-			{
-				overlay.SetupFrame(Context, _cameraBuffer);
-				overlay.Render(Context, renderTarget, _commandList, Scene.GetRenderables(overlay, renderTarget));
-			}
 			_commandList.End();
 			Device.SubmitCommands(_commandList);
 
