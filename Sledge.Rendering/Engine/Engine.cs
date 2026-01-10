@@ -43,7 +43,6 @@ namespace Sledge.Rendering.Engine
 		public Swapchain Swapchain { get; private set; }
 		internal SwapchainOverlayPipeline SwapchainOverlayPipeline { get; }
 
-		private long _previousFrameTime = DateTime.Now.Ticks;
 		private ViewProjectionBuffer _lightData;
 		private ViewProjectionBuffer _cameraBuffer;
 
@@ -258,18 +257,11 @@ namespace Sledge.Rendering.Engine
 				Scene.Update(frame);
 				var overlays = Scene.GetOverlayRenderables().ToList();
 
-				long currentTime = DateTime.Now.Ticks;
-				long elapsedTime = currentTime - _previousFrameTime;
-				double millisecondsPerFrame = 1000.0 / InactiveTargetFps;
-				bool shouldRender = (elapsedTime >= millisecondsPerFrame * TimeSpan.TicksPerMillisecond);
-
-
-
 				foreach (var rt in _renderTargets)
 				{
 					rt.Update(frame);
 					rt.Overlay.Build(overlays);
-					if (rt.IsFocused || (!rt.IsFocused && shouldRender))
+					if (rt.IsFocused || rt.ShouldRender(frame))
 					{
 						_cameraBuffer = new ViewProjectionBuffer { Projection = rt.Camera.Projection, View = rt.Camera.View };
 						Render(rt);
@@ -300,8 +292,7 @@ namespace Sledge.Rendering.Engine
 				Device.SubmitCommands(_commandList);
 
 				Device.SwapBuffers(Swapchain);
-				if (shouldRender)
-					_previousFrameTime = currentTime;
+
 			}
 		}
 
