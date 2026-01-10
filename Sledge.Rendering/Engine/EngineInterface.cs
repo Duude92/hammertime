@@ -194,6 +194,11 @@ namespace Sledge.Rendering.Engine
 			Engine.Instance.CreateSwapChain(table);
 		}
 
+		public void Resize(int v1, int v2)
+		{
+			Engine.Instance.Resize(v1, v2);
+		}
+
 		public bool ShadowsEnabled { get => Engine.Instance.IsShadowsEnabled; set => Engine.Instance.IsShadowsEnabled = value; }
 	}
 }

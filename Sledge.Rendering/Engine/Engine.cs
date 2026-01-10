@@ -1,4 +1,5 @@
 ﻿using SharpDX.Direct3D;
+using SixLabors.ImageSharp;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.Pipelines;
@@ -199,6 +200,7 @@ namespace Sledge.Rendering.Engine
 
 		private int _paused = 0;
 		private TextureSampleCount _sampleCount = TextureSampleCount.Count1;
+		private Point? _resize;
 		private readonly ManualResetEvent _pauseThreadEvent = new ManualResetEvent(false);
 
 		public IDisposable Pause()
@@ -273,7 +275,13 @@ namespace Sledge.Rendering.Engine
 						Render(rt);
 					}
 				}
-				Device.WaitForIdle();
+				if (_resize.HasValue)
+				{
+					var r = _resize.Value;
+					_resize = null;
+					Swapchain?.Resize((uint)r.X, (uint)r.Y);
+				}
+
 				_commandList.Begin();
 				_commandList.SetFramebuffer(Swapchain.Framebuffer);
 				_commandList.ClearColorTarget(0, RgbaFloat.Grey);
@@ -393,9 +401,6 @@ namespace Sledge.Rendering.Engine
 			if (h <= 0) h = 1;
 			var desc = new SwapchainDescription(source, w, h, _options.SwapchainDepthFormat, _options.SyncToVerticalBlank);
 			Swapchain = Device.ResourceFactory.CreateSwapchain(desc);
-			//FIXME: dynamic cast to avoid making Control a known type here
-			//This needed to control swapchain resizing from the control itself
-			(control as dynamic).SetSwapchain(Swapchain);
 		}
 		internal IViewport CreateViewport(Control parent)
 		{
@@ -451,6 +456,12 @@ namespace Sledge.Rendering.Engine
 				Start();
 			}
 		}
+
+		public void Resize(int v1, int v2)
+		{
+			_resize = new Point(v1, v2);
+		}
+
 		public class ViewProjectionBuffer
 		{
 			public Matrix4x4 Projection;

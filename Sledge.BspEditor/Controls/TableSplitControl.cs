@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sledge.Rendering.Engine;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -110,14 +111,11 @@ namespace Sledge.BspEditor.Controls
             _configuration = TableSplitConfiguration.Default();
             ResetLayout();
         }
-        public void SetSwapchain(Swapchain swapchain)
-        {
-            _swapchain = swapchain;
-		}
 		protected override void OnResize(EventArgs eventargs)
 		{
 			base.OnResize(eventargs);
-            _swapchain?.Resize((uint)Math.Max(1, Width), (uint)Math.Max(1, Height));
+
+			Engine.Interface.Resize(Math.Max(1, Width), Math.Max(1, Height));
 		}
         protected override void OnControlAdded(ControlEventArgs e)
         {
@@ -210,7 +208,6 @@ namespace Sledge.BspEditor.Controls
 
         private float[] _memoryWidth;
         private float[] _memoryHeight;
-		private Swapchain _swapchain;
 
 		protected override void OnMouseMove(MouseEventArgs e)
         {
