@@ -72,8 +72,9 @@ namespace Sledge.Rendering.Engine.Backends
 				var errors = result.GetErrors();
 				throw new Exception($"Error compiling shader\n{errors}");
 			}
-
-			return result.GetObjectBytecodeArray();
+			var resultArray = result.GetObjectBytecodeArray();
+			result.Dispose();
+			return resultArray;
 		}
 		public (Shader, Shader) LoadShaders(string name)
 		{
