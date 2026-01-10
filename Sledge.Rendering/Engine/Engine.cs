@@ -50,9 +50,12 @@ namespace Sledge.Rendering.Engine
 		{
 			_options = new GraphicsDeviceOptions
 			{
-				HasMainSwapchain = false,
+				HasMainSwapchain = true,
 				ResourceBindingModel = ResourceBindingModel.Improved,
 				SwapchainDepthFormat = PixelFormat.R32_Float,
+#if DEBUG
+				Debug = true
+#endif
 			};
 
 			Device = GraphicsDevice.CreateD3D11(_options);
@@ -258,11 +261,7 @@ namespace Sledge.Rendering.Engine
 				double millisecondsPerFrame = 1000.0 / InactiveTargetFps;
 				bool shouldRender = (elapsedTime >= millisecondsPerFrame * TimeSpan.TicksPerMillisecond);
 
-				_commandList.Begin();
-				_commandList.SetFramebuffer(Swapchain.Framebuffer);
-				_commandList.ClearColorTarget(0, RgbaFloat.Grey);
-				_commandList.End();
-				Device.SubmitCommands(_commandList);
+
 
 				foreach (var rt in _renderTargets)
 				{
@@ -274,6 +273,24 @@ namespace Sledge.Rendering.Engine
 						Render(rt);
 					}
 				}
+				Device.WaitForIdle();
+				_commandList.Begin();
+				_commandList.SetFramebuffer(Swapchain.Framebuffer);
+				_commandList.ClearColorTarget(0, RgbaFloat.Grey);
+
+
+				foreach (var rt in _renderTargets)
+				{
+					_commandList.SetFramebuffer(Swapchain.Framebuffer);
+					var vp = rt.GetViewport();
+					_commandList.SetViewport(0, vp);
+					_commandList.SetScissorRect(0, (uint)vp.X, (uint)vp.Y, (uint)vp.Width, (uint)vp.Height);
+					SwapchainOverlayPipeline.SetupFrame(Context, _cameraBuffer);
+					SwapchainOverlayPipeline.Render(Context, rt, _commandList, Scene.GetRenderables(SwapchainOverlayPipeline, rt));
+				}
+				_commandList.End();
+				Device.SubmitCommands(_commandList);
+
 				Device.SwapBuffers(Swapchain);
 				if (shouldRender)
 					_previousFrameTime = currentTime;
@@ -357,13 +374,6 @@ namespace Sledge.Rendering.Engine
 			}
 
 			renderTarget.ResolveRenderTexture(_commandList);
-
-			_commandList.SetFramebuffer(Swapchain.Framebuffer);
-			var vp = renderTarget.GetViewport();
-			_commandList.SetViewport(0, vp);
-			_commandList.SetScissorRect(0, (uint)vp.X, (uint)vp.Y, (uint)vp.Width, (uint)vp.Height);
-			SwapchainOverlayPipeline.SetupFrame(Context, _cameraBuffer);
-			SwapchainOverlayPipeline.Render(Context, renderTarget, _commandList, Scene.GetRenderables(SwapchainOverlayPipeline, renderTarget));
 
 			_commandList.End();
 			Device.SubmitCommands(_commandList);
