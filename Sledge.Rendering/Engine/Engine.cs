@@ -439,11 +439,14 @@ namespace Sledge.Rendering.Engine
 
 				foreach (var rt in _renderTargets)
 				{
+					Scene.Remove((IRenderable)rt.Overlay);
+					Scene.Remove((IUpdateable)rt.Overlay);
 					rt.InitFramebuffer(_sampleCount);
 					Scene.Add((IRenderable)rt.Overlay);
 					Scene.Add((IUpdateable)rt.Overlay);
 
 				}
+				if (!RenderThread.IsAlive)
 				Start();
 			}
 		}
