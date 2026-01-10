@@ -51,6 +51,7 @@ namespace Sledge.Rendering.Engine.Backends
 				new VertexElementDescription("in_texCoord", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2),
 				new VertexElementDescription("in_color", VertexElementSemantic.Color, VertexElementFormat.Byte4_Norm));
 
+		public RasterizerStateDescription RasterizerStateDescription => RasterizerStateDescription.Default;
 
 		public (Shader, Shader) LoadShaders(string name)
 		{

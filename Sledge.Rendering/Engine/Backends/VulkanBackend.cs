@@ -42,7 +42,15 @@ namespace Sledge.Rendering.Engine.Backends
 				new VertexElementDescription("in_texCoord", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2),
 				new VertexElementDescription("in_color", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Byte4_Norm));
 
-	private byte[] CompileShadersToSpirV(byte[] shaderCode, DxcShaderStage stage)
+		public RasterizerStateDescription RasterizerStateDescription => new RasterizerStateDescription {
+			CullMode = FaceCullMode.Front,
+			FillMode = PolygonFillMode.Solid,
+			FrontFace = FrontFace.Clockwise,
+			DepthClipEnabled = true,
+			ScissorTestEnabled = false
+		};
+
+		private byte[] CompileShadersToSpirV(byte[] shaderCode, DxcShaderStage stage)
 		{
 			var vShader = shaderCode;
 			var str = System.Text.Encoding.Default.GetString(vShader);

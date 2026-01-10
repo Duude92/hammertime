@@ -14,6 +14,6 @@ namespace Sledge.Rendering.Engine.Backends
 		public VertexLayoutDescription ImGUILayoutDescription { get; }
 		public (Shader, Shader) LoadShaders(string name);
 		public (Shader, Shader, Shader) LoadShadersGeometry(string name);
-
+		public RasterizerStateDescription RasterizerStateDescription { get; }
 	}
 }
