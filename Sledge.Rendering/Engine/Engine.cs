@@ -246,7 +246,6 @@ namespace Sledge.Rendering.Engine
 				// exit
 			}
 		}
-
 		private void Render(long frame)
 		{
 			lock (_lock)
@@ -401,7 +400,6 @@ namespace Sledge.Rendering.Engine
 			//This needed to control swapchain resizing from the control itself
 			(control as dynamic).SetSwapchain(Swapchain);
 		}
-
 		internal IViewport CreateViewport(Control parent)
 		{
 			lock (_lock)
@@ -411,9 +409,7 @@ namespace Sledge.Rendering.Engine
 				control.InitSwapchain();
 				control.Disposed += DestroyViewport;
 
-				if (!_renderTargets.Any()) Start();
 				_renderTargets.Add(control);
-
 
 				ViewportCreated?.Invoke(this, control);
 
@@ -455,6 +451,7 @@ namespace Sledge.Rendering.Engine
 					Scene.Add((IUpdateable)rt.Overlay);
 
 				}
+				Start();
 			}
 		}
 		public class ViewProjectionBuffer
