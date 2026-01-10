@@ -103,7 +103,6 @@ namespace Sledge.Rendering.Engine
 			SwapchainOverlayPipeline.Create(Context, TextureSampleCount.Count1);
 
 			Application.ApplicationExit += Shutdown;
-			InitPipelines();
 			_pipelines.Add(PipelineGroup.Opaque, new List<IPipeline>());
 			_pipelines.Add(PipelineGroup.Transparent, new List<IPipeline>());
 			_pipelines.Add(PipelineGroup.Overlay, new List<IPipeline>());
@@ -111,7 +110,6 @@ namespace Sledge.Rendering.Engine
 
 		private void InitPipelines()
 		{
-
 			AddPipeline(new SkyboxPipeline());
 			AddPipeline(new WireframePipeline());
 			AddPipeline(new TexturedOpaquePipeline());
@@ -152,7 +150,7 @@ namespace Sledge.Rendering.Engine
 
 		public void AddPipeline(IPipeline pipeline)
 		{
-			pipeline.Create(Context, TextureSampleCount.Count1);
+			pipeline.Create(Context, _sampleCount);
 			lock (_lock)
 			{
 				_pipelines[pipeline.Group].Add(pipeline);
@@ -416,8 +414,7 @@ namespace Sledge.Rendering.Engine
 				if (!_renderTargets.Any()) Start();
 				_renderTargets.Add(control);
 
-				Scene.Add((IRenderable)control.Overlay);
-				Scene.Add((IUpdateable)control.Overlay);
+
 				ViewportCreated?.Invoke(this, control);
 
 				return control;
@@ -449,14 +446,14 @@ namespace Sledge.Rendering.Engine
 			lock (_lock)
 			{
 				_sampleCount = (TextureSampleCount)mSAAoption;
-				foreach (var pl in _pipelines.SelectMany(x => x.Value))
-				{
-					if (pl.Group == PipelineGroup.Overlay) continue;
-					pl.Create(Context, _sampleCount);
-				}
+				InitPipelines();
+
 				foreach (var rt in _renderTargets)
 				{
 					rt.InitFramebuffer(_sampleCount);
+					Scene.Add((IRenderable)rt.Overlay);
+					Scene.Add((IUpdateable)rt.Overlay);
+
 				}
 			}
 		}

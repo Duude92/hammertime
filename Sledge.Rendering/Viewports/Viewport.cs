@@ -76,6 +76,8 @@ namespace Sledge.Rendering.Viewports
 		public void InitFramebuffer(TextureSampleCount sampleCount)
 		{
 			InitFramebuffer((uint)Width, (uint)Height, sampleCount);
+			Overlay = new ViewportOverlay(this);
+
 		}
 
 		private void InitFramebuffer(uint width, uint height, TextureSampleCount sampleCount)
