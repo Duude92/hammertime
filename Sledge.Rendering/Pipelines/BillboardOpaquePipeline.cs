@@ -32,7 +32,7 @@ namespace Sledge.Rendering.Pipelines
 			{
 				BlendState = BlendStateDescription.SingleAlphaBlend,
 				DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
-				RasterizerState = RasterizerStateDescription.Default,
+				RasterizerState = context.GraphicBackend.RasterizerStateDescription,
 				PrimitiveTopology = PrimitiveTopology.TriangleList,
 				ResourceLayouts = new[] { context.ResourceLoader.ProjectionLayout,
 					context.ResourceLoader.TextureLayout },

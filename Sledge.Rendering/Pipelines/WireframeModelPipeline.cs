@@ -38,7 +38,7 @@ namespace Sledge.Rendering.Pipelines
             {
                 BlendState = BlendStateDescription.SingleDisabled,
                 DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
-                RasterizerState = RasterizerStateDescription.Default,
+                RasterizerState = context.GraphicBackend.RasterizerStateDescription,
                 PrimitiveTopology = PrimitiveTopology.LineList,
                 ResourceLayouts = new[] { context.ResourceLoader.ProjectionLayout, _transformsLayout },
                 ShaderSet = new ShaderSetDescription(new[] { context.ResourceLoader.VertexModel3LayoutDescription }, new[] { _vertex, _fragment }),

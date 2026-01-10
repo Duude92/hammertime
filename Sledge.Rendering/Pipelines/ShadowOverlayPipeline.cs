@@ -60,7 +60,7 @@ namespace Sledge.Rendering.Pipelines
 					}
 				},
 				DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
-				RasterizerState = RasterizerStateDescription.Default,
+				RasterizerState = context.GraphicBackend.RasterizerStateDescription,
 				PrimitiveTopology = PrimitiveTopology.TriangleList,
 				ResourceLayouts = new[] { context.ResourceLoader.ProjectionLayout, context.ResourceLoader.TextureLayout,
 					context.Device.ResourceFactory.CreateResourceLayout(
