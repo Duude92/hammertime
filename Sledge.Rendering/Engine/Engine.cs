@@ -99,6 +99,15 @@ namespace Sledge.Rendering.Engine
 
 			RenderThread = new Thread(Loop);
 
+			SwapchainOverlayPipeline = new SwapchainOverlayPipeline();
+			SwapchainOverlayPipeline.Create(Context, TextureSampleCount.Count1);
+
+			Application.ApplicationExit += Shutdown;
+			InitPipelines();
+		}
+
+		private void InitPipelines()
+		{
 			_pipelines.Add(PipelineGroup.Opaque, new List<IPipeline>());
 			_pipelines.Add(PipelineGroup.Transparent, new List<IPipeline>());
 			_pipelines.Add(PipelineGroup.Overlay, new List<IPipeline>());
@@ -113,17 +122,9 @@ namespace Sledge.Rendering.Engine
 			AddPipeline(new TexturedAlphaPipeline());
 			AddPipeline(new TexturedAdditivePipeline());
 			AddPipeline(new BillboardAlphaPipeline());
-			//#if DEBUG
-			//			AddPipeline(new SwapchainShadowOverlay(shadowdepth.NearShadowResourceTexture));
-			//#endif
-			SwapchainOverlayPipeline = new SwapchainOverlayPipeline();
-			SwapchainOverlayPipeline.Create(Context, TextureSampleCount.Count1);
 
-			//AddPipeline(new SwapchainOverlayPipeline());
 			AddPipeline(new OverlayPipeline());
 			AddPipeline(new ShadowOverlayPipeline(_lightData));
-
-			Application.ApplicationExit += Shutdown;
 		}
 
 		private void DetectFeatures(GraphicsDevice device)
