@@ -21,27 +21,27 @@ namespace Sledge.Rendering.Engine
 		internal static Engine Instance { get; } = new Engine();
 		public static EngineInterface Interface { get; } = new EngineInterface();
 
-		public GraphicsDevice Device { get; }
+		public GraphicsDevice Device { get; private set; }
 		public Thread RenderThread { get; private set; }
 		public Scene Scene { get; }
 		internal bool IsShadowsEnabled { get; set; } = false;
 		internal Vector3 LightAngle { get; set; } = Vector3.Zero;
-		internal RenderContext Context { get; }
+		internal RenderContext Context { get; private set; }
 
 		private CancellationTokenSource _token;
 
 		private readonly GraphicsDeviceOptions _options;
-		private readonly Stopwatch _timer;
 		private readonly object _lock = new object();
 		private readonly List<IViewport> _renderTargets;
 		private readonly Dictionary<PipelineGroup, List<IPipeline>> _pipelines;
-		private readonly CommandList _commandList;
+		private Stopwatch _timer;
+		private CommandList _commandList;
 
 		private RgbaFloat _clearColourPerspective;
 		private RgbaFloat _clearColourOrthographic;
 		internal int InactiveTargetFps { get; set; } = 10;
 		public Swapchain Swapchain { get; private set; }
-		internal SwapchainOverlayPipeline SwapchainOverlayPipeline { get; }
+		private SwapchainOverlayPipeline SwapchainOverlayPipeline { get; set; }
 
 		private ViewProjectionBuffer _lightData;
 		private ViewProjectionBuffer _cameraBuffer;
@@ -57,10 +57,16 @@ namespace Sledge.Rendering.Engine
 				Debug = true
 #endif
 			};
+			Scene = new Scene();
+			_renderTargets = new List<IViewport>();
+			_pipelines = new Dictionary<PipelineGroup, List<IPipeline>>();
+
+			Initialize();
+		}
+		public void Initialize() { 
 
 			Device = GraphicsDevice.CreateD3D11(_options);
 			DetectFeatures(Device);
-			Scene = new Scene();
 
 			_commandList = Device.ResourceFactory.CreateCommandList();
 
@@ -92,8 +98,6 @@ namespace Sledge.Rendering.Engine
 			_timer = new Stopwatch();
 			_token = new CancellationTokenSource();
 
-			_renderTargets = new List<IViewport>();
-			_pipelines = new Dictionary<PipelineGroup, List<IPipeline>>();
 			Context = new RenderContext(Device);
 			Scene.Add(Context);
 #if DEBUG
