@@ -61,7 +61,6 @@ namespace Sledge.Rendering.Engine
 			_renderTargets = new List<IViewport>();
 			_pipelines = new Dictionary<PipelineGroup, List<IPipeline>>();
 
-			Initialize();
 		}
 		public void Initialize() { 
 
@@ -395,6 +394,8 @@ namespace Sledge.Rendering.Engine
 			if (w <= 0) w = 1;
 			if (h <= 0) h = 1;
 			var desc = new SwapchainDescription(source, w, h, _options.SwapchainDepthFormat, _options.SyncToVerticalBlank);
+			Initialize();
+
 			Swapchain = Device.ResourceFactory.CreateSwapchain(desc);
 		}
 		internal IViewport CreateViewport(Control parent)
