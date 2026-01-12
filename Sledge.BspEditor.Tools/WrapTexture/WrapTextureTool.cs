@@ -39,6 +39,7 @@ namespace Sledge.BspEditor.Tools.WrapTexture
 		{
 			return "Apply current texture to selected brushes";
 		}
+		public override string Id => "WrapTextureTool";
 
 		public void LoadValues(ISettingsStore store)
 		{

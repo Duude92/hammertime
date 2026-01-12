@@ -32,7 +32,7 @@ namespace Sledge.BspEditor.Tools.Widgets
 		private readonly Vector3 Vector3MaxValue = new Vector3(1, 1, 1) * float.MaxValue;
 		private bool _uniformTransform = true;
 		private bool _scaleTransformation = false;
-
+		public override string Id => "MoveWidget";
 		public MoveWidget(MapDocument document)
 		{
 			SetDocument(document);

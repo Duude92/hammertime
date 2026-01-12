@@ -54,6 +54,7 @@ namespace Sledge.BspEditor.Tools.Texture
         {
             return "Texture Application Tool";
         }
+		public override string Id => "TextureTool";
 
         private FaceSelection GetSelection(MapDocument document)
         {

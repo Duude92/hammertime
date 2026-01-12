@@ -56,6 +56,7 @@ namespace Sledge.BspEditor.Tools.Prefab
 		public override Image GetIcon() => Resources.Tool_Prefab;
 
 		public override string GetName() => "PrefabTool";
+		public override string Id => "PrefabTool";
 
 		public PrefabTool()
 		{

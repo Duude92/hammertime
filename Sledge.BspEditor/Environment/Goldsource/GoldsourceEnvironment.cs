@@ -146,6 +146,8 @@ namespace Sledge.BspEditor.Environment.Goldsource
 			}
 		}
 
+		public string[] SupportedTools => new[]{"SelectTool", "TextureTool", "BrushTool", "ClipTool", "CordonTool", "DecalTool",
+			"EntityTool", "PathTool", "PrefabTool" , "VertexTool", "WrapTextureTool", "CameraTool" };
 
 		public GoldsourceEnvironment()
 		{

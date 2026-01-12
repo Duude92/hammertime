@@ -54,6 +54,7 @@ namespace Sledge.BspEditor.Tools.Brush
 		public string CreateObject { get; set; } = "Create Object";
 
 		public bool ValuesLoaded { get; private set; } = false;
+		public override string Id { get; } = "BrushTool";
 
 
 		// Settings

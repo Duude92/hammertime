@@ -39,6 +39,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
         public override Control Control => _control;
         
         private readonly List<SolidFace> _selectedFaces;
+		public override string Id => "VertexFaceEditTool";
 
         [ImportingConstructor]
         public VertexFaceEditTool(

@@ -58,6 +58,7 @@ namespace Sledge.BspEditor.Tools.Entity
 		[Setting("ResetEntityTypeOnCreation")] private bool _resetEntityTypeOnCreation = false;
 
 		string ISettingsContainer.Name => "Sledge.BspEditor.Tools.EntityTool";
+		public override string Id => "EntityTool";
 		public bool ValuesLoaded { get; private set; } = false;
 
 		IEnumerable<SettingKey> ISettingsContainer.GetKeys()

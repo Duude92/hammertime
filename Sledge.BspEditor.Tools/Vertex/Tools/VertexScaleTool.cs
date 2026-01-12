@@ -36,6 +36,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
         private readonly Dictionary<VertexSolid, VertexList> _vertices;
         private readonly ScaleOrigin _origin;
         private Dictionary<VertexPoint, Vector3> _originals;
+		public override string Id => "VertexScaleTool";
         
         public VertexScaleTool()
         {

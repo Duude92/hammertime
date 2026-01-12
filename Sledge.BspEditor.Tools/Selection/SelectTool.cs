@@ -67,6 +67,7 @@ namespace Sledge.BspEditor.Tools.Selection
 		[Setting] public bool KeepVisgroupsWhenCloning { get; set; } = true;
 
 		string ISettingsContainer.Name => "Sledge.BspEditor.Tools.SelectTool";
+		public override string Id => "SelectTool";
 		public bool ValuesLoaded { get; private set; } = false;
 
 		IEnumerable<SettingKey> ISettingsContainer.GetKeys()

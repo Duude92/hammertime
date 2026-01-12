@@ -61,6 +61,7 @@ namespace Sledge.BspEditor.Tools.Vertex
 
 			_selection = new VertexSelection();
 		}
+		public override string Id => "VertexTool";
 
 		public Task OnInitialise()
 		{

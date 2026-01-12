@@ -75,6 +75,7 @@ namespace Sledge.BspEditor.Tools.Clip
         {
             return "Clip Tool";
         }
+		public override string Id => "ClipTool";
 
         protected override IEnumerable<Subscription> Subscribe()
         {

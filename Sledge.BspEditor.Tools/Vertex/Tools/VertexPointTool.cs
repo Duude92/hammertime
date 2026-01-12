@@ -49,7 +49,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
 
 		private VisiblePoints _showPoints;
 
-
+		public override string Id => "VertexPointTool";
 
 		public VertexPointTool()
 		{

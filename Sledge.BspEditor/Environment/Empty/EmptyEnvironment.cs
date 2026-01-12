@@ -16,8 +16,9 @@ namespace Sledge.BspEditor.Environment.Empty
         public string Name => "Empty";
         public IFile Root => null;
         public IEnumerable<string> Directories => new string[0];
+		public string[] SupportedTools => new string[0];
 
-        public async Task<TextureCollection> GetTextureCollection()
+		public async Task<TextureCollection> GetTextureCollection()
         {
              return new EmptyTextureCollection(new TexturePackage[0]);
         }

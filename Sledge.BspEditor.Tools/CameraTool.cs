@@ -59,7 +59,7 @@ namespace Sledge.BspEditor.Tools
 			_state = State.None;
 			return Task.CompletedTask;
 		}
-
+		public override string Id => "CameraTool";
 		private Task CameraNext(object param)
 		{
 			var document = GetDocument();

@@ -40,6 +40,7 @@ namespace Sledge.BspEditor.Tools.Cordon
         {
             return "CordonTool";
         }
+		public override string Id => "CordonTool";
 
         public override async Task ToolSelected()
         {

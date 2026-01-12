@@ -43,6 +43,7 @@ namespace Sledge.BspEditor.Tools.Decal
         {
             return "Decal Tool";
         }
+		public override string Id => "DecalTool";
 
         protected override void MouseDown(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
         {

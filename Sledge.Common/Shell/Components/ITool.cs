@@ -17,5 +17,9 @@ namespace Sledge.Common.Shell.Components
         /// The tool's name
         /// </summary>
         string Name { get; }
+        /// <summary>
+        /// The tool's id to filter tools
+        /// </summary>
+        string Id { get; }
     }
 }

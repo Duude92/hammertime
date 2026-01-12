@@ -159,6 +159,9 @@ namespace HammerTime.Source.BspEditor.Environment.Source
 		public bool MapCopyErr { get; internal set; }
 		public bool MapCopyRes { get; internal set; }
 
+		public string[] SupportedTools => new[] { "SelectTool", "TextureTool", "BrushTool", "ClipTool", "CordonTool", "DecalTool",
+			"EntityTool", "PathTool", "PrefabTool" , "VertexTool", "WrapTextureTool", "CameraTool" };
+
 		public void AddData(IEnvironmentData data)
 		{
 			if (!_data.Contains(data)) _data.Add(data);

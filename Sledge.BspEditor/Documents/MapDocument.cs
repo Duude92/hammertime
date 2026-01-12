@@ -50,8 +50,9 @@ namespace Sledge.BspEditor.Documents
         /// The environment for this document
         /// </summary>
         public IEnvironment Environment { get; set; }
+        public IEnumerable<string> SupportedTools => Environment.SupportedTools;
 
-        private readonly List<Subscription> _subscriptions;
+		private readonly List<Subscription> _subscriptions;
 
         /// <summary>
         /// A convenience method to get the selection for this document.

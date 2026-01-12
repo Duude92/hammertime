@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Sledge.Common.Shell.Documents
 {
@@ -12,7 +13,9 @@ namespace Sledge.Common.Shell.Documents
         public object Control => null;
         public bool HasUnsavedChanges => false;
 
-        public Task<bool> RequestClose()
+		public IEnumerable<string> SupportedTools => new string[0];
+
+		public Task<bool> RequestClose()
         {
             return Task.FromResult(true);
         }

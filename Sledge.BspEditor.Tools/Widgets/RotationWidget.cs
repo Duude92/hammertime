@@ -32,7 +32,7 @@ namespace Sledge.BspEditor.Tools.Widgets
         public override bool IsScaleTransformation => false;
 
 		public override SelectionBoxDraggableState.TransformationMode WidgetTransformationMode => SelectionBoxDraggableState.TransformationMode.Rotate;
-
+		public override string Id => "RotationWidget";
 		#region Line cache
 
 		protected override void UpdateCache(IViewport viewport, PerspectiveCamera camera)

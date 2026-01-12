@@ -108,5 +108,9 @@ namespace Sledge.BspEditor.Environment
         /// </summary>
 		string CordonTexture { get; set; }
         string[] NonRenderableTextures { get; set; }
+		/// <summary>
+		/// Supported tools in this environment
+		/// </summary>
+		string[] SupportedTools { get; }
 	}
 }
