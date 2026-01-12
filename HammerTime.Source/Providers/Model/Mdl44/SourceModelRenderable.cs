@@ -51,12 +51,9 @@ namespace HammerTime.Source.Providers.Model.Mdl44
 			_frozenTransformsResourceSet = context.Device.ResourceFactory.CreateResourceSet(
 				new ResourceSetDescription(context.ResourceLoader.ProjectionLayout, _frozenTransformsBuffer)
 			);
-			var xxx = _model.Model.Bones[0].Data.quat;
-			var x = xxx.X;
-			xxx.X = xxx.Z;
-			xxx.Z = x;
-			var tr1 = Matrix4x4.CreateFromQuaternion(xxx);
-			_transforms = new Matrix4x4[1] { tr1 };
+			var rot = _model.Model.Bones[0].Data.rot;
+			var transform = Matrix4x4.CreateFromYawPitchRoll(rot.Z, rot.Y, rot.X);
+			_transforms = new Matrix4x4[1] { transform };
 			//_transforms = _model.Model.Bones.Select(b => b.Data.quat).Select(x =>
 			//{
 			//	var a = x.X;
@@ -102,7 +99,7 @@ namespace HammerTime.Source.Providers.Model.Mdl44
 
 		public Matrix4x4 GetModelTransformation()
 		{
-			Matrix4x4 yawMatrix = Matrix4x4.CreateRotationY(-Angles.X);
+			Matrix4x4 yawMatrix = Matrix4x4.CreateRotationY(Angles.X);
 			Matrix4x4 pitchMatrix = Matrix4x4.CreateRotationX(Angles.Z);
 			Matrix4x4 rollMatrix = Matrix4x4.CreateRotationZ(Angles.Y);
 
