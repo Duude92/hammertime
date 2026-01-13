@@ -1,5 +1,4 @@
 ﻿using Sledge.BspEditor.Environment;
-using Sledge.BspEditor.Environment.Goldsource;
 using System.ComponentModel.Composition;
 using System.Globalization;
 using static Sledge.BspEditor.Environment.EnvironmentHelper;
@@ -72,7 +71,7 @@ namespace HammerTime.Source.BspEditor.Environment.Source
 
 		public SerialisedEnvironment Serialise(IEnvironment environment)
 		{
-			var env = (GoldsourceEnvironment)environment;
+			var env = (SourceEnvironment)environment;
 			var se = new SerialisedEnvironment
 			{
 				ID = environment.ID,
@@ -84,7 +83,6 @@ namespace HammerTime.Source.BspEditor.Environment.Source
 					{ "GameDirectory", env.GameDirectory },
 					{ "ModDirectory", env.ModDirectory },
 					{ "GameExe", env.GameExe },
-					{ "LoadHdModels", Convert.ToString(env.LoadHdModels, CultureInfo.InvariantCulture) },
 
 					{ "FgdFiles", String.Join(";", env.FgdFiles) },
 					{ "DefaultPointEntity", env.DefaultPointEntity },
@@ -97,7 +95,6 @@ namespace HammerTime.Source.BspEditor.Environment.Source
 					{ "ToolsDirectory", env.ToolsDirectory },
 					{ "IncludeToolsDirectoryInEnvironment", Convert.ToString(env.IncludeToolsDirectoryInEnvironment, CultureInfo.InvariantCulture) },
 					{ "BspExe", env.BspExe },
-					{ "CsgExe", env.CsgExe },
 					{ "VisExe", env.VisExe },
 					{ "RadExe", env.RadExe },
 
@@ -114,7 +111,6 @@ namespace HammerTime.Source.BspEditor.Environment.Source
 					{ "DefaultTextureScale", Convert.ToString(env.DefaultTextureScale, CultureInfo.InvariantCulture) },
 					{ "DefaultGridSize", Convert.ToString(env.DefaultGridSize, CultureInfo.InvariantCulture)},
 
-					{ "ExcludedWads", String.Join(";", env.ExcludedWads) },
 					{ "AdditionalTextureFiles", String.Join(";", env.AdditionalTextureFiles) },
 					{ "CordonWrapTexture", String.Join(";", env.CordonTexture) },
 					{ "NonRenderableTexture", String.Join(";", env.NonRenderableTextures) }
