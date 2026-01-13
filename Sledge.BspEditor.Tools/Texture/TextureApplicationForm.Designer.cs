@@ -20,667 +20,620 @@
             base.Dispose(disposing);
         }
 
-        #region Windows Form Designer generated code
+		#region Windows Form Designer generated code
 
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
-        /// </summary>
-        private void InitializeComponent()
-        {
-			this.components = new System.ComponentModel.Container();
-			this.HideMaskCheckbox = new System.Windows.Forms.CheckBox();
-			this.RecentFilterTextbox = new System.Windows.Forms.TextBox();
-			this.FilterRecentLabel = new System.Windows.Forms.Label();
-			this.SmoothingGroupsButton = new System.Windows.Forms.Button();
-			this.AlignGroup = new System.Windows.Forms.GroupBox();
-			this.AlignToFaceCheckbox = new System.Windows.Forms.CheckBox();
-			this.AlignToWorldCheckbox = new System.Windows.Forms.CheckBox();
-			this.JustifyGroup = new System.Windows.Forms.GroupBox();
-			this.RLeftButton = new System.Windows.Forms.Button();
-			this.RRightButton = new System.Windows.Forms.Button();
-			this.JustifyTopButton = new System.Windows.Forms.Button();
-			this.JustifyFitButton = new System.Windows.Forms.Button();
-			this.TreatAsOneCheckbox = new System.Windows.Forms.CheckBox();
-			this.JustifyRightButton = new System.Windows.Forms.Button();
-			this.JustifyBottomButton = new System.Windows.Forms.Button();
-			this.JustifyCenterButton = new System.Windows.Forms.Button();
-			this.JustifyLeftButton = new System.Windows.Forms.Button();
-			this.ApplyButton = new System.Windows.Forms.Button();
-			this.RotationValue = new Sledge.Shell.Controls.NumericUpDownEx();
-			this.ReplaceButton = new System.Windows.Forms.Button();
-			this.BrowseButton = new System.Windows.Forms.Button();
-			this.RotationLabel = new System.Windows.Forms.Label();
-			this.TextureDetailsLabel = new System.Windows.Forms.Label();
-			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-			this.ScaleXValue = new Sledge.Shell.Controls.NumericUpDownEx();
-			this.ScaleLabel = new System.Windows.Forms.Label();
-			this.label2 = new System.Windows.Forms.Label();
-			this.label3 = new System.Windows.Forms.Label();
-			this.ShiftLabel = new System.Windows.Forms.Label();
-			this.ScaleYValue = new Sledge.Shell.Controls.NumericUpDownEx();
-			this.ShiftXValue = new Sledge.Shell.Controls.NumericUpDownEx();
-			this.ShiftYValue = new Sledge.Shell.Controls.NumericUpDownEx();
-			this.LightmapLabel = new System.Windows.Forms.Label();
-			this.LightmapValue = new Sledge.Shell.Controls.NumericUpDownEx();
-			this.HoverTip = new System.Windows.Forms.ToolTip(this.components);
-			this.SelectedTextureListPanel = new System.Windows.Forms.Panel();
-			this.RecentTextureListPanel = new System.Windows.Forms.Panel();
-			this.LeftClickActionButton = new Sledge.Shell.Controls.DropdownButton();
-			this.LeftClickActionMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
-			this.RightClickActionButton = new Sledge.Shell.Controls.DropdownButton();
-			this.RightClickActionMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
-			this.ResetButton = new System.Windows.Forms.Button();
-			this.AlignGroup.SuspendLayout();
-			this.JustifyGroup.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.RotationValue)).BeginInit();
-			this.tableLayoutPanel1.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.ScaleXValue)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.ScaleYValue)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.ShiftXValue)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.ShiftYValue)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.LightmapValue)).BeginInit();
-			this.SuspendLayout();
+		/// <summary>
+		/// Required method for Designer support - do not modify
+		/// the contents of this method with the code editor.
+		/// </summary>
+		private void InitializeComponent()
+		{
+			components = new System.ComponentModel.Container();
+			HideMaskCheckbox = new System.Windows.Forms.CheckBox();
+			RecentFilterTextbox = new System.Windows.Forms.TextBox();
+			FilterRecentLabel = new System.Windows.Forms.Label();
+			SmoothingGroupsButton = new System.Windows.Forms.Button();
+			AlignGroup = new System.Windows.Forms.GroupBox();
+			AlignToFaceCheckbox = new System.Windows.Forms.CheckBox();
+			AlignToWorldCheckbox = new System.Windows.Forms.CheckBox();
+			JustifyGroup = new System.Windows.Forms.GroupBox();
+			RLeftButton = new System.Windows.Forms.Button();
+			RRightButton = new System.Windows.Forms.Button();
+			JustifyTopButton = new System.Windows.Forms.Button();
+			JustifyFitButton = new System.Windows.Forms.Button();
+			TreatAsOneCheckbox = new System.Windows.Forms.CheckBox();
+			JustifyRightButton = new System.Windows.Forms.Button();
+			JustifyBottomButton = new System.Windows.Forms.Button();
+			JustifyCenterButton = new System.Windows.Forms.Button();
+			JustifyLeftButton = new System.Windows.Forms.Button();
+			ApplyButton = new System.Windows.Forms.Button();
+			RotationValue = new Sledge.Shell.Controls.NumericUpDownEx();
+			ReplaceButton = new System.Windows.Forms.Button();
+			BrowseButton = new System.Windows.Forms.Button();
+			RotationLabel = new System.Windows.Forms.Label();
+			TextureDetailsLabel = new System.Windows.Forms.Label();
+			tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+			ScaleXValue = new Sledge.Shell.Controls.NumericUpDownEx();
+			ScaleLabel = new System.Windows.Forms.Label();
+			label2 = new System.Windows.Forms.Label();
+			label3 = new System.Windows.Forms.Label();
+			ShiftLabel = new System.Windows.Forms.Label();
+			ScaleYValue = new Sledge.Shell.Controls.NumericUpDownEx();
+			ShiftXValue = new Sledge.Shell.Controls.NumericUpDownEx();
+			ShiftYValue = new Sledge.Shell.Controls.NumericUpDownEx();
+			LightmapLabel = new System.Windows.Forms.Label();
+			LightmapValue = new Sledge.Shell.Controls.NumericUpDownEx();
+			HoverTip = new System.Windows.Forms.ToolTip(components);
+			SelectedTextureListPanel = new System.Windows.Forms.Panel();
+			RecentTextureListPanel = new System.Windows.Forms.Panel();
+			LeftClickActionButton = new Sledge.Shell.Controls.DropdownButton();
+			LeftClickActionMenu = new System.Windows.Forms.ContextMenuStrip(components);
+			RightClickActionButton = new Sledge.Shell.Controls.DropdownButton();
+			RightClickActionMenu = new System.Windows.Forms.ContextMenuStrip(components);
+			ResetButton = new System.Windows.Forms.Button();
+			lightmapGrp = new System.Windows.Forms.Panel();
+			AlignGroup.SuspendLayout();
+			JustifyGroup.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)RotationValue).BeginInit();
+			tableLayoutPanel1.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)ScaleXValue).BeginInit();
+			((System.ComponentModel.ISupportInitialize)ScaleYValue).BeginInit();
+			((System.ComponentModel.ISupportInitialize)ShiftXValue).BeginInit();
+			((System.ComponentModel.ISupportInitialize)ShiftYValue).BeginInit();
+			((System.ComponentModel.ISupportInitialize)LightmapValue).BeginInit();
+			lightmapGrp.SuspendLayout();
+			SuspendLayout();
 			// 
 			// HideMaskCheckbox
 			// 
-			this.HideMaskCheckbox.Appearance = System.Windows.Forms.Appearance.Button;
-			this.HideMaskCheckbox.Location = new System.Drawing.Point(303, 152);
-			this.HideMaskCheckbox.Name = "HideMaskCheckbox";
-			this.HideMaskCheckbox.Size = new System.Drawing.Size(102, 23);
-			this.HideMaskCheckbox.TabIndex = 34;
-			this.HideMaskCheckbox.Text = "Hide Mask";
-			this.HideMaskCheckbox.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			this.HideMaskCheckbox.UseVisualStyleBackColor = true;
-			this.HideMaskCheckbox.CheckedChanged += new System.EventHandler(this.HideMaskCheckboxToggled);
+			HideMaskCheckbox.Appearance = System.Windows.Forms.Appearance.Button;
+			HideMaskCheckbox.Location = new System.Drawing.Point(354, 175);
+			HideMaskCheckbox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			HideMaskCheckbox.Name = "HideMaskCheckbox";
+			HideMaskCheckbox.Size = new System.Drawing.Size(119, 27);
+			HideMaskCheckbox.TabIndex = 34;
+			HideMaskCheckbox.Text = "Hide Mask";
+			HideMaskCheckbox.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			HideMaskCheckbox.UseVisualStyleBackColor = true;
+			HideMaskCheckbox.CheckedChanged += HideMaskCheckboxToggled;
 			// 
 			// RecentFilterTextbox
 			// 
-			this.RecentFilterTextbox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.RecentFilterTextbox.Location = new System.Drawing.Point(318, 390);
-			this.RecentFilterTextbox.Name = "RecentFilterTextbox";
-			this.RecentFilterTextbox.Size = new System.Drawing.Size(87, 20);
-			this.RecentFilterTextbox.TabIndex = 33;
-			this.RecentFilterTextbox.TextChanged += new System.EventHandler(this.RecentFilterTextChanged);
+			RecentFilterTextbox.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+			RecentFilterTextbox.Location = new System.Drawing.Point(371, 450);
+			RecentFilterTextbox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			RecentFilterTextbox.Name = "RecentFilterTextbox";
+			RecentFilterTextbox.Size = new System.Drawing.Size(101, 23);
+			RecentFilterTextbox.TabIndex = 33;
+			RecentFilterTextbox.TextChanged += RecentFilterTextChanged;
 			// 
 			// FilterRecentLabel
 			// 
-			this.FilterRecentLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.FilterRecentLabel.Location = new System.Drawing.Point(318, 360);
-			this.FilterRecentLabel.Name = "FilterRecentLabel";
-			this.FilterRecentLabel.Size = new System.Drawing.Size(87, 24);
-			this.FilterRecentLabel.TabIndex = 32;
-			this.FilterRecentLabel.Text = "Filter Recent:";
-			this.FilterRecentLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			FilterRecentLabel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+			FilterRecentLabel.Location = new System.Drawing.Point(371, 415);
+			FilterRecentLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			FilterRecentLabel.Name = "FilterRecentLabel";
+			FilterRecentLabel.Size = new System.Drawing.Size(102, 28);
+			FilterRecentLabel.TabIndex = 32;
+			FilterRecentLabel.Text = "Filter Recent:";
+			FilterRecentLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// SmoothingGroupsButton
 			// 
-			this.SmoothingGroupsButton.Enabled = false;
-			this.SmoothingGroupsButton.Location = new System.Drawing.Point(180, 69);
-			this.SmoothingGroupsButton.Name = "SmoothingGroupsButton";
-			this.SmoothingGroupsButton.Size = new System.Drawing.Size(117, 23);
-			this.SmoothingGroupsButton.TabIndex = 31;
-			this.SmoothingGroupsButton.Text = "Smoothing Groups";
-			this.SmoothingGroupsButton.UseVisualStyleBackColor = true;
-			this.SmoothingGroupsButton.Click += new System.EventHandler(this.SmoothingGroupsButtonClicked);
+			SmoothingGroupsButton.Enabled = false;
+			SmoothingGroupsButton.Location = new System.Drawing.Point(4, 32);
+			SmoothingGroupsButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			SmoothingGroupsButton.Name = "SmoothingGroupsButton";
+			SmoothingGroupsButton.Size = new System.Drawing.Size(136, 27);
+			SmoothingGroupsButton.TabIndex = 31;
+			SmoothingGroupsButton.Text = "Smoothing Groups";
+			SmoothingGroupsButton.UseVisualStyleBackColor = true;
+			SmoothingGroupsButton.Click += SmoothingGroupsButtonClicked;
 			// 
 			// AlignGroup
 			// 
-			this.AlignGroup.Controls.Add(this.AlignToFaceCheckbox);
-			this.AlignGroup.Controls.Add(this.AlignToWorldCheckbox);
-			this.AlignGroup.Location = new System.Drawing.Point(174, 97);
-			this.AlignGroup.Name = "AlignGroup";
-			this.AlignGroup.Size = new System.Drawing.Size(122, 52);
-			this.AlignGroup.TabIndex = 30;
-			this.AlignGroup.TabStop = false;
-			this.AlignGroup.Text = "Align";
+			AlignGroup.Controls.Add(AlignToFaceCheckbox);
+			AlignGroup.Controls.Add(AlignToWorldCheckbox);
+			AlignGroup.Location = new System.Drawing.Point(203, 112);
+			AlignGroup.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			AlignGroup.Name = "AlignGroup";
+			AlignGroup.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			AlignGroup.Size = new System.Drawing.Size(142, 60);
+			AlignGroup.TabIndex = 30;
+			AlignGroup.TabStop = false;
+			AlignGroup.Text = "Align";
 			// 
 			// AlignToFaceCheckbox
 			// 
-			this.AlignToFaceCheckbox.AutoSize = true;
-			this.AlignToFaceCheckbox.Location = new System.Drawing.Point(63, 22);
-			this.AlignToFaceCheckbox.Name = "AlignToFaceCheckbox";
-			this.AlignToFaceCheckbox.Size = new System.Drawing.Size(50, 17);
-			this.AlignToFaceCheckbox.TabIndex = 0;
-			this.AlignToFaceCheckbox.Text = "Face";
-			this.AlignToFaceCheckbox.UseVisualStyleBackColor = true;
-			this.AlignToFaceCheckbox.Click += new System.EventHandler(this.AlignToFaceClicked);
+			AlignToFaceCheckbox.AutoSize = true;
+			AlignToFaceCheckbox.Location = new System.Drawing.Point(74, 25);
+			AlignToFaceCheckbox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			AlignToFaceCheckbox.Name = "AlignToFaceCheckbox";
+			AlignToFaceCheckbox.Size = new System.Drawing.Size(50, 19);
+			AlignToFaceCheckbox.TabIndex = 0;
+			AlignToFaceCheckbox.Text = "Face";
+			AlignToFaceCheckbox.UseVisualStyleBackColor = true;
+			AlignToFaceCheckbox.Click += AlignToFaceClicked;
 			// 
 			// AlignToWorldCheckbox
 			// 
-			this.AlignToWorldCheckbox.AutoSize = true;
-			this.AlignToWorldCheckbox.Location = new System.Drawing.Point(7, 22);
-			this.AlignToWorldCheckbox.Name = "AlignToWorldCheckbox";
-			this.AlignToWorldCheckbox.Size = new System.Drawing.Size(54, 17);
-			this.AlignToWorldCheckbox.TabIndex = 0;
-			this.AlignToWorldCheckbox.Text = "World";
-			this.AlignToWorldCheckbox.UseVisualStyleBackColor = true;
-			this.AlignToWorldCheckbox.Click += new System.EventHandler(this.AlignToWorldClicked);
+			AlignToWorldCheckbox.AutoSize = true;
+			AlignToWorldCheckbox.Location = new System.Drawing.Point(8, 25);
+			AlignToWorldCheckbox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			AlignToWorldCheckbox.Name = "AlignToWorldCheckbox";
+			AlignToWorldCheckbox.Size = new System.Drawing.Size(58, 19);
+			AlignToWorldCheckbox.TabIndex = 0;
+			AlignToWorldCheckbox.Text = "World";
+			AlignToWorldCheckbox.UseVisualStyleBackColor = true;
+			AlignToWorldCheckbox.Click += AlignToWorldClicked;
 			// 
 			// JustifyGroup
 			// 
-			this.JustifyGroup.Controls.Add(this.RLeftButton);
-			this.JustifyGroup.Controls.Add(this.RRightButton);
-			this.JustifyGroup.Controls.Add(this.JustifyTopButton);
-			this.JustifyGroup.Controls.Add(this.JustifyFitButton);
-			this.JustifyGroup.Controls.Add(this.TreatAsOneCheckbox);
-			this.JustifyGroup.Controls.Add(this.JustifyRightButton);
-			this.JustifyGroup.Controls.Add(this.JustifyBottomButton);
-			this.JustifyGroup.Controls.Add(this.JustifyCenterButton);
-			this.JustifyGroup.Controls.Add(this.JustifyLeftButton);
-			this.JustifyGroup.Location = new System.Drawing.Point(303, 12);
-			this.JustifyGroup.Name = "JustifyGroup";
-			this.JustifyGroup.Size = new System.Drawing.Size(102, 137);
-			this.JustifyGroup.TabIndex = 29;
-			this.JustifyGroup.TabStop = false;
-			this.JustifyGroup.Text = "Justify";
+			JustifyGroup.Controls.Add(RLeftButton);
+			JustifyGroup.Controls.Add(RRightButton);
+			JustifyGroup.Controls.Add(JustifyTopButton);
+			JustifyGroup.Controls.Add(JustifyFitButton);
+			JustifyGroup.Controls.Add(TreatAsOneCheckbox);
+			JustifyGroup.Controls.Add(JustifyRightButton);
+			JustifyGroup.Controls.Add(JustifyBottomButton);
+			JustifyGroup.Controls.Add(JustifyCenterButton);
+			JustifyGroup.Controls.Add(JustifyLeftButton);
+			JustifyGroup.Location = new System.Drawing.Point(354, 14);
+			JustifyGroup.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			JustifyGroup.Name = "JustifyGroup";
+			JustifyGroup.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			JustifyGroup.Size = new System.Drawing.Size(119, 158);
+			JustifyGroup.TabIndex = 29;
+			JustifyGroup.TabStop = false;
+			JustifyGroup.Text = "Justify";
 			// 
 			// RLeftButton
 			// 
-			this.RLeftButton.Location = new System.Drawing.Point(64, 15);
-			this.RLeftButton.Name = "RLeftButton";
-			this.RLeftButton.Size = new System.Drawing.Size(20, 20);
-			this.RLeftButton.TabIndex = 7;
-			this.RLeftButton.Text = "↰";
-			this.RLeftButton.UseVisualStyleBackColor = true;
-			this.RLeftButton.Click += new System.EventHandler(this.RLeftButton_Click);
+			RLeftButton.Location = new System.Drawing.Point(75, 17);
+			RLeftButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			RLeftButton.Name = "RLeftButton";
+			RLeftButton.Size = new System.Drawing.Size(23, 23);
+			RLeftButton.TabIndex = 7;
+			RLeftButton.Text = "↰";
+			RLeftButton.UseVisualStyleBackColor = true;
+			RLeftButton.Click += RLeftButton_Click;
 			// 
 			// RRightButton
 			// 
-			this.RRightButton.Location = new System.Drawing.Point(16, 15);
-			this.RRightButton.Name = "RRightButton";
-			this.RRightButton.Size = new System.Drawing.Size(20, 20);
-			this.RRightButton.TabIndex = 6;
-			this.RRightButton.Text = "↱";
-			this.RRightButton.UseVisualStyleBackColor = true;
-			this.RRightButton.Click += new System.EventHandler(this.RRightButton_Click);
+			RRightButton.Location = new System.Drawing.Point(19, 17);
+			RRightButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			RRightButton.Name = "RRightButton";
+			RRightButton.Size = new System.Drawing.Size(23, 23);
+			RRightButton.TabIndex = 6;
+			RRightButton.Text = "↱";
+			RRightButton.UseVisualStyleBackColor = true;
+			RRightButton.Click += RRightButton_Click;
 			// 
 			// JustifyTopButton
 			// 
-			this.JustifyTopButton.Location = new System.Drawing.Point(40, 15);
-			this.JustifyTopButton.Name = "JustifyTopButton";
-			this.JustifyTopButton.Size = new System.Drawing.Size(20, 20);
-			this.JustifyTopButton.TabIndex = 3;
-			this.JustifyTopButton.Text = "T";
-			this.JustifyTopButton.UseVisualStyleBackColor = true;
-			this.JustifyTopButton.Click += new System.EventHandler(this.JustifyTopClicked);
+			JustifyTopButton.Location = new System.Drawing.Point(47, 17);
+			JustifyTopButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			JustifyTopButton.Name = "JustifyTopButton";
+			JustifyTopButton.Size = new System.Drawing.Size(23, 23);
+			JustifyTopButton.TabIndex = 3;
+			JustifyTopButton.Text = "T";
+			JustifyTopButton.UseVisualStyleBackColor = true;
+			JustifyTopButton.Click += JustifyTopClicked;
 			// 
 			// JustifyFitButton
 			// 
-			this.JustifyFitButton.Location = new System.Drawing.Point(16, 87);
-			this.JustifyFitButton.Name = "JustifyFitButton";
-			this.JustifyFitButton.Size = new System.Drawing.Size(68, 20);
-			this.JustifyFitButton.TabIndex = 4;
-			this.JustifyFitButton.Text = "Fit";
-			this.JustifyFitButton.UseVisualStyleBackColor = true;
-			this.JustifyFitButton.Click += new System.EventHandler(this.JustifyFitClicked);
+			JustifyFitButton.Location = new System.Drawing.Point(19, 100);
+			JustifyFitButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			JustifyFitButton.Name = "JustifyFitButton";
+			JustifyFitButton.Size = new System.Drawing.Size(79, 23);
+			JustifyFitButton.TabIndex = 4;
+			JustifyFitButton.Text = "Fit";
+			JustifyFitButton.UseVisualStyleBackColor = true;
+			JustifyFitButton.Click += JustifyFitClicked;
 			// 
 			// TreatAsOneCheckbox
 			// 
-			this.TreatAsOneCheckbox.Location = new System.Drawing.Point(6, 113);
-			this.TreatAsOneCheckbox.Name = "TreatAsOneCheckbox";
-			this.TreatAsOneCheckbox.Size = new System.Drawing.Size(90, 21);
-			this.TreatAsOneCheckbox.TabIndex = 5;
-			this.TreatAsOneCheckbox.Text = "Treat as One";
-			this.TreatAsOneCheckbox.UseVisualStyleBackColor = true;
-			this.TreatAsOneCheckbox.CheckedChanged += new System.EventHandler(this.TreatAsOneCheckboxToggled);
+			TreatAsOneCheckbox.Location = new System.Drawing.Point(7, 130);
+			TreatAsOneCheckbox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			TreatAsOneCheckbox.Name = "TreatAsOneCheckbox";
+			TreatAsOneCheckbox.Size = new System.Drawing.Size(105, 24);
+			TreatAsOneCheckbox.TabIndex = 5;
+			TreatAsOneCheckbox.Text = "Treat as One";
+			TreatAsOneCheckbox.UseVisualStyleBackColor = true;
+			TreatAsOneCheckbox.CheckedChanged += TreatAsOneCheckboxToggled;
 			// 
 			// JustifyRightButton
 			// 
-			this.JustifyRightButton.Location = new System.Drawing.Point(64, 39);
-			this.JustifyRightButton.Name = "JustifyRightButton";
-			this.JustifyRightButton.Size = new System.Drawing.Size(20, 20);
-			this.JustifyRightButton.TabIndex = 3;
-			this.JustifyRightButton.Text = "R";
-			this.JustifyRightButton.UseVisualStyleBackColor = true;
-			this.JustifyRightButton.Click += new System.EventHandler(this.JustifyRightClicked);
+			JustifyRightButton.Location = new System.Drawing.Point(75, 45);
+			JustifyRightButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			JustifyRightButton.Name = "JustifyRightButton";
+			JustifyRightButton.Size = new System.Drawing.Size(23, 23);
+			JustifyRightButton.TabIndex = 3;
+			JustifyRightButton.Text = "R";
+			JustifyRightButton.UseVisualStyleBackColor = true;
+			JustifyRightButton.Click += JustifyRightClicked;
 			// 
 			// JustifyBottomButton
 			// 
-			this.JustifyBottomButton.Location = new System.Drawing.Point(40, 63);
-			this.JustifyBottomButton.Name = "JustifyBottomButton";
-			this.JustifyBottomButton.Size = new System.Drawing.Size(20, 20);
-			this.JustifyBottomButton.TabIndex = 3;
-			this.JustifyBottomButton.Text = "B";
-			this.JustifyBottomButton.UseVisualStyleBackColor = true;
-			this.JustifyBottomButton.Click += new System.EventHandler(this.JustifyBottomClicked);
+			JustifyBottomButton.Location = new System.Drawing.Point(47, 73);
+			JustifyBottomButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			JustifyBottomButton.Name = "JustifyBottomButton";
+			JustifyBottomButton.Size = new System.Drawing.Size(23, 23);
+			JustifyBottomButton.TabIndex = 3;
+			JustifyBottomButton.Text = "B";
+			JustifyBottomButton.UseVisualStyleBackColor = true;
+			JustifyBottomButton.Click += JustifyBottomClicked;
 			// 
 			// JustifyCenterButton
 			// 
-			this.JustifyCenterButton.Location = new System.Drawing.Point(40, 39);
-			this.JustifyCenterButton.Name = "JustifyCenterButton";
-			this.JustifyCenterButton.Size = new System.Drawing.Size(20, 20);
-			this.JustifyCenterButton.TabIndex = 3;
-			this.JustifyCenterButton.Text = "C";
-			this.JustifyCenterButton.UseVisualStyleBackColor = true;
-			this.JustifyCenterButton.Click += new System.EventHandler(this.JustifyCenterClicked);
+			JustifyCenterButton.Location = new System.Drawing.Point(47, 45);
+			JustifyCenterButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			JustifyCenterButton.Name = "JustifyCenterButton";
+			JustifyCenterButton.Size = new System.Drawing.Size(23, 23);
+			JustifyCenterButton.TabIndex = 3;
+			JustifyCenterButton.Text = "C";
+			JustifyCenterButton.UseVisualStyleBackColor = true;
+			JustifyCenterButton.Click += JustifyCenterClicked;
 			// 
 			// JustifyLeftButton
 			// 
-			this.JustifyLeftButton.Location = new System.Drawing.Point(16, 39);
-			this.JustifyLeftButton.Name = "JustifyLeftButton";
-			this.JustifyLeftButton.Size = new System.Drawing.Size(20, 20);
-			this.JustifyLeftButton.TabIndex = 3;
-			this.JustifyLeftButton.Text = "L";
-			this.JustifyLeftButton.UseVisualStyleBackColor = true;
-			this.JustifyLeftButton.Click += new System.EventHandler(this.JustifyLeftClicked);
+			JustifyLeftButton.Location = new System.Drawing.Point(19, 45);
+			JustifyLeftButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			JustifyLeftButton.Name = "JustifyLeftButton";
+			JustifyLeftButton.Size = new System.Drawing.Size(23, 23);
+			JustifyLeftButton.TabIndex = 3;
+			JustifyLeftButton.Text = "L";
+			JustifyLeftButton.UseVisualStyleBackColor = true;
+			JustifyLeftButton.Click += JustifyLeftClicked;
 			// 
 			// ApplyButton
 			// 
-			this.ApplyButton.Location = new System.Drawing.Point(93, 126);
-			this.ApplyButton.Name = "ApplyButton";
-			this.ApplyButton.Size = new System.Drawing.Size(75, 23);
-			this.ApplyButton.TabIndex = 22;
-			this.ApplyButton.Text = "Apply";
-			this.ApplyButton.UseVisualStyleBackColor = true;
-			this.ApplyButton.Click += new System.EventHandler(this.ApplyButtonClicked);
+			ApplyButton.Location = new System.Drawing.Point(108, 145);
+			ApplyButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			ApplyButton.Name = "ApplyButton";
+			ApplyButton.Size = new System.Drawing.Size(88, 27);
+			ApplyButton.TabIndex = 22;
+			ApplyButton.Text = "Apply";
+			ApplyButton.UseVisualStyleBackColor = true;
+			ApplyButton.Click += ApplyButtonClicked;
 			// 
 			// RotationValue
 			// 
-			this.RotationValue.BackColor = System.Drawing.SystemColors.Window;
-			this.RotationValue.DecimalPlaces = 2;
-			this.RotationValue.Location = new System.Drawing.Point(239, 17);
-			this.RotationValue.Maximum = new decimal(new int[] {
-            360,
-            0,
-            0,
-            0});
-			this.RotationValue.Minimum = new decimal(new int[] {
-            360,
-            0,
-            0,
-            -2147483648});
-			this.RotationValue.Name = "RotationValue";
-			this.RotationValue.Size = new System.Drawing.Size(57, 20);
-			this.RotationValue.TabIndex = 18;
-			this.RotationValue.ValueChanged += new System.EventHandler(this.RotationValueChanged);
-			this.RotationValue.Enter += new System.EventHandler(this.FocusTextInControl);
+			RotationValue.BackColor = System.Drawing.SystemColors.Window;
+			RotationValue.DecimalPlaces = 2;
+			RotationValue.Location = new System.Drawing.Point(279, 20);
+			RotationValue.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			RotationValue.Maximum = new decimal(new int[] { 360, 0, 0, 0 });
+			RotationValue.Minimum = new decimal(new int[] { 360, 0, 0, int.MinValue });
+			RotationValue.Name = "RotationValue";
+			RotationValue.Size = new System.Drawing.Size(66, 23);
+			RotationValue.TabIndex = 18;
+			RotationValue.ValueChanged += RotationValueChanged;
+			RotationValue.Enter += FocusTextInControl;
 			// 
 			// ReplaceButton
 			// 
-			this.ReplaceButton.Location = new System.Drawing.Point(12, 126);
-			this.ReplaceButton.Name = "ReplaceButton";
-			this.ReplaceButton.Size = new System.Drawing.Size(75, 23);
-			this.ReplaceButton.TabIndex = 24;
-			this.ReplaceButton.Text = "Replace...";
-			this.ReplaceButton.UseVisualStyleBackColor = true;
-			this.ReplaceButton.Click += new System.EventHandler(this.ReplaceButtonClicked);
+			ReplaceButton.Location = new System.Drawing.Point(14, 145);
+			ReplaceButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			ReplaceButton.Name = "ReplaceButton";
+			ReplaceButton.Size = new System.Drawing.Size(88, 27);
+			ReplaceButton.TabIndex = 24;
+			ReplaceButton.Text = "Replace...";
+			ReplaceButton.UseVisualStyleBackColor = true;
+			ReplaceButton.Click += ReplaceButtonClicked;
 			// 
 			// BrowseButton
 			// 
-			this.BrowseButton.Location = new System.Drawing.Point(12, 97);
-			this.BrowseButton.Name = "BrowseButton";
-			this.BrowseButton.Size = new System.Drawing.Size(75, 23);
-			this.BrowseButton.TabIndex = 23;
-			this.BrowseButton.Text = "Browse...";
-			this.BrowseButton.UseVisualStyleBackColor = true;
-			this.BrowseButton.Click += new System.EventHandler(this.BrowseButtonClicked);
+			BrowseButton.Location = new System.Drawing.Point(14, 112);
+			BrowseButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			BrowseButton.Name = "BrowseButton";
+			BrowseButton.Size = new System.Drawing.Size(88, 27);
+			BrowseButton.TabIndex = 23;
+			BrowseButton.Text = "Browse...";
+			BrowseButton.UseVisualStyleBackColor = true;
+			BrowseButton.Click += BrowseButtonClicked;
 			// 
 			// RotationLabel
 			// 
-			this.RotationLabel.Location = new System.Drawing.Point(174, 13);
-			this.RotationLabel.Name = "RotationLabel";
-			this.RotationLabel.Size = new System.Drawing.Size(59, 25);
-			this.RotationLabel.TabIndex = 17;
-			this.RotationLabel.Text = "Rotation";
-			this.RotationLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			RotationLabel.Location = new System.Drawing.Point(203, 15);
+			RotationLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			RotationLabel.Name = "RotationLabel";
+			RotationLabel.Size = new System.Drawing.Size(69, 29);
+			RotationLabel.TabIndex = 17;
+			RotationLabel.Text = "Rotation";
+			RotationLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
 			// TextureDetailsLabel
 			// 
-			this.TextureDetailsLabel.Location = new System.Drawing.Point(12, 152);
-			this.TextureDetailsLabel.Name = "TextureDetailsLabel";
-			this.TextureDetailsLabel.Size = new System.Drawing.Size(393, 23);
-			this.TextureDetailsLabel.TabIndex = 21;
-			this.TextureDetailsLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			TextureDetailsLabel.Location = new System.Drawing.Point(14, 175);
+			TextureDetailsLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			TextureDetailsLabel.Name = "TextureDetailsLabel";
+			TextureDetailsLabel.Size = new System.Drawing.Size(458, 27);
+			TextureDetailsLabel.TabIndex = 21;
+			TextureDetailsLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// tableLayoutPanel1
 			// 
-			this.tableLayoutPanel1.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Single;
-			this.tableLayoutPanel1.ColumnCount = 3;
-			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 65F));
-			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 228F));
-			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-			this.tableLayoutPanel1.Controls.Add(this.ScaleXValue, 1, 1);
-			this.tableLayoutPanel1.Controls.Add(this.ScaleLabel, 1, 0);
-			this.tableLayoutPanel1.Controls.Add(this.label2, 0, 1);
-			this.tableLayoutPanel1.Controls.Add(this.label3, 0, 2);
-			this.tableLayoutPanel1.Controls.Add(this.ShiftLabel, 2, 0);
-			this.tableLayoutPanel1.Controls.Add(this.ScaleYValue, 1, 2);
-			this.tableLayoutPanel1.Controls.Add(this.ShiftXValue, 2, 1);
-			this.tableLayoutPanel1.Controls.Add(this.ShiftYValue, 2, 2);
-			this.tableLayoutPanel1.Location = new System.Drawing.Point(12, 12);
-			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-			this.tableLayoutPanel1.RowCount = 3;
-			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-			this.tableLayoutPanel1.Size = new System.Drawing.Size(156, 80);
-			this.tableLayoutPanel1.TabIndex = 20;
+			tableLayoutPanel1.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Single;
+			tableLayoutPanel1.ColumnCount = 3;
+			tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 23F));
+			tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 76F));
+			tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 267F));
+			tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 23F));
+			tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 23F));
+			tableLayoutPanel1.Controls.Add(ScaleXValue, 1, 1);
+			tableLayoutPanel1.Controls.Add(ScaleLabel, 1, 0);
+			tableLayoutPanel1.Controls.Add(label2, 0, 1);
+			tableLayoutPanel1.Controls.Add(label3, 0, 2);
+			tableLayoutPanel1.Controls.Add(ShiftLabel, 2, 0);
+			tableLayoutPanel1.Controls.Add(ScaleYValue, 1, 2);
+			tableLayoutPanel1.Controls.Add(ShiftXValue, 2, 1);
+			tableLayoutPanel1.Controls.Add(ShiftYValue, 2, 2);
+			tableLayoutPanel1.Location = new System.Drawing.Point(14, 14);
+			tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			tableLayoutPanel1.Name = "tableLayoutPanel1";
+			tableLayoutPanel1.RowCount = 3;
+			tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 29F));
+			tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 29F));
+			tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 29F));
+			tableLayoutPanel1.Size = new System.Drawing.Size(182, 92);
+			tableLayoutPanel1.TabIndex = 20;
 			// 
 			// ScaleXValue
 			// 
-			this.ScaleXValue.DecimalPlaces = 4;
-			this.ScaleXValue.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            131072});
-			this.ScaleXValue.Location = new System.Drawing.Point(25, 30);
-			this.ScaleXValue.Maximum = new decimal(new int[] {
-            4096,
-            0,
-            0,
-            0});
-			this.ScaleXValue.Minimum = new decimal(new int[] {
-            4096,
-            0,
-            0,
-            -2147483648});
-			this.ScaleXValue.Name = "ScaleXValue";
-			this.ScaleXValue.Size = new System.Drawing.Size(57, 20);
-			this.ScaleXValue.TabIndex = 1;
-			this.ScaleXValue.Value = new decimal(new int[] {
-            100,
-            0,
-            0,
-            131072});
-			this.ScaleXValue.WheelIncrement = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-			this.ScaleXValue.ValueChanged += new System.EventHandler(this.ScaleXValueChanged);
-			this.ScaleXValue.Enter += new System.EventHandler(this.FocusTextInControl);
+			ScaleXValue.DecimalPlaces = 4;
+			ScaleXValue.Increment = new decimal(new int[] { 1, 0, 0, 131072 });
+			ScaleXValue.Location = new System.Drawing.Point(29, 34);
+			ScaleXValue.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			ScaleXValue.Maximum = new decimal(new int[] { 4096, 0, 0, 0 });
+			ScaleXValue.Minimum = new decimal(new int[] { 4096, 0, 0, int.MinValue });
+			ScaleXValue.Name = "ScaleXValue";
+			ScaleXValue.Size = new System.Drawing.Size(66, 23);
+			ScaleXValue.TabIndex = 1;
+			ScaleXValue.Value = new decimal(new int[] { 100, 0, 0, 131072 });
+			ScaleXValue.WheelIncrement = new decimal(new int[] { 1, 0, 0, 65536 });
+			ScaleXValue.ValueChanged += ScaleXValueChanged;
+			ScaleXValue.Enter += FocusTextInControl;
 			// 
 			// ScaleLabel
 			// 
-			this.ScaleLabel.Location = new System.Drawing.Point(25, 1);
-			this.ScaleLabel.Name = "ScaleLabel";
-			this.ScaleLabel.Size = new System.Drawing.Size(59, 25);
-			this.ScaleLabel.TabIndex = 0;
-			this.ScaleLabel.Text = "Scale";
-			this.ScaleLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			ScaleLabel.Location = new System.Drawing.Point(29, 1);
+			ScaleLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			ScaleLabel.Name = "ScaleLabel";
+			ScaleLabel.Size = new System.Drawing.Size(68, 29);
+			ScaleLabel.TabIndex = 0;
+			ScaleLabel.Text = "Scale";
+			ScaleLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
 			// label2
 			// 
-			this.label2.Location = new System.Drawing.Point(4, 27);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(14, 25);
-			this.label2.TabIndex = 2;
-			this.label2.Text = "X";
-			this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			label2.Location = new System.Drawing.Point(5, 31);
+			label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			label2.Name = "label2";
+			label2.Size = new System.Drawing.Size(15, 29);
+			label2.TabIndex = 2;
+			label2.Text = "X";
+			label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// label3
 			// 
-			this.label3.Location = new System.Drawing.Point(4, 53);
-			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(14, 26);
-			this.label3.TabIndex = 2;
-			this.label3.Text = "Y";
-			this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			label3.Location = new System.Drawing.Point(5, 61);
+			label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			label3.Name = "label3";
+			label3.Size = new System.Drawing.Size(15, 30);
+			label3.TabIndex = 2;
+			label3.Text = "Y";
+			label3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// ShiftLabel
 			// 
-			this.ShiftLabel.Location = new System.Drawing.Point(91, 1);
-			this.ShiftLabel.Name = "ShiftLabel";
-			this.ShiftLabel.Size = new System.Drawing.Size(59, 25);
-			this.ShiftLabel.TabIndex = 0;
-			this.ShiftLabel.Text = "Shift";
-			this.ShiftLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			ShiftLabel.Location = new System.Drawing.Point(106, 1);
+			ShiftLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			ShiftLabel.Name = "ShiftLabel";
+			ShiftLabel.Size = new System.Drawing.Size(69, 29);
+			ShiftLabel.TabIndex = 0;
+			ShiftLabel.Text = "Shift";
+			ShiftLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
 			// ScaleYValue
 			// 
-			this.ScaleYValue.DecimalPlaces = 4;
-			this.ScaleYValue.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            131072});
-			this.ScaleYValue.Location = new System.Drawing.Point(25, 56);
-			this.ScaleYValue.Maximum = new decimal(new int[] {
-            4096,
-            0,
-            0,
-            0});
-			this.ScaleYValue.Minimum = new decimal(new int[] {
-            4096,
-            0,
-            0,
-            -2147483648});
-			this.ScaleYValue.Name = "ScaleYValue";
-			this.ScaleYValue.Size = new System.Drawing.Size(57, 20);
-			this.ScaleYValue.TabIndex = 1;
-			this.ScaleYValue.Value = new decimal(new int[] {
-            100,
-            0,
-            0,
-            131072});
-			this.ScaleYValue.WheelIncrement = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-			this.ScaleYValue.ValueChanged += new System.EventHandler(this.ScaleYValueChanged);
-			this.ScaleYValue.Enter += new System.EventHandler(this.FocusTextInControl);
+			ScaleYValue.DecimalPlaces = 4;
+			ScaleYValue.Increment = new decimal(new int[] { 1, 0, 0, 131072 });
+			ScaleYValue.Location = new System.Drawing.Point(29, 64);
+			ScaleYValue.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			ScaleYValue.Maximum = new decimal(new int[] { 4096, 0, 0, 0 });
+			ScaleYValue.Minimum = new decimal(new int[] { 4096, 0, 0, int.MinValue });
+			ScaleYValue.Name = "ScaleYValue";
+			ScaleYValue.Size = new System.Drawing.Size(66, 23);
+			ScaleYValue.TabIndex = 1;
+			ScaleYValue.Value = new decimal(new int[] { 100, 0, 0, 131072 });
+			ScaleYValue.WheelIncrement = new decimal(new int[] { 1, 0, 0, 65536 });
+			ScaleYValue.ValueChanged += ScaleYValueChanged;
+			ScaleYValue.Enter += FocusTextInControl;
 			// 
 			// ShiftXValue
 			// 
-			this.ShiftXValue.CtrlWheelMultiplier = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-			this.ShiftXValue.Location = new System.Drawing.Point(91, 30);
-			this.ShiftXValue.Maximum = new decimal(new int[] {
-            4096,
-            0,
-            0,
-            0});
-			this.ShiftXValue.Minimum = new decimal(new int[] {
-            4096,
-            0,
-            0,
-            -2147483648});
-			this.ShiftXValue.Name = "ShiftXValue";
-			this.ShiftXValue.Size = new System.Drawing.Size(58, 20);
-			this.ShiftXValue.TabIndex = 1;
-			this.ShiftXValue.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-			this.ShiftXValue.ValueChanged += new System.EventHandler(this.ShiftXValueChanged);
-			this.ShiftXValue.Enter += new System.EventHandler(this.FocusTextInControl);
+			ShiftXValue.CtrlWheelMultiplier = new decimal(new int[] { 0, 0, 0, 0 });
+			ShiftXValue.Location = new System.Drawing.Point(106, 34);
+			ShiftXValue.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			ShiftXValue.Maximum = new decimal(new int[] { 4096, 0, 0, 0 });
+			ShiftXValue.Minimum = new decimal(new int[] { 4096, 0, 0, int.MinValue });
+			ShiftXValue.Name = "ShiftXValue";
+			ShiftXValue.Size = new System.Drawing.Size(68, 23);
+			ShiftXValue.TabIndex = 1;
+			ShiftXValue.Value = new decimal(new int[] { 1, 0, 0, 65536 });
+			ShiftXValue.ValueChanged += ShiftXValueChanged;
+			ShiftXValue.Enter += FocusTextInControl;
 			// 
 			// ShiftYValue
 			// 
-			this.ShiftYValue.CtrlWheelMultiplier = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-			this.ShiftYValue.Location = new System.Drawing.Point(91, 56);
-			this.ShiftYValue.Maximum = new decimal(new int[] {
-            4096,
-            0,
-            0,
-            0});
-			this.ShiftYValue.Minimum = new decimal(new int[] {
-            4096,
-            0,
-            0,
-            -2147483648});
-			this.ShiftYValue.Name = "ShiftYValue";
-			this.ShiftYValue.Size = new System.Drawing.Size(58, 20);
-			this.ShiftYValue.TabIndex = 1;
-			this.ShiftYValue.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-			this.ShiftYValue.ValueChanged += new System.EventHandler(this.ShiftYValueChanged);
-			this.ShiftYValue.Enter += new System.EventHandler(this.FocusTextInControl);
+			ShiftYValue.CtrlWheelMultiplier = new decimal(new int[] { 0, 0, 0, 0 });
+			ShiftYValue.Location = new System.Drawing.Point(106, 64);
+			ShiftYValue.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			ShiftYValue.Maximum = new decimal(new int[] { 4096, 0, 0, 0 });
+			ShiftYValue.Minimum = new decimal(new int[] { 4096, 0, 0, int.MinValue });
+			ShiftYValue.Name = "ShiftYValue";
+			ShiftYValue.Size = new System.Drawing.Size(68, 23);
+			ShiftYValue.TabIndex = 1;
+			ShiftYValue.Value = new decimal(new int[] { 1, 0, 0, 65536 });
+			ShiftYValue.ValueChanged += ShiftYValueChanged;
+			ShiftYValue.Enter += FocusTextInControl;
 			// 
 			// LightmapLabel
 			// 
-			this.LightmapLabel.Location = new System.Drawing.Point(174, 38);
-			this.LightmapLabel.Name = "LightmapLabel";
-			this.LightmapLabel.Size = new System.Drawing.Size(59, 25);
-			this.LightmapLabel.TabIndex = 16;
-			this.LightmapLabel.Text = "Lightmap";
-			this.LightmapLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			LightmapLabel.Location = new System.Drawing.Point(0, 0);
+			LightmapLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			LightmapLabel.Name = "LightmapLabel";
+			LightmapLabel.Size = new System.Drawing.Size(69, 29);
+			LightmapLabel.TabIndex = 16;
+			LightmapLabel.Text = "Lightmap";
+			LightmapLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
 			// LightmapValue
 			// 
-			this.LightmapValue.CtrlWheelMultiplier = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-			this.LightmapValue.Enabled = false;
-			this.LightmapValue.Location = new System.Drawing.Point(239, 43);
-			this.LightmapValue.Maximum = new decimal(new int[] {
-            512,
-            0,
-            0,
-            0});
-			this.LightmapValue.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-			this.LightmapValue.Name = "LightmapValue";
-			this.LightmapValue.ShiftWheelMultiplier = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-			this.LightmapValue.Size = new System.Drawing.Size(58, 20);
-			this.LightmapValue.TabIndex = 19;
-			this.LightmapValue.Value = new decimal(new int[] {
-            16,
-            0,
-            0,
-            0});
-			this.LightmapValue.ValueChanged += new System.EventHandler(this.LightmapValueChanged);
-			this.LightmapValue.Enter += new System.EventHandler(this.FocusTextInControl);
+			LightmapValue.CtrlWheelMultiplier = new decimal(new int[] { 0, 0, 0, 0 });
+			LightmapValue.Enabled = false;
+			LightmapValue.Location = new System.Drawing.Point(74, 6);
+			LightmapValue.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			LightmapValue.Maximum = new decimal(new int[] { 512, 0, 0, 0 });
+			LightmapValue.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+			LightmapValue.Name = "LightmapValue";
+			LightmapValue.ShiftWheelMultiplier = new decimal(new int[] { 0, 0, 0, 0 });
+			LightmapValue.Size = new System.Drawing.Size(68, 23);
+			LightmapValue.TabIndex = 19;
+			LightmapValue.Value = new decimal(new int[] { 16, 0, 0, 0 });
+			LightmapValue.ValueChanged += LightmapValueChanged;
+			LightmapValue.Enter += FocusTextInControl;
 			// 
 			// HoverTip
 			// 
-			this.HoverTip.AutoPopDelay = 5000;
-			this.HoverTip.InitialDelay = 200;
-			this.HoverTip.IsBalloon = true;
-			this.HoverTip.ReshowDelay = 100;
+			HoverTip.AutoPopDelay = 5000;
+			HoverTip.InitialDelay = 200;
+			HoverTip.IsBalloon = true;
+			HoverTip.ReshowDelay = 100;
 			// 
 			// SelectedTextureListPanel
 			// 
-			this.SelectedTextureListPanel.Location = new System.Drawing.Point(12, 178);
-			this.SelectedTextureListPanel.Name = "SelectedTextureListPanel";
-			this.SelectedTextureListPanel.Size = new System.Drawing.Size(300, 206);
-			this.SelectedTextureListPanel.TabIndex = 35;
+			SelectedTextureListPanel.Location = new System.Drawing.Point(14, 205);
+			SelectedTextureListPanel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			SelectedTextureListPanel.Name = "SelectedTextureListPanel";
+			SelectedTextureListPanel.Size = new System.Drawing.Size(350, 238);
+			SelectedTextureListPanel.TabIndex = 35;
 			// 
 			// RecentTextureListPanel
 			// 
-			this.RecentTextureListPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.RecentTextureListPanel.Location = new System.Drawing.Point(318, 178);
-			this.RecentTextureListPanel.Name = "RecentTextureListPanel";
-			this.RecentTextureListPanel.Size = new System.Drawing.Size(87, 179);
-			this.RecentTextureListPanel.TabIndex = 36;
+			RecentTextureListPanel.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+			RecentTextureListPanel.Location = new System.Drawing.Point(371, 205);
+			RecentTextureListPanel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			RecentTextureListPanel.Name = "RecentTextureListPanel";
+			RecentTextureListPanel.Size = new System.Drawing.Size(102, 207);
+			RecentTextureListPanel.TabIndex = 36;
 			// 
 			// LeftClickActionButton
 			// 
-			this.LeftClickActionButton.Location = new System.Drawing.Point(12, 390);
-			this.LeftClickActionButton.Menu = this.LeftClickActionMenu;
-			this.LeftClickActionButton.Name = "LeftClickActionButton";
-			this.LeftClickActionButton.Size = new System.Drawing.Size(148, 23);
-			this.LeftClickActionButton.TabIndex = 37;
-			this.LeftClickActionButton.Text = "Left click: Lift";
-			this.LeftClickActionButton.UseVisualStyleBackColor = true;
+			LeftClickActionButton.Location = new System.Drawing.Point(14, 450);
+			LeftClickActionButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			LeftClickActionButton.Menu = LeftClickActionMenu;
+			LeftClickActionButton.Name = "LeftClickActionButton";
+			LeftClickActionButton.Size = new System.Drawing.Size(173, 27);
+			LeftClickActionButton.TabIndex = 37;
+			LeftClickActionButton.Text = "Left click: Lift";
+			LeftClickActionButton.UseVisualStyleBackColor = true;
 			// 
 			// LeftClickActionMenu
 			// 
-			this.LeftClickActionMenu.Name = "LeftClickActionMenu";
-			this.LeftClickActionMenu.Size = new System.Drawing.Size(61, 4);
-			this.LeftClickActionMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.SetLeftClickAction);
+			LeftClickActionMenu.Name = "LeftClickActionMenu";
+			LeftClickActionMenu.Size = new System.Drawing.Size(61, 4);
+			LeftClickActionMenu.ItemClicked += SetLeftClickAction;
 			// 
 			// RightClickActionButton
 			// 
-			this.RightClickActionButton.Location = new System.Drawing.Point(164, 390);
-			this.RightClickActionButton.Menu = this.RightClickActionMenu;
-			this.RightClickActionButton.Name = "RightClickActionButton";
-			this.RightClickActionButton.Size = new System.Drawing.Size(148, 23);
-			this.RightClickActionButton.TabIndex = 37;
-			this.RightClickActionButton.Text = "Right click: Apply";
-			this.RightClickActionButton.UseVisualStyleBackColor = true;
+			RightClickActionButton.Location = new System.Drawing.Point(191, 450);
+			RightClickActionButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			RightClickActionButton.Menu = RightClickActionMenu;
+			RightClickActionButton.Name = "RightClickActionButton";
+			RightClickActionButton.Size = new System.Drawing.Size(173, 27);
+			RightClickActionButton.TabIndex = 37;
+			RightClickActionButton.Text = "Right click: Apply";
+			RightClickActionButton.UseVisualStyleBackColor = true;
 			// 
 			// RightClickActionMenu
 			// 
-			this.RightClickActionMenu.Name = "RightClickActionMenu";
-			this.RightClickActionMenu.Size = new System.Drawing.Size(61, 4);
-			this.RightClickActionMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.SetRightClickAction);
+			RightClickActionMenu.Name = "RightClickActionMenu";
+			RightClickActionMenu.Size = new System.Drawing.Size(61, 4);
+			RightClickActionMenu.ItemClicked += SetRightClickAction;
 			// 
 			// ResetButton
 			// 
-			this.ResetButton.Location = new System.Drawing.Point(94, 97);
-			this.ResetButton.Name = "ResetButton";
-			this.ResetButton.Size = new System.Drawing.Size(75, 23);
-			this.ResetButton.TabIndex = 38;
-			this.ResetButton.Text = "Reset";
-			this.ResetButton.UseVisualStyleBackColor = true;
-			this.ResetButton.Click += new System.EventHandler(this.ResetButton_Click);
+			ResetButton.Location = new System.Drawing.Point(110, 112);
+			ResetButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			ResetButton.Name = "ResetButton";
+			ResetButton.Size = new System.Drawing.Size(88, 27);
+			ResetButton.TabIndex = 38;
+			ResetButton.Text = "Reset";
+			ResetButton.UseVisualStyleBackColor = true;
+			ResetButton.Click += ResetButton_Click;
+			// 
+			// lightmapGrp
+			// 
+			lightmapGrp.Controls.Add(SmoothingGroupsButton);
+			lightmapGrp.Controls.Add(LightmapValue);
+			lightmapGrp.Controls.Add(LightmapLabel);
+			lightmapGrp.Location = new System.Drawing.Point(205, 49);
+			lightmapGrp.Name = "lightmapGrp";
+			lightmapGrp.Size = new System.Drawing.Size(140, 61);
+			lightmapGrp.TabIndex = 39;
+			lightmapGrp.Text = "groupBox1";
 			// 
 			// TextureApplicationForm
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(417, 420);
-			this.Controls.Add(this.ResetButton);
-			this.Controls.Add(this.RightClickActionButton);
-			this.Controls.Add(this.LeftClickActionButton);
-			this.Controls.Add(this.RecentTextureListPanel);
-			this.Controls.Add(this.SelectedTextureListPanel);
-			this.Controls.Add(this.HideMaskCheckbox);
-			this.Controls.Add(this.RecentFilterTextbox);
-			this.Controls.Add(this.FilterRecentLabel);
-			this.Controls.Add(this.SmoothingGroupsButton);
-			this.Controls.Add(this.AlignGroup);
-			this.Controls.Add(this.JustifyGroup);
-			this.Controls.Add(this.ApplyButton);
-			this.Controls.Add(this.RotationValue);
-			this.Controls.Add(this.ReplaceButton);
-			this.Controls.Add(this.BrowseButton);
-			this.Controls.Add(this.RotationLabel);
-			this.Controls.Add(this.TextureDetailsLabel);
-			this.Controls.Add(this.tableLayoutPanel1);
-			this.Controls.Add(this.LightmapLabel);
-			this.Controls.Add(this.LightmapValue);
-			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
-			this.Name = "TextureApplicationForm";
-			this.ShowIcon = false;
-			this.ShowInTaskbar = false;
-			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-			this.Text = "Texture Application";
-			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnClosing);
-			this.AlignGroup.ResumeLayout(false);
-			this.AlignGroup.PerformLayout();
-			this.JustifyGroup.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.RotationValue)).EndInit();
-			this.tableLayoutPanel1.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.ScaleXValue)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.ScaleYValue)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.ShiftXValue)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.ShiftYValue)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.LightmapValue)).EndInit();
-			this.ResumeLayout(false);
-			this.PerformLayout();
+			AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+			AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			ClientSize = new System.Drawing.Size(486, 485);
+			Controls.Add(lightmapGrp);
+			Controls.Add(ResetButton);
+			Controls.Add(RightClickActionButton);
+			Controls.Add(LeftClickActionButton);
+			Controls.Add(RecentTextureListPanel);
+			Controls.Add(SelectedTextureListPanel);
+			Controls.Add(HideMaskCheckbox);
+			Controls.Add(RecentFilterTextbox);
+			Controls.Add(FilterRecentLabel);
+			Controls.Add(AlignGroup);
+			Controls.Add(JustifyGroup);
+			Controls.Add(ApplyButton);
+			Controls.Add(RotationValue);
+			Controls.Add(ReplaceButton);
+			Controls.Add(BrowseButton);
+			Controls.Add(RotationLabel);
+			Controls.Add(TextureDetailsLabel);
+			Controls.Add(tableLayoutPanel1);
+			FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+			Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			Name = "TextureApplicationForm";
+			ShowIcon = false;
+			ShowInTaskbar = false;
+			StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+			Text = "Texture Application";
+			FormClosing += OnClosing;
+			AlignGroup.ResumeLayout(false);
+			AlignGroup.PerformLayout();
+			JustifyGroup.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)RotationValue).EndInit();
+			tableLayoutPanel1.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)ScaleXValue).EndInit();
+			((System.ComponentModel.ISupportInitialize)ScaleYValue).EndInit();
+			((System.ComponentModel.ISupportInitialize)ShiftXValue).EndInit();
+			((System.ComponentModel.ISupportInitialize)ShiftYValue).EndInit();
+			((System.ComponentModel.ISupportInitialize)LightmapValue).EndInit();
+			lightmapGrp.ResumeLayout(false);
+			ResumeLayout(false);
+			PerformLayout();
 
-        }
+		}
 
-        #endregion
-        private System.Windows.Forms.CheckBox HideMaskCheckbox;
+		#endregion
+		private System.Windows.Forms.CheckBox HideMaskCheckbox;
         private System.Windows.Forms.TextBox RecentFilterTextbox;
         private System.Windows.Forms.Label FilterRecentLabel;
         private System.Windows.Forms.Button SmoothingGroupsButton;
@@ -722,5 +675,6 @@
 		private System.Windows.Forms.Button ResetButton;
 		private System.Windows.Forms.Button RRightButton;
 		private System.Windows.Forms.Button RLeftButton;
+		private System.Windows.Forms.Panel lightmapGrp;
 	}
 }
