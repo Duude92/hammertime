@@ -17,7 +17,6 @@ using Sledge.DataStructures.Geometric;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations.Mutation;
 using System.Windows.Forms;
-using Sledge.BspEditor.Environment.Goldsource;
 using Sledge.Common.Shell.Settings;
 using System.IO;
 using Sledge.Common.Translations;
@@ -52,7 +51,7 @@ namespace Sledge.BspEditor.Tools.PropExporter
 				MessageBox.Show("Nothing to build.\nTry to select objects to build prop.", "Build error.", MessageBoxButtons.OK, MessageBoxIcon.Error);
 				return;
 			}
-			var defaultPath = string.IsNullOrEmpty(lastPath) ? (document.Environment as GoldsourceEnvironment).BaseDirectory : lastPath;
+			var defaultPath = string.IsNullOrEmpty(lastPath) ? document.Environment.BaseDirectory : lastPath;
 			SaveFileDialog dialog = new SaveFileDialog();
 			dialog.InitialDirectory = defaultPath;
 			dialog.Filter = "Models (*.mdl)|*.mdl";

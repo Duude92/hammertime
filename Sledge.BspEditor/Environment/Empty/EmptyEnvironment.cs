@@ -66,5 +66,6 @@ namespace Sledge.BspEditor.Environment.Empty
         public float DefaultGridSize => 16;
 		public string CordonTexture { get; set; }
 		public string[] NonRenderableTextures { get; set; }
+        public string BaseDirectory => ".";
 	}
 }
