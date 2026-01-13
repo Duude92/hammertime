@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Compile;
 using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Grid;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjectData;
@@ -25,7 +26,7 @@ using Path = System.IO.Path;
 
 namespace Sledge.BspEditor.Environment.Goldsource
 {
-	public class GoldsourceEnvironment : IEnvironment
+	public class GoldsourceEnvironment : IEnvironment, IDynamicSizeGridEnvironment
 	{
 		private readonly ITexturePackageProvider _wadProvider;
 		private readonly ITexturePackageProvider _spriteProvider;

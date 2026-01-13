@@ -1,6 +1,7 @@
 ﻿using Sledge.BspEditor.Compile;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Environment;
+using Sledge.BspEditor.Grid;
 using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
@@ -14,7 +15,7 @@ using Path = System.IO.Path;
 
 namespace HammerTime.Source.BspEditor.Environment.Source
 {
-	public class SourceEnvironment : IEnvironment
+	public class SourceEnvironment : IEnvironment, IDynamicSizeGridEnvironment
 	{
 		public string Engine => "Source";
 

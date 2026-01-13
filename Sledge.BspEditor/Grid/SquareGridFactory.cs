@@ -31,21 +31,12 @@ namespace Sledge.BspEditor.Grid
 		public async Task<IGrid> Create(IEnvironment environment)
 		{
 			var gd = await environment.GetGameData();
-			dynamic env = environment;
-			//if (environment is GoldsourceEnvironment goldSrcEnvironment && goldSrcEnvironment.OverrideMapSize)
-			//FIXME: dynamic used to avoid needing to reference Sledge.BspEditor.Environment.Goldsource
-			try
+			if (environment is IDynamicSizeGridEnvironment env && env.OverrideMapSize)
 			{
-				if (!!env.OverrideMapSize)
-				{
-					gd.MapSizeLow = (int)env.MapSizeLow;
-					gd.MapSizeHigh = (int)env.MapSizeHigh;
-				}
+				gd.MapSizeLow = (int)env.MapSizeLow;
+				gd.MapSizeHigh = (int)env.MapSizeHigh;
 			}
-			catch
-			{
-				// Ignore
-			}
+
 			return new SquareGrid(gd.MapSizeHigh, gd.MapSizeLow, environment.DefaultGridSize);
 		}
 
