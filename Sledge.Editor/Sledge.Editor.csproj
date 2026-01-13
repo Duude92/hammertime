@@ -111,6 +111,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\HammerTime.GoldSource\HammerTime.GoldSource.csproj" />
     <ProjectReference Include="..\HammerTime.Source\HammerTime.Source.csproj" />
     <ProjectReference Include="..\Sledge.BspEditor.Editing\Sledge.BspEditor.Editing.csproj">
       <Project>{d33e1027-1956-44c4-b920-85281f703704}</Project>
