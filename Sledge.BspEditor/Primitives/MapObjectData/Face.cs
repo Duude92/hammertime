@@ -25,6 +25,7 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
 		/// Used for lightmap UVs
 		/// </summary>
 		public Vector2[] Uv1 { get; set; }
+		public float? LightmapScale { get; set; }
 
 		public Plane Plane
 		{

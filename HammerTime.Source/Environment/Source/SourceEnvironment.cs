@@ -183,7 +183,9 @@ namespace HammerTime.Source.BspEditor.Environment.Source
 				PathTool.PathToolCapability,
 				VertexTool.VertexToolCapability,
 				WrapTextureTool.WrapTextureToolCapability,
-				CameraTool.CameraToolCapability
+				CameraTool.CameraToolCapability,
+				TextureTool.TextureToolLightmapCapable,
+				TextureTool.TextureToolDisplacementCapable
 		};
 		public void AddData(IEnvironmentData data)
 		{

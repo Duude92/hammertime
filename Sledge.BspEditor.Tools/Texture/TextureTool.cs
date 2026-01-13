@@ -39,6 +39,9 @@ namespace Sledge.BspEditor.Tools.Texture
     public class TextureTool : BaseTool
     {
         public static readonly Capability TextureToolCapability = Capability.Create("TextureTool");
+        public static readonly Capability TextureToolLightmapCapable = Capability.Create("TextureTool.LightmapCapable");
+        public static readonly Capability TextureToolDisplacementCapable = Capability.Create("TextureTool.DisplacementCapable");
+
 		private ClickAction _leftClickAction = ClickAction.Lift | ClickAction.Select;
         private ClickAction _rightClickAction = ClickAction.Apply | ClickAction.Values;
 

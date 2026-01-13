@@ -716,7 +716,8 @@ namespace HammerTime.Source.Providers
 					var face = new Face(generator.Next("Face"))
 					{
 						Plane = side.Plane.ToStandardPlane(),
-						Texture = side.Texture
+						Texture = side.Texture,
+						LightmapScale = side.LightmapScale
 					};
 					face.Vertices.AddRange(side.Vertices);
 					if (face.Vertices.Any()) solid.Data.Add(face);

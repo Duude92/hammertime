@@ -108,7 +108,7 @@ namespace Sledge.BspEditor.Tools.Texture
 
 		public void Translate(ITranslationStringProvider strings)
 		{
-			if(Handle == null) CreateHandle();
+			if (Handle == null) CreateHandle();
 			var prefix = GetType().FullName;
 			this.InvokeLater(() =>
 			{
@@ -218,6 +218,10 @@ namespace Sledge.BspEditor.Tools.Texture
 				var tc = await md.Environment.GetTextureCollection();
 				SelectedTexturesList.Collection = tc;
 				RecentTexturesList.Collection = tc;
+				this.Invoke(() =>
+				{
+					this.lightmapGrp.Visible = md.Capabilities.Contains(TextureTool.TextureToolLightmapCapable);
+				});
 			}
 			else
 			{
@@ -413,6 +417,7 @@ namespace Sledge.BspEditor.Tools.Texture
 				ShiftXValue.Value = (decimal)_currentTextureProperties.XShift;
 				ShiftYValue.Value = (decimal)_currentTextureProperties.YShift;
 				RotationValue.Value = (decimal)_currentTextureProperties.Rotation;
+				LightmapValue.Value = (decimal)(_currentTextureProperties.LightmapScale ?? 1);
 
 				if (_currentTextureProperties.DifferentXScaleValues) ScaleXValue.Text = "";
 				if (_currentTextureProperties.DifferentYScaleValues) ScaleYValue.Text = "";
@@ -751,6 +756,7 @@ namespace Sledge.BspEditor.Tools.Texture
 
 			public bool AllAlignedToWorld { get; set; }
 			public bool NoneAlignedToWorld { get; set; }
+			public float? LightmapScale { get; set; }
 
 			public CurrentTextureProperties()
 			{
@@ -804,6 +810,7 @@ namespace Sledge.BspEditor.Tools.Texture
 						if (face.Texture.YShift != YShift) DifferentYShiftValues = true;
 						if (face.Texture.Rotation != Rotation) DifferentRotationValues = true;
 					}
+					LightmapScale = face.LightmapScale;
 					num++;
 				}
 
