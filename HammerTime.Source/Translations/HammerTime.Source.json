@@ -1,0 +1,44 @@
+﻿{
+  "@Meta": {
+    "Base": "HammerTime.Source.BspEditor",
+    "Language": "en",
+    "LanguageDescription": "English",
+    "Inherit": ""
+  },
+  "Environment": {
+    "SourceEnvironmentFactory": {
+      "Description": "Source (HL2)"
+    },
+    "SourceEnvironmentEditor": {
+      "Directories": "Directories",
+      "GameDataFiles": "Game Data Files",
+      "BuildTools": "Build Tools",
+      "Textures": "Textures",
+      "Browse": "Browse...",
+      "Add": "Add...",
+      "Remove": "Remove",
+      "Name": "Name",
+      "Path": "Path",
+      "GameDirectory": "Game directory",
+      "BaseDirectory": "Base game directory (e.g. 'hl2')",
+      "ModDirectory": "Mod directory (e.g. 'cstrike')",
+      "GameExecutable": "Game executable (e.g. 'cstrike.exe')",
+      "DefaultPointEntity": "Default point entity",
+      "DefaultBrushEntity": "Default brush entity",
+      "Low": "Low",
+      "High": "High",
+      "OverrideMapSize": "Override map size",
+      "IncludeFgdDirectories": "Load sprites and models from FGD directories",
+      "BuildDirectory": "Folder containing build tools:",
+      "IncludeToolsDirectory": "Automatically include textures found in this directory",
+      "CopyBspToGameFolder": "Copy BSP/RES to game folder",
+      "RunGame": "Run the game after successful compile",
+      "AskToRunGame": "Ask before running the game",
+      "CopyToMapFolder": "Copy to map folder:",
+      "DefaultTextureScale": "Default texture scale",
+      "TexturePackagesToInclude": "Texture packages to include:",
+      "ToggleAll": "Toggle all",
+      "AdditionalTexturePackages": "Additional texture packages:"
+    }
+  }
+}
