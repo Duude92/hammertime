@@ -1,7 +1,6 @@
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Environment;
-using Sledge.BspEditor.Environment.Goldsource;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjectData;
@@ -164,8 +163,9 @@ namespace Sledge.BspEditor.Rendering.Scene
 		}
 		private async Task LoadSkybox()
 		{
-			if (_activeDocument.TryGetTarget(out var md) && md?.Environment is GoldsourceEnvironment environment1)
+			if (_activeDocument.TryGetTarget(out var md))
 			{
+				var env = md.Environment;
 				var data = md.Map.Root.Data.Get<EntityData>().First();
 				var dd = md.Map.Data.GetOne<DisplayData>() ?? new DisplayData();
 
@@ -176,7 +176,7 @@ namespace Sledge.BspEditor.Rendering.Scene
 
 				md.Map.Data.Replace(dd);
 
-				var sky = environment1.GetSkyboxes().FirstOrDefault(x => x.Name == skyname);
+				var sky = env.GetSkyboxes().FirstOrDefault(x => x.Name == skyname);
 				if (sky == null) return;
 
 				UpdateScene(md, null);

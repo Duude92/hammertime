@@ -1,14 +1,11 @@
 ﻿using System.ComponentModel.Composition;
 using System.Linq;
-using System.Reflection.Metadata;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
-using Sledge.BspEditor.Environment.Goldsource;
 using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Context;
-using Sledge.Rendering.Resources;
 
 namespace Sledge.BspEditor.Editing.Commands.Toggles
 {
@@ -26,9 +23,9 @@ namespace Sledge.BspEditor.Editing.Commands.Toggles
 
 		public Task Invoke(IContext context, CommandParameters parameters)
 		{
-			if (context.TryGet("ActiveDocument", out MapDocument document) && document.Environment is GoldsourceEnvironment environment)
+			if (context.TryGet("ActiveDocument", out MapDocument document))
 			{
-
+				var environment = document.Environment;
 				var tl = document.Map.Data.GetOne<DisplayFlags>() ?? new DisplayFlags();
 				var dd = document.Map.Data.GetOne<DisplayData>() ?? new DisplayData();
 
