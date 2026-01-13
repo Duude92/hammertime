@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using Sledge.BspEditor.Environment.Goldsource;
 using Sledge.Common.Shell.Settings;
 using Sledge.Common.Translations;
 
@@ -40,8 +39,8 @@ namespace Sledge.BspEditor.Environment.Controls
 			InitializeComponent();
 			Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
 
-            _nameLabel = new Label {Text = "Name", Padding = new Padding(0, 6, 0, 0), AutoSize = true};
-            _nameBox = new TextBox{Width = 250};
+			_nameLabel = new Label { Text = "Name", Padding = new Padding(0, 6, 0, 0), AutoSize = true };
+			_nameBox = new TextBox { Width = 250 };
 			_nameBox.TextChanged += UpdateEnvironment;
 
 			if (_factories.Any())
@@ -202,19 +201,20 @@ namespace Sledge.BspEditor.Environment.Controls
 				if (_value.Any(x => x.Name == ser.Name)) ser.Name += "_copy";
 				if (_value.Any(x => x.ID == ser.ID)) ser.ID = Guid.NewGuid().ToString();
 				var factory = _factories.FirstOrDefault(x => x.TypeName == ser.Type);
-				if (factory is GoldsourceEnvironmentFactory gsFactory)
+				if (ser.Properties.TryGetValue("BaseDirectory", out var dir))
 				{
-					ser.Properties.Add("BaseDirectory", folder.SelectedPath);
-					var env = gsFactory.InverseDeserialise(ser) as GoldsourceEnvironment;
-					_value.Add(gsFactory.Serialise(env));
-
-					UpdateTreeNodes();
-
-					var nodeToSelect = treEnvironments.Nodes.OfType<TreeNode>().SelectMany(x => x.Nodes.OfType<TreeNode>()).FirstOrDefault(x => x.Tag == ser);
-					if (nodeToSelect != null) treEnvironments.SelectedNode = nodeToSelect;
-
-					OnValueChanged?.Invoke(this, Key);
+					ser.Properties.Remove("BaseDirectory");
 				}
+				ser.Properties.Add("BaseDirectory", folder.SelectedPath);
+				var env = factory.Deserialise(ser);
+				_value.Add(factory.Serialise(env));
+
+				UpdateTreeNodes();
+
+				var nodeToSelect = treEnvironments.Nodes.OfType<TreeNode>().SelectMany(x => x.Nodes.OfType<TreeNode>()).FirstOrDefault(x => x.Tag == ser);
+				if (nodeToSelect != null) treEnvironments.SelectedNode = nodeToSelect;
+
+				OnValueChanged?.Invoke(this, Key);
 			}
 
 		}
@@ -226,26 +226,23 @@ namespace Sledge.BspEditor.Environment.Controls
 			{
 				treEnvironments.SelectedNode.Text = _nameBox.Text;
 				var factory = _factories.FirstOrDefault(x => x.TypeName == node.Type);
-				if (factory != null && factory is GoldsourceEnvironmentFactory gsFactory)
-				{
-					var ser = gsFactory.InverseSerialise(_currentEditor.Environment);
-					ser.Name = node.Name;
-					ser.ID = node.ID;
+				var ser = factory.Serialise(_currentEditor.Environment);
+				ser.Name = node.Name;
+				ser.ID = node.ID;
 
-					SaveFileDialog fileDialog = new SaveFileDialog
+				SaveFileDialog fileDialog = new SaveFileDialog
+				{
+					AddExtension = true,
+					DefaultExt = "json",
+					Filter = "JSON file (*.json)|*.json"
+				};
+				if (fileDialog.ShowDialog() == DialogResult.OK)
+				{
+					using (var file = new StreamWriter(fileDialog.FileName))
 					{
-						AddExtension = true,
-						DefaultExt = "json",
-						Filter = "JSON file (*.json)|*.json"
-					};
-					if (fileDialog.ShowDialog() == DialogResult.OK)
-					{
-						using (var file = new StreamWriter(fileDialog.FileName))
-						{
-							JsonSettingsStore store = new JsonSettingsStore();
-							store.Set("Environment", ser);
-							file.Write(store.ToJson());
-						}
+						JsonSettingsStore store = new JsonSettingsStore();
+						store.Set("Environment", ser);
+						file.Write(store.ToJson());
 					}
 				}
 			}
