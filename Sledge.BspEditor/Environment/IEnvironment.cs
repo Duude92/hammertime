@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Sledge.BspEditor.Compile;
+﻿using Sledge.BspEditor.Compile;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapData;
 using Sledge.DataStructures.GameData;
 using Sledge.FileSystem;
+using Sledge.Providers.Texture;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Sledge.BspEditor.Environment
 {
@@ -112,5 +113,11 @@ namespace Sledge.BspEditor.Environment
 		/// Supported tools in this environment
 		/// </summary>
 		string[] SupportedTools { get; }
+        /// <summary>
+        /// Retrieves a collection of available skybox texture package references.
+        /// </summary>
+        /// <returns>An enumerable collection of <see cref="TexturePackageReference"/> objects representing the available
+        /// skyboxes. The collection will be empty if no skyboxes are available.</returns>
+        IEnumerable<TexturePackageReference> GetSkyboxes();
 	}
 }
