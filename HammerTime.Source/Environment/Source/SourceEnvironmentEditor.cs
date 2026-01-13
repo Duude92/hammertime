@@ -2,7 +2,6 @@ using System.Globalization;
 using System.Windows.Forms;
 using HammerTime.Source.BspEditor.Environment.Source;
 using Sledge.BspEditor.Environment;
-using Sledge.BspEditor.Environment.Goldsource;
 using Sledge.Common.Logging;
 using Sledge.Common.Translations;
 using Sledge.DataStructures.GameData;
@@ -37,7 +36,6 @@ namespace HammerTime.Source.BspEditor.Environment
 			cmbBaseGame.SelectedIndexChanged += OnEnvironmentChanged;
 			cmbGameMod.SelectedIndexChanged += OnEnvironmentChanged;
 			cmbGameExe.SelectedIndexChanged += OnEnvironmentChanged;
-			chkLoadHdModels.CheckedChanged += OnEnvironmentChanged;
 
 			cmbDefaultPointEntity.SelectedIndexChanged += OnEnvironmentChanged;
 			cmbDefaultBrushEntity.SelectedIndexChanged += OnEnvironmentChanged;
@@ -49,7 +47,6 @@ namespace HammerTime.Source.BspEditor.Environment
 			txtBuildToolsDirectory.TextChanged += OnEnvironmentChanged;
 			chkIncludeToolsDirectory.CheckedChanged += OnEnvironmentChanged;
 			cmbBspExe.SelectedIndexChanged += OnEnvironmentChanged;
-			cmbCsgExe.SelectedIndexChanged += OnEnvironmentChanged;
 			cmbVisExe.SelectedIndexChanged += OnEnvironmentChanged;
 			cmbRadExe.SelectedIndexChanged += OnEnvironmentChanged;
 
@@ -109,7 +106,6 @@ namespace HammerTime.Source.BspEditor.Environment
 			lblBaseGame.Text = strings.GetString(prefix, "BaseDirectory");
 			lblGameMod.Text = strings.GetString(prefix, "ModDirectory");
 			lblGameExe.Text = strings.GetString(prefix, "GameExecutable");
-			chkLoadHdModels.Text = strings.GetString(prefix, "LoadHDModels");
 
 			lblDefaultPointEntity.Text = strings.GetString(prefix, "DefaultPointEntity");
 			lblDefaultBrushEntity.Text = strings.GetString(prefix, "DefaultBrushEntity");
@@ -408,12 +404,10 @@ namespace HammerTime.Source.BspEditor.Environment
 			if (!Directory.Exists(dir)) return;
 
 			var selBsp = cmbBspExe.SelectedItem ?? "";
-			var selCsg = cmbCsgExe.SelectedItem ?? "";
 			var selVis = cmbVisExe.SelectedItem ?? "";
 			var selRad = cmbRadExe.SelectedItem ?? "";
 
 			cmbBspExe.Items.Clear();
-			cmbCsgExe.Items.Clear();
 			cmbVisExe.Items.Clear();
 			cmbRadExe.Items.Clear();
 
@@ -421,20 +415,15 @@ namespace HammerTime.Source.BspEditor.Environment
 			var rangeArr = range.OfType<object>().ToArray();
 
 			cmbBspExe.Items.AddRange(rangeArr);
-			cmbCsgExe.Items.AddRange(rangeArr);
 			cmbVisExe.Items.AddRange(rangeArr);
 			cmbRadExe.Items.AddRange(rangeArr);
 
 			cmbBspExe.SelectedIndex = -1;
-			cmbCsgExe.SelectedIndex = -1;
 			cmbVisExe.SelectedIndex = -1;
 			cmbRadExe.SelectedIndex = -1;
 
 			if (cmbBspExe.Items.Contains(selBsp)) cmbBspExe.SelectedItem = selBsp;
 			else if (cmbBspExe.Items.Count > 0) cmbBspExe.SelectedIndex = Math.Max(0, range.FindIndex(x => x.ToLower().Contains("bsp")));
-
-			if (cmbCsgExe.Items.Contains(selCsg)) cmbCsgExe.SelectedItem = selCsg;
-			else if (cmbCsgExe.Items.Count > 0) cmbCsgExe.SelectedIndex = Math.Max(0, range.FindIndex(x => x.ToLower().Contains("csg")));
 
 			if (cmbVisExe.Items.Contains(selVis)) cmbVisExe.SelectedItem = selVis;
 			else if (cmbVisExe.Items.Count > 0) cmbVisExe.SelectedIndex = Math.Max(0, range.FindIndex(x => x.ToLower().Contains("vis")));

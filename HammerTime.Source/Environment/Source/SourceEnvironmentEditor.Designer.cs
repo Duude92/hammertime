@@ -56,7 +56,6 @@ namespace HammerTime.Source.BspEditor.Environment
 			cmbMapSizeOverrideLow = new System.Windows.Forms.ComboBox();
 			chkOverrideMapSize = new System.Windows.Forms.CheckBox();
 			lblMapSizeOverrideLow = new System.Windows.Forms.Label();
-			chkLoadHdModels = new System.Windows.Forms.CheckBox();
 			grpDirectories = new System.Windows.Forms.GroupBox();
 			grpFgds = new System.Windows.Forms.GroupBox();
 			gridUpDown = new GridUpDown();
@@ -75,12 +74,10 @@ namespace HammerTime.Source.BspEditor.Environment
 			lblBuildExeFolder = new System.Windows.Forms.Label();
 			lblBuildBSP = new System.Windows.Forms.Label();
 			txtBuildToolsDirectory = new System.Windows.Forms.TextBox();
-			lblBuildCSG = new System.Windows.Forms.Label();
 			cmbRadExe = new System.Windows.Forms.ComboBox();
 			cmbBspExe = new System.Windows.Forms.ComboBox();
 			lblBuildVIS = new System.Windows.Forms.Label();
 			cmbVisExe = new System.Windows.Forms.ComboBox();
-			cmbCsgExe = new System.Windows.Forms.ComboBox();
 			lblBuildRAD = new System.Windows.Forms.Label();
 			btnBuildToolsBrowse = new System.Windows.Forms.Button();
 			grpTextures = new System.Windows.Forms.GroupBox();
@@ -379,23 +376,10 @@ namespace HammerTime.Source.BspEditor.Environment
 			lblMapSizeOverrideLow.Text = "Low";
 			lblMapSizeOverrideLow.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
-			// chkLoadHdModels
-			// 
-			chkLoadHdModels.Checked = true;
-			chkLoadHdModels.CheckState = System.Windows.Forms.CheckState.Checked;
-			chkLoadHdModels.Location = new System.Drawing.Point(245, 142);
-			chkLoadHdModels.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-			chkLoadHdModels.Name = "chkLoadHdModels";
-			chkLoadHdModels.Size = new System.Drawing.Size(284, 28);
-			chkLoadHdModels.TabIndex = 45;
-			chkLoadHdModels.Text = "Load HD Models (if available)";
-			chkLoadHdModels.UseVisualStyleBackColor = true;
-			// 
 			// grpDirectories
 			// 
 			grpDirectories.Controls.Add(lblGameDir);
 			grpDirectories.Controls.Add(cmbGameMod);
-			grpDirectories.Controls.Add(chkLoadHdModels);
 			grpDirectories.Controls.Add(cmbGameExe);
 			grpDirectories.Controls.Add(lblGameMod);
 			grpDirectories.Controls.Add(lblGameExe);
@@ -471,12 +455,10 @@ namespace HammerTime.Source.BspEditor.Environment
 			grpBuildTools.Controls.Add(lblBuildExeFolder);
 			grpBuildTools.Controls.Add(lblBuildBSP);
 			grpBuildTools.Controls.Add(txtBuildToolsDirectory);
-			grpBuildTools.Controls.Add(lblBuildCSG);
 			grpBuildTools.Controls.Add(cmbRadExe);
 			grpBuildTools.Controls.Add(cmbBspExe);
 			grpBuildTools.Controls.Add(lblBuildVIS);
 			grpBuildTools.Controls.Add(cmbVisExe);
-			grpBuildTools.Controls.Add(cmbCsgExe);
 			grpBuildTools.Controls.Add(lblBuildRAD);
 			grpBuildTools.Controls.Add(btnBuildToolsBrowse);
 			grpBuildTools.Location = new System.Drawing.Point(7, 553);
@@ -638,21 +620,11 @@ namespace HammerTime.Source.BspEditor.Environment
 			txtBuildToolsDirectory.Text = "example: C:\\hammer_alt";
 			txtBuildToolsDirectory.TextChanged += BuildToolsDirectoryTextChanged;
 			// 
-			// lblBuildCSG
-			// 
-			lblBuildCSG.Location = new System.Drawing.Point(41, 136);
-			lblBuildCSG.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-			lblBuildCSG.Name = "lblBuildCSG";
-			lblBuildCSG.Size = new System.Drawing.Size(40, 23);
-			lblBuildCSG.TabIndex = 24;
-			lblBuildCSG.Text = "CSG";
-			lblBuildCSG.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
 			// cmbRadExe
 			// 
 			cmbRadExe.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			cmbRadExe.FormattingEnabled = true;
-			cmbRadExe.Location = new System.Drawing.Point(88, 197);
+			cmbRadExe.Location = new System.Drawing.Point(88, 162);
 			cmbRadExe.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
 			cmbRadExe.Name = "cmbRadExe";
 			cmbRadExe.Size = new System.Drawing.Size(178, 23);
@@ -670,7 +642,7 @@ namespace HammerTime.Source.BspEditor.Environment
 			// 
 			// lblBuildVIS
 			// 
-			lblBuildVIS.Location = new System.Drawing.Point(41, 167);
+			lblBuildVIS.Location = new System.Drawing.Point(41, 133);
 			lblBuildVIS.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
 			lblBuildVIS.Name = "lblBuildVIS";
 			lblBuildVIS.Size = new System.Drawing.Size(40, 23);
@@ -682,25 +654,15 @@ namespace HammerTime.Source.BspEditor.Environment
 			// 
 			cmbVisExe.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			cmbVisExe.FormattingEnabled = true;
-			cmbVisExe.Location = new System.Drawing.Point(88, 166);
+			cmbVisExe.Location = new System.Drawing.Point(88, 133);
 			cmbVisExe.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
 			cmbVisExe.Name = "cmbVisExe";
 			cmbVisExe.Size = new System.Drawing.Size(178, 23);
 			cmbVisExe.TabIndex = 30;
 			// 
-			// cmbCsgExe
-			// 
-			cmbCsgExe.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			cmbCsgExe.FormattingEnabled = true;
-			cmbCsgExe.Location = new System.Drawing.Point(88, 135);
-			cmbCsgExe.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-			cmbCsgExe.Name = "cmbCsgExe";
-			cmbCsgExe.Size = new System.Drawing.Size(178, 23);
-			cmbCsgExe.TabIndex = 31;
-			// 
 			// lblBuildRAD
 			// 
-			lblBuildRAD.Location = new System.Drawing.Point(41, 198);
+			lblBuildRAD.Location = new System.Drawing.Point(41, 162);
 			lblBuildRAD.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
 			lblBuildRAD.Name = "lblBuildRAD";
 			lblBuildRAD.Size = new System.Drawing.Size(40, 23);
@@ -932,7 +894,6 @@ namespace HammerTime.Source.BspEditor.Environment
         private System.Windows.Forms.ComboBox cmbMapSizeOverrideLow;
         private System.Windows.Forms.CheckBox chkOverrideMapSize;
         private System.Windows.Forms.Label lblMapSizeOverrideLow;
-        private System.Windows.Forms.CheckBox chkLoadHdModels;
         private System.Windows.Forms.GroupBox grpDirectories;
         private System.Windows.Forms.GroupBox grpFgds;
         private System.Windows.Forms.GroupBox grpBuildTools;
@@ -940,12 +901,10 @@ namespace HammerTime.Source.BspEditor.Environment
         private System.Windows.Forms.Label lblBuildExeFolder;
         private System.Windows.Forms.Label lblBuildBSP;
         private System.Windows.Forms.TextBox txtBuildToolsDirectory;
-        private System.Windows.Forms.Label lblBuildCSG;
         private System.Windows.Forms.ComboBox cmbRadExe;
         private System.Windows.Forms.ComboBox cmbBspExe;
         private System.Windows.Forms.Label lblBuildVIS;
         private System.Windows.Forms.ComboBox cmbVisExe;
-        private System.Windows.Forms.ComboBox cmbCsgExe;
         private System.Windows.Forms.Label lblBuildRAD;
         private System.Windows.Forms.Button btnBuildToolsBrowse;
         private System.Windows.Forms.GroupBox grpTextures;
