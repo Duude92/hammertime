@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Sledge.BspEditor.Compile;
+﻿using Sledge.BspEditor.Compile;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapData;
 using Sledge.DataStructures.GameData;
 using Sledge.FileSystem;
 using Sledge.Providers.Texture;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Sledge.BspEditor.Environment.Empty
 {
@@ -58,7 +59,8 @@ namespace Sledge.BspEditor.Environment.Empty
             return false;
         }
 
-        public string DefaultBrushEntity => "";
+		public IEnumerable<TexturePackageReference> GetSkyboxes() => Enumerable.Empty<TexturePackageReference>();
+		public string DefaultBrushEntity => "";
         public string DefaultPointEntity => "";
         public decimal DefaultTextureScale => 1;
         public float DefaultGridSize => 16;

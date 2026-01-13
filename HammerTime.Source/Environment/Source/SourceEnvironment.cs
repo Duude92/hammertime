@@ -278,5 +278,7 @@ namespace HammerTime.Source.BspEditor.Environment.Source
 
 			ed.Name = "worldspawn";
 		}
+		// FIXME: Implement skybox retrieval
+		public IEnumerable<TexturePackageReference> GetSkyboxes() => Enumerable.Empty<TexturePackageReference>();
 	}
 }
