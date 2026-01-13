@@ -8,7 +8,6 @@ using LogicAndTrick.Oy;
 using Sledge.BspEditor.Controls;
 using Sledge.BspEditor.Controls.Layout;
 using Sledge.BspEditor.Documents;
-using Sledge.BspEditor.Environment.Goldsource;
 using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.Common.Shell.Documents;
@@ -400,7 +399,7 @@ namespace Sledge.BspEditor.Components
 						var data = _activeDocument.Map.Root.Data.Get<EntityData>().First();
 						var skyname = data?.Get<string>("skyname", null);
 
-						if (_activeDocument.Environment is not GoldsourceEnvironment environment) return;
+						var environment = _activeDocument.Environment;
 
 						var sky = environment.GetSkyboxes().FirstOrDefault(x => x.Name == skyname);
 						if (sky == null) return;
