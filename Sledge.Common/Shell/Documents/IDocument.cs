@@ -29,7 +29,7 @@ namespace Sledge.Common.Shell.Documents
         /// True if this document has unsaved changes
         /// </summary>
         bool HasUnsavedChanges { get; }
-        IEnumerable<string> SupportedTools { get; }
+        IReadOnlySet<Capability> Capabilities { get; }
 
         /// <summary>
         /// Nicely request if this document can be closed.

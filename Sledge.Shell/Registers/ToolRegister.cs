@@ -60,7 +60,7 @@ namespace Sledge.Shell.Registers
 		{
 			var activeDocument = context.Get<IDocument>("ActiveDocument");
 			var activeTool = context.Get<ITool>("ActiveTool");
-			var toolsInContext = _components.Where(x => activeDocument?.SupportedTools.Contains(x.Id) ?? false && x.IsInContext(context)).ToList();
+			var toolsInContext = _components.Where(x => activeDocument?.Capabilities.Contains(x.ToolCapability) ?? false && x.IsInContext(context)).ToList();
 
 			// If there are any tools available, or the active tool exists
 			// And if the active tool isn't in context

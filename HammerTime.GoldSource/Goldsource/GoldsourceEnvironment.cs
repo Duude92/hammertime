@@ -15,8 +15,21 @@ using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Providers;
+using Sledge.BspEditor.Tools;
+using Sledge.BspEditor.Tools.Brush;
+using Sledge.BspEditor.Tools.Clip;
+using Sledge.BspEditor.Tools.Cordon;
+using Sledge.BspEditor.Tools.Decal;
+using Sledge.BspEditor.Tools.Entity;
+using Sledge.BspEditor.Tools.PathTool;
+using Sledge.BspEditor.Tools.Prefab;
+using Sledge.BspEditor.Tools.Selection;
+using Sledge.BspEditor.Tools.Texture;
+using Sledge.BspEditor.Tools.Vertex;
+using Sledge.BspEditor.Tools.WrapTexture;
 using Sledge.Common;
 using Sledge.Common.Shell.Commands;
+using Sledge.Common.Shell.Documents;
 using Sledge.DataStructures.GameData;
 using Sledge.DataStructures.Geometric;
 using Sledge.FileSystem;
@@ -146,9 +159,22 @@ namespace Sledge.BspEditor.Environment.Goldsource
 				yield return Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
 			}
 		}
-
-		public string[] SupportedTools => new[]{"SelectTool", "TextureTool", "BrushTool", "ClipTool", "CordonTool", "DecalTool",
-			"EntityTool", "PathTool", "PrefabTool" , "VertexTool", "WrapTextureTool", "CameraTool" };
+		public IReadOnlySet<Capability> Capabilities => new HashSet<Capability>() {
+				SelectTool.SelectToolCapability,
+				TextureTool.TextureToolCapability,
+				BrushTool.BrushToolCapability,
+				ClipTool.ClipToolCapability,
+				CordonTool.CordonToolCapability,
+				DecalTool.DecalToolCapability,
+				EntityTool.EntityToolCapability,
+				PathTool.PathToolCapability,
+				PrefabTool.PrefabToolCapability,
+				VertexTool.VertexToolCapability,
+				WrapTextureTool.WrapTextureToolCapability,
+				CameraTool.CameraToolCapability
+		};
+		//new[]{"SelectTool", "TextureTool", "BrushTool", "ClipTool", "CordonTool", "DecalTool",
+		//"EntityTool", "PathTool", "PrefabTool" , "VertexTool", "WrapTextureTool", "CameraTool" };
 
 		public GoldsourceEnvironment()
 		{
@@ -263,7 +289,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
 
 		private async Task ExportDocumentForBatch(MapDocument doc, string path, Box cordonBounds)
 		{
-			var cordonTextureName = String.IsNullOrWhiteSpace(CordonTexture)? "BLACK" : CordonTexture;
+			var cordonTextureName = String.IsNullOrWhiteSpace(CordonTexture) ? "BLACK" : CordonTexture;
 
 			if (cordonBounds != null && !cordonBounds.IsEmpty())
 			{

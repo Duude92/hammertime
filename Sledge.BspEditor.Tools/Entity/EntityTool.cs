@@ -19,6 +19,7 @@ using Sledge.BspEditor.Tools.Properties;
 using Sledge.Common;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
+using Sledge.Common.Shell.Documents;
 using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Shell.Settings;
 using Sledge.Common.Translations;
@@ -38,6 +39,7 @@ namespace Sledge.BspEditor.Tools.Entity
 	[DefaultHotkey("Shift+E")]
 	public class EntityTool : BaseTool, ISettingsContainer
 	{
+		public static readonly Capability EntityToolCapability = Capability.Create("EntityTool");
 		private enum EntityState
 		{
 			None,
@@ -58,7 +60,7 @@ namespace Sledge.BspEditor.Tools.Entity
 		[Setting("ResetEntityTypeOnCreation")] private bool _resetEntityTypeOnCreation = false;
 
 		string ISettingsContainer.Name => "Sledge.BspEditor.Tools.EntityTool";
-		public override string Id => "EntityTool";
+		public override Capability ToolCapability => EntityToolCapability;
 		public bool ValuesLoaded { get; private set; } = false;
 
 		IEnumerable<SettingKey> ISettingsContainer.GetKeys()

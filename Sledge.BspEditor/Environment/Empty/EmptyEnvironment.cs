@@ -1,6 +1,7 @@
 ﻿using Sledge.BspEditor.Compile;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapData;
+using Sledge.Common.Shell.Documents;
 using Sledge.DataStructures.GameData;
 using Sledge.FileSystem;
 using Sledge.Providers.Texture;
@@ -17,7 +18,7 @@ namespace Sledge.BspEditor.Environment.Empty
         public string Name => "Empty";
         public IFile Root => null;
         public IEnumerable<string> Directories => new string[0];
-		public string[] SupportedTools => new string[0];
+		public IReadOnlySet<Capability> Capabilities => new HashSet<Capability>();
 
 		public async Task<TextureCollection> GetTextureCollection()
         {

@@ -12,6 +12,7 @@ using Sledge.BspEditor.Tools.Draggable;
 using Sledge.BspEditor.Tools.Vertex.Controls;
 using Sledge.BspEditor.Tools.Vertex.Selection;
 using Sledge.Common;
+using Sledge.Common.Shell.Documents;
 using Sledge.Common.Translations;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
@@ -26,7 +27,9 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
     [Export(typeof(VertexSubtool))]
     public class VertexScaleTool : VertexSubtool
     {
-        [Import] private VertexScaleControl _control;
+        public static readonly Capability VertexScaleToolCapability = Capability.Create("VertexScaleTool");
+
+		[Import] private VertexScaleControl _control;
 
         public override string OrderHint => "D";
         public override string GetName() => "Point scaling";
@@ -36,7 +39,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
         private readonly Dictionary<VertexSolid, VertexList> _vertices;
         private readonly ScaleOrigin _origin;
         private Dictionary<VertexPoint, Vector3> _originals;
-		public override string Id => "VertexScaleTool";
+		public override Capability ToolCapability => VertexScaleToolCapability;
         
         public VertexScaleTool()
         {

@@ -5,6 +5,7 @@ using Sledge.BspEditor.Tools.Properties;
 using Sledge.BspEditor.Tools.Selection;
 using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Components;
+using Sledge.Common.Shell.Documents;
 using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Shell.Settings;
 using Sledge.Common.Translations;
@@ -24,7 +25,7 @@ namespace Sledge.BspEditor.Tools.WrapTexture
 	[AutoTranslate]
 	public class WrapTextureTool : BaseDraggableTool
 	{
-
+		public static readonly Capability WrapTextureToolCapability = Capability.Create("WrapTextureTool");
 		public override Image GetIcon()
 		{
 			return Resources.Tool_Wrap;
@@ -39,7 +40,7 @@ namespace Sledge.BspEditor.Tools.WrapTexture
 		{
 			return "Apply current texture to selected brushes";
 		}
-		public override string Id => "WrapTextureTool";
+		public override Capability ToolCapability => WrapTextureToolCapability;
 
 		public void LoadValues(ISettingsStore store)
 		{

@@ -14,6 +14,7 @@ using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Properties;
 using Sledge.Common;
 using Sledge.Common.Shell.Components;
+using Sledge.Common.Shell.Documents;
 using Sledge.Common.Shell.Hotkeys;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
@@ -27,9 +28,10 @@ namespace Sledge.BspEditor.Tools.Decal
     [Export(typeof(ITool))]
     [OrderHint("L")]
     [DefaultHotkey("Shift+D")]
-    class DecalTool : BaseTool
+    public class DecalTool : BaseTool
     {
-        public DecalTool()
+        public static readonly Capability DecalToolCapability = Capability.Create("DecalTool");
+		public DecalTool()
         {
             Usage = ToolUsage.View3D;
         }
@@ -43,7 +45,7 @@ namespace Sledge.BspEditor.Tools.Decal
         {
             return "Decal Tool";
         }
-		public override string Id => "DecalTool";
+		public override Capability ToolCapability => DecalToolCapability;
 
         protected override void MouseDown(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
         {

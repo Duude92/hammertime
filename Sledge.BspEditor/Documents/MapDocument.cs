@@ -50,7 +50,7 @@ namespace Sledge.BspEditor.Documents
         /// The environment for this document
         /// </summary>
         public IEnvironment Environment { get; set; }
-        public IEnumerable<string> SupportedTools => Environment.SupportedTools;
+        public IReadOnlySet<Capability> Capabilities => Environment.Capabilities;
 
 		private readonly List<Subscription> _subscriptions;
 

@@ -37,8 +37,7 @@ namespace Sledge.BspEditor.Tools
         public bool RenderedByDefault = false;
         public Image Icon => GetIcon();
         public string Name => GetName();
-        public abstract string Id { get; }
-
+        public abstract Capability ToolCapability { get; }
 		public virtual bool IsInContext(IContext context)
         {
             return context.Get<MapDocument>("ActiveDocument") != null;

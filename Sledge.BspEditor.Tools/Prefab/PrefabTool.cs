@@ -31,14 +31,17 @@ using Sledge.Common.Shell.Context;
 using Sledge.Formats.Map.Formats;
 using System.Windows.Forms;
 using System.IO;
+using Sledge.Common.Shell.Documents;
 
 namespace Sledge.BspEditor.Tools.Prefab
 {
     [Export(typeof(ITool))]
 	[OrderHint("I")]
 	[AutoTranslate]
-	internal class PrefabTool : BaseDraggableTool
+	public class PrefabTool : BaseDraggableTool
 	{
+		public static readonly Capability PrefabToolCapability = Capability.Create("PrefabTool");
+
 		private int _selectionBoxBackgroundOpacity = 64;
 
 		private BoxDraggableState _state;
@@ -56,7 +59,7 @@ namespace Sledge.BspEditor.Tools.Prefab
 		public override Image GetIcon() => Resources.Tool_Prefab;
 
 		public override string GetName() => "PrefabTool";
-		public override string Id => "PrefabTool";
+		public override Capability ToolCapability => PrefabToolCapability;
 
 		public PrefabTool()
 		{

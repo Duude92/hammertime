@@ -18,6 +18,7 @@ using Sledge.BspEditor.Rendering.Resources;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Vertex.Controls;
 using Sledge.BspEditor.Tools.Vertex.Selection;
+using Sledge.Common.Shell.Documents;
 using Sledge.Common.Translations;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
@@ -32,14 +33,16 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
     [Export(typeof(VertexSubtool))]
     public class VertexFaceEditTool : VertexSubtool
     {
-        private readonly VertexEditFaceControl _control;
+        public static readonly Capability VertexFaceEditToolCapability = Capability.Create("VertexFaceEditTool");
+
+		private readonly VertexEditFaceControl _control;
 
         public override string OrderHint => "F";
         public override string GetName() => "Face editing";
         public override Control Control => _control;
         
         private readonly List<SolidFace> _selectedFaces;
-		public override string Id => "VertexFaceEditTool";
+		public override Capability ToolCapability => VertexFaceEditToolCapability;
 
         [ImportingConstructor]
         public VertexFaceEditTool(

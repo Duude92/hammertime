@@ -8,6 +8,7 @@ using Sledge.BspEditor.Tools.Draggable;
 using Sledge.BspEditor.Tools.Properties;
 using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Components;
+using Sledge.Common.Shell.Documents;
 using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Translations;
 using Sledge.DataStructures.Geometric;
@@ -32,6 +33,8 @@ namespace Sledge.BspEditor.Tools.PathTool
 	[DefaultHotkey("Shift+P")]
 	public class PathTool : BaseDraggableTool
 	{
+		public static readonly Capability PathToolCapability = Capability.Create("PathTool");
+
 		private BoxDraggableState box;
 
 		private bool _shiftPressed;
@@ -39,7 +42,7 @@ namespace Sledge.BspEditor.Tools.PathTool
 		private MapDocument _lastDocument;
 		public override Image GetIcon() => Resources.Tool_Path;
 		public override string GetName() => "Path Tool";
-		public override string Id => "PathTool";
+		public override Capability ToolCapability => PathToolCapability;
 
 		public PathTool()
 		{

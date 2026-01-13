@@ -21,6 +21,7 @@ using Sledge.BspEditor.Tools.Draggable;
 using Sledge.BspEditor.Tools.Properties;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
+using Sledge.Common.Shell.Documents;
 using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Shell.Settings;
 using Sledge.Common.Translations;
@@ -42,7 +43,7 @@ namespace Sledge.BspEditor.Tools.Brush
 	[DefaultHotkey("Shift+B")]
 	public class BrushTool : BaseDraggableTool, ISettingsContainer
 	{
-		[Import] private EngineInterface _engine;
+		public static readonly Capability BrushToolCapability = Capability.Create("BrushTool");
 
 		private bool _updatePreview;
 		private List<IMapObject> _preview;
@@ -54,8 +55,7 @@ namespace Sledge.BspEditor.Tools.Brush
 		public string CreateObject { get; set; } = "Create Object";
 
 		public bool ValuesLoaded { get; private set; } = false;
-		public override string Id { get; } = "BrushTool";
-
+		public override Capability ToolCapability => BrushToolCapability;
 
 		// Settings
 

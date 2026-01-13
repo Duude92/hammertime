@@ -15,6 +15,7 @@ using Sledge.BspEditor.Tools.Vertex.Controls;
 using Sledge.BspEditor.Tools.Vertex.Selection;
 using Sledge.Common;
 using Sledge.Common.Logging;
+using Sledge.Common.Shell.Documents;
 using Sledge.Common.Threading;
 using Sledge.Common.Translations;
 using Sledge.DataStructures.Geometric;
@@ -31,6 +32,8 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
 	[Export(typeof(VertexSubtool))]
 	public class VertexPointTool : VertexSubtool
 	{
+		public static readonly Capability VertexPointToolCapability = Capability.Create("VertexPointTool");
+
 		[Import] private VertexPointControl _control;
 
 		public enum VisiblePoints
@@ -49,7 +52,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
 
 		private VisiblePoints _showPoints;
 
-		public override string Id => "VertexPointTool";
+		public override Capability ToolCapability => VertexPointToolCapability;
 
 		public VertexPointTool()
 		{

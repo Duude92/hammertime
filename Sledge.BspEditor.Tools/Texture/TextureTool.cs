@@ -20,6 +20,7 @@ using Sledge.BspEditor.Rendering.Resources;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Properties;
 using Sledge.Common.Shell.Components;
+using Sledge.Common.Shell.Documents;
 using Sledge.Common.Shell.Hotkeys;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
@@ -31,13 +32,14 @@ using KeyboardState = Sledge.Shell.Input.KeyboardState;
 
 namespace Sledge.BspEditor.Tools.Texture
 {
-    [Export(typeof(ITool))]
+	[Export(typeof(ITool))]
     [Export]
     [OrderHint("J")]
     [DefaultHotkey("Shift+A")]
     public class TextureTool : BaseTool
     {
-        private ClickAction _leftClickAction = ClickAction.Lift | ClickAction.Select;
+        public static readonly Capability TextureToolCapability = Capability.Create("TextureTool");
+		private ClickAction _leftClickAction = ClickAction.Lift | ClickAction.Select;
         private ClickAction _rightClickAction = ClickAction.Apply | ClickAction.Values;
 
         public TextureTool()
@@ -54,7 +56,7 @@ namespace Sledge.BspEditor.Tools.Texture
         {
             return "Texture Application Tool";
         }
-		public override string Id => "TextureTool";
+		public override Capability ToolCapability => TextureToolCapability;
 
         private FaceSelection GetSelection(MapDocument document)
         {

@@ -25,6 +25,7 @@ using Sledge.Rendering.Resources;
 using Sledge.Rendering.Viewports;
 using Sledge.Shell.Input;
 using Plane = Sledge.DataStructures.Geometric.Plane;
+using Sledge.Common.Shell.Documents;
 
 namespace Sledge.BspEditor.Tools.Clip
 {
@@ -33,7 +34,8 @@ namespace Sledge.BspEditor.Tools.Clip
     [DefaultHotkey("Shift+X")]
     public class ClipTool : BaseTool
     {
-        public enum ClipState
+        public static readonly Capability ClipToolCapability = Capability.Create("ClipTool");
+		public enum ClipState
         {
             None,
             Drawing,
@@ -75,7 +77,7 @@ namespace Sledge.BspEditor.Tools.Clip
         {
             return "Clip Tool";
         }
-		public override string Id => "ClipTool";
+        public override Capability ToolCapability => ClipToolCapability;
 
         protected override IEnumerable<Subscription> Subscribe()
         {

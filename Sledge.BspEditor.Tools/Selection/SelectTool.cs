@@ -49,6 +49,8 @@ namespace Sledge.BspEditor.Tools.Selection
 	[AutoTranslate]
 	public class SelectTool : BaseDraggableTool, ISettingsContainer
 	{
+		public static readonly Capability SelectToolCapability = Capability.Create("SelectTool");
+
 		private readonly BoxDraggableState _emptyBox;
 		private readonly SelectionBoxDraggableState _selectionBox;
 
@@ -67,7 +69,7 @@ namespace Sledge.BspEditor.Tools.Selection
 		[Setting] public bool KeepVisgroupsWhenCloning { get; set; } = true;
 
 		string ISettingsContainer.Name => "Sledge.BspEditor.Tools.SelectTool";
-		public override string Id => "SelectTool";
+		public override Capability ToolCapability => SelectToolCapability;
 		public bool ValuesLoaded { get; private set; } = false;
 
 		IEnumerable<SettingKey> ISettingsContainer.GetKeys()

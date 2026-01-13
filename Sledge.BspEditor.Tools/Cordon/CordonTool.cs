@@ -8,6 +8,7 @@ using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Tools.Draggable;
 using Sledge.BspEditor.Tools.Properties;
 using Sledge.Common.Shell.Components;
+using Sledge.Common.Shell.Documents;
 using Sledge.Common.Shell.Hotkeys;
 using Sledge.DataStructures.Geometric;
 
@@ -18,7 +19,8 @@ namespace Sledge.BspEditor.Tools.Cordon
     [DefaultHotkey("Shift+K")]
     public class CordonTool : BaseDraggableTool
     {
-        private readonly CordonBoxDraggableState _cordonBox;
+        public static readonly Capability CordonToolCapability = Capability.Create("CordonTool");
+		private readonly CordonBoxDraggableState _cordonBox;
 
         public CordonTool()
         {
@@ -40,7 +42,7 @@ namespace Sledge.BspEditor.Tools.Cordon
         {
             return "CordonTool";
         }
-		public override string Id => "CordonTool";
+        public override Capability ToolCapability => CordonToolCapability;
 
         public override async Task ToolSelected()
         {

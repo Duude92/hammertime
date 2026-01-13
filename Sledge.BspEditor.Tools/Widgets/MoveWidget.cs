@@ -5,6 +5,7 @@ using Sledge.BspEditor.Rendering.Resources;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Selection;
 using Sledge.Common.Logging;
+using Sledge.Common.Shell.Documents;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Overlay;
@@ -23,6 +24,8 @@ namespace Sledge.BspEditor.Tools.Widgets
 {
 	public class MoveWidget : Widget
 	{
+		public static readonly Capability MoveWidgetCapability = Capability.Create("MoveWidget");
+
 		public override bool IsUniformTransformation => _uniformTransform;
 
 		public override bool IsScaleTransformation => _scaleTransformation;
@@ -32,7 +35,7 @@ namespace Sledge.BspEditor.Tools.Widgets
 		private readonly Vector3 Vector3MaxValue = new Vector3(1, 1, 1) * float.MaxValue;
 		private bool _uniformTransform = true;
 		private bool _scaleTransformation = false;
-		public override string Id => "MoveWidget";
+		public override Capability ToolCapability => MoveWidgetCapability;
 		public MoveWidget(MapDocument document)
 		{
 			SetDocument(document);

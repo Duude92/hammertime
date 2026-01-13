@@ -13,6 +13,7 @@ using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Properties;
 using Sledge.Common.Shell.Components;
+using Sledge.Common.Shell.Documents;
 using Sledge.Common.Shell.Hotkeys;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
@@ -28,6 +29,7 @@ namespace Sledge.BspEditor.Tools
 	[DefaultHotkey("Shift+C")]
 	public class CameraTool : BaseTool
 	{
+		public static readonly Capability CameraToolCapability = Capability.Create("CameraTool");
 		private enum State
 		{
 			None,
@@ -59,7 +61,7 @@ namespace Sledge.BspEditor.Tools
 			_state = State.None;
 			return Task.CompletedTask;
 		}
-		public override string Id => "CameraTool";
+		public override Capability ToolCapability => CameraToolCapability;
 		private Task CameraNext(object param)
 		{
 			var document = GetDocument();

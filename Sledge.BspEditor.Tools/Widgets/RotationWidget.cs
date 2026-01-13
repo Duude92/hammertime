@@ -8,6 +8,7 @@ using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Rendering.Resources;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Selection;
+using Sledge.Common.Shell.Documents;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Overlay;
@@ -22,7 +23,8 @@ namespace Sledge.BspEditor.Tools.Widgets
 {
     public class RotationWidget : Widget
     {
-        public RotationWidget(MapDocument document)
+        public static readonly Capability RotationWidgetCapability = Capability.Create("RotationWidget");
+		public RotationWidget(MapDocument document)
         {
             SetDocument(document);
         }
@@ -32,7 +34,7 @@ namespace Sledge.BspEditor.Tools.Widgets
         public override bool IsScaleTransformation => false;
 
 		public override SelectionBoxDraggableState.TransformationMode WidgetTransformationMode => SelectionBoxDraggableState.TransformationMode.Rotate;
-		public override string Id => "RotationWidget";
+		public override Capability ToolCapability => RotationWidgetCapability;
 		#region Line cache
 
 		protected override void UpdateCache(IViewport viewport, PerspectiveCamera camera)

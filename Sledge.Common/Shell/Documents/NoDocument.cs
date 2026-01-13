@@ -13,7 +13,7 @@ namespace Sledge.Common.Shell.Documents
         public object Control => null;
         public bool HasUnsavedChanges => false;
 
-		public IEnumerable<string> SupportedTools => new string[0];
+		public IReadOnlySet<Capability> Capabilities => new HashSet<Capability>();
 
 		public Task<bool> RequestClose()
         {

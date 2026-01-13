@@ -1,6 +1,7 @@
 ﻿using Sledge.BspEditor.Compile;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapData;
+using Sledge.Common.Shell.Documents;
 using Sledge.DataStructures.GameData;
 using Sledge.FileSystem;
 using Sledge.Providers.Texture;
@@ -112,7 +113,7 @@ namespace Sledge.BspEditor.Environment
 		/// <summary>
 		/// Supported tools in this environment
 		/// </summary>
-		string[] SupportedTools { get; }
+		IReadOnlySet<Capability> Capabilities { get; }
 		/// <summary>
 		/// Retrieves a collection of available skybox texture package references.
 		/// </summary>

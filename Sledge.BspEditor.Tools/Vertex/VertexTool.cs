@@ -46,6 +46,8 @@ namespace Sledge.BspEditor.Tools.Vertex
 	[DefaultHotkey("Shift+V")]
 	public class VertexTool : BaseDraggableTool, IInitialiseHook
 	{
+		public static readonly Capability VertexToolCapability = Capability.Create("VertexTool");
+
 		private readonly IEnumerable<Lazy<VertexSubtool>> _subTools;
 
 		private readonly VertexSelection _selection;
@@ -61,7 +63,7 @@ namespace Sledge.BspEditor.Tools.Vertex
 
 			_selection = new VertexSelection();
 		}
-		public override string Id => "VertexTool";
+		public override Capability ToolCapability => VertexToolCapability;
 
 		public Task OnInitialise()
 		{

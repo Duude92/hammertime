@@ -5,7 +5,19 @@ using Sledge.BspEditor.Grid;
 using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
+using Sledge.BspEditor.Tools;
+using Sledge.BspEditor.Tools.Brush;
+using Sledge.BspEditor.Tools.Clip;
+using Sledge.BspEditor.Tools.Cordon;
+using Sledge.BspEditor.Tools.Decal;
+using Sledge.BspEditor.Tools.Entity;
+using Sledge.BspEditor.Tools.PathTool;
+using Sledge.BspEditor.Tools.Selection;
+using Sledge.BspEditor.Tools.Texture;
+using Sledge.BspEditor.Tools.Vertex;
+using Sledge.BspEditor.Tools.WrapTexture;
 using Sledge.Common;
+using Sledge.Common.Shell.Documents;
 using Sledge.DataStructures.GameData;
 using Sledge.FileSystem;
 using Sledge.Providers.GameData;
@@ -160,9 +172,19 @@ namespace HammerTime.Source.BspEditor.Environment.Source
 		public bool MapCopyErr { get; internal set; }
 		public bool MapCopyRes { get; internal set; }
 
-		public string[] SupportedTools => new[] { "SelectTool", "TextureTool", "BrushTool", "ClipTool", "CordonTool", "DecalTool",
-			"EntityTool", "PathTool", "PrefabTool" , "VertexTool", "WrapTextureTool", "CameraTool" };
-
+		public IReadOnlySet<Capability> Capabilities => new HashSet<Capability>() {
+				SelectTool.SelectToolCapability,
+				TextureTool.TextureToolCapability,
+				BrushTool.BrushToolCapability,
+				ClipTool.ClipToolCapability,
+				CordonTool.CordonToolCapability,
+				DecalTool.DecalToolCapability,
+				EntityTool.EntityToolCapability,
+				PathTool.PathToolCapability,
+				VertexTool.VertexToolCapability,
+				WrapTextureTool.WrapTextureToolCapability,
+				CameraTool.CameraToolCapability
+		};
 		public void AddData(IEnvironmentData data)
 		{
 			if (!_data.Contains(data)) _data.Add(data);
