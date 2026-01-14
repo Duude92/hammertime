@@ -7,7 +7,6 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using LogicAndTrick.Oy;
 using Sledge.Rendering.Cameras;
-using Sledge.Rendering.Engine;
 using Sledge.Rendering.Viewports;
 using Sledge.Shell.Registers;
 
@@ -277,6 +276,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
 		private void OnKeyUp(object sender, KeyEventArgs e)
 		{
 			ListenerDoEvent(new ViewportEvent(this, e), (l, v) => l.KeyUp(v));
+			e.Handled = false;
 		}
 
 		private void OnUpdate(object sender, long frame)

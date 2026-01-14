@@ -371,17 +371,19 @@ namespace Sledge.Rendering.Engine
 		{
 			lock (_lock)
 			{
-				var control = new Viewports.Viewport(Device, _options, _sampleCount);
-				control.Disposed += DestroyViewport;
+
+				var control = new ViewportAv();
+				control.CreateViewportHost(Device, _options, _sampleCount);
+				//control.Disposed += DestroyViewport;
 
 				if (!_renderTargets.Any()) Start();
-				_renderTargets.Add(control);
+				_renderTargets.Add(control.ViewportHost);
 
-				Scene.Add((IRenderable)control.Overlay);
-				Scene.Add((IUpdateable)control.Overlay);
-				ViewportCreated?.Invoke(this, control);
+				Scene.Add((IRenderable)control.ViewportHost.Overlay);
+				Scene.Add((IUpdateable)control.ViewportHost.Overlay);
+				ViewportCreated?.Invoke(this, control.ViewportHost);
 
-				return control;
+				return control.ViewportHost;
 			}
 		}
 
@@ -400,7 +402,7 @@ namespace Sledge.Rendering.Engine
 				Scene.Remove((IRenderable)t.Overlay);
 				Scene.Remove((IUpdateable)t.Overlay);
 
-				t.Control.Disposed -= DestroyViewport;
+				//t.Control.Disposed -= DestroyViewport;
 				t.Dispose();
 			}
 		}

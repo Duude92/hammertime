@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Drawing;
 using System.Linq;
-using System.Windows.Forms;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Media;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Controls;
 using Sledge.BspEditor.Controls.Layout;
@@ -29,11 +30,11 @@ namespace Sledge.BspEditor.Components
 	[Export(typeof(IUIStartupHook))]
 	[Export(typeof(ISettingsContainer))]
 	[Export]
-	public class MapDocumentControlHost : UserControl, ISettingsContainer, IUIShutdownHook, IUIStartupHook
+	public class MapDocumentControlHost : Panel, ISettingsContainer, IUIShutdownHook, IUIStartupHook
 	{
 		private readonly IEnumerable<Lazy<IMapDocumentControlFactory>> _controlFactories;
-		private readonly Form _shell;
-		private ContextMenuStrip _contextMenu;
+		private readonly Window _shell;
+		private StackPanel _contextMenu;
 
 		public static MapDocumentControlHost Instance { get; private set; }
 
@@ -46,7 +47,7 @@ namespace Sledge.BspEditor.Components
 		[ImportingConstructor]
 		public MapDocumentControlHost(
 			[ImportMany] IEnumerable<Lazy<IMapDocumentControlFactory>> controlFactories,
-			[Import("Shell")] Form shell
+			[Import("Shell")] Window shell
 		)
 		{
 			_controlFactories = controlFactories;
@@ -58,13 +59,14 @@ namespace Sledge.BspEditor.Components
 			Instance = this;
 			MainWindow = new MapDocumentContainer(0)
 			{
-				Dock = DockStyle.Fill
+				//Dock = DockStyle.Fill
 			};
-			Controls.Add(MainWindow);
-			Windows = new List<ViewportWindow>();
-			CreateHandle();
 
-			Application.AddMessageFilter(new LeftClickMessageFilter(this));
+			Children.Add(MainWindow);
+			Windows = new List<ViewportWindow>();
+			//CreateHandle();
+
+			//Application.AddMessageFilter(new LeftClickMessageFilter(this));
 
 			Oy.Subscribe<IDocument>("Document:Activated", document =>
 			{
@@ -126,17 +128,17 @@ namespace Sledge.BspEditor.Components
 		private void RemoveInvalidCells(MapDocumentContainer container, TableSplitConfiguration config)
 		{
 			var recs = config.Rectangles.ToList();
-			foreach (var control in container.Table.Controls.OfType<Control>().ToList())
+			foreach (var control in container.Table.Children.OfType<Avalonia.Controls.Control>().ToList())
 			{
 				var pos = container.Table.GetPositionFromControl(control);
 				var mdc = container.MapDocumentControls.FirstOrDefault(x => x.Control.Control == control);
 				if (recs.Any(x => x.X == pos.Column && x.Y == pos.Row)) continue;
 
-				container.Table.Controls.Remove(control);
+				container.Table.Children.Remove(control);
 				if (mdc == null) continue;
 
 				container.MapDocumentControls.Remove(mdc);
-				mdc.Control.Control.Dispose();
+				//mdc.Control.Control.Dispose();
 			}
 		}
 
@@ -188,7 +190,7 @@ namespace Sledge.BspEditor.Components
 			var window = (ViewportWindow)sender;
 			Windows.Remove(window);
 			window.Closed -= DestroyWindow;
-			window.Dispose();
+			//window.Dispose();
 		}
 
 		public void CreateNewWindow()
@@ -355,113 +357,113 @@ namespace Sledge.BspEditor.Components
 		{
 			if (_contextMenu != null) return;
 
-			_contextMenu = new ContextMenuStrip();
+			_contextMenu = new StackPanel();
 			foreach (var cf in _controlFactories.Select(x => x.Value))
 			{
-				if (_contextMenu.Items.Count > 0) _contextMenu.Items.Add(new ToolStripSeparator());
+				if (_contextMenu.Children.Count > 0) _contextMenu.Children.Add(new Separator());
 				foreach (var kv in cf.GetStyles())
 				{
-					_contextMenu.Items.Add(new ContextMenuItem(kv.Value, cf.Type, kv.Key));
+					_contextMenu.Children.Add(new ContextMenuItem(kv.Value, cf.Type, kv.Key));
 				}
 			}
 
-			_contextMenu.Closed += (s, e) => _contextControl = null;
-			_contextMenu.ItemClicked += SetContextControl;
+			//_contextMenu.Closed += (s, e) => _contextControl = null;
+			//_contextMenu.ItemClicked += SetContextControl;
 		}
 
-		private void SetContextControl(object sender, ToolStripItemClickedEventArgs e)
-		{
-			if (_contextControl == null || !(e.ClickedItem is ContextMenuItem mi)) return;
+		//private void SetContextControl(object sender, ToolStripItemClickedEventArgs e)
+		//{
+		//	if (_contextControl == null || !(e.ClickedItem is ContextMenuItem mi)) return;
 
 
-			var container = GetContainer(_contextControl.WindowID);
-			if (container == null) return;
+		//	var container = GetContainer(_contextControl.WindowID);
+		//	if (container == null) return;
 
-			var hc = new HostedControl
-			{
-				WindowID = _contextControl.WindowID,
-				Row = _contextControl.Row,
-				Column = _contextControl.Column,
-				Type = mi.Type,
-				Serialised = mi.Style
-			};
+		//	var hc = new HostedControl
+		//	{
+		//		WindowID = _contextControl.WindowID,
+		//		Row = _contextControl.Row,
+		//		Column = _contextControl.Column,
+		//		Type = mi.Type,
+		//		Serialised = mi.Style
+		//	};
 
 
-			var tags = mi.Style.Split('/');
-			if (tags[0] == "PerspectiveCamera")
-			{
-				var tl = _activeDocument.Map.Data.GetOne<DisplayFlags>() ?? new DisplayFlags();
-				var dd = _activeDocument.Map.Data.GetOne<DisplayData>() ?? new DisplayData();
+		//	var tags = mi.Style.Split('/');
+		//	if (tags[0] == "PerspectiveCamera")
+		//	{
+		//		var tl = _activeDocument.Map.Data.GetOne<DisplayFlags>() ?? new DisplayFlags();
+		//		var dd = _activeDocument.Map.Data.GetOne<DisplayData>() ?? new DisplayData();
 
-				switch (tags[1])
-				{
+		//		switch (tags[1])
+		//		{
 
-					case "Skybox":
-						var data = _activeDocument.Map.Root.Data.Get<EntityData>().First();
-						var skyname = data?.Get<string>("skyname", null);
+		//			case "Skybox":
+		//				var data = _activeDocument.Map.Root.Data.Get<EntityData>().First();
+		//				var skyname = data?.Get<string>("skyname", null);
 
-						if (_activeDocument.Environment is not GoldsourceEnvironment environment) return;
+		//				if (_activeDocument.Environment is not GoldsourceEnvironment environment) return;
 
-						var sky = environment.GetSkyboxes().FirstOrDefault(x => x.Name == skyname);
-						if (sky == null) return;
+		//				var sky = environment.GetSkyboxes().FirstOrDefault(x => x.Name == skyname);
+		//				if (sky == null) return;
 
-						tl.ToggleSkybox = !tl.ToggleSkybox;
+		//				tl.ToggleSkybox = !tl.ToggleSkybox;
 
-						dd.SkyboxName = skyname;
-						break;
+		//				dd.SkyboxName = skyname;
+		//				break;
 
-					case "Wireframe":
-						tl.Wireframe = !tl.Wireframe;
-						break;
-					case "View": break;
-					default:
+		//			case "Wireframe":
+		//				tl.Wireframe = !tl.Wireframe;
+		//				break;
+		//			case "View": break;
+		//			default:
 
-						return;
+		//				return;
 
-				}
-				_activeDocument.Map.Data.Replace(dd);
-				_activeDocument.Map.Data.Replace(tl);
-				Oy.Publish("SettingsChanged", new object());
-			}
+		//		}
+		//		_activeDocument.Map.Data.Replace(dd);
+		//		_activeDocument.Map.Data.Replace(tl);
+		//		Oy.Publish("SettingsChanged", new object());
+		//	}
 
-			_shell.InvokeSync(() =>
-			{
-				if (UpdateControl(hc)) return;
-				var ctrl = MakeControl(hc.Type, hc.Serialised);
-				if (ctrl != null) container.SetControl(ctrl, hc.Column, hc.Row);
-			});
-		}
+		//	_shell.InvokeSync(() =>
+		//	{
+		//		if (UpdateControl(hc)) return;
+		//		var ctrl = MakeControl(hc.Type, hc.Serialised);
+		//		if (ctrl != null) container.SetControl(ctrl, hc.Column, hc.Row);
+		//	});
+		//}
 
-		private bool InterceptRightClick()
-		{
-			var mousePosition = MousePosition;
-			foreach (var container in GetContainers())
-			{
-				var client = container.PointToClient(mousePosition);
-				if (!container.ClientRectangle.Contains(client)) continue;
+		//private bool InterceptRightClick()
+		//{
+		//	var mousePosition = MousePosition;
+		//	foreach (var container in GetContainers())
+		//	{
+		//		var client = container.PointToClient(mousePosition);
+		//		if (!container.ClientRectangle.Contains(client)) continue;
 
-				foreach (var control in container.Table.Controls.OfType<Control>())
-				{
-					var mapped = control.PointToClient(mousePosition);
+		//		foreach (var control in container.Table.Children.OfType<Control>())
+		//		{
+		//			var mapped = control.PointToClient(mousePosition);
 
-					if (mapped.X >= 0 && mapped.X < 40 && mapped.Y >= 0 && mapped.Y < FontHeight + 2)
-					{
-						var pos = container.Table.GetPositionFromControl(control);
-						var hc = new HostedControl
-						{
-							WindowID = container.WindowID,
-							Row = pos.Row,
-							Column = pos.Column,
-						};
-						var mdc = GetControls().FirstOrDefault(x => x.Control == control);
-						ShowContextMenu(hc, mdc, mousePosition);
-						return true;
-					}
-				}
-			}
+		//			if (mapped.X >= 0 && mapped.X < 40 && mapped.Y >= 0 && mapped.Y < FontHeight + 2)
+		//			{
+		//				var pos = container.Table.GetPositionFromControl(control);
+		//				var hc = new HostedControl
+		//				{
+		//					WindowID = container.WindowID,
+		//					Row = pos.Row,
+		//					Column = pos.Column,
+		//				};
+		//				var mdc = GetControls().FirstOrDefault(x => x.Control == control);
+		//				ShowContextMenu(hc, mdc, mousePosition);
+		//				return true;
+		//			}
+		//		}
+		//	}
 
-			return false;
-		}
+		//	return false;
+		//}
 
 		private void ShowContextMenu(HostedControl control, IMapDocumentControl mdc, Point screenPoint)
 		{
@@ -469,42 +471,43 @@ namespace Sledge.BspEditor.Components
 			var tl = _activeDocument.Map.Data.GetOne<DisplayFlags>() ?? new DisplayFlags();
 
 
-			foreach (var cmi in _contextMenu.Items.OfType<ContextMenuItem>())
+			foreach (var cmi in _contextMenu.Children.OfType<ContextMenuItem>())
 			{
 				var f = _controlFactories.Select(x => x.Value).FirstOrDefault(x => x.Type == cmi.Type);
-				cmi.Checked = f != null && mdc != null && f.IsStyle(mdc, cmi.Style, tl);
+				cmi.IsChecked = f != null && mdc != null && f.IsStyle(mdc, cmi.Style, tl);
 			}
 
 			_contextControl = control;
-			_contextMenu.Show(this, PointToClient(screenPoint));
+			//_contextMenu.Show(this, PointToClient(screenPoint));
 		}
 
-		private class LeftClickMessageFilter : IMessageFilter
-		{
-			private readonly MapDocumentControlHost _self;
+		//private class LeftClickMessageFilter : IMessageFilter
+		//{
+		//	private readonly MapDocumentControlHost _self;
 
-			public LeftClickMessageFilter(MapDocumentControlHost self)
-			{
-				_self = self;
-			}
+		//	public LeftClickMessageFilter(MapDocumentControlHost self)
+		//	{
+		//		_self = self;
+		//	}
 
-			public bool PreFilterMessage(ref Message objMessage)
-			{
-				if (objMessage.Msg == 0x0204) // WM_RBUTTONDOWN
-				{
-					if (_self.InterceptRightClick()) return true;
-				}
-				return false;
-			}
-		}
+		//	public bool PreFilterMessage(ref Message objMessage)
+		//	{
+		//		if (objMessage.Msg == 0x0204) // WM_RBUTTONDOWN
+		//		{
+		//			if (_self.InterceptRightClick()) return true;
+		//		}
+		//		return false;
+		//	}
+		//}
 
-		private class ContextMenuItem : ToolStripMenuItem
+		private class ContextMenuItem : MenuItem
 		{
 			public string Type { get; }
 			public string Style { get; }
 
-			public ContextMenuItem(string text, string type, string style) : base(text)
+			public ContextMenuItem(string text, string type, string style) : base()
 			{
+				Header = text;
 				Type = type;
 				Style = style;
 			}

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Windows.Forms;
+using Avalonia.Controls;
 using Sledge.BspEditor.Components;
 
 namespace Sledge.BspEditor.Controls.Layout
@@ -25,7 +25,7 @@ namespace Sledge.BspEditor.Controls.Layout
         {
             if (_size.IsEmpty || _size.Width < 400 || _size.Height < 400)
             {
-                _size = Screen.FromPoint(Point.Empty).Bounds;
+                //_size = Screen.FromPoint(Point.Empty).Bounds;
             }
         }
 
@@ -47,8 +47,8 @@ namespace Sledge.BspEditor.Controls.Layout
 
             if (window != null)
             {
-                Maximised = window.WindowState == FormWindowState.Maximized;
-                Size = new Rectangle(window.Location, window.Size);
+                Maximised = window.WindowState == WindowState.Maximized;
+                Size = new Rectangle(new System.Drawing.Point(window.Position.X, window.Position.Y) , new System.Drawing.Size((int)window.Width, (int)window.Height));
             }
         }
 
@@ -74,7 +74,7 @@ namespace Sledge.BspEditor.Controls.Layout
                 RowSizes = new List<float> {50, 50},
                 ColumnSizes = new List<float> {50, 50},
                 Maximised = false,
-                Size = Screen.PrimaryScreen.Bounds
+                //Size = Screen.PrimaryScreen.Bounds
             };
         }
     }
