@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Threading;
-using System.Windows.Forms;
 using SharpDX.Direct3D;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Interfaces;
@@ -117,7 +116,7 @@ namespace Sledge.Rendering.Engine
 			AddPipeline(new OverlayPipeline());
 			AddPipeline(new ShadowOverlayPipeline(_lightData));
 
-			Application.ApplicationExit += Shutdown;
+			//Application.ApplicationExit += Shutdown;
 		}
 
 		private void DetectFeatures(GraphicsDevice device)
@@ -127,7 +126,7 @@ namespace Sledge.Rendering.Engine
 			var fl = dxd?.FeatureLevel ?? FeatureLevel.Level_10_0; // Just assume it's DX10, whatever
 			if (fl < FeatureLevel.Level_10_0)
 			{
-				MessageBox.Show($"Sledge requires DirectX 10, but your computer only has version {fl}.", "Unsupported graphics card!");
+				//MessageBox.Show($"Sledge requires DirectX 10, but your computer only has version {fl}.", "Unsupported graphics card!");
 				Environment.Exit(1);
 			}
 			Features.FeatureLevel = fl;
@@ -168,7 +167,7 @@ namespace Sledge.Rendering.Engine
 		private void Shutdown(object sender, EventArgs e)
 		{
 			Dispose();
-			Application.ApplicationExit -= Shutdown;
+			//Application.ApplicationExit -= Shutdown;
 		}
 
 		// Render loop

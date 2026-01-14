@@ -5,11 +5,9 @@ using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Windows.Forms;
 using Sledge.Common.Extensions;
 using Sledge.DataStructures;
 using Sledge.FileSystem;
-using static System.Collections.Specialized.BitVector32;
 
 
 namespace Sledge.Providers.Model.Mdl10.Format

@@ -1,24 +1,16 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Controls.Platform;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Platform;
-using Avalonia.Platform;
-using Avalonia.Styling;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Overlay;
 using Sledge.Rendering.Viewports;
 using Sledge.Rendering.Viewports.ViewportResolver;
 using System;
 using System.Diagnostics;
-using System.Reflection.Metadata;
-using System.Runtime.InteropServices;
 using Veldrid;
-using Vortice.Mathematics;
-using Vulkan;
-using Vulkan.Win32;
 using static Sledge.Rendering.WinApi;
 namespace Sledge.Rendering;
 public partial class ViewportAv : UserControl
