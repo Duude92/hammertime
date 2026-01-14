@@ -7,7 +7,6 @@ using LogicAndTrick.Oy;
 using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Shell.Settings;
 using Sledge.Shell.Forms;
-using Sledge.Shell.Input;
 using Sledge.Shell.Registers;
 
 namespace Sledge.Shell.Settings.Editors
@@ -94,7 +93,7 @@ namespace Sledge.Shell.Settings.Editors
 		{
 			e.SuppressKeyPress = true;
 			e.Handled = true;
-			HotkeyCombination.Text = KeyboardState.KeysToString(e.KeyData);
+			//HotkeyCombination.Text = KeyboardState.KeysToString(e.KeyData);
 		}
 
 		private void HotkeySetButtonClicked(object sender, EventArgs e)
