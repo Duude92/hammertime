@@ -16,6 +16,7 @@ namespace Sledge.QuickForms.Items
 	    public QuickFormButtonSet(IEnumerable<(string, DialogResult, Action)> buttons)
 		{
 		    FlowDirection = Avalonia.Media.FlowDirection.RightToLeft;
+			LastChildFill = false;
 
 		    // Add in reverse since the direction is RTL
 		    foreach (var b in buttons.Reverse())

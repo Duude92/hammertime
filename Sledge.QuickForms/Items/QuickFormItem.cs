@@ -7,7 +7,7 @@ namespace Sledge.QuickForms.Items
 	/// <summary>
 	/// Abstract base class for all form items.
 	/// </summary>
-	public abstract class QuickFormItem : WrapPanel
+	public abstract class QuickFormItem : DockPanel
 	{
 		protected const int LabelWidth = 80;
 

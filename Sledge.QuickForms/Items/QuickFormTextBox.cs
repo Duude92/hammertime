@@ -24,15 +24,14 @@ namespace Sledge.QuickForms.Items
                 //TextAlign = ContentAlignment.MiddleRight,
                 //Anchor = AnchorStyles.Top | AnchorStyles.Bottom
                 HorizontalContentAlignment = Avalonia.Layout.HorizontalAlignment.Right,
-                Width = LabelWidth,
+				Width = LabelWidth,
                 MinHeight = 0,
                 MaxHeight = 1000
             };
             _textBox = new TextBox
             {
                 Text = value,
-                IsEnabled = true
-
+                //MinWidth = 20,
             };
 
             Controls.Add(_label);
@@ -40,9 +39,9 @@ namespace Sledge.QuickForms.Items
         }
         public override void OnResize(EventArgs eventargs)
         {
-            var width = (Parent as Panel).DesiredSize.Width;
-            _textBox.Width = width - _label.Width - _label.Margin.Left - _textBox.Margin.Left;
-            base.OnResize(eventargs);
+            //var width = (Parent as Panel).Bounds.Width;
+            //_textBox.Width = width - _label.Width - _label.Margin.Left - _textBox.Margin.Left - 50;
+            //base.OnResize(eventargs);
         }
     }
 }
