@@ -127,8 +127,7 @@ public partial class QuickForm : Window, IDisposable
 	public async Task<DialogResult> ShowDialogAsync()
 	{
 		await Task.Yield();
-		var dialog = ShowDialog(null);
-		return DialogResult;
+		return await ShowDialog();
 	}
 
 	/// <summary>

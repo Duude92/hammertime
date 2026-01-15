@@ -27,9 +27,10 @@ namespace Sledge.QuickForms.Items
 					MinHeight = 0,
 					MinWidth = 80,
 					FlowDirection = Avalonia.Media.FlowDirection.RightToLeft,
-					
+
+					//FIXME: Avalonia does not have DialogResult property
 					//DialogResult = b.Item2
-		        };
+				};
 
 		        btn.Click += (s, e) => b.Item3();
 		        Controls.Add(btn);
