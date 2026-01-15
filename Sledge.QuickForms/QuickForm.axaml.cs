@@ -115,6 +115,8 @@ public partial class QuickForm : Window, IDisposable
 		var ps = _flpLayout.DesiredSize;
 		//var ps = _flpLayout.GetPreferredSize(new Size(ClientSize.Width, 100000));
 		ClientSize = new Size(ClientSize.Width, ps.Height + 10);
+		Width = ClientSize.Width;
+		Height = ClientSize.Height;
 		var nonlabel = ContentPanel.Children.OfType<Control>().FirstOrDefault(x => !(x is Label));
 		nonlabel?.Focus();
 
