@@ -1,4 +1,4 @@
-﻿namespace Sledge.Shell.Forms
+﻿namespace Sledge.Shell.Forms1
 {
     partial class SettingsForm
     {

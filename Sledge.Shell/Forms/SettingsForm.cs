@@ -13,9 +13,9 @@ using Sledge.Common.Translations;
 using Sledge.Shell.Properties;
 using Sledge.Shell.Settings.Editors;
 
-namespace Sledge.Shell.Forms
+namespace Sledge.Shell.Forms1
 {
-    [Export(typeof(IDialog))]
+    //[Export(typeof(IDialog))]
     [AutoTranslate]
 	public partial class SettingsForm : Form, IDialog
     {
