@@ -23,8 +23,10 @@ namespace Sledge.QuickForms.Items
 		        var btn = new Button
 		        {
 		            Content = b.Item1,
-		            //MinimumSize = new Size(80, 0),
-		            //Anchor = AnchorStyles.Right,
+					MinHeight = 0,
+					MinWidth = 80,
+					FlowDirection = Avalonia.Media.FlowDirection.RightToLeft,
+					
 					//DialogResult = b.Item2
 		        };
 
