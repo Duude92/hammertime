@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Avalonia.Controls;
+using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
-using System.Windows.Forms;
+using DialogResult = System.Windows.Forms.DialogResult;
 
 namespace Sledge.QuickForms.Items
 {
@@ -15,17 +15,17 @@ namespace Sledge.QuickForms.Items
 
 	    public QuickFormButtonSet(IEnumerable<(string, DialogResult, Action)> buttons)
 		{
-		    FlowDirection = FlowDirection.RightToLeft;
+		    FlowDirection = Avalonia.Media.FlowDirection.RightToLeft;
 
 		    // Add in reverse since the direction is RTL
 		    foreach (var b in buttons.Reverse())
 		    {
 		        var btn = new Button
 		        {
-		            Text = b.Item1,
-		            MinimumSize = new Size(80, 0),
-		            Anchor = AnchorStyles.Right,
-                    DialogResult = b.Item2
+		            Content = b.Item1,
+		            //MinimumSize = new Size(80, 0),
+		            //Anchor = AnchorStyles.Right,
+					//DialogResult = b.Item2
 		        };
 
 		        btn.Click += (s, e) => b.Item3();

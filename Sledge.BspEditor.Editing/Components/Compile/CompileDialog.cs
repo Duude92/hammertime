@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sledge.BspEditor.Compile;
 using Sledge.BspEditor.Editing.Components.Compile.Profiles;
@@ -260,24 +261,23 @@ namespace Sledge.BspEditor.Editing.Components.Compile
             }
         }
 
-        private string PromptName(string name)
+        private async Task<string> PromptName(string name)
         {
             var qf = new QuickForm(ProfileName) {UseShortcutKeys = true};
             qf.TextBox("ProfileName", ProfileName, name);
             qf.OkCancel(OK, Cancel);
-
-            if (qf.ShowDialog() != DialogResult.OK) return null;
+            if (await qf.ShowDialog() != DialogResult.OK) return null;
 
             var n = qf.String("ProfileName");
             return String.IsNullOrEmpty(n) ? null : n;
         }
 
-        private void RenameProfileButtonClicked(object sender, EventArgs e)
+        private async void RenameProfileButtonClicked(object sender, EventArgs e)
         {
             if (!(cmbProfile.SelectedItem is ProfileWrapper profile)) return;
             if (profile.Profile == null) return;
 
-            var name = PromptName(profile.GetName());
+            var name = await PromptName(profile.GetName());
             if (String.IsNullOrEmpty(name)) return;
 
             profile.Profile.Name = name;
@@ -306,9 +306,9 @@ namespace Sledge.BspEditor.Editing.Components.Compile
             SetArgumentsFromInterface(profile.Profile);
         }
 
-        private void SaveProfileAsButtonClicked(object sender, EventArgs e)
+        private async void SaveProfileAsButtonClicked(object sender, EventArgs e)
         {
-            var name = PromptName("");
+            var name = await PromptName("");
             if (String.IsNullOrEmpty(name)) return;
             
             var profile = new BuildProfile

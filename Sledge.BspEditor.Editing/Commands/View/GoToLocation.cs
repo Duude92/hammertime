@@ -1,9 +1,9 @@
 using System;
 using System.ComponentModel.Composition;
-using System.Drawing;
 using System.Numerics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Avalonia;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Commands;
 using Sledge.BspEditor.Documents;
@@ -34,7 +34,7 @@ namespace Sledge.BspEditor.Editing.Commands.View
         {
             using (var qf = new QuickForm(Title) { UseShortcutKeys = true }.TextBox("X", "X", "0").TextBox("Y", "Y", "0").TextBox("Z", "Z", "0").OkCancel(OK, Cancel))
             {
-                qf.ClientSize = new Size(180, qf.ClientSize.Height);
+                qf.SetClientSize(new Size(180, qf.ClientSize.Height));
 
                 if (await qf.ShowDialogAsync() != DialogResult.OK) return;
 

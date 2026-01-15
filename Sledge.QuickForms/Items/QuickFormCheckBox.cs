@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿
+using Avalonia.Controls;
 
 namespace Sledge.QuickForms.Items
 {
@@ -7,7 +8,7 @@ namespace Sledge.QuickForms.Items
 	/// </summary>
 	public class QuickFormCheckBox : QuickFormItem
 	{
-	    public override object Value => _checkBox.Checked;
+	    public override object Value => _checkBox.IsChecked;
 
         private readonly CheckBox _checkBox;
 
@@ -15,12 +16,11 @@ namespace Sledge.QuickForms.Items
 		{
 	        _checkBox = new CheckBox
 	        {
-	            Text = text,
-	            Checked = isChecked
+	            Content = text,
+	            IsChecked = isChecked
 	        };
 
-		    var margin = _checkBox.Margin;
-		    margin.Left += LabelWidth + 6;
+		    var margin = _checkBox.Margin + new Avalonia.Thickness(LabelWidth+6,0,0,0);
 		    _checkBox.Margin = margin;
 
             Controls.Add(_checkBox);

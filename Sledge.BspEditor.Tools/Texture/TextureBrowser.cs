@@ -425,7 +425,7 @@ namespace Sledge.BspEditor.Tools.Texture
 				UpdateTextureList();
 			}
 		}
-		private void RenameFolderButtonClicked(object sender, EventArgs e)
+		private async void RenameFolderButtonClicked(object sender, EventArgs e)
 		{
 			FavouriteTextureFolder item = null;
 			var selected = FavouritesTree.SelectedNode;
@@ -436,7 +436,7 @@ namespace Sledge.BspEditor.Tools.Texture
 
 				using (var qf = new QuickForm("Rename Folder") { UseShortcutKeys = true }.TextBox("Name", "Name").OkCancel("Ok", "Cancel"))
 				{
-					if (qf.ShowDialog() != DialogResult.OK) return;
+					if (await qf.ShowDialog() != DialogResult.OK) return;
 
 					var name = qf.String("Name");
 					var uniqName = name;
@@ -454,7 +454,7 @@ namespace Sledge.BspEditor.Tools.Texture
 				}
 			}
 		}
-		private void AddFavouriteFolderButtonClicked(object sender, EventArgs e)
+		private async void AddFavouriteFolderButtonClicked(object sender, EventArgs e)
 		{
 			FavouriteTextureFolder parent = null;
 			var selected = FavouritesTree.SelectedNode;
@@ -462,7 +462,7 @@ namespace Sledge.BspEditor.Tools.Texture
 			var siblings = parent != null ? parent.Children : _settingsManager.Folders;
 			using (var qf = new QuickForm("Enter Folder Name") { UseShortcutKeys = true }.TextBox("Name", "Name").OkCancel("Ok", "Cancel"))
 			{
-				if (qf.ShowDialog() != DialogResult.OK) return;
+				if (await qf.ShowDialog() != DialogResult.OK) return;
 
 				var name = qf.String("Name");
 				var uniqName = name;

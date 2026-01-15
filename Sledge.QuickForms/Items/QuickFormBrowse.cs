@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
-using System.Windows.Forms;
+using Avalonia;
+using Avalonia.Controls;
 
 namespace Sledge.QuickForms.Items
 {
@@ -20,24 +21,25 @@ namespace Sledge.QuickForms.Items
         {
             _label = new Label
             {
-                Text = text,
-                AutoSize = true,
-                MinimumSize = new Size(LabelWidth, 0),
-                MaximumSize = new Size(LabelWidth, 1000),
-                TextAlign = ContentAlignment.MiddleRight,
-                Anchor = AnchorStyles.Top | AnchorStyles.Bottom
-            };
+                Content = text,
+                //AutoSize = true,
+                //MinimumSize = new Size(LabelWidth, 0),
+                //MaximumSize = new Size(LabelWidth, 1000),
+                //TextAlign = ContentAlignment.MiddleRight,
+                //Anchor = AnchorStyles.Top | AnchorStyles.Bottom
+                HorizontalContentAlignment = Avalonia.Layout.HorizontalAlignment.Center,
+			};
             _textBox = new TextBox
             {
                 Text = ""
             };
             _button = new Button
             {
-                Text = browseText,
-                AutoSize = true,
-                MinimumSize = new Size(60, 0),
-                MaximumSize = new Size(1000, _textBox.Height),
-                Anchor = AnchorStyles.Top | AnchorStyles.Bottom
+                Content = browseText,
+                //AutoSize = true,
+                //MinimumSize = new Size(60, 0),
+                //MaximumSize = new Size(1000, _textBox.Height),
+                //Anchor = AnchorStyles.Top | AnchorStyles.Bottom
             };
 
             _button.Click += (s,e) => ShowBrowseDialog();
@@ -47,21 +49,29 @@ namespace Sledge.QuickForms.Items
             Controls.Add(_button);
         }
 
-        protected override void OnResize(EventArgs eventargs)
-        {
-            _textBox.Width = Width - _label.Width - _label.Margin.Horizontal - _textBox.Margin.Horizontal - _button.Width - _button.Margin.Horizontal;
-            base.OnResize(eventargs);
-        }
+        //protected override void OnResize(EventArgs eventargs)
+        //{
+        //    _textBox.Width = Width - _label.Width - _label.Margin.Horizontal - _textBox.Margin.Horizontal - _button.Width - _button.Margin.Horizontal;
+        //    base.OnResize(eventargs);
+        //}
 
         private void ShowBrowseDialog()
         {
-            using (var ofd = new OpenFileDialog {Filter = _filter, FileName = _textBox.Text})
+            (this.Parent as Window).StorageProvider.OpenFolderPickerAsync(new Avalonia.Platform.Storage.FolderPickerOpenOptions { SuggestedFileName = _textBox.Text}).ContinueWith(t =>
             {
-                if (ofd.ShowDialog() == DialogResult.OK)
+                if (t.Result != null && t.Result.Count > 0)
                 {
-                    _textBox.Text = ofd.FileName;
+                    _textBox.Text = t.Result[0].Path.LocalPath;
                 }
-            }
+            }, System.Threading.Tasks.TaskScheduler.FromCurrentSynchronizationContext());
+
+			//using (var ofd = new OpenFileDialog {Filter = _filter, FileName = _textBox.Text})
+   //         {
+   //             if (ofd.ShowDialog() == DialogResult.OK)
+   //             {
+   //                 _textBox.Text = ofd.FileName;
+   //             }
+   //         }
         }
     }
 }

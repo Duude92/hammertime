@@ -1,5 +1,5 @@
-﻿using System.Drawing;
-using System.Windows.Forms;
+﻿
+using Avalonia.Controls;
 
 namespace Sledge.QuickForms.Items
 {
@@ -16,9 +16,9 @@ namespace Sledge.QuickForms.Items
 		{
 		    _label = new Label
 		    {
-		        Text = text,
-                AutoSize = true,
-                TextAlign = ContentAlignment.MiddleLeft
+		        Content = text,
+                //AutoSize = true,
+                //TextAlign = ContentAlignment.MiddleLeft
 		    };
             Controls.Add(_label);
 		}

@@ -81,6 +81,8 @@
     <GeneratedAssemblyInfoFile>assemblyinfo.cs</GeneratedAssemblyInfoFile>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Avalonia" Version="11.3.4" />
+    <PackageReference Include="Avalonia.Diagnostics" Version="11.3.4" />
     <PackageReference Include="System.Resources.Extensions" Version="7.0.0" />
   </ItemGroup>
   <ItemGroup>
@@ -88,5 +90,10 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="QuickForm.axaml.cs">
+      <DependentUpon>QuickForm.axaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 </Project>

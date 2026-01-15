@@ -1,10 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Avalonia;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Commands;
 using Sledge.BspEditor.Documents;
@@ -41,7 +41,7 @@ namespace Sledge.BspEditor.Editing.Commands.View
 		{
 			using (var qf = new QuickForm(Title) { UseShortcutKeys = true }.NumericUpDown("EntityID", "EntityID", 0, ENTITY_LIMIT, 0).NumericUpDown("BrushID", "BrushID", 0, SOLID_BRUSH_LIMIT, 0).OkCancel(OK, Cancel))
 			{
-				qf.ClientSize = new Size(230, qf.ClientSize.Height);
+				qf.SetClientSize( new Size(230, qf.ClientSize.Height));
 
 				if (await qf.ShowDialogAsync() != DialogResult.OK) return;
 

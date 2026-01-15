@@ -1,5 +1,4 @@
-﻿using System.Drawing;
-using System.Windows.Forms;
+﻿using Avalonia.Controls;
 
 namespace Sledge.QuickForms.Items
 {
@@ -17,20 +16,20 @@ namespace Sledge.QuickForms.Items
         {
             _label = new Label
             {
-                Text = text,
-                AutoSize = true,
-                MinimumSize = new Size(LabelWidth, 0),
-                MaximumSize = new Size(LabelWidth, 1000),
-                TextAlign = ContentAlignment.MiddleRight,
-                Anchor = AnchorStyles.Top | AnchorStyles.Bottom
+                Content = text,
+                //AutoSize = true,
+                //MinimumSize = new Size(LabelWidth, 0),
+                //MaximumSize = new Size(LabelWidth, 1000),
+                //TextAlign = ContentAlignment.MiddleRight,
+                //Anchor = AnchorStyles.Top | AnchorStyles.Bottom
             };
             _numericUpDown = new NumericUpDown
             {
                 Maximum = max,
                 Minimum = min,
-                DecimalPlaces = numDecimals,
+                //DecimalPlaces = numDecimals,
                 Name = Name,
-                Anchor = AnchorStyles.Right,
+                //Anchor = AnchorStyles.Right,
                 Increment = (numDecimals > 0) ? (1m / (numDecimals * 10m)) : (1),
                 Width = 80,
                 Value = value
