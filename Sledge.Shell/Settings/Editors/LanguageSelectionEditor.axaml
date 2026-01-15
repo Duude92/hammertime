@@ -1,0 +1,14 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 mc:Ignorable="d" d:DesignWidth="408" d:DesignHeight="30"
+			 HorizontalAlignment="Left"
+			 VerticalAlignment="Top"
+			 Width="408" Height="30"
+			 x:Class="Sledge.Shell.Settings.Editors.LanguageSelectionEditor">
+	<DockPanel>
+		<Label Margin="0,0,0,5" Name="Label"/>
+		<ComboBox Name="Combobox"/>
+	</DockPanel>
+</UserControl>
