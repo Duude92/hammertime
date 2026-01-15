@@ -20,7 +20,7 @@
 					</TreeDataTemplate>
 				</TreeView.ItemTemplate>
 			</TreeView>
-			<DockPanel Margin="4,3,4,3" Width="725" Height="490"
+			<StackPanel Margin="4,3,4,3" Width="725" Height="490"
 			   HorizontalAlignment="Left"
 							Name="SettingsPanel"/>
 		</StackPanel>
