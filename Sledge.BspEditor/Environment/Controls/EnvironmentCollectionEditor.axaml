@@ -1,0 +1,34 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+			 x:Class="Sledge.BspEditor.Environment.Controls.EnvironmentCollectionEditor">
+	<WrapPanel
+	Name="EnvironmentCollectionEditorPanel"
+	Orientation="Horizontal">
+		<DockPanel
+		>
+			<TreeView
+			Name="treEnvironments"
+			DockPanel.Dock="Top"
+			MinHeight="100"
+			SelectionChanged="EnvironmentSelected"
+			/>
+			<DropDownButton
+			Name="btnAdd"
+			Content="Add"
+			Margin="2"/>
+			<Button
+			Name="btnRemove"
+			Content="Remove"
+			Margin="2"/>
+			<DropDownButton
+			Name="importBtn"
+			Content="Import"
+			Margin="2"/>
+		</DockPanel>
+		<DockPanel
+		Name="pnlSettings"/>
+	</WrapPanel>
+</UserControl>

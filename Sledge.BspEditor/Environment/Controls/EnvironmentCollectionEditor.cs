@@ -7,7 +7,7 @@ using Sledge.BspEditor.Environment.Goldsource;
 using Sledge.Common.Shell.Settings;
 using Sledge.Common.Translations;
 
-namespace Sledge.BspEditor.Environment.Controls
+namespace Sledge.BspEditor.Environment.Controls1
 {
 	public partial class EnvironmentCollectionEditor : UserControl, ISettingEditor, IManualTranslate
 	{

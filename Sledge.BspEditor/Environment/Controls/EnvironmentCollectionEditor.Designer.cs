@@ -1,4 +1,4 @@
-﻿namespace Sledge.BspEditor.Environment.Controls
+﻿namespace Sledge.BspEditor.Environment.Controls1
 {
     partial class EnvironmentCollectionEditor
     {
@@ -32,10 +32,10 @@
 			treEnvironments = new System.Windows.Forms.TreeView();
 			btnRemove = new System.Windows.Forms.Button();
 			pnlSettings = new System.Windows.Forms.FlowLayoutPanel();
-			btnAdd = new Shell.Controls.DropdownButton();
+			btnAdd = new Sledge.Shell.Controls.DropdownButton();
 			ctxEnvironmentMenu = new System.Windows.Forms.ContextMenuStrip(components);
 			noEnvironmentsFoundToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			importBtn = new Shell.Controls.DropdownButton();
+			importBtn = new Sledge.Shell.Controls.DropdownButton();
 			ctxImportMenu = new System.Windows.Forms.ContextMenuStrip(components);
 			importProfileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			exportProfileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -117,19 +117,19 @@
 			// 
 			ctxImportMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { importProfileToolStripMenuItem, exportProfileToolStripMenuItem });
 			ctxImportMenu.Name = "ctxImportMenu";
-			ctxImportMenu.Size = new System.Drawing.Size(181, 70);
+			ctxImportMenu.Size = new System.Drawing.Size(148, 48);
 			// 
 			// importProfileToolStripMenuItem
 			// 
 			importProfileToolStripMenuItem.Name = "importProfileToolStripMenuItem";
-			importProfileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			importProfileToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
 			importProfileToolStripMenuItem.Text = "Import profile";
 			importProfileToolStripMenuItem.Click += importProfileToolStripMenuItem_Click;
 			// 
 			// exportProfileToolStripMenuItem
 			// 
 			exportProfileToolStripMenuItem.Name = "exportProfileToolStripMenuItem";
-			exportProfileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			exportProfileToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
 			exportProfileToolStripMenuItem.Text = "Export profile";
 			exportProfileToolStripMenuItem.Click += exportProfileToolStripMenuItem_Click;
 			// 
