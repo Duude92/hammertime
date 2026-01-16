@@ -1,0 +1,31 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="408" d:DesignHeight="59"
+             Height="30"
+             HorizontalAlignment="Left"
+             VerticalAlignment="Top"
+             x:Class="Sledge.Shell.Settings.Editors.SliderEditor">
+    <DockPanel>
+		<Label Margin="0,0,0,5" Name="Label"/>
+        <Slider Name="Slider"
+                Width="263"
+                Height="23"
+                Minimum="0"
+                Maximum="100"
+                TickFrequency="1"
+                IsSnapToTickEnabled="True"
+                VerticalAlignment="Center"
+                ValueChanged="SliderChanged"
+                HorizontalAlignment="Left"/>
+        <NumericUpDown Name="NumericBox"
+                 Width="59"
+                 Height="23"
+                 Margin="5,0,0,0"
+                 Padding="0"
+                 VerticalContentAlignment="Center"
+                 ValueChanged="NumberChanged"
+                 HorizontalContentAlignment="Center"/>
+    </DockPanel>
+</UserControl>
