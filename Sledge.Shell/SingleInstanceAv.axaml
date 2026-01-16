@@ -1,54 +1,55 @@
 <Application  xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="Sledge.Shell.SingleInstanceAv">
-  <Application.Styles>
-    <SimpleTheme />
-    <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Simple.xaml" />
-    <Style Selector="NumericUpDown">
-      <Setter Property="Height" Value="25"/>
-      <Setter Property="Padding" Value="0"/>
-    </Style>
-    <Style Selector="HeaderedContentControl">
-      <Setter Property="Template">
-        <ControlTemplate>
-          <Grid>
-            <Grid.RowDefinitions>
-              <RowDefinition Height="Auto"/>
-              <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-              <ColumnDefinition Width="Auto"/>
-              <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
+			  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			  x:Class="Sledge.Shell.SingleInstanceAv">
+	<Application.Styles>
+		<SimpleTheme />
+		<StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Simple.xaml" />
+		<StyleInclude Source="avares://Avalonia.Controls.ColorPicker/Themes/Simple/Simple.xaml" />
+		<Style Selector="NumericUpDown">
+			<Setter Property="Height" Value="25"/>
+			<Setter Property="Padding" Value="0"/>
+		</Style>
+		<Style Selector="HeaderedContentControl">
+			<Setter Property="Template">
+				<ControlTemplate>
+					<Grid>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="*"/>
+						</Grid.RowDefinitions>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="*"/>
+						</Grid.ColumnDefinitions>
 
-            <!-- Header -->
-            <Border
-                ZIndex="1"
-                Background="{DynamicResource ThemeBackgroundBrush}"
-                Padding="5,0,5,0"
-                Margin="5,0,0,0">
-              <TextBlock
-                  Text="{TemplateBinding Header}"
-                  FontWeight="Bold"/>
-            </Border>
+						<!-- Header -->
+						<Border
+						ZIndex="1"
+						Background="{DynamicResource ThemeBackgroundBrush}"
+						Padding="5,0,5,0"
+						Margin="5,0,0,0">
+							<TextBlock
+							Text="{TemplateBinding Header}"
+							FontWeight="Bold"/>
+						</Border>
 
-            <!-- Content Area -->
-            <Border
-                Grid.RowSpan="2"
-                Padding="0,5,0,0"
-                Grid.ColumnSpan="2"
-                CornerRadius="0"
-                Margin="0,10,0,0"
-                BorderBrush="{DynamicResource ThemeBorderLowBrush}"
-                BorderThickness="1">
-              <ContentPresenter
-                  Name="PART_ContentPresenter"
-                  Padding="8"
-                  Content="{TemplateBinding Content}"/>
-            </Border>
-          </Grid>
-        </ControlTemplate>
-      </Setter>
-    </Style>
-  </Application.Styles>
+						<!-- Content Area -->
+						<Border
+						Grid.RowSpan="2"
+						Padding="0,5,0,0"
+						Grid.ColumnSpan="2"
+						CornerRadius="0"
+						Margin="0,10,0,0"
+						BorderBrush="{DynamicResource ThemeBorderLowBrush}"
+						BorderThickness="1">
+							<ContentPresenter
+							Name="PART_ContentPresenter"
+							Padding="8"
+							Content="{TemplateBinding Content}"/>
+						</Border>
+					</Grid>
+				</ControlTemplate>
+			</Setter>
+		</Style>
+	</Application.Styles>
 </Application >
