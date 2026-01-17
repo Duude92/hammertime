@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Sledge.Common.Shell.Documents;
 using Sledge.Common.Translations;
@@ -25,22 +26,21 @@ public partial class SaveChangesForm : Window
 		{
 			DocumentList.Items.Add(document.Name + " *");
 		}
-
 	}
 
-	private void SaveAllClicked(object sender, EventArgs e)
+	private void SaveAllClicked(object sender, RoutedEventArgs e)
 	{
 		DialogResult = DialogResult.Yes;
 		Close();
 	}
 
-	private void DiscardAllClicked(object sender, EventArgs e)
+	private void DiscardAllClicked(object sender, RoutedEventArgs e)
 	{
 		DialogResult = DialogResult.No;
 		Close();
 	}
 
-	private void CancelClicked(object sender, EventArgs e)
+	private void CancelClicked(object sender, RoutedEventArgs e)
 	{
 		DialogResult = DialogResult.Cancel;
 		Close();

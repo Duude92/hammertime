@@ -11,10 +11,10 @@
 		<TextBlock Name="UnsavedChangesLabel" TextWrapping="Wrap" Text="Some documents have unsaved changes. Would you like to save or discard these changes?"/>
 		<ListBox Name="DocumentList"
 		   Width="387" Height="152"/>
-		<DockPanel>
-			<Button Name="SaveAllButton" Content="Save all"/>
-			<Button Name="DiscardButton" Content="Discard all"/>
-			<Button Name="CancelButton" Content="Cancel"/>
+		<DockPanel LastChildFill="False" HorizontalAlignment="Right" >
+			<Button Name="SaveAllButton" Click="SaveAllClicked" Content="Save all"/>
+			<Button Name="DiscardButton" Click="DiscardAllClicked" Content="Discard all"/>
+			<Button Name="CancelButton" Click="CancelClicked" Content="Cancel" />
 		</DockPanel>
 	</StackPanel>
 </Window>
