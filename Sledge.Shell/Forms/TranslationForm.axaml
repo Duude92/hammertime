@@ -1,0 +1,41 @@
+<Window xmlns="https://github.com/avaloniaui"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		mc:Ignorable="d" d:DesignWidth="957" d:DesignHeight="657"
+		Width="957" Height="657"
+		x:Class="Sledge.Shell.Forms.TranslationForm"
+		Padding="15"
+		Title="TranslationForm">
+	<StackPanel>
+		<DockPanel LastChildFill="False" >
+			<Label Content="Target language" Width="91"/>
+			<ComboBox Width="370" Name="cmbLanguage" SelectionChanged="LanguageChanged" />
+			<Button Width="148" Click="AddLanguageClicked" Content="Add a new language"/>
+		</DockPanel>
+		<DockPanel LastChildFill="False"  Margin="0,5">
+			<Label Content="File to translate" Width="91"/>
+			<ComboBox Width="370" Name="cmbFile" SelectionChanged="FileChanged"/>
+			<Button Width="148" Click="SaveClicked" Content="Save changes"/>
+		</DockPanel>
+		<DataGrid Name="dataGridView"
+				  Width="916"
+				  Height="534"
+				  ItemsSource="{Binding Items}"
+				  IsReadOnly="False"
+				  SelectionMode="Single"
+				  HorizontalAlignment="Left"
+				  VerticalAlignment="Top"
+				  Margin="0,5,0,0"
+				  >
+			<!-- Define columns with headers -->
+			<DataGrid.Columns>
+				<!--<DataGridTextColumn Header="Type" Binding="{Binding Type}" MaxWidth="0" />
+				<DataGridTextColumn Header="FriendlyID" Binding="{Binding FriendlyID}" MaxWidth="0" />-->
+				<DataGridTextColumn Header="ID" Binding="{Binding ID}" Width="*" MinWidth="70" IsReadOnly="True"/>
+				<DataGridTextColumn Header="English" Binding="{Binding English}" Width="*" MinWidth="70" IsReadOnly="True"/>
+				<DataGridTextColumn Header="Translation" Binding="{Binding Translation, Mode=TwoWay }" Width="*" MinWidth="70" IsReadOnly="False" />
+			</DataGrid.Columns>
+		</DataGrid>
+	</StackPanel>
+</Window>
