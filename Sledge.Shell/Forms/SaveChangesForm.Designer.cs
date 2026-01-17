@@ -1,6 +1,6 @@
 ﻿namespace Sledge.Shell.Forms
 {
-    partial class SaveChangesForm
+    partial class SaveChangesForm1
     {
         /// <summary>
         /// Required designer variable.
@@ -20,104 +20,107 @@
             base.Dispose(disposing);
         }
 
-        #region Windows Form Designer generated code
+		#region Windows Form Designer generated code
 
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
-        /// </summary>
-        private void InitializeComponent()
-        {
-            this.CancelButton = new System.Windows.Forms.Button();
-            this.DiscardButton = new System.Windows.Forms.Button();
-            this.SaveAllButton = new System.Windows.Forms.Button();
-            this.DocumentList = new System.Windows.Forms.ListBox();
-            this.UnsavedChangesLabel = new System.Windows.Forms.Label();
-            this.SuspendLayout();
-            // 
-            // CancelButton
-            // 
-            this.CancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.CancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.CancelButton.Location = new System.Drawing.Point(269, 185);
-            this.CancelButton.Name = "CancelButton";
-            this.CancelButton.Size = new System.Drawing.Size(75, 23);
-            this.CancelButton.TabIndex = 0;
-            this.CancelButton.Text = "Cancel";
-            this.CancelButton.UseVisualStyleBackColor = true;
-            this.CancelButton.Click += new System.EventHandler(this.CancelClicked);
-            // 
-            // DiscardButton
-            // 
-            this.DiscardButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.DiscardButton.Location = new System.Drawing.Point(188, 185);
-            this.DiscardButton.Name = "DiscardButton";
-            this.DiscardButton.Size = new System.Drawing.Size(75, 23);
-            this.DiscardButton.TabIndex = 0;
-            this.DiscardButton.Text = "Discard all";
-            this.DiscardButton.UseVisualStyleBackColor = true;
-            this.DiscardButton.Click += new System.EventHandler(this.DiscardAllClicked);
-            // 
-            // SaveAllButton
-            // 
-            this.SaveAllButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.SaveAllButton.Location = new System.Drawing.Point(107, 185);
-            this.SaveAllButton.Name = "SaveAllButton";
-            this.SaveAllButton.Size = new System.Drawing.Size(75, 23);
-            this.SaveAllButton.TabIndex = 0;
-            this.SaveAllButton.Text = "Save all";
-            this.SaveAllButton.UseVisualStyleBackColor = true;
-            this.SaveAllButton.Click += new System.EventHandler(this.SaveAllClicked);
-            // 
-            // DocumentList
-            // 
-            this.DocumentList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.DocumentList.FormattingEnabled = true;
-            this.DocumentList.IntegralHeight = false;
-            this.DocumentList.Location = new System.Drawing.Point(12, 47);
-            this.DocumentList.Name = "DocumentList";
-            this.DocumentList.Size = new System.Drawing.Size(332, 132);
-            this.DocumentList.TabIndex = 1;
-            // 
-            // UnsavedChangesLabel
-            // 
-            this.UnsavedChangesLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.UnsavedChangesLabel.Location = new System.Drawing.Point(12, 12);
-            this.UnsavedChangesLabel.Name = "UnsavedChangesLabel";
-            this.UnsavedChangesLabel.Size = new System.Drawing.Size(332, 32);
-            this.UnsavedChangesLabel.TabIndex = 2;
-            this.UnsavedChangesLabel.Text = "Some documents have unsaved changes. Would you like to save or discard these chan" +
-    "ges?";
-            // 
-            // SaveChangesForm
-            // 
-            this.AcceptButton = this.SaveAllButton;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(356, 220);
-            this.Controls.Add(this.UnsavedChangesLabel);
-            this.Controls.Add(this.DocumentList);
-            this.Controls.Add(this.SaveAllButton);
-            this.Controls.Add(this.DiscardButton);
-            this.Controls.Add(this.CancelButton);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.Name = "SaveChangesForm";
-            this.ShowIcon = false;
-            this.ShowInTaskbar = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Unsaved changes";
-            this.ResumeLayout(false);
+		/// <summary>
+		/// Required method for Designer support - do not modify
+		/// the contents of this method with the code editor.
+		/// </summary>
+		private void InitializeComponent()
+		{
+			CancelButton = new System.Windows.Forms.Button();
+			DiscardButton = new System.Windows.Forms.Button();
+			SaveAllButton = new System.Windows.Forms.Button();
+			DocumentList = new System.Windows.Forms.ListBox();
+			UnsavedChangesLabel = new System.Windows.Forms.Label();
+			SuspendLayout();
+			// 
+			// CancelButton
+			// 
+			CancelButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+			CancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			CancelButton.Location = new System.Drawing.Point(314, 213);
+			CancelButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			CancelButton.Name = "CancelButton";
+			CancelButton.Size = new System.Drawing.Size(88, 27);
+			CancelButton.TabIndex = 0;
+			CancelButton.Text = "Cancel";
+			CancelButton.UseVisualStyleBackColor = true;
+			CancelButton.Click += CancelClicked;
+			// 
+			// DiscardButton
+			// 
+			DiscardButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+			DiscardButton.Location = new System.Drawing.Point(219, 213);
+			DiscardButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			DiscardButton.Name = "DiscardButton";
+			DiscardButton.Size = new System.Drawing.Size(88, 27);
+			DiscardButton.TabIndex = 0;
+			DiscardButton.Text = "Discard all";
+			DiscardButton.UseVisualStyleBackColor = true;
+			DiscardButton.Click += DiscardAllClicked;
+			// 
+			// SaveAllButton
+			// 
+			SaveAllButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+			SaveAllButton.Location = new System.Drawing.Point(125, 213);
+			SaveAllButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			SaveAllButton.Name = "SaveAllButton";
+			SaveAllButton.Size = new System.Drawing.Size(88, 27);
+			SaveAllButton.TabIndex = 0;
+			SaveAllButton.Text = "Save all";
+			SaveAllButton.UseVisualStyleBackColor = true;
+			SaveAllButton.Click += SaveAllClicked;
+			// 
+			// DocumentList
+			// 
+			DocumentList.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			DocumentList.FormattingEnabled = true;
+			DocumentList.IntegralHeight = false;
+			DocumentList.ItemHeight = 15;
+			DocumentList.Location = new System.Drawing.Point(14, 54);
+			DocumentList.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			DocumentList.Name = "DocumentList";
+			DocumentList.Size = new System.Drawing.Size(387, 152);
+			DocumentList.TabIndex = 1;
+			// 
+			// UnsavedChangesLabel
+			// 
+			UnsavedChangesLabel.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			UnsavedChangesLabel.Location = new System.Drawing.Point(14, 14);
+			UnsavedChangesLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			UnsavedChangesLabel.Name = "UnsavedChangesLabel";
+			UnsavedChangesLabel.Size = new System.Drawing.Size(387, 37);
+			UnsavedChangesLabel.TabIndex = 2;
+			UnsavedChangesLabel.Text = "Some documents have unsaved changes. Would you like to save or discard these changes?";
+			// 
+			// SaveChangesForm1
+			// 
+			AcceptButton = SaveAllButton;
+			AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+			AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			ClientSize = new System.Drawing.Size(415, 254);
+			Controls.Add(UnsavedChangesLabel);
+			Controls.Add(DocumentList);
+			Controls.Add(SaveAllButton);
+			Controls.Add(DiscardButton);
+			Controls.Add(CancelButton);
+			FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+			Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			MaximizeBox = false;
+			MinimizeBox = false;
+			Name = "SaveChangesForm1";
+			ShowIcon = false;
+			ShowInTaskbar = false;
+			StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+			Text = "Unsaved changes";
+			ResumeLayout(false);
 
-        }
+		}
 
-        #endregion
+		#endregion
 
-        private System.Windows.Forms.Button CancelButton;
+		private System.Windows.Forms.Button CancelButton;
         private System.Windows.Forms.Button DiscardButton;
         private System.Windows.Forms.Button SaveAllButton;
         private System.Windows.Forms.ListBox DocumentList;

@@ -1,0 +1,20 @@
+<Window xmlns="https://github.com/avaloniaui"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		mc:Ignorable="d" d:DesignWidth="431" d:DesignHeight="293"
+		Width="431" Height="293"
+		x:Class="Sledge.Shell.Forms.SaveChangesForm"
+		Padding="18,14"
+		Title="Unsaved changes">
+	<StackPanel>
+		<TextBlock Name="UnsavedChangesLabel" TextWrapping="Wrap" Text="Some documents have unsaved changes. Would you like to save or discard these changes?"/>
+		<ListBox Name="DocumentList"
+		   Width="387" Height="152"/>
+		<DockPanel>
+			<Button Name="SaveAllButton" Content="Save all"/>
+			<Button Name="DiscardButton" Content="Discard all"/>
+			<Button Name="CancelButton" Content="Cancel"/>
+		</DockPanel>
+	</StackPanel>
+</Window>

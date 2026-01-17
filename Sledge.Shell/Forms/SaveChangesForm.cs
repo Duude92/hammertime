@@ -12,9 +12,9 @@ using Sledge.Common.Translations;
 
 namespace Sledge.Shell.Forms
 {
-    public partial class SaveChangesForm : Form
+    public partial class SaveChangesForm1 : Form
     {
-        public SaveChangesForm(List<IDocument> unsaved)
+        public SaveChangesForm1(List<IDocument> unsaved)
         {
             InitializeComponent();
             DialogResult = DialogResult.Cancel;

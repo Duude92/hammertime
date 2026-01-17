@@ -221,18 +221,18 @@ namespace Sledge.Shell.Forms
 
 			DialogResult result;
 
-			using (var d = new SaveChangesForm(unsaved))
-			{
-				d.Translate(_translation.Value);
-				d.Owner = this;
-				result = await d.ShowDialogAsync();
-			}
+			//using (var d = new SaveChangesForm(unsaved))
+			//{
+			//	d.Translate(_translation.Value);
+			//	d.Owner = this;
+			//	result = await d.ShowDialogAsync();
+			//}
 
-			// Don't continue
-			if (result == DialogResult.Cancel) return false;
+			//// Don't continue
+			//if (result == DialogResult.Cancel) return false;
 
-			// Discard changes and continue
-			if (result == DialogResult.No) return true;
+			//// Discard changes and continue
+			//if (result == DialogResult.No) return true;
 
 			// Save changes and continue
 			foreach (var doc in unsaved)

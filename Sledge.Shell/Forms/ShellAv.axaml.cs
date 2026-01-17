@@ -262,12 +262,12 @@ namespace Sledge.Shell.Forms
 
 			DialogResult result;
 
-			using (var d = new SaveChangesForm(unsaved))
-			{
+			var d = new SaveChangesForm(unsaved);
+			
 				d.Translate(_translation.Value);
 				//d.Owner = this;
-				result = await d.ShowDialogAsync();
-			}
+				result = await d.ShowDialogAsync(this);
+			
 
 			// Don't continue
 			if (result == DialogResult.Cancel) return false;
