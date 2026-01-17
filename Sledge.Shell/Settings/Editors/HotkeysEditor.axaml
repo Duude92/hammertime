@@ -1,0 +1,89 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 mc:Ignorable="d" d:DesignWidth="751" d:DesignHeight="292"
+			 Width="751" Height="292"
+			 VerticalAlignment="Top"
+			 HorizontalAlignment="Left"
+			 x:Class="Sledge.Shell.Settings.Editors.HotkeysEditor">
+	<UserControl.Styles>
+		<Style Selector="" >
+			<Setter Property="Margin" Value="4,3,4,3"/>
+		</Style>
+	</UserControl.Styles>
+
+	<StackPanel>
+		<DockPanel
+		Width="300"
+		HorizontalAlignment="Left">
+			<Label Margin="0,0,0,5" Content="Filter"/>
+			<TextBox Name="FilterBox"
+					 Width="174"
+					 Height="23"
+					 Padding="0"
+					 VerticalContentAlignment="Center"
+					 HorizontalContentAlignment="Left"
+					 TextChanged="UpdateFilter"/>
+		</DockPanel>
+		<DataGrid Name="HotkeyList"
+				  Width="744"
+				  Height="191"
+				  ItemsSource="{Binding Items}" 
+				  IsReadOnly="True" 
+				  SelectionMode="Single"
+				  HorizontalAlignment="Left"
+				  VerticalAlignment="Top"
+				  Margin="0,5,0,0"
+				  SelectionChanged="HotkeyListSelectionChanged"
+				  KeyDown="HotkeyListKeyDown">
+				  <!-- Define columns with headers -->
+				  <DataGrid.Columns>
+					  <DataGridTextColumn Header="Action" Binding="{Binding Action}" Width="*" MinWidth="70" />
+					  <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="*" MinWidth="70" />
+					  <DataGridTextColumn Header="Hotkey" Binding="{Binding Hotkey}" Width="*" MinWidth="70" />
+				  </DataGrid.Columns>
+		</DataGrid>
+		<DockPanel>
+			<HeaderedContentControl Header="Assign Hotkey"
+									Width="590"
+									Height="58"
+									HorizontalAlignment="Left"
+									VerticalAlignment="Top">
+				<DockPanel>
+					<Label Content="Action"/>
+					<ComboBox Name="HotkeyActionList"
+							  Width="174"
+							  Height="23"
+							  Padding="0"
+							  VerticalContentAlignment="Top"
+							  HorizontalContentAlignment="Left"/>
+					<Label Content="Hotkey"
+						   Margin="4,0"/>
+					<TextBox Name="HotkeyCombination"
+							 Width="116"
+							 Height="23"
+							 Padding="0"
+							 Margin="4,0,10,0"
+							 VerticalContentAlignment="Center"
+							 HorizontalContentAlignment="Left"
+							 KeyDown="HotkeyCombinationKeyDown"/>
+					<Button
+					Width="80" Height="27"
+					Content="Set"
+					Click="HotkeySetButtonClicked"/>
+					<Button
+					Width="80" Height="27"
+					Content="Unset"
+					Click="HotkeyUnsetButtonClicked"/>
+
+				</DockPanel>
+			</HeaderedContentControl>
+			<Button
+			Content="Reset to Defaults"
+			VerticalAlignment="Center"
+			Width="138" Height="27"
+			Click="HotkeyResetButtonClicked"/>
+		</DockPanel>
+	</StackPanel>
+</UserControl>
