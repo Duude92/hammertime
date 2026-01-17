@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using MsBox.Avalonia;
 using Newtonsoft.Json.Linq;
 using Sledge.Common.Shell;
 using Sledge.Common.Translations;
@@ -164,7 +165,7 @@ public partial class TranslationForm : Window
 		}
 	}
 
-	private void SaveClicked(object sender, RoutedEventArgs e)
+	private async void SaveClicked(object sender, RoutedEventArgs e)
 	{
 		var langW = cmbLanguage.SelectedItem as Wrapper<Language>;
 		var fileW = cmbFile.SelectedItem as Wrapper<string>;
@@ -214,8 +215,7 @@ public partial class TranslationForm : Window
 		if (!Directory.Exists(_userTranslationsFolder)) Directory.CreateDirectory(_userTranslationsFolder);
 		File.WriteAllText(userLang, output);
 
-
-		//MessageBox.Show("Save complete! Reset Sledge to test the changes.", "Changes saved");
+		await MessageBoxManager.GetMessageBoxStandard("Changes saved", "Save complete! Reset Sledge to test the changes.").ShowWindowDialogAsync(this);
 	}
 
 	private class Wrapper<T>
