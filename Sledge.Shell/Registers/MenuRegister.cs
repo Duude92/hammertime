@@ -263,7 +263,7 @@ namespace Sledge.Shell.Registers
 			public MenuTreeRoot(IContext context, string text, MenuSection section)
 			{
 				Section = section;
-				MenuMenuItem = new MenuItem { Header = text, Tag = this };
+				MenuMenuItem = new MenuItem { Header = new TextBlock { Text = text }, Tag = this };
 				ToolStrip = new StackPanel { Orientation = Avalonia.Layout.Orientation.Horizontal, Tag = this, Margin = new Thickness(2, 0) };//, LayoutStyle = ToolStripLayoutStyle.Flow };
 				Context = context;
 				_toolbarGroups = new List<MenuTreeGroup>();
@@ -365,7 +365,7 @@ namespace Sledge.Shell.Registers
 			{
 				Context = context;
 				Group = group ?? new MenuGroup("", "", "", "T");
-				MenuMenuItem = new MenuItem { Header = text, Tag = this };
+				MenuMenuItem = new MenuItem { Header = new TextBlock { Text = text }, Tag = this };
 			}
 		}
 
@@ -403,7 +403,7 @@ namespace Sledge.Shell.Registers
 
 				MenuMenuItem = new MenuItem
 				{
-					Header = menuItem.Name,
+					Header = new TextBlock { Text = menuItem.Name },
 					Icon = new Image { Source = icon },
 					Tag = this,
 					//TODO:: Implement HotKey

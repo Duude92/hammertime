@@ -306,7 +306,7 @@ namespace Sledge.Shell.Forms
 			{
 				var page = new TabItem
 				{
-					Header = document.Name,
+					Header = new TextBlock { Text = document.Name },
 					Tag = document
 				};
 				DocumentTabs.Items.Add(page);
