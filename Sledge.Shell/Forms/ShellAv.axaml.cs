@@ -454,7 +454,7 @@ namespace Sledge.Shell.Forms
 		// Settings
 		private List<LoadedDocument> _openDocuments;
 
-		string Name => "Sledge.Shell";
+		string ISettingsContainer.Name => "Sledge.Shell";
 
 		public IEnumerable<SettingKey> GetKeys()
 		{
