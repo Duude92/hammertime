@@ -150,18 +150,16 @@ public partial class TranslationForm : Window
 		}
 	}
 
-	private void AddLanguageClicked(object sender, RoutedEventArgs e)
+	private async void AddLanguageClicked(object sender, RoutedEventArgs e)
 	{
-		using (var alf = new AddLanguageForm())
+		var alf = new AddLanguageForm(this);
+		if (await alf.ShowDialog() == DialogResult.OK)
 		{
-			if (alf.ShowDialog() == DialogResult.OK)
-			{
-				var lang = new Language(alf.Code) { Description = alf.Description, Inherit = "en" };
+			var lang = new Language(alf.Code) { Description = alf.Description, Inherit = "en" };
 
-				var w = new Wrapper<Language>(lang, lang.Description);
-				cmbLanguage.Items.Add(w);
-				cmbLanguage.SelectedItem = w;
-			}
+			var w = new Wrapper<Language>(lang, lang.Description);
+			cmbLanguage.Items.Add(w);
+			cmbLanguage.SelectedItem = w;
 		}
 	}
 

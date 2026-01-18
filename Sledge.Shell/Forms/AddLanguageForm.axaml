@@ -1,0 +1,26 @@
+<Window xmlns="https://github.com/avaloniaui"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		mc:Ignorable="d" d:DesignWidth="260" d:DesignHeight="158"
+		Width="260" Height="158"
+		x:Class="Sledge.Shell.AddLanguageForm"
+		Padding="18,14"
+		CanResize="False"
+		Title="AddLanguageForm">
+	<StackPanel>
+		<DockPanel Margin="0,2">
+			<Label Content="2-letter Language code"/>
+			<TextBox Name="txtCode" TextChanged="FormTextChanged" />
+		</DockPanel>
+		<HyperlinkButton Margin="0,5" NavigateUri="https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes" Content="Click here for a list of language codes" />
+		<DockPanel Margin="0,5">
+			<Label Content="Description"/>
+			<TextBox Name="txtDescription" TextChanged="FormTextChanged"/>
+		</DockPanel>
+		<DockPanel LastChildFill="False" Margin="5" HorizontalSpacing="10" HorizontalAlignment="Right" >
+			<Button Name="btnOK" Width="100" Content="OK" Click="OKClicked"/>
+			<Button Name="btnCancel" Width="100" Content="Cancel" Click="CancelClicked"/>
+		</DockPanel>
+	</StackPanel>
+</Window>
