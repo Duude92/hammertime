@@ -144,6 +144,8 @@
     <PackageReference Include="ImGui.NET">
       <Version>1.89.6</Version>
     </PackageReference>
+    <PackageReference Include="OpenTK" Version="3.3.3" />
+    <PackageReference Include="OpenTK.Windowing.Desktop" Version="4.9.4" />
     <PackageReference Include="SharpDX" Version="4.2.0" />
     <PackageReference Include="SharpDX.Direct3D11" Version="4.2.0" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
