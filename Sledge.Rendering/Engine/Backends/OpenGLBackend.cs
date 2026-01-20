@@ -1,10 +1,13 @@
-﻿using Sledge.Common.Logging;
+﻿using OpenTK.Graphics;
+using OpenTK.Platform;
+using Sledge.Common.Logging;
 using Sledge.Rendering.Shaders;
 using System;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using Veldrid;
+using Veldrid.OpenGL;
 using Veldrid.SPIRV;
 using Vortice.Dxc;
 
@@ -129,7 +132,7 @@ namespace Sledge.Rendering.Engine.Backends
 
 		public Swapchain CreateSwapchain(Control control, GraphicsDeviceOptions options)
 		{
-			throw new NotImplementedException();
+			return new OpenglSwapchainAdapter(_context.Device);
 		}
 	}
 	internal class OpenglSwapchainAdapter : Swapchain
