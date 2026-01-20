@@ -3,6 +3,7 @@ using Sledge.Rendering.Shaders;
 using System;
 using System.IO;
 using System.Reflection;
+using System.Windows.Forms;
 using Veldrid;
 using Veldrid.SPIRV;
 using Vortice.Dxc;
@@ -126,6 +127,10 @@ namespace Sledge.Rendering.Engine.Backends
 			throw new FileNotFoundException($"The `{name}` shader could not be found.", name);
 		}
 
+		public Swapchain CreateSwapchain(Control control, GraphicsDeviceOptions options)
+		{
+			throw new NotImplementedException();
+		}
 	}
 	internal class OpenglSwapchainAdapter : Swapchain
 	{

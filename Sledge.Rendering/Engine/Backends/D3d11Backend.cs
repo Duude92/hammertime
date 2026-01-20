@@ -2,15 +2,18 @@
 using Sledge.Rendering.Shaders;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using Veldrid;
 using Veldrid.SPIRV;
 using Vortice.Dxc;
+using static System.Windows.Forms.Design.AxImporter;
 
 namespace Sledge.Rendering.Engine.Backends
 {
@@ -93,5 +96,17 @@ namespace Sledge.Rendering.Engine.Backends
 			}
 			throw new FileNotFoundException($"The `{name}` shader could not be found.", name);
 		}
+		public Swapchain CreateSwapchain(Control control, GraphicsDeviceOptions options)
+		{
+			IntPtr HInstance = Process.GetCurrentProcess().Handle;
+			var source = SwapchainSource.CreateWin32(control.Handle, HInstance);
+			uint w = (uint)control.Width, h = (uint)control.Height;
+			if (w <= 0) w = 1;
+			if (h <= 0) h = 1;
+			var desc = new SwapchainDescription(source, w, h, options.SwapchainDepthFormat, options.SyncToVerticalBlank);
+
+			return _context.Device.ResourceFactory.CreateSwapchain(desc);
+		}
+
 	}
 }
