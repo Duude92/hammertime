@@ -43,7 +43,7 @@ namespace Sledge.Rendering.Engine.Backends
 		{
 			CullMode = FaceCullMode.Front,
 			FillMode = PolygonFillMode.Solid,
-			FrontFace = FrontFace.Clockwise,
+			FrontFace = FrontFace.CounterClockwise,
 			DepthClipEnabled = true,
 			ScissorTestEnabled = false
 		};
