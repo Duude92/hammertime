@@ -127,4 +127,30 @@ namespace Sledge.Rendering.Engine.Backends
 		}
 
 	}
+	internal class OpenglSwapchainAdapter : Swapchain
+	{
+		private GraphicsDevice _device;
+		private Framebuffer _framebuffer;
+		public override Framebuffer Framebuffer => _framebuffer;
+
+		public override bool SyncToVerticalBlank { get; set; }
+		public override string Name { get; set; }
+
+		public override bool IsDisposed => false;
+		public OpenglSwapchainAdapter(GraphicsDevice device)
+		{
+			_device = device;
+			_framebuffer = device.SwapchainFramebuffer;
+		}
+
+		public override void Dispose()
+		{
+			_framebuffer?.Dispose();
+		}
+
+		public override void Resize(uint width, uint height)
+		{
+			_device.ResizeMainWindow(width, height);
+		}
+	}
 }
