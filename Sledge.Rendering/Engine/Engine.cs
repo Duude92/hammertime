@@ -62,9 +62,9 @@ namespace Sledge.Rendering.Engine
 			_pipelines = new Dictionary<PipelineGroup, List<IPipeline>>();
 
 		}
-		public void Initialize() { 
+		public void Initialize()
+		{
 
-			Device = GraphicsDevice.CreateD3D11(_options);
 			DetectFeatures(Device);
 
 			_commandList = Device.ResourceFactory.CreateCommandList();
@@ -390,9 +390,11 @@ namespace Sledge.Rendering.Engine
 			if (w <= 0) w = 1;
 			if (h <= 0) h = 1;
 			var desc = new SwapchainDescription(source, w, h, _options.SwapchainDepthFormat, _options.SyncToVerticalBlank);
-			Initialize();
+			Device = GraphicsDevice.CreateD3D11(_options);
 
-			Swapchain = Device.ResourceFactory.CreateSwapchain(desc);
+			Initialize();
+			Swapchain = Context.GraphicBackend.CreateSwapchain(control, _options);
+
 		}
 		internal IViewport CreateViewport(Control parent)
 		{
