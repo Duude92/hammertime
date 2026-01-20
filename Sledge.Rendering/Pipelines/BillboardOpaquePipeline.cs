@@ -69,6 +69,19 @@ namespace Sledge.Rendering.Pipelines
 				Projection = viewProjectionBuffer.Projection
 			});
 		}
+		public void SetupFrame(RenderContext context, CommandList cl, Engine.Engine.ViewProjectionBuffer viewProjectionBuffer)
+		{
+			var view = viewProjectionBuffer.View;
+			if (!Matrix4x4.Invert(view, out var invView)) invView = Matrix4x4.Identity;
+
+			cl.UpdateBuffer(_projectionBuffer, 0, new UniformProjection
+			{
+				Selective = context.SelectiveTransform,
+				Model = invView,
+				View = view,
+				Projection = viewProjectionBuffer.Projection
+			});
+		}
 
 		public void Render(RenderContext context, IViewport target, CommandList cl, IEnumerable<IRenderable> renderables)
 		{

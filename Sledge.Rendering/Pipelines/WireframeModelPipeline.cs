@@ -119,5 +119,9 @@ namespace Sledge.Rendering.Pipelines
             _vertex?.Dispose();
             _fragment?.Dispose();
         }
-    }
+
+		public void SetupFrame(RenderContext context, CommandList cl, Engine.Engine.ViewProjectionBuffer viewProjectionBuffer)
+		{
+		}
+	}
 }

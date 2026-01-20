@@ -124,6 +124,19 @@ new BufferDescription((uint)Unsafe.SizeOf<Matrix4x4>(), BufferUsage.UniformBuffe
 			context.Device.UpdateBuffer(_lightProjection, 0, _lightData.Projection);
 		}
 
+		public void SetupFrame(RenderContext context, CommandList cl, Engine.Engine.ViewProjectionBuffer viewProjectionBuffer)
+		{
+			cl.UpdateBuffer(_projectionBuffer, 0, new UniformProjection
+			{
+				Selective = context.SelectiveTransform,
+				Model = Matrix4x4.Identity,
+				View = viewProjectionBuffer.View,
+				Projection = viewProjectionBuffer.Projection,
+			});
+
+			cl.UpdateBuffer(_lightDirection, 0, _lightData.View);
+			cl.UpdateBuffer(_lightProjection, 0, _lightData.Projection);
+		}
 		public void Render(RenderContext context, IViewport target, CommandList cl, IEnumerable<IRenderable> renderables) {
 			if (target.Camera is not PerspectiveCamera) return;
 
