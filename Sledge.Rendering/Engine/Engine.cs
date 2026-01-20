@@ -1,6 +1,8 @@
-﻿using SharpDX.Direct3D;
-using SixLabors.ImageSharp;
+﻿using OpenTK.Graphics;
+using OpenTK.Platform;
+using SharpDX.Direct3D;
 using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Engine.Backends;
 using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.Pipelines;
 using Sledge.Rendering.Renderables;
@@ -8,11 +10,13 @@ using Sledge.Rendering.Viewports;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using System.Threading;
 using System.Windows.Forms;
 using Veldrid;
+using Veldrid.OpenGL;
 
 namespace Sledge.Rendering.Engine
 {
@@ -381,16 +385,68 @@ namespace Sledge.Rendering.Engine
 
 		internal event EventHandler<IViewport> ViewportCreated;
 		internal event EventHandler<IViewport> ViewportDestroyed;
-		//TODO: Create swapchain at ctor
-		internal void CreateSwapChain(Control control)
+
+
+		internal void CreateSwapChain(Control control, GraphicsBackend backend = GraphicsBackend.Direct3D11)
 		{
-			IntPtr HInstance = Process.GetCurrentProcess().Handle;
-			var source = SwapchainSource.CreateWin32(control.Handle, HInstance);
-			uint w = (uint)control.Width, h = (uint)control.Height;
-			if (w <= 0) w = 1;
-			if (h <= 0) h = 1;
-			var desc = new SwapchainDescription(source, w, h, _options.SwapchainDepthFormat, _options.SyncToVerticalBlank);
-			Device = GraphicsDevice.CreateD3D11(_options);
+			GraphicsDevice CreateOpenglDevice()
+			{
+
+				var WindowInfo = Utilities.CreateWindowsWindowInfo(control.Handle);
+
+				GraphicsMode mode = new GraphicsMode(new ColorFormat(32), 24, 8, 0);
+				var _openTKContext = new GraphicsContext(mode, WindowInfo);
+
+				var a = (IGraphicsContextInternal)_openTKContext;
+				IntPtr GetProcAddressFunc(string name) => a.GetAddress(name);
+
+				Object lObject = new object();
+
+				OpenGLPlatformInfo platformInfo = new OpenGLPlatformInfo(
+						a.Context.Handle, // Context handle from OpenTK
+						GetProcAddressFunc,
+						(hdc) =>
+						{
+							lock (lObject)
+								_openTKContext.MakeCurrent(WindowInfo);
+						}, // Make current
+						() =>
+						{
+							lock (lObject)
+								return _openTKContext.IsCurrent ? a.Context.Handle : IntPtr.Zero;
+						}, // Get current context
+						() =>
+						{
+							lock (lObject)
+							{
+								if (_openTKContext.IsCurrent)
+								{
+									_openTKContext.MakeCurrent(null);
+								}
+							}
+						}, // Clear current context
+						(hglrc) =>
+						{
+							lock (lObject)
+								_openTKContext.Dispose();
+						}, // Delete context
+						() =>
+						{
+							lock (lObject)
+								_openTKContext.SwapBuffers();
+						}, // Swap buffers
+						(vsync) => _openTKContext.SwapInterval = vsync ? 1 : 0
+					);
+
+				return GraphicsDevice.CreateOpenGL(_options, platformInfo, 1, 1);
+			}
+			Device = backend switch
+		{
+				GraphicsBackend.OpenGL => CreateOpenglDevice(),
+				GraphicsBackend.Direct3D11 => GraphicsDevice.CreateD3D11(_options),
+				GraphicsBackend.Vulkan => GraphicsDevice.CreateVulkan(_options),
+				_ => throw new NotSupportedException("The selected graphics backend is not supported."),
+			};
 
 			Initialize();
 			Swapchain = Context.GraphicBackend.CreateSwapchain(control, _options);
