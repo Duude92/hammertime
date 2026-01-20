@@ -259,6 +259,7 @@ namespace Sledge.Rendering.Engine
 			{
 				Scene.Update(frame);
 				var overlays = Scene.GetOverlayRenderables().ToList();
+				_commandList.Begin();
 
 				foreach (var rt in _renderTargets)
 				{
@@ -277,14 +278,12 @@ namespace Sledge.Rendering.Engine
 					Swapchain?.Resize((uint)r.X, (uint)r.Y);
 				}
 
-				_commandList.Begin();
 				_commandList.SetFramebuffer(Swapchain.Framebuffer);
 				_commandList.ClearColorTarget(0, RgbaFloat.Grey);
 
 
 				foreach (var rt in _renderTargets)
 				{
-					_commandList.SetFramebuffer(Swapchain.Framebuffer);
 					var vp = rt.GetViewport();
 					_commandList.SetViewport(0, vp);
 					_commandList.SetScissorRect(0, (uint)vp.X, (uint)vp.Y, (uint)vp.Width, (uint)vp.Height);
@@ -301,7 +300,6 @@ namespace Sledge.Rendering.Engine
 
 		private void Render(IViewport renderTarget)
 		{
-			_commandList.Begin();
 			_commandList.SetFramebuffer(renderTarget.ViewportFramebuffer);
 			_commandList.ClearDepthStencil(1);
 
@@ -349,14 +347,14 @@ namespace Sledge.Rendering.Engine
 
 			foreach (var opaque in _pipelines[PipelineGroup.Opaque])
 			{
-				opaque.SetupFrame(Context, _cameraBuffer);
+				opaque.SetupFrame(Context, _commandList, _cameraBuffer);
 				opaque.Render(Context, renderTarget, _commandList, Scene.GetRenderables(opaque, renderTarget));
 			}
 
 
 			foreach (var transparent in transparentPipelines)
 			{
-				transparent.SetupFrame(Context, _cameraBuffer);
+				transparent.SetupFrame(Context, _commandList, _cameraBuffer);
 			}
 			foreach (var lo in locationObjects)
 			{
@@ -371,14 +369,12 @@ namespace Sledge.Rendering.Engine
 
 			foreach (var overlay in _pipelines[PipelineGroup.Overlay])
 			{
-				overlay.SetupFrame(Context, _cameraBuffer);
+				overlay.SetupFrame(Context, _commandList, _cameraBuffer);
 				overlay.Render(Context, renderTarget, _commandList, Scene.GetRenderables(overlay, renderTarget));
 			}
 
 			renderTarget.ResolveRenderTexture(_commandList);
 
-			_commandList.End();
-			Device.SubmitCommands(_commandList);
 		}
 
 		// Viewports
