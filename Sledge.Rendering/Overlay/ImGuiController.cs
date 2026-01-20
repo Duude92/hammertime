@@ -381,7 +381,7 @@ namespace Sledge.Rendering.Overlay
 
         private void RenderImDrawData(ImDrawDataPtr draw_data, GraphicsDevice gd, CommandList cl)
         {
-            uint vertexOffsetInVertices = 0;
+			uint vertexOffsetInVertices = 0;
             uint indexOffsetInElements = 0;
 
             if (draw_data.CmdListsCount == 0)
@@ -433,7 +433,7 @@ namespace Sledge.Rendering.Overlay
                 -1.0f,
                 1.0f);
 
-            _gd.UpdateBuffer(_projMatrixBuffer, 0, ref mvp);
+            cl.UpdateBuffer(_projMatrixBuffer, 0, ref mvp);
 
             cl.SetVertexBuffer(0, _vertexBuffer);
             cl.SetIndexBuffer(_indexBuffer, IndexFormat.UInt16);

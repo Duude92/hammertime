@@ -97,6 +97,13 @@ namespace Sledge.Rendering.Pipelines
 
 		public void SetupFrame(RenderContext context, CommandList cl, Engine.Engine.ViewProjectionBuffer viewProjectionBuffer)
 		{
+			cl.UpdateBuffer(_projectionBuffer, 0, new UniformProjection
+			{
+				Selective = context.SelectiveTransform,
+				Model = Matrix4x4.Identity,
+				View = Matrix4x4.Identity,
+				Projection = Matrix4x4.CreateOrthographicOffCenter(0, 1, 1, 0, -1, 1)
+			});
 		}
 	}
 }
