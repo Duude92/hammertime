@@ -20,7 +20,7 @@ struct FragmentIn
     uint Flags;
 };
 
-layout(binding = 0, std140) uniform type_Projection
+layout(binding = 0, std140) uniform Projection
 {
     layout(row_major)
 mat4 Selective;
@@ -31,7 +31,7 @@ mat4 View;
     layout(row_major)
 mat4 Projection;
 }
-Projection;
+iProjection;
 
 layout(location = 0) in
 vec3 in_var_POSITION0;
@@ -65,12 +65,12 @@ mat4 spvWorkaroundRowMajor(mat4 wrap)
 
 FragmentIn src_main(VertexIn _input)
 {
-    mat4 tModel = transpose(spvWorkaroundRowMajor(Projection.Model));
-    mat4 tView = transpose(spvWorkaroundRowMajor(Projection.View));
-    mat4 tProjection = transpose(spvWorkaroundRowMajor(Projection.Projection));
+    mat4 tModel = transpose(spvWorkaroundRowMajor(iProjection.Model));
+    mat4 tView = transpose(spvWorkaroundRowMajor(iProjection.View));
+    mat4 tProjection = transpose(spvWorkaroundRowMajor(iProjection.Projection));
     vec4 position = vec4(_input.Position, 1.0);
     vec4 normal = vec4(_input.Normal, 1.0);
-    mat4 _114 = transpose(spvWorkaroundRowMajor(Projection.Selective));
+    mat4 _114 = transpose(spvWorkaroundRowMajor(iProjection.Selective));
     vec4 _123 = vec4(float((_input.Flags & Flags_SelectiveTransformed) / Flags_SelectiveTransformed));
     mat4 _124 = mat4(_123, _123, _123, _123);
     position = mat4(mix(Identity[0], _114[0], _124[0]), mix(Identity[1], _114[1], _124[1]), mix(Identity[2], _114[2], _124[2]), mix(Identity[3], _114[3], _124[3])) * position;

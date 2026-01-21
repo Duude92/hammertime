@@ -18,7 +18,7 @@ struct FragmentIn
     uint fBone;
 };
 
-layout(binding = 0, std140) uniform type_Projection
+layout(binding = 0, std140) uniform Projection
 {
     layout(row_major)
 mat4 Selective;
@@ -29,7 +29,7 @@ mat4 View;
     layout(row_major)
 mat4 Projection;
 }
-Projection;
+iProjection;
 
 layout(binding = 1, std140) uniform uTransforms
 {
@@ -63,9 +63,9 @@ mat4 spvWorkaroundRowMajor(mat4 wrap)
 
 FragmentIn src_main(VertexIn _input)
 {
-    mat4 tModel = transpose(spvWorkaroundRowMajor(Projection.Model));
-    mat4 tView = transpose(spvWorkaroundRowMajor(Projection.View));
-    mat4 tProjection = transpose(spvWorkaroundRowMajor(Projection.Projection));
+    mat4 tModel = transpose(spvWorkaroundRowMajor(iProjection.Model));
+    mat4 tView = transpose(spvWorkaroundRowMajor(iProjection.View));
+    mat4 tProjection = transpose(spvWorkaroundRowMajor(iProjection.Projection));
     vec4 position = vec4(_input.Position, 1.0);
     vec4 normal = vec4(_input.Normal, 1.0);
     mat4 bone = transpose(spvWorkaroundRowMajor(BoneTransforms[_input.Bone]));

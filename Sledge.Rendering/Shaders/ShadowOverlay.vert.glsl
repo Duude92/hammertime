@@ -21,7 +21,7 @@ struct FragmentIn
     vec4 sPosition;
 };
 
-layout(binding = 0, std140) uniform type_Projection
+layout(binding = 0, std140) uniform Projection
 {
     layout(row_major)
 mat4 Selective;
@@ -32,7 +32,7 @@ mat4 View;
     layout(row_major)
 mat4 Projection;
 }
-Projection;
+iProjection;
 
 layout(binding = 0, std140) uniform type_LightData
 {
@@ -82,12 +82,12 @@ mat4 spvWorkaroundRowMajor(mat4 wrap)
 
 FragmentIn src_main(VertexIn _input)
 {
-    mat4 tModel = transpose(spvWorkaroundRowMajor(Projection.Model));
-    mat4 tView = transpose(spvWorkaroundRowMajor(Projection.View));
-    mat4 tProjection = transpose(spvWorkaroundRowMajor(Projection.Projection));
+    mat4 tModel = transpose(spvWorkaroundRowMajor(iProjection.Model));
+    mat4 tView = transpose(spvWorkaroundRowMajor(iProjection.View));
+    mat4 tProjection = transpose(spvWorkaroundRowMajor(iProjection.Projection));
     vec4 position = vec4(_input.Position, 1.0);
     vec4 normal = vec4(_input.Normal, 1.0);
-    mat4 _125 = transpose(spvWorkaroundRowMajor(Projection.Selective));
+    mat4 _125 = transpose(spvWorkaroundRowMajor(iProjection.Selective));
     vec4 _134 = vec4(float((_input.Flags & Flags_SelectiveTransformed) / Flags_SelectiveTransformed));
     mat4 _135 = mat4(_134, _134, _134, _134);
     position = mat4(mix(Identity[0], _125[0], _135[0]), mix(Identity[1], _125[1], _135[1]), mix(Identity[2], _125[2], _135[2]), mix(Identity[3], _125[3], _135[3])) * position;

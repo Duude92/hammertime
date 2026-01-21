@@ -17,13 +17,13 @@ struct FragmentIn
     vec3 fTexture;
 };
 
-layout(binding = 0, std140) uniform type_Projection
+layout(binding = 0, std140) uniform Projection
 {
     mat4 Selective;
     mat4 Model;
     mat4 View;
     mat4 Projection;
-};
+}iProjection;
 
 layout(binding = 1, std140) uniform uTransforms
 {
@@ -48,16 +48,16 @@ uint Flags_SelectiveTransformed;
 
 FragmentIn src_main(VertexIn _input)
 {
-    mat4 tModel = transpose(Model);
-    mat4 tView = transpose(View);
-    mat4 tProjection = transpose(Projection);
+    mat4 tModel = transpose(iProjection.Model);
+    mat4 tView = transpose(iProjection.View);
+    mat4 tProjection = transpose(iProjection.Projection);
     vec4 position = vec4(_input.Position.xyz, 1.0);
     vec4 normal = vec4(_input.Normal.xyz, 1.0);
     mat4 bone = transpose(BoneTransforms[_input.Bone.x]);
     position = bone * position;
     normal = bone * normal ;
     vec4 modelPos = position*tModel;
-    modelPos = transpose(Selective) * modelPos;
+    modelPos = transpose(iProjection.Selective) * modelPos;
     vec4 cameraPos = modelPos * tView;
     vec4 viewportPos = cameraPos * tProjection;
     FragmentIn _output;

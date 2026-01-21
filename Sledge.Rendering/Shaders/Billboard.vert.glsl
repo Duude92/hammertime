@@ -19,7 +19,7 @@ struct GeometryIn
     vec4 gTint;
 };
 
-layout(binding = 0, std140) uniform type_Projection
+layout(binding = 0, std140) uniform Projection
 {
     layout(row_major)
 mat4 Selective;
@@ -30,7 +30,7 @@ mat4 View;
     layout(row_major)
 mat4 Projection;
 }
-Projection;
+iProjection;
 
 layout(location = 0) in
 vec3 in_var_POSITION0;
@@ -64,7 +64,7 @@ GeometryIn src_main(VertexIn _input)
 {
     vec4 position = vec4(_input.Position, 1.0);
     vec4 normal = vec4(_input.Normal, 1.0);
-    mat4 _95 = transpose(spvWorkaroundRowMajor(Projection.Selective));
+    mat4 _95 = transpose(spvWorkaroundRowMajor(iProjection.Selective));
     vec4 _104 = vec4(float((_input.Flags & Flags_SelectiveTransformed) / Flags_SelectiveTransformed));
     mat4 _105 = mat4(_104, _104, _104, _104);
     position = mat4(mix(Identity[0], _95[0], _105[0]), mix(Identity[1], _95[1], _105[1]), mix(Identity[2], _95[2], _105[2]), mix(Identity[3], _95[3], _105[3])) * position;

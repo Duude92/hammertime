@@ -16,7 +16,7 @@ struct PS_INPUT
     vec3 TexCoord;
 };
 
-layout(binding = 0, std140) uniform type_Projection
+layout(binding = 0, std140) uniform Projection
 {
     layout(row_major)
 mat4 Selective;
@@ -27,7 +27,7 @@ mat4 View;
     layout(row_major)
 mat4 Projection;
 }
-Projection;
+iProjection;
 
 layout(location = 0) in
 vec3 in_var_POSITION0;
@@ -95,9 +95,9 @@ mat4 _inverse(mat4 m)
 
 PS_INPUT src_main(VertexIn _input)
 {
-    mat4 param_var_m = spvWorkaroundRowMajor(Projection.View);
+    mat4 param_var_m = spvWorkaroundRowMajor(iProjection.View);
     PS_INPUT _output;
-    _output.Position = ((spvWorkaroundRowMajor(Projection.Projection) * _inverse(param_var_m)) * vec4(_input.Position, 1.0)).xyww;
+    _output.Position = ((spvWorkaroundRowMajor(iProjection.Projection) * _inverse(param_var_m)) * vec4(_input.Position, 1.0)).xyww;
     _output.TexCoord = _input.Position;
     return _output;
 }
