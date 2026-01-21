@@ -1,13 +1,10 @@
-﻿using OpenTK.Graphics;
-using OpenTK.Platform;
-using Sledge.Common.Logging;
+﻿using Sledge.Common.Logging;
 using Sledge.Rendering.Shaders;
 using System;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using Veldrid;
-using Veldrid.OpenGL;
 using Veldrid.SPIRV;
 using Vortice.Dxc;
 
@@ -80,6 +77,21 @@ namespace Sledge.Rendering.Engine.Backends
 			result.Dispose();
 			return resultArray;
 		}
+		private byte[] GetShader(string name)
+		{
+			using (var s = ResourceAssembly.GetManifestResourceStream(typeof(Scope), name))
+			{
+				if (s != null)
+				{
+					using (var ms = new MemoryStream())
+					{
+						s.CopyTo(ms);
+						return ms.ToArray();
+					}
+				}
+			}
+			return null;
+		}
 		public (Shader, Shader) LoadShaders(string name)
 		{
 			var options = new CrossCompileOptions
@@ -87,8 +99,16 @@ namespace Sledge.Rendering.Engine.Backends
 				FixClipSpaceZ = true,
 				InvertVertexOutputY = false,
 			};
-			var vertex = _context.Device.ResourceFactory.CreateFromSpirv(new ShaderDescription(ShaderStages.Vertex, CompileShadersToSpirV(GetEmbeddedShader(name + ".vert.hlsl"), DxcShaderStage.Vertex), "main"), options);
-			var fragment = _context.Device.ResourceFactory.CreateFromSpirv(new ShaderDescription(ShaderStages.Fragment, CompileShadersToSpirV(GetEmbeddedShader(name + ".frag.hlsl"), DxcShaderStage.Pixel), "main"), options);
+			var vCode = GetShader(name + ".vert.glsl");
+			var fCode = GetShader(name + ".frag.glsl");
+
+
+			var vertex = vCode != null ?
+				_context.Device.ResourceFactory.CreateShader(new ShaderDescription(ShaderStages.Vertex, vCode, "main")) :
+				_context.Device.ResourceFactory.CreateFromSpirv(new ShaderDescription(ShaderStages.Vertex, CompileShadersToSpirV(GetEmbeddedShader(name + ".vert.hlsl"), DxcShaderStage.Vertex), "main"), options);
+			var fragment = fCode != null ?
+				_context.Device.ResourceFactory.CreateShader(new ShaderDescription(ShaderStages.Fragment, fCode, "main")) :
+				_context.Device.ResourceFactory.CreateFromSpirv(new ShaderDescription(ShaderStages.Fragment, CompileShadersToSpirV(GetEmbeddedShader(name + ".frag.hlsl"), DxcShaderStage.Pixel), "main"), options);
 			return (vertex, fragment);
 
 		}
