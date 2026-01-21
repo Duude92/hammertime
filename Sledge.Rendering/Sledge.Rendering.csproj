@@ -176,6 +176,8 @@
     <EmbeddedResource Include="Shaders\SwapchainOverlay.vert.glsl" />
     <EmbeddedResource Include="Shaders\SwapchainOverlay.frag.hlsl" />
     <EmbeddedResource Include="Shaders\SwapchainOverlay.vert.hlsl" />
+    <EmbeddedResource Include="Shaders\TexturedModel.frag.glsl" />
+    <EmbeddedResource Include="Shaders\TexturedModel.vert.glsl" />
     <EmbeddedResource Include="Shaders\Wireframe.frag.hlsl" />
     <EmbeddedResource Include="Shaders\Wireframe.vert.hlsl" />
   </ItemGroup>
