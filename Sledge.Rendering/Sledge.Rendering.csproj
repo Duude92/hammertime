@@ -164,22 +164,37 @@
     <PackageReference Include="Vortice.Dxc" Version="3.2.0" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Shaders\Billboard.frag.glsl" />
+    <EmbeddedResource Include="Shaders\Billboard.geom.glsl" />
+    <EmbeddedResource Include="Shaders\Billboard.vert.glsl" />
     <EmbeddedResource Include="Shaders\imgui.frag.glsl" />
     <EmbeddedResource Include="Shaders\imgui.vert.glsl" />
     <EmbeddedResource Include="Shaders\Overlay.frag.glsl" />
     <EmbeddedResource Include="Shaders\Overlay.vert.glsl" />
+    <EmbeddedResource Include="Shaders\ShadowOverlay.frag.glsl" />
+    <EmbeddedResource Include="Shaders\ShadowOverlay.vert.glsl" />
     <EmbeddedResource Include="Shaders\ShadowOverlay.frag.hlsl" />
     <EmbeddedResource Include="Shaders\ShadowOverlay.vert.hlsl" />
+    <EmbeddedResource Include="Shaders\Skybox.frag.glsl" />
+    <EmbeddedResource Include="Shaders\Skybox.vert.glsl" />
     <EmbeddedResource Include="Shaders\Skybox.frag.hlsl" />
     <EmbeddedResource Include="Shaders\Skybox.vert.hlsl" />
     <EmbeddedResource Include="Shaders\SwapchainOverlay.frag.glsl" />
     <EmbeddedResource Include="Shaders\SwapchainOverlay.vert.glsl" />
     <EmbeddedResource Include="Shaders\SwapchainOverlay.frag.hlsl" />
     <EmbeddedResource Include="Shaders\SwapchainOverlay.vert.hlsl" />
+    <EmbeddedResource Include="Shaders\TexturedAlpha.frag.glsl" />
+    <EmbeddedResource Include="Shaders\TexturedAlpha.vert.glsl" />
     <EmbeddedResource Include="Shaders\TexturedModel.frag.glsl" />
     <EmbeddedResource Include="Shaders\TexturedModel.vert.glsl" />
+    <EmbeddedResource Include="Shaders\TexturedOpaque.frag.glsl" />
+    <EmbeddedResource Include="Shaders\TexturedOpaque.vert.glsl" />
+    <EmbeddedResource Include="Shaders\Wireframe.frag.glsl" />
+    <EmbeddedResource Include="Shaders\Wireframe.vert.glsl" />
     <EmbeddedResource Include="Shaders\Wireframe.frag.hlsl" />
     <EmbeddedResource Include="Shaders\Wireframe.vert.hlsl" />
+    <EmbeddedResource Include="Shaders\WireframeModel.frag.glsl" />
+    <EmbeddedResource Include="Shaders\WireframeModel.vert.glsl" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sledge.Common\Sledge.Common.csproj">
