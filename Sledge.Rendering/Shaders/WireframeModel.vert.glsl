@@ -31,12 +31,10 @@ mat4 Projection;
 }
 Projection;
 
-layout(binding = 0, std140) uniform type_BoneTransforms
+layout(binding = 1, std140) uniform uTransforms
 {
-    layout(row_major)
-mat4 uTransforms[128];
-}
-BoneTransforms;
+    layout(row_major) mat4 BoneTransforms[128];
+};
 
 layout(location = 0) in
 vec3 in_var_POSITION0;
@@ -70,7 +68,7 @@ FragmentIn src_main(VertexIn _input)
     mat4 tProjection = transpose(spvWorkaroundRowMajor(Projection.Projection));
     vec4 position = vec4(_input.Position, 1.0);
     vec4 normal = vec4(_input.Normal, 1.0);
-    mat4 bone = transpose(spvWorkaroundRowMajor(BoneTransforms.uTransforms[_input.Bone]));
+    mat4 bone = transpose(spvWorkaroundRowMajor(BoneTransforms[_input.Bone]));
     position = bone * position;
     normal = bone * normal;
     vec4 modelPos = tModel * position;
