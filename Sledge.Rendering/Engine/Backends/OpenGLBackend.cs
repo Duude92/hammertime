@@ -1,4 +1,5 @@
 ﻿using Sledge.Common.Logging;
+using Sledge.Common.Shell.Context;
 using Sledge.Rendering.Shaders;
 using System;
 using System.IO;
@@ -126,6 +127,7 @@ namespace Sledge.Rendering.Engine.Backends
 			return (vertex, geom, fragment);
 		}
 		private static readonly Assembly ResourceAssembly = Assembly.GetExecutingAssembly();
+		private OpenglSwapchainAdapter _swapchain;
 
 		private static byte[] GetEmbeddedShader(string name)
 		{
@@ -152,7 +154,14 @@ namespace Sledge.Rendering.Engine.Backends
 
 		public Swapchain CreateSwapchain(Control control, GraphicsDeviceOptions options)
 		{
-			return new OpenglSwapchainAdapter(_context.Device);
+			_swapchain = new OpenglSwapchainAdapter(_context.Device);
+			return _swapchain;
+		}
+
+		public void SetScissors(CommandList cl, Viewport vp)
+		{
+			vp.Y = _swapchain.Framebuffer.Height - (vp.Y + vp.Height);
+			cl.SetScissorRect(0, (uint)vp.X, (uint)vp.Y, (uint)vp.Width, (uint)vp.Height);
 		}
 	}
 	internal class OpenglSwapchainAdapter : Swapchain

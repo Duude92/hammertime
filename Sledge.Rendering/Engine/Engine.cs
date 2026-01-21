@@ -290,7 +290,7 @@ namespace Sledge.Rendering.Engine
 				{
 					var vp = rt.GetViewport();
 					_commandList.SetViewport(0, vp);
-					_commandList.SetScissorRect(0, (uint)vp.X, (uint)vp.Y, (uint)vp.Width, (uint)vp.Height);
+					Context.GraphicBackend.SetScissors(_commandList, vp);
 					SwapchainOverlayPipeline.SetupFrame(Context, _cameraBuffer);
 					SwapchainOverlayPipeline.Render(Context, rt, _commandList, Scene.GetRenderables(SwapchainOverlayPipeline, rt));
 				}
@@ -386,12 +386,10 @@ namespace Sledge.Rendering.Engine
 		internal event EventHandler<IViewport> ViewportCreated;
 		internal event EventHandler<IViewport> ViewportDestroyed;
 
-
 		internal void CreateSwapChain(Control control, GraphicsBackend backend = GraphicsBackend.Direct3D11)
 		{
 			GraphicsDevice CreateOpenglDevice()
 			{
-
 				var WindowInfo = Utilities.CreateWindowsWindowInfo(control.Handle);
 
 				GraphicsMode mode = new GraphicsMode(new ColorFormat(32), 24, 8, 0);
@@ -441,7 +439,7 @@ namespace Sledge.Rendering.Engine
 				return GraphicsDevice.CreateOpenGL(_options, platformInfo, 1, 1);
 			}
 			Device = backend switch
-		{
+			{
 				GraphicsBackend.OpenGL => CreateOpenglDevice(),
 				GraphicsBackend.Direct3D11 => GraphicsDevice.CreateD3D11(_options),
 				GraphicsBackend.Vulkan => GraphicsDevice.CreateVulkan(_options),
@@ -506,7 +504,7 @@ namespace Sledge.Rendering.Engine
 
 				}
 				if (!RenderThread.IsAlive)
-				Start();
+					Start();
 			}
 		}
 

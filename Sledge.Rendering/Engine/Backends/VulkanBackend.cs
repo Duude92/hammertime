@@ -139,5 +139,10 @@ namespace Sledge.Rendering.Engine.Backends
 
 			return _context.Device.ResourceFactory.CreateSwapchain(desc);
 		}
+		public void SetScissors(CommandList cl, Viewport vp)
+		{
+			cl.SetScissorRect(0, (uint)vp.X, (uint)vp.Y, (uint)vp.Width, (uint)vp.Height);
+		}
+
 	}
 }

@@ -12,5 +12,6 @@ namespace Sledge.Rendering.Engine.Backends
 		public (Shader, Shader, Shader) LoadShadersGeometry(string name);
 		public RasterizerStateDescription RasterizerStateDescription { get; }
 		public Swapchain CreateSwapchain(Control control, GraphicsDeviceOptions options);
+		public void SetScissors(CommandList cl, Viewport viewport);
 	}
 }
