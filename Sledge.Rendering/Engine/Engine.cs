@@ -121,7 +121,17 @@ namespace Sledge.Rendering.Engine
 			_pipelines.Add(PipelineGroup.Transparent, new List<IPipeline>());
 			_pipelines.Add(PipelineGroup.Overlay, new List<IPipeline>());
 		}
-
+		private void ClearPipelines()
+		{
+			foreach (var group in _pipelines.Values)
+			{
+				foreach (var pipeline in group)
+				{
+					pipeline.Dispose();
+				}
+				group.Clear();
+			}
+		}
 		private void InitPipelines()
 		{
 			AddPipeline(new SkyboxPipeline());
@@ -500,6 +510,7 @@ namespace Sledge.Rendering.Engine
 				{
 
 				_sampleCount = (TextureSampleCount)mSAAoption;
+					ClearPipelines();
 				InitPipelines();
 
 				foreach (var rt in _renderTargets)
@@ -509,7 +520,6 @@ namespace Sledge.Rendering.Engine
 					rt.InitFramebuffer(_sampleCount);
 					Scene.Add((IRenderable)rt.Overlay);
 					Scene.Add((IUpdateable)rt.Overlay);
-
 				}
 				if (!RenderThread.IsAlive)
 					Start();
