@@ -203,8 +203,10 @@ namespace Sledge.Rendering.Engine
 
 		// Render loop
 
+		private bool _started = false;
 		private void Start()
 		{
+			_started = true;
 			_timer.Start();
 			RenderThread.Start(_token.Token);
 			RenderThread.Name = "Render Thread";
@@ -521,7 +523,7 @@ namespace Sledge.Rendering.Engine
 					Scene.Add((IRenderable)rt.Overlay);
 					Scene.Add((IUpdateable)rt.Overlay);
 				}
-				if (!RenderThread.IsAlive)
+					if (!_started)
 					Start();
 			}
 		}
