@@ -86,6 +86,8 @@ namespace Sledge.Rendering.Pipelines
 				View = viewProjectionBuffer.View,
 				Projection = viewProjectionBuffer.Projection,
 			});
+			cl.SetPipeline(_pipeline);
+			cl.SetGraphicsResourceSet(0, _projectionResourceSet);
 		}
 
 		public void Render(RenderContext context, IViewport target, CommandList cl, IEnumerable<IRenderable> renderables)
@@ -101,8 +103,7 @@ namespace Sledge.Rendering.Pipelines
 
         public void Render(RenderContext context, IViewport target, CommandList cl, IRenderable renderable, ILocation locationObject)
         {
-            cl.SetPipeline(_pipeline);
-            cl.SetGraphicsResourceSet(0, _projectionResourceSet);
+
 
             renderable.Render(context, this, target, cl, locationObject);
         }

@@ -355,13 +355,14 @@ namespace Sledge.Rendering.Engine
 				opaque.Render(Context, renderTarget, _commandList, Scene.GetRenderables(opaque, renderTarget));
 			}
 
-
-			foreach (var transparent in transparentPipelines)
-			{
-				transparent.SetupFrame(Context, _commandList, _cameraBuffer);
-			}
+			IPipeline lastPipeline = null;
 			foreach (var lo in locationObjects)
 			{
+				if (lastPipeline != lo.Pipeline)
+			{
+					lo.Pipeline.SetupFrame(Context, _commandList, _cameraBuffer);
+					lastPipeline = lo.Pipeline;
+			}
 				lo.Pipeline.Render(Context, renderTarget, _commandList, lo.Renderable, lo.Location);
 			}
 

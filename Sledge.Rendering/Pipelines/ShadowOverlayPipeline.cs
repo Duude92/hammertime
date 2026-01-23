@@ -136,6 +136,12 @@ new BufferDescription((uint)Unsafe.SizeOf<Matrix4x4>(), BufferUsage.UniformBuffe
 
 			cl.UpdateBuffer(_lightDirection, 0, _lightData.View);
 			cl.UpdateBuffer(_lightProjection, 0, _lightData.Projection);
+
+			cl.SetPipeline(_pipeline);
+			cl.SetGraphicsResourceSet(0, _projectionResourceSet);
+
+			cl.SetGraphicsResourceSet(2, _lightDirectionSet);
+			cl.SetGraphicsResourceSet(3, _lightProjectionSet);
 		}
 		public void Render(RenderContext context, IViewport target, CommandList cl, IEnumerable<IRenderable> renderables) {
 			if (target.Camera is not PerspectiveCamera) return;
@@ -155,11 +161,7 @@ new BufferDescription((uint)Unsafe.SizeOf<Matrix4x4>(), BufferUsage.UniformBuffe
 		public void Render(RenderContext context, IViewport target, CommandList cl, IRenderable renderable, ILocation locationObject)
 		{
 			if (target.Camera is not PerspectiveCamera) return;
-			cl.SetPipeline(_pipeline);
-			cl.SetGraphicsResourceSet(0, _projectionResourceSet);
 
-			cl.SetGraphicsResourceSet(2, _lightDirectionSet);
-			cl.SetGraphicsResourceSet(3, _lightProjectionSet);
 
 			renderable.Render(context, this, target, cl, locationObject);
 		}
