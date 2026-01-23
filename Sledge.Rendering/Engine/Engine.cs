@@ -491,6 +491,9 @@ namespace Sledge.Rendering.Engine
 		{
 			lock (_lock)
 			{
+				using (Pause())
+				{
+
 				_sampleCount = (TextureSampleCount)mSAAoption;
 				InitPipelines();
 
@@ -506,6 +509,7 @@ namespace Sledge.Rendering.Engine
 				if (!RenderThread.IsAlive)
 					Start();
 			}
+		}
 		}
 
 		public void Resize(int v1, int v2)
