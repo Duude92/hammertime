@@ -64,6 +64,7 @@ namespace Sledge.Rendering.Engine
 			_renderTargets = new List<IViewport>();
 			_pipelines = new Dictionary<PipelineGroup, List<IPipeline>>();
 
+			InitPipelineGroups();
 		}
 		public void Initialize()
 		{
@@ -112,6 +113,10 @@ namespace Sledge.Rendering.Engine
 			SwapchainOverlayPipeline.Create(Context, TextureSampleCount.Count1);
 
 			Application.ApplicationExit += Shutdown;
+		}
+
+		private void InitPipelineGroups()
+		{
 			_pipelines.Add(PipelineGroup.Opaque, new List<IPipeline>());
 			_pipelines.Add(PipelineGroup.Transparent, new List<IPipeline>());
 			_pipelines.Add(PipelineGroup.Overlay, new List<IPipeline>());
