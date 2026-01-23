@@ -1,8 +1,7 @@
 ﻿using OpenTK.Graphics;
 using OpenTK.Platform;
-using SharpDX.Direct3D;
+using Vortice.Direct3D;
 using Sledge.Rendering.Cameras;
-using Sledge.Rendering.Engine.Backends;
 using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.Pipelines;
 using Sledge.Rendering.Renderables;
@@ -137,8 +136,9 @@ namespace Sledge.Rendering.Engine
 
 		private void DetectFeatures(GraphicsDevice device)
 		{
+			Features.GraphicFeatures = device.Features;
 			var dev = device.GetType().GetProperty("Device");
-			var dxd = dev?.GetValue(device) as SharpDX.Direct3D11.Device;
+			var dxd = dev?.GetValue(device) as Vortice.Direct3D11.ID3D11Device;
 			var fl = dxd?.FeatureLevel ?? FeatureLevel.Level_10_0; // Just assume it's DX10, whatever
 			if (fl < FeatureLevel.Level_10_0)
 			{
