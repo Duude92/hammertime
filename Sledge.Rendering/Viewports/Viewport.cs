@@ -92,6 +92,7 @@ namespace Sledge.Rendering.Viewports
 				PixelFormat.R32_Float,
 				TextureUsage.DepthStencil,
 				 sampleCount));
+			_viewportResolvedTexture?.Dispose();
 			_viewportResolvedTexture = _device.ResourceFactory.CreateTexture(TextureDescription.Texture2D(width, height, 1, 1, PixelFormat.B8_G8_R8_A8_UNorm, TextureUsage.Sampled,
 				TextureSampleCount.Count1));
 			TextureDescription mainColorDesc = TextureDescription.Texture2D(
@@ -102,8 +103,11 @@ namespace Sledge.Rendering.Viewports
 				PixelFormat.B8_G8_R8_A8_UNorm,
 				TextureUsage.RenderTarget | TextureUsage.Sampled,
 				sampleCount);
+			_mainSceneColorTexture?.Dispose();
 			_mainSceneColorTexture = _device.ResourceFactory.CreateTexture(ref mainColorDesc);
+			ViewportFramebuffer?.Dispose();
 			ViewportFramebuffer = _device.ResourceFactory.CreateFramebuffer(new FramebufferDescription(mainSceneDepthTexture, _mainSceneColorTexture));
+			ViewportRenderTexture?.Dispose();
 			ViewportRenderTexture = new Sledge.Rendering.Resources.Texture(Engine.Engine.Instance.Context, _viewportResolvedTexture, Resources.TextureSampleType.Standard);
 			if (sampleCount == TextureSampleCount.Count1)
 			{
