@@ -245,7 +245,6 @@ namespace Sledge.Rendering.Engine
 
 					lastFrame = frame;
 					Render(frame);
-					Device.WaitForIdle();
 				}
 			}
 			catch (ThreadInterruptedException)
