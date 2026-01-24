@@ -405,6 +405,11 @@ namespace Sledge.Rendering.Engine
 
 		internal void CreateSwapChain(Control control, GraphicsBackend backend = GraphicsBackend.Direct3D11)
 		{
+			if(Device?.BackendType == (Veldrid.GraphicsBackend)(backend))
+			{
+				// FIXME: do not recreate device if same backend
+				return;
+			}
 			GraphicsDevice CreateOpenglDevice()
 			{
 				var WindowInfo = Utilities.CreateWindowsWindowInfo(control.Handle);
@@ -544,9 +549,9 @@ namespace Sledge.Rendering.Engine
 	public enum GraphicsBackend
 	{
 		Direct3D11 = 0,
-		OpenGL = 1,
-		Vulkan = 2,
+		Vulkan = 1,
+		OpenGL = 2,
 		Metal = 3,
-		OpenGLES = 4
+		OpenGLES = 4,
 	}
 }
