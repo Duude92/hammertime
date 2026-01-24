@@ -259,22 +259,22 @@ namespace Sledge.Rendering.Overlay
         {
             switch (factory.BackendType)
             {
-                case GraphicsBackend.Direct3D11:
+                case Veldrid.GraphicsBackend.Direct3D11:
                     {
                         string resourceName = name + ".hlsl.bytes";
                         return GetEmbeddedResourceBytes(resourceName);
                     }
-                case GraphicsBackend.OpenGL:
+                case Veldrid.GraphicsBackend.OpenGL:
                     {
                         string resourceName = name + ".glsl";
                         return GetEmbeddedResourceBytes(resourceName);
                     }
-                case GraphicsBackend.Vulkan:
+                case Veldrid.GraphicsBackend.Vulkan:
                     {
                         string resourceName = name + ".spv";
                         return GetEmbeddedResourceBytes(resourceName);
                     }
-                case GraphicsBackend.Metal:
+                case Veldrid.GraphicsBackend.Metal:
                     {
                         string resourceName = name + ".metallib";
                         return GetEmbeddedResourceBytes(resourceName);

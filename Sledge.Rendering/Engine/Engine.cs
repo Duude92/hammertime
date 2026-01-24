@@ -540,4 +540,13 @@ namespace Sledge.Rendering.Engine
 			public Matrix4x4 View;
 		}
 	}
+	// I can use veldrid's enum directly, but this I can modify
+	public enum GraphicsBackend
+	{
+		Direct3D11 = 0,
+		OpenGL = 1,
+		Vulkan = 2,
+		Metal = 3,
+		OpenGLES = 4
+	}
 }

@@ -17,10 +17,10 @@ namespace Sledge.Rendering.Engine
 		{
 			GraphicBackend = device.BackendType switch
 			{
-				GraphicsBackend.Vulkan => new VulkanBackend(this),
-				GraphicsBackend.Direct3D11 => new D3d11Backend(this),
+				Veldrid.GraphicsBackend.Vulkan => new VulkanBackend(this),
+				Veldrid.GraphicsBackend.Direct3D11 => new D3d11Backend(this),
 				//GraphicsBackend.Metal => new MetalBackend(this),
-				GraphicsBackend.OpenGL => new OpenGLBackend(this),
+				Veldrid.GraphicsBackend.OpenGL => new OpenGLBackend(this),
 				//GraphicsBackend.OpenGLES => new OpenGLESBackend(this),
 				_ => throw new NotSupportedException($"The graphics backend {device.BackendType} is not supported."),
 			};
