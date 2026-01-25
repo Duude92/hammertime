@@ -314,6 +314,7 @@ namespace Sledge.BspEditor.Components
 			}
 
 			store.Set("Controls", controls);
+			store.Set("RenderApi", _graphicApi);
 		}
 
 		// Create and update controls
