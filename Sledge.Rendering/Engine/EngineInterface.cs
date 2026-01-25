@@ -189,9 +189,9 @@ namespace Sledge.Rendering.Engine
 		//TODO: Move this to the DisplayData? if baking approach be more reliable
 		public Vector3 GetLightAnglesRadians() => Engine.Instance.LightAngle;
 
-		public void CreateSwapChain(Control table)
+		public void SetControlHost(Control table)
 		{
-			Engine.Instance.CreateSwapChain(table);
+			Engine.Instance.SetControlHost(table);
 		}
 
 		public void Resize(int v1, int v2)

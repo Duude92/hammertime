@@ -224,6 +224,7 @@ namespace Sledge.Rendering.Engine
 		private int _paused = 0;
 		private TextureSampleCount _sampleCount = TextureSampleCount.Count1;
 		private Point? _resize;
+		private Control _hostControl;
 		private readonly ManualResetEvent _pauseThreadEvent = new ManualResetEvent(false);
 
 		public IDisposable Pause()
@@ -403,9 +404,14 @@ namespace Sledge.Rendering.Engine
 		internal event EventHandler<IViewport> ViewportCreated;
 		internal event EventHandler<IViewport> ViewportDestroyed;
 
-		internal void CreateSwapChain(Control control, GraphicsBackend backend = GraphicsBackend.Direct3D11)
+		internal void SetControlHost(Control control, GraphicsBackend backend = GraphicsBackend.Direct3D11)
 		{
-			if(Device?.BackendType == (Veldrid.GraphicsBackend)(backend))
+			_hostControl = control;
+			CreateDevice(control, backend);
+		}
+		private void CreateDevice(Control control, GraphicsBackend backend)
+		{
+			if (Device?.BackendType == (Veldrid.GraphicsBackend)(backend))
 			{
 				// FIXME: do not recreate device if same backend
 				return;
