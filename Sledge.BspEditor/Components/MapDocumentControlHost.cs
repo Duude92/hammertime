@@ -71,6 +71,7 @@ namespace Sledge.BspEditor.Components
 			{
 				if (document is MapDocument mapDocument) _activeDocument = mapDocument;
 			});
+			Engine.Interface.CreateSwapChain(MainWindow.Table);
 		}
 
 		public void OnUIShutdown()
@@ -275,7 +276,6 @@ namespace Sledge.BspEditor.Components
 				{
 					controls = HostedControl.Default(0);
 				}
-				Engine.Interface.CreateSwapChain(MainWindow.Table);
 
 				foreach (var hc in controls)
 				{
