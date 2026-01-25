@@ -199,6 +199,11 @@ namespace Sledge.Rendering.Engine
 			Engine.Instance.Resize(v1, v2);
 		}
 
+		public void SetGraphicsBackend(GraphicsBackend renderApi)
+		{
+			Engine.Instance.SetGraphicsBackend(renderApi);
+		}
+
 		public bool ShadowsEnabled { get => Engine.Instance.IsShadowsEnabled; set => Engine.Instance.IsShadowsEnabled = value; }
 	}
 }

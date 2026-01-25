@@ -225,6 +225,7 @@ namespace Sledge.Rendering.Engine
 		private TextureSampleCount _sampleCount = TextureSampleCount.Count1;
 		private Point? _resize;
 		private Control _hostControl;
+		private GraphicsBackend _renderApi = GraphicsBackend.None;
 		private readonly ManualResetEvent _pauseThreadEvent = new ManualResetEvent(false);
 
 		public IDisposable Pause()
@@ -404,10 +405,22 @@ namespace Sledge.Rendering.Engine
 		internal event EventHandler<IViewport> ViewportCreated;
 		internal event EventHandler<IViewport> ViewportDestroyed;
 
-		internal void SetControlHost(Control control, GraphicsBackend backend = GraphicsBackend.Direct3D11)
+		internal void SetControlHost(Control control)
 		{
+			if (_hostControl == control) return;
 			_hostControl = control;
-			CreateDevice(control, backend);
+			CreateDevice();
+		}
+		internal void SetGraphicsBackend(GraphicsBackend renderApi)
+		{
+			if (_renderApi == renderApi) return;
+			_renderApi = renderApi;
+			CreateDevice();
+		}
+		private void CreateDevice()
+		{
+			if (_hostControl == null || _renderApi == GraphicsBackend.None) return;
+			CreateDevice(_hostControl, _renderApi);
 		}
 		private void CreateDevice(Control control, GraphicsBackend backend)
 		{
@@ -559,5 +572,6 @@ namespace Sledge.Rendering.Engine
 		OpenGL = 2,
 		Metal = 3,
 		OpenGLES = 4,
+		None = 5
 	}
 }
