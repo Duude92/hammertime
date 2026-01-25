@@ -229,7 +229,7 @@ namespace Sledge.BspEditor.Components
 
 		public IEnumerable<SettingKey> GetKeys()
 		{
-			yield break;
+			yield return new SettingKey("Rendering", "RenderApi", typeof(GraphicsBackend));
 		}
 
 		public void LoadValues(ISettingsStore store)
@@ -270,6 +270,9 @@ namespace Sledge.BspEditor.Components
 						container.Table.ColumnSizes = config.ColumnSizes;
 					}
 				}
+				_graphicApi = store.Get<GraphicsBackend>("RenderApi", GraphicsBackend.Direct3D11);
+				Engine.Interface.SetGraphicsBackend(_graphicApi);
+
 
 				var controls = store.Get<List<HostedControl>>("Controls");
 				if (controls == null || !controls.Any())
@@ -352,6 +355,7 @@ namespace Sledge.BspEditor.Components
 		// Context menu
 
 		private HostedControl _contextControl;
+		private GraphicsBackend _graphicApi;
 
 		private void CreateContextMenu()
 		{

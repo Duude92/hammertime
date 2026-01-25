@@ -32,7 +32,6 @@ namespace Sledge.BspEditor.Rendering
 		[Setting] public static Color BoundaryGridLineColour { get; set; } = Color.Red;
 		[Setting("UnfocusedViewportTargetFps")] private int _targetFps { get; set; } = 10;
 		[Setting] private static MSAA_OPTION MSAAoption { get; set; } = MSAA_OPTION.MSAA_1X;
-		[Setting] private static GraphicsBackend RenderApi { get; set; } = GraphicsBackend.Direct3D11;
 		[Setting] public static float GizmoScale { get; set; } = 1.0f;
 
 		// Settings container
@@ -46,7 +45,6 @@ namespace Sledge.BspEditor.Rendering
 			yield return new SettingKey("Rendering", "OrthographicBackgroundColour", typeof(Color));
 			yield return new SettingKey("Rendering", "UnfocusedViewportTargetFps", typeof(int));
 			yield return new SettingKey("Rendering", "MSAAoption", typeof(MSAA_OPTION));
-			yield return new SettingKey("Rendering", "RenderApi", typeof(GraphicsBackend));
 			yield return new SettingKey("Rendering", "GizmoScale", typeof(decimal));
 
 
