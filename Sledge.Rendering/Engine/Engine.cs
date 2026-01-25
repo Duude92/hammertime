@@ -530,6 +530,7 @@ namespace Sledge.Rendering.Engine
 
 		internal void SetMSAA(int mSAAoption)
 		{
+			if(mSAAoption != (int)_sampleCount)
 			lock (_lock)
 			{
 				using (Pause())
