@@ -424,9 +424,16 @@ namespace Sledge.Rendering.Engine
 		}
 		private void CreateDevice(Control control, GraphicsBackend backend)
 		{
-			if (Device?.BackendType == (Veldrid.GraphicsBackend)(backend))
+			if (Device != null && Device?.BackendType != (Veldrid.GraphicsBackend)(backend))
 			{
-				// FIXME: do not recreate device if same backend
+				using (Pause())
+				{
+
+					var result = MessageBox.Show($"Changing graphics backend requires restarting Sledge.", "Graphics backend changed", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
+					if (result == DialogResult.Cancel) return;
+					Stop();
+					Application.Restart();
+				}
 				return;
 			}
 			GraphicsDevice CreateOpenglDevice()
@@ -497,7 +504,6 @@ namespace Sledge.Rendering.Engine
 			{
 				var control = new Viewports.Viewport(Device, _options, _sampleCount);
 				parent.Controls.Add(control);
-				control.InitSwapchain();
 				control.Disposed += DestroyViewport;
 
 				_renderTargets.Add(control);
@@ -530,7 +536,7 @@ namespace Sledge.Rendering.Engine
 
 		internal void SetMSAA(int mSAAoption)
 		{
-			if(mSAAoption != (int)_sampleCount)
+			if (mSAAoption != (int)_sampleCount)
 			lock (_lock)
 			{
 				using (Pause())
