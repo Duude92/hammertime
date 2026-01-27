@@ -46,7 +46,7 @@ namespace Sledge.Rendering.Pipelines
 			{
 				BlendState = BlendStateDescription.SingleDisabled,
 				DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
-				RasterizerState = RasterizerStateDescription.Default,
+				RasterizerState = context.GraphicBackend.RasterizerStateDescription,
 				PrimitiveTopology = PrimitiveTopology.TriangleList,
 				ResourceLayouts = new[] { context.ResourceLoader.ProjectionLayout, context.ResourceLoader.TextureLayout, _transformsLayout, _layerTransformLayout },
 				ShaderSet = new ShaderSetDescription(new[] { context.ResourceLoader.VertexModel3LayoutDescription }, new[] { _vertex, _fragment }),
@@ -127,6 +127,11 @@ namespace Sledge.Rendering.Pipelines
 			_layerTransformLayout?.Dispose();
 			_vertex?.Dispose();
 			_fragment?.Dispose();
+		}
+
+		public void SetupFrame(RenderContext context, CommandList cl, Engine.Engine.ViewProjectionBuffer viewProjectionBuffer)
+		{
+			_lastProjectionBuffer = viewProjectionBuffer;
 		}
 	}
 }

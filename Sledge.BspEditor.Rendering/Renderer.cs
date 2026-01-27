@@ -75,10 +75,10 @@ namespace Sledge.BspEditor.Rendering
 		}
 		private enum MSAA_OPTION
 		{
-			MSAA_1X ,
-			MSAA_2X ,
-			MSAA_4X ,
-			MSAA_8X ,
+			MSAA_1X,
+			MSAA_2X,
+			MSAA_4X,
+			MSAA_8X,
 		}
 	}
 }

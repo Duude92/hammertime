@@ -1,17 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Numerics;
-using System.Threading;
-using System.Windows.Forms;
-using SharpDX.Direct3D;
+﻿using OpenTK.Graphics;
+using OpenTK.Platform;
+using Vortice.Direct3D;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.Pipelines;
 using Sledge.Rendering.Renderables;
 using Sledge.Rendering.Viewports;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
+using System.Linq;
+using System.Numerics;
+using System.Threading;
+using System.Windows.Forms;
 using Veldrid;
+using Veldrid.OpenGL;
 
 namespace Sledge.Rendering.Engine
 {
@@ -20,26 +24,28 @@ namespace Sledge.Rendering.Engine
 		internal static Engine Instance { get; } = new Engine();
 		public static EngineInterface Interface { get; } = new EngineInterface();
 
-		public GraphicsDevice Device { get; }
+		public GraphicsDevice Device { get; private set; }
 		public Thread RenderThread { get; private set; }
 		public Scene Scene { get; }
 		internal bool IsShadowsEnabled { get; set; } = false;
 		internal Vector3 LightAngle { get; set; } = Vector3.Zero;
-		internal RenderContext Context { get; }
+		internal RenderContext Context { get; private set; }
 
 		private CancellationTokenSource _token;
 
 		private readonly GraphicsDeviceOptions _options;
-		private readonly Stopwatch _timer;
 		private readonly object _lock = new object();
 		private readonly List<IViewport> _renderTargets;
 		private readonly Dictionary<PipelineGroup, List<IPipeline>> _pipelines;
-		private readonly CommandList _commandList;
+		private Stopwatch _timer;
+		private CommandList _commandList;
 
 		private RgbaFloat _clearColourPerspective;
 		private RgbaFloat _clearColourOrthographic;
 		internal int InactiveTargetFps { get; set; } = 10;
-		private long _previousFrameTime = DateTime.Now.Ticks;
+		public Swapchain Swapchain { get; private set; }
+		private SwapchainOverlayPipeline SwapchainOverlayPipeline { get; set; }
+
 		private ViewProjectionBuffer _lightData;
 		private ViewProjectionBuffer _cameraBuffer;
 
@@ -47,14 +53,23 @@ namespace Sledge.Rendering.Engine
 		{
 			_options = new GraphicsDeviceOptions
 			{
-				HasMainSwapchain = false,
+				HasMainSwapchain = true,
 				ResourceBindingModel = ResourceBindingModel.Improved,
 				SwapchainDepthFormat = PixelFormat.R32_Float,
+#if DEBUG
+				Debug = true
+#endif
 			};
-
-			Device = GraphicsDevice.CreateD3D11(_options);
-			DetectFeatures(Device);
 			Scene = new Scene();
+			_renderTargets = new List<IViewport>();
+			_pipelines = new Dictionary<PipelineGroup, List<IPipeline>>();
+
+			InitPipelineGroups();
+		}
+		public void Initialize()
+		{
+
+			DetectFeatures(Device);
 
 			_commandList = Device.ResourceFactory.CreateCommandList();
 
@@ -86,8 +101,6 @@ namespace Sledge.Rendering.Engine
 			_timer = new Stopwatch();
 			_token = new CancellationTokenSource();
 
-			_renderTargets = new List<IViewport>();
-			_pipelines = new Dictionary<PipelineGroup, List<IPipeline>>();
 			Context = new RenderContext(Device);
 			Scene.Add(Context);
 #if DEBUG
@@ -96,10 +109,31 @@ namespace Sledge.Rendering.Engine
 
 			RenderThread = new Thread(Loop);
 
+			SwapchainOverlayPipeline = new SwapchainOverlayPipeline();
+			SwapchainOverlayPipeline.Create(Context, TextureSampleCount.Count1);
+
+			Application.ApplicationExit += Shutdown;
+		}
+
+		private void InitPipelineGroups()
+		{
 			_pipelines.Add(PipelineGroup.Opaque, new List<IPipeline>());
 			_pipelines.Add(PipelineGroup.Transparent, new List<IPipeline>());
 			_pipelines.Add(PipelineGroup.Overlay, new List<IPipeline>());
-
+		}
+		private void ClearPipelines()
+		{
+			foreach (var group in _pipelines.Values)
+			{
+				foreach (var pipeline in group)
+				{
+					pipeline.Dispose();
+				}
+				group.Clear();
+			}
+		}
+		private void InitPipelines()
+		{
 			AddPipeline(new SkyboxPipeline());
 			AddPipeline(new WireframePipeline());
 			AddPipeline(new TexturedOpaquePipeline());
@@ -110,20 +144,16 @@ namespace Sledge.Rendering.Engine
 			AddPipeline(new TexturedAlphaPipeline());
 			AddPipeline(new TexturedAdditivePipeline());
 			AddPipeline(new BillboardAlphaPipeline());
-//#if DEBUG
-//			AddPipeline(new SwapchainShadowOverlay(shadowdepth.NearShadowResourceTexture));
-//#endif
-			AddPipeline(new SwapchainOverlayPipeline());
+
 			AddPipeline(new OverlayPipeline());
 			AddPipeline(new ShadowOverlayPipeline(_lightData));
-
-			Application.ApplicationExit += Shutdown;
 		}
 
 		private void DetectFeatures(GraphicsDevice device)
 		{
+			Features.GraphicFeatures = device.Features;
 			var dev = device.GetType().GetProperty("Device");
-			var dxd = dev?.GetValue(device) as SharpDX.Direct3D11.Device;
+			var dxd = dev?.GetValue(device) as Vortice.Direct3D11.ID3D11Device;
 			var fl = dxd?.FeatureLevel ?? FeatureLevel.Level_10_0; // Just assume it's DX10, whatever
 			if (fl < FeatureLevel.Level_10_0)
 			{
@@ -145,7 +175,7 @@ namespace Sledge.Rendering.Engine
 
 		public void AddPipeline(IPipeline pipeline)
 		{
-			pipeline.Create(Context, TextureSampleCount.Count1);
+			pipeline.Create(Context, _sampleCount);
 			lock (_lock)
 			{
 				_pipelines[pipeline.Group].Add(pipeline);
@@ -173,8 +203,10 @@ namespace Sledge.Rendering.Engine
 
 		// Render loop
 
+		private bool _started = false;
 		private void Start()
 		{
+			_started = true;
 			_timer.Start();
 			RenderThread.Start(_token.Token);
 			RenderThread.Name = "Render Thread";
@@ -191,6 +223,9 @@ namespace Sledge.Rendering.Engine
 
 		private int _paused = 0;
 		private TextureSampleCount _sampleCount = TextureSampleCount.Count1;
+		private Point? _resize;
+		private Control _hostControl;
+		private GraphicsBackend _renderApi = GraphicsBackend.None;
 		private readonly ManualResetEvent _pauseThreadEvent = new ManualResetEvent(false);
 
 		public IDisposable Pause()
@@ -229,7 +264,6 @@ namespace Sledge.Rendering.Engine
 
 					lastFrame = frame;
 					Render(frame);
-					Device.WaitForIdle();
 				}
 			}
 			catch (ThreadInterruptedException)
@@ -241,37 +275,53 @@ namespace Sledge.Rendering.Engine
 				// exit
 			}
 		}
-
 		private void Render(long frame)
 		{
 			lock (_lock)
 			{
 				Scene.Update(frame);
 				var overlays = Scene.GetOverlayRenderables().ToList();
-
-				long currentTime = DateTime.Now.Ticks;
-				long elapsedTime = currentTime - _previousFrameTime;
-				double millisecondsPerFrame = 1000.0 / InactiveTargetFps;
-				bool shouldRender = (elapsedTime >= millisecondsPerFrame * TimeSpan.TicksPerMillisecond);
+				_commandList.Begin();
 
 				foreach (var rt in _renderTargets)
 				{
 					rt.Update(frame);
 					rt.Overlay.Build(overlays);
-					if (rt.IsFocused || (!rt.IsFocused && shouldRender))
+					if (rt.IsFocused || rt.ShouldRender(frame))
 					{
 						_cameraBuffer = new ViewProjectionBuffer { Projection = rt.Camera.Projection, View = rt.Camera.View };
 						Render(rt);
 					}
 				}
-				if (shouldRender)
-					_previousFrameTime = currentTime;
+				if (_resize.HasValue)
+				{
+					var r = _resize.Value;
+					_resize = null;
+					Swapchain?.Resize((uint)r.X, (uint)r.Y);
+				}
+
+				_commandList.SetFramebuffer(Swapchain.Framebuffer);
+				_commandList.ClearColorTarget(0, RgbaFloat.Grey);
+
+
+				foreach (var rt in _renderTargets)
+				{
+					var vp = rt.GetViewport();
+					_commandList.SetViewport(0, vp);
+					Context.GraphicBackend.SetScissors(_commandList, vp);
+					SwapchainOverlayPipeline.SetupFrame(Context, _cameraBuffer);
+					SwapchainOverlayPipeline.Render(Context, rt, _commandList, Scene.GetRenderables(SwapchainOverlayPipeline, rt));
+				}
+				_commandList.End();
+				Device.SubmitCommands(_commandList);
+
+				Device.SwapBuffers(Swapchain);
+
 			}
 		}
 
 		private void Render(IViewport renderTarget)
 		{
-			_commandList.Begin();
 			_commandList.SetFramebuffer(renderTarget.ViewportFramebuffer);
 			_commandList.ClearDepthStencil(1);
 
@@ -319,17 +369,18 @@ namespace Sledge.Rendering.Engine
 
 			foreach (var opaque in _pipelines[PipelineGroup.Opaque])
 			{
-				opaque.SetupFrame(Context, _cameraBuffer);
+				opaque.SetupFrame(Context, _commandList, _cameraBuffer);
 				opaque.Render(Context, renderTarget, _commandList, Scene.GetRenderables(opaque, renderTarget));
 			}
 
-
-			foreach (var transparent in transparentPipelines)
-			{
-				transparent.SetupFrame(Context, _cameraBuffer);
-			}
+			IPipeline lastPipeline = null;
 			foreach (var lo in locationObjects)
 			{
+				if (lastPipeline != lo.Pipeline)
+			{
+					lo.Pipeline.SetupFrame(Context, _commandList, _cameraBuffer);
+					lastPipeline = lo.Pipeline;
+			}
 				lo.Pipeline.Render(Context, renderTarget, _commandList, lo.Renderable, lo.Location);
 			}
 
@@ -339,27 +390,14 @@ namespace Sledge.Rendering.Engine
 					pipeline.Render(Context, renderTarget, _commandList, Scene.GetRenderables(pipeline, renderTarget));
 			}
 
-			_commandList.End();
-			Device.SubmitCommands(_commandList);
-
-			_commandList.Begin();
-			renderTarget.ResolveRenderTexture(_commandList);
-			_commandList.End();
-			Device.SubmitCommands(_commandList);
-
-			_commandList.Begin();
-			_commandList.SetFramebuffer(renderTarget.Swapchain.Framebuffer);
-			_commandList.ClearDepthStencil(1);
-			_commandList.ClearColorTarget(0, cc);
-
 			foreach (var overlay in _pipelines[PipelineGroup.Overlay])
 			{
-				overlay.SetupFrame(Context, _cameraBuffer);
-					overlay.Render(Context, renderTarget, _commandList, Scene.GetRenderables(overlay, renderTarget));
+				overlay.SetupFrame(Context, _commandList, _cameraBuffer);
+				overlay.Render(Context, renderTarget, _commandList, Scene.GetRenderables(overlay, renderTarget));
 			}
-			_commandList.End();
-			Device.SubmitCommands(_commandList);
-			Device.SwapBuffers(renderTarget.Swapchain);
+
+			renderTarget.ResolveRenderTexture(_commandList);
+
 		}
 
 		// Viewports
@@ -367,18 +405,109 @@ namespace Sledge.Rendering.Engine
 		internal event EventHandler<IViewport> ViewportCreated;
 		internal event EventHandler<IViewport> ViewportDestroyed;
 
-		internal IViewport CreateViewport()
+		internal void SetControlHost(Control control)
+		{
+			if (_hostControl == control) return;
+			_hostControl = control;
+			CreateDevice();
+		}
+		internal void SetGraphicsBackend(GraphicsBackend renderApi)
+		{
+			if (_renderApi == renderApi) return;
+			_renderApi = renderApi;
+			CreateDevice();
+		}
+		private void CreateDevice()
+		{
+			if (_hostControl == null || _renderApi == GraphicsBackend.None) return;
+			CreateDevice(_hostControl, _renderApi);
+		}
+		private void CreateDevice(Control control, GraphicsBackend backend)
+		{
+			if (Device != null && Device?.BackendType != (Veldrid.GraphicsBackend)(backend))
+			{
+				using (Pause())
+				{
+
+					var result = MessageBox.Show($"Changing graphics backend requires restarting Sledge.", "Graphics backend changed", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
+					if (result == DialogResult.Cancel) return;
+					Stop();
+					Application.Restart();
+				}
+				return;
+			}
+			GraphicsDevice CreateOpenglDevice()
+			{
+				var WindowInfo = Utilities.CreateWindowsWindowInfo(control.Handle);
+
+				GraphicsMode mode = new GraphicsMode(new ColorFormat(32), 24, 8, 0);
+				var _openTKContext = new GraphicsContext(mode, WindowInfo);
+
+				var a = (IGraphicsContextInternal)_openTKContext;
+				IntPtr GetProcAddressFunc(string name) => a.GetAddress(name);
+
+				Object lObject = new object();
+
+				OpenGLPlatformInfo platformInfo = new OpenGLPlatformInfo(
+						a.Context.Handle, // Context handle from OpenTK
+						GetProcAddressFunc,
+						(hdc) =>
+						{
+							lock (lObject)
+								_openTKContext.MakeCurrent(WindowInfo);
+						}, // Make current
+						() =>
+						{
+							lock (lObject)
+								return _openTKContext.IsCurrent ? a.Context.Handle : IntPtr.Zero;
+						}, // Get current context
+						() =>
+						{
+							lock (lObject)
+							{
+								if (_openTKContext.IsCurrent)
+								{
+									_openTKContext.MakeCurrent(null);
+								}
+							}
+						}, // Clear current context
+						(hglrc) =>
+						{
+							lock (lObject)
+								_openTKContext.Dispose();
+						}, // Delete context
+						() =>
+						{
+							lock (lObject)
+								_openTKContext.SwapBuffers();
+						}, // Swap buffers
+						(vsync) => _openTKContext.SwapInterval = vsync ? 1 : 0
+					);
+
+				return GraphicsDevice.CreateOpenGL(_options, platformInfo, 1, 1);
+			}
+			Device = backend switch
+			{
+				GraphicsBackend.OpenGL => CreateOpenglDevice(),
+				GraphicsBackend.Direct3D11 => GraphicsDevice.CreateD3D11(_options),
+				GraphicsBackend.Vulkan => GraphicsDevice.CreateVulkan(_options),
+				_ => throw new NotSupportedException("The selected graphics backend is not supported."),
+			};
+
+			Initialize();
+			Swapchain = Context.GraphicBackend.CreateSwapchain(control, _options);
+
+		}
+		internal IViewport CreateViewport(Control parent)
 		{
 			lock (_lock)
 			{
 				var control = new Viewports.Viewport(Device, _options, _sampleCount);
+				parent.Controls.Add(control);
 				control.Disposed += DestroyViewport;
 
-				if (!_renderTargets.Any()) Start();
 				_renderTargets.Add(control);
 
-				Scene.Add((IRenderable)control.Overlay);
-				Scene.Add((IUpdateable)control.Overlay);
 				ViewportCreated?.Invoke(this, control);
 
 				return control;
@@ -407,24 +536,49 @@ namespace Sledge.Rendering.Engine
 
 		internal void SetMSAA(int mSAAoption)
 		{
+			if (mSAAoption != (int)_sampleCount)
 			lock (_lock)
 			{
-				_sampleCount = (TextureSampleCount)mSAAoption;
-				foreach (var pl in _pipelines.SelectMany(x => x.Value))
+				using (Pause())
 				{
-					if (pl.Group == PipelineGroup.Overlay) continue;
-					pl.Create(Context, _sampleCount);
-				}
+
+				_sampleCount = (TextureSampleCount)mSAAoption;
+					ClearPipelines();
+				InitPipelines();
+
 				foreach (var rt in _renderTargets)
 				{
+					Scene.Remove((IRenderable)rt.Overlay);
+					Scene.Remove((IUpdateable)rt.Overlay);
 					rt.InitFramebuffer(_sampleCount);
+					Scene.Add((IRenderable)rt.Overlay);
+					Scene.Add((IUpdateable)rt.Overlay);
 				}
+					if (!_started)
+					Start();
 			}
 		}
+		}
+
+		public void Resize(int v1, int v2)
+		{
+			_resize = new Point(v1, v2);
+		}
+
 		public class ViewProjectionBuffer
 		{
 			public Matrix4x4 Projection;
 			public Matrix4x4 View;
 		}
+	}
+	// I can use veldrid's enum directly, but this I can modify
+	public enum GraphicsBackend
+	{
+		Direct3D11 = 0,
+		Vulkan = 1,
+		OpenGL = 2,
+		Metal = 3,
+		OpenGLES = 4,
+		None = 5
 	}
 }

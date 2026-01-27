@@ -14,6 +14,7 @@ using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.Common.Shell.Documents;
 using Sledge.Common.Shell.Hooks;
 using Sledge.Common.Shell.Settings;
+using Sledge.Rendering.Engine;
 using Sledge.Shell;
 using Message = System.Windows.Forms.Message;
 
@@ -70,6 +71,7 @@ namespace Sledge.BspEditor.Components
 			{
 				if (document is MapDocument mapDocument) _activeDocument = mapDocument;
 			});
+			Engine.Interface.SetControlHost(MainWindow.Table);
 		}
 
 		public void OnUIShutdown()
@@ -227,7 +229,7 @@ namespace Sledge.BspEditor.Components
 
 		public IEnumerable<SettingKey> GetKeys()
 		{
-			yield break;
+			yield return new SettingKey("Rendering", "RenderApi", typeof(GraphicsBackend));
 		}
 
 		public void LoadValues(ISettingsStore store)
@@ -268,6 +270,9 @@ namespace Sledge.BspEditor.Components
 						container.Table.ColumnSizes = config.ColumnSizes;
 					}
 				}
+				_graphicApi = store.Get<GraphicsBackend>("RenderApi", GraphicsBackend.Direct3D11);
+				Engine.Interface.SetGraphicsBackend(_graphicApi);
+
 
 				var controls = store.Get<List<HostedControl>>("Controls");
 				if (controls == null || !controls.Any())
@@ -309,6 +314,7 @@ namespace Sledge.BspEditor.Components
 			}
 
 			store.Set("Controls", controls);
+			store.Set("RenderApi", _graphicApi);
 		}
 
 		// Create and update controls
@@ -350,6 +356,7 @@ namespace Sledge.BspEditor.Components
 		// Context menu
 
 		private HostedControl _contextControl;
+		private GraphicsBackend _graphicApi;
 
 		private void CreateContextMenu()
 		{

@@ -149,21 +149,22 @@ namespace Sledge.Rendering.Overlay
 
             _projMatrixBuffer = factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
             _projMatrixBuffer.Name = "ImGui.NET Projection Buffer";
-            
-            byte[] vertexShaderBytes = ResourceLoader.GetEmbeddedShader("imgui.vert.hlsl");
-            byte[] fragmentShaderBytes = ResourceLoader.GetEmbeddedShader("imgui.frag.hlsl");
-            _vertexShader = factory.CreateShader(new ShaderDescription(ShaderStages.Vertex, vertexShaderBytes, "main"));
-            _fragmentShader = factory.CreateShader(new ShaderDescription(ShaderStages.Fragment, fragmentShaderBytes, "main"));
 
-            VertexLayoutDescription[] vertexLayouts = new VertexLayoutDescription[]
-            {
-                new VertexLayoutDescription(
-                    new VertexElementDescription("in_position", VertexElementSemantic.Position, VertexElementFormat.Float2),
-                    new VertexElementDescription("in_texCoord", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2),
-                    new VertexElementDescription("in_color", VertexElementSemantic.Color, VertexElementFormat.Byte4_Norm))
-            };
+            var rl = Engine.Engine.Instance.Context.ResourceLoader;
 
-            _layout = factory.CreateResourceLayout(new ResourceLayoutDescription(
+			var (_vertexShader, _fragmentShader) = rl.LoadShaders("imgui");
+
+            VertexLayoutDescription vertexLayouts = rl.ImGUILayoutDescription;
+
+			//VertexLayoutDescription[] vertexLayouts = new VertexLayoutDescription[]
+			//{
+			//    new VertexLayoutDescription(
+			//        new VertexElementDescription("in_position", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2),
+			//        new VertexElementDescription("in_texCoord", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2),
+			//        new VertexElementDescription("in_color", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Byte4_Norm))
+			//};
+
+			_layout = factory.CreateResourceLayout(new ResourceLayoutDescription(
                 new ResourceLayoutElementDescription("ProjectionMatrixBuffer", ResourceKind.UniformBuffer, ShaderStages.Vertex),
                 new ResourceLayoutElementDescription("MainSampler", ResourceKind.Sampler, ShaderStages.Fragment)));
             _textureLayout = factory.CreateResourceLayout(new ResourceLayoutDescription(
@@ -174,7 +175,7 @@ namespace Sledge.Rendering.Overlay
                 new DepthStencilStateDescription(false, false, ComparisonKind.Always),
                 new RasterizerStateDescription(FaceCullMode.None, PolygonFillMode.Solid, FrontFace.Clockwise, false, true),
                 PrimitiveTopology.TriangleList,
-                new ShaderSetDescription(vertexLayouts, new[] { _vertexShader, _fragmentShader }),
+                new ShaderSetDescription(new[]{ vertexLayouts }, new[] { _vertexShader, _fragmentShader }),
                 new ResourceLayout[] { _layout, _textureLayout },
                 outputDescription);
             _pipeline = factory.CreateGraphicsPipeline(ref pd);
@@ -258,22 +259,22 @@ namespace Sledge.Rendering.Overlay
         {
             switch (factory.BackendType)
             {
-                case GraphicsBackend.Direct3D11:
+                case Veldrid.GraphicsBackend.Direct3D11:
                     {
                         string resourceName = name + ".hlsl.bytes";
                         return GetEmbeddedResourceBytes(resourceName);
                     }
-                case GraphicsBackend.OpenGL:
+                case Veldrid.GraphicsBackend.OpenGL:
                     {
                         string resourceName = name + ".glsl";
                         return GetEmbeddedResourceBytes(resourceName);
                     }
-                case GraphicsBackend.Vulkan:
+                case Veldrid.GraphicsBackend.Vulkan:
                     {
                         string resourceName = name + ".spv";
                         return GetEmbeddedResourceBytes(resourceName);
                     }
-                case GraphicsBackend.Metal:
+                case Veldrid.GraphicsBackend.Metal:
                     {
                         string resourceName = name + ".metallib";
                         return GetEmbeddedResourceBytes(resourceName);
@@ -340,7 +341,7 @@ namespace Sledge.Rendering.Overlay
         /// </summary>
         public void Render(GraphicsDevice gd, CommandList cl)
         {
-            if (_frameBegun)
+			if (_frameBegun)
             {
                 _frameBegun = false;
                 ImGui.Render();
@@ -380,7 +381,7 @@ namespace Sledge.Rendering.Overlay
 
         private void RenderImDrawData(ImDrawDataPtr draw_data, GraphicsDevice gd, CommandList cl)
         {
-            uint vertexOffsetInVertices = 0;
+			uint vertexOffsetInVertices = 0;
             uint indexOffsetInElements = 0;
 
             if (draw_data.CmdListsCount == 0)
@@ -432,7 +433,7 @@ namespace Sledge.Rendering.Overlay
                 -1.0f,
                 1.0f);
 
-            _gd.UpdateBuffer(_projMatrixBuffer, 0, ref mvp);
+            cl.UpdateBuffer(_projMatrixBuffer, 0, ref mvp);
 
             cl.SetVertexBuffer(0, _vertexBuffer);
             cl.SetIndexBuffer(_indexBuffer, IndexFormat.UInt16);
