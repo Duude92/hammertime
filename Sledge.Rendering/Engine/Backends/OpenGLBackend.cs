@@ -50,34 +50,6 @@ namespace Sledge.Rendering.Engine.Backends
 			ScissorTestEnabled = false
 		};
 
-		private byte[] CompileShadersToSpirV(byte[] shaderCode, DxcShaderStage stage)
-		{
-			var vShader = shaderCode;
-			var str = System.Text.Encoding.Default.GetString(vShader);
-
-			var options = new DxcCompilerOptions
-			{
-				GenerateSpirv = true,
-				SpirvTargetEnvMinor = 0,
-				SpvTargetEnvMajor = 1,
-				OptimizationLevel = 0,
-				VkUseGLLayout = true,
-				VkUseDXLayout = false
-			};
-
-			IDxcUtils Utils = Dxc.CreateDxcUtils();
-			var includeHandler = Utils.CreateDefaultIncludeHandler();
-
-			var result = DxcCompiler.Compile(stage, str, "main", options, includeHandler: includeHandler);
-			if (result.GetStatus() != 0)
-			{
-				var errors = result.GetErrors();
-				throw new Exception($"Error compiling shader\n{errors}");
-			}
-			var resultArray = result.GetObjectBytecodeArray();
-			result.Dispose();
-			return resultArray;
-		}
 		private byte[] GetShader(string name)
 		{
 			using (var s = ResourceAssembly.GetManifestResourceStream(typeof(Scope), name))
@@ -103,15 +75,9 @@ namespace Sledge.Rendering.Engine.Backends
 			var vCode = GetShader(name + ".vert.glsl");
 			var fCode = GetShader(name + ".frag.glsl");
 
-
-			var vertex = vCode != null ?
-				_context.Device.ResourceFactory.CreateShader(new ShaderDescription(ShaderStages.Vertex, vCode, "main")) :
-				_context.Device.ResourceFactory.CreateFromSpirv(new ShaderDescription(ShaderStages.Vertex, CompileShadersToSpirV(GetEmbeddedShader(name + ".vert.hlsl"), DxcShaderStage.Vertex), "main"), options);
-			var fragment = fCode != null ?
-				_context.Device.ResourceFactory.CreateShader(new ShaderDescription(ShaderStages.Fragment, fCode, "main")) :
-				_context.Device.ResourceFactory.CreateFromSpirv(new ShaderDescription(ShaderStages.Fragment, CompileShadersToSpirV(GetEmbeddedShader(name + ".frag.hlsl"), DxcShaderStage.Pixel), "main"), options);
+			var vertex = _context.Device.ResourceFactory.CreateShader(new ShaderDescription(ShaderStages.Vertex, vCode, "main"));
+			var fragment = _context.Device.ResourceFactory.CreateShader(new ShaderDescription(ShaderStages.Fragment, fCode, "main"));
 			return (vertex, fragment);
-
 		}
 
 		public (Shader, Shader, Shader) LoadShadersGeometry(string name)
@@ -121,32 +87,20 @@ namespace Sledge.Rendering.Engine.Backends
 				FixClipSpaceZ = true,
 				InvertVertexOutputY = false,
 			};
-			var vertex = _context.Device.ResourceFactory.CreateFromSpirv(new ShaderDescription(ShaderStages.Vertex, CompileShadersToSpirV(GetEmbeddedShader(name + ".vert.hlsl"), DxcShaderStage.Vertex), "main"), options);
-			var fragment = _context.Device.ResourceFactory.CreateFromSpirv(new ShaderDescription(ShaderStages.Fragment, CompileShadersToSpirV(GetEmbeddedShader(name + ".frag.hlsl"), DxcShaderStage.Pixel), "main"), options);
-			var geom = _context.Device.ResourceFactory.CreateFromSpirv(new ShaderDescription(ShaderStages.Geometry, CompileShadersToSpirV(GetEmbeddedShader(name + ".geom.hlsl"), DxcShaderStage.Geometry), "main"), options);
+
+			var vCode = GetShader(name + ".vert.glsl");
+			var fCode = GetShader(name + ".frag.glsl");
+			var gCode = GetShader(name + ".geom.glsl");
+
+
+			var vertex = _context.Device.ResourceFactory.CreateShader(new ShaderDescription(ShaderStages.Vertex, vCode, "main"));
+			var fragment = _context.Device.ResourceFactory.CreateShader(new ShaderDescription(ShaderStages.Fragment, fCode, "main"));
+			var geom = _context.Device.ResourceFactory.CreateShader(new ShaderDescription(ShaderStages.Geometry, gCode, "main"));
+
 			return (vertex, geom, fragment);
 		}
 		private static readonly Assembly ResourceAssembly = Assembly.GetExecutingAssembly();
 		private OpenglSwapchainAdapter _swapchain;
-
-		private static byte[] GetEmbeddedShader(string name)
-		{
-			var names = new[] { name + ".bytes", name };
-
-			foreach (var n in names)
-			{
-				using (var s = ResourceAssembly.GetManifestResourceStream(typeof(Scope), n))
-				{
-					if (s == null) continue;
-					using (var ms = new MemoryStream())
-					{
-						s.CopyTo(ms);
-						return ms.ToArray();
-					}
-				}
-			}
-			throw new FileNotFoundException($"The `{name}` shader could not be found.", name);
-		}
 
 		public Swapchain CreateSwapchain(Control control, GraphicsDeviceOptions options)
 		{
