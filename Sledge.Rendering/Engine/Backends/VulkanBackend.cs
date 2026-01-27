@@ -108,11 +108,7 @@ namespace Sledge.Rendering.Engine.Backends
 		private static byte[] GetEmbeddedShader(string name)
 		{
 			var names = new[] { name + ".bytes", name };
-#if DEBUG
-			// Compiling shaders manually is a pain!
-			if (!Features.DirectX11OrHigher) Log.Debug("ResourceLoader", "If you're debugging on DX10 you'll need to manually compile shaders.");
-			else names = new[] { name };
-#endif
+
 			foreach (var n in names)
 			{
 				using (var s = ResourceAssembly.GetManifestResourceStream(typeof(Scope), n))
