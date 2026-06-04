@@ -304,7 +304,11 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 
 
 				}
-				newCachedEntities = cachedEntities.Where(x => x.EntityData.Properties.TryGetValue("targetname", out var targetName) && targetName == _newTarget).ToList();
+				// TODO: rework this
+				if (!string.IsNullOrEmpty(_newTarget))
+					newCachedEntities = cachedEntities.Where(x => x.EntityData.Properties.TryGetValue("targetname", out var targetName) && targetName == _newTarget).ToList();
+				else
+					newCachedEntities.Clear();
 				newCachedEntities.ForEach(x => x.Relations.AddRange(objects.OfType<Entity>().Select(entit => new Entity.EntityRelative { Entity = entit, Relation = Entity.EntityRelative.RelationType.TargetsMain })));
 
 				_newTarget = null;
