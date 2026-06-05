@@ -16,6 +16,7 @@ namespace Sledge.BspEditor.Primitives.MapData
 		public bool HideClipTextures { get; set; } = false;
 		public bool Wireframe { get; set; } = false;
 		public bool ToggleSkybox { get; set; } = false;
+		public bool ToggleEntityRelations { get; set; } = true;
 
 		public DisplayFlags()
 		{
