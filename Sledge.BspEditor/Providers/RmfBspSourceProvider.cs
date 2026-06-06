@@ -90,6 +90,7 @@ namespace Sledge.BspEditor.Providers
 
 						ReadCameras(map, br);
 					}
+					map.Data.Add(new DisplayFlags());
 					result.Map = map;
 					return result;
 				}
