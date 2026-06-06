@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Sledge.Rendering.Engine;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Veldrid;
 
 namespace Sledge.BspEditor.Controls
 {
@@ -109,7 +111,12 @@ namespace Sledge.BspEditor.Controls
             _configuration = TableSplitConfiguration.Default();
             ResetLayout();
         }
+		protected override void OnResize(EventArgs eventargs)
+		{
+			base.OnResize(eventargs);
 
+			Engine.Interface.Resize(Math.Max(1, Width), Math.Max(1, Height));
+		}
         protected override void OnControlAdded(ControlEventArgs e)
         {
             var r = GetPositionFromControl(e.Control);
@@ -202,7 +209,7 @@ namespace Sledge.BspEditor.Controls
         private float[] _memoryWidth;
         private float[] _memoryHeight;
 
-        protected override void OnMouseMove(MouseEventArgs e)
+		protected override void OnMouseMove(MouseEventArgs e)
         {
             if (_resizing)
             {

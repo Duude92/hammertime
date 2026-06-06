@@ -15,6 +15,7 @@ namespace Sledge.Rendering.Pipelines
 
         void Create(RenderContext context, TextureSampleCount sampleCount);
         void SetupFrame(RenderContext context, Engine.Engine.ViewProjectionBuffer viewProjectionBuffer);
+        void SetupFrame(RenderContext context, CommandList cl, Engine.Engine.ViewProjectionBuffer viewProjectionBuffer);
         void Render(RenderContext context, IViewport target, CommandList cl, IEnumerable<IRenderable> renderables);
         void Render(RenderContext context, IViewport target, CommandList cl, IRenderable renderable, ILocation locationObject);
         void Bind(RenderContext context, CommandList cl, string binding);

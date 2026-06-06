@@ -12,8 +12,8 @@ static const float3 lightDirection = { 0.2672612f, 0.5345225f, 0.8017837f }; // 
 static const float lightIntensity = 0.5f;
 static const float ambient = 0.8f;
 
-Texture2D Texture;
-SamplerState Sampler;
+Texture2D Texture : register(t0, space1);
+SamplerState Sampler : register(s1, space1);
 
 static const uint Flags_FlatColour = 1 << 1;
 

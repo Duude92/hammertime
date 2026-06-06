@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Numerics;
+using System.Windows.Forms;
 using SixLabors.ImageSharp.PixelFormats;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Interfaces;
@@ -160,9 +161,9 @@ namespace Sledge.Rendering.Engine
 		/// Create a new viewport for the engine.
 		/// </summary>
 		/// <returns>The viewport</returns>
-		public IViewport CreateViewport()
+		public IViewport CreateViewport(Control parent)
 		{
-			return Engine.Instance.CreateViewport();
+			return Engine.Instance.CreateViewport(parent);
 		}
 
 		public IDisposable Pause()
@@ -187,6 +188,22 @@ namespace Sledge.Rendering.Engine
 		public void SetLightAngles(Vector3 angles) => Engine.Instance.LightAngle = Vector3.Multiply(angles, (float)Math.PI / 180f);
 		//TODO: Move this to the DisplayData? if baking approach be more reliable
 		public Vector3 GetLightAnglesRadians() => Engine.Instance.LightAngle;
+
+		public void SetControlHost(Control table)
+		{
+			Engine.Instance.SetControlHost(table);
+		}
+
+		public void Resize(int v1, int v2)
+		{
+			Engine.Instance.Resize(v1, v2);
+		}
+
+		public void SetGraphicsBackend(GraphicsBackend renderApi)
+		{
+			Engine.Instance.SetGraphicsBackend(renderApi);
+		}
+
 		public bool ShadowsEnabled { get => Engine.Instance.IsShadowsEnabled; set => Engine.Instance.IsShadowsEnabled = value; }
 	}
 }

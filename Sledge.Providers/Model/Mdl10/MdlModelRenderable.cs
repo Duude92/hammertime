@@ -118,9 +118,13 @@ namespace Sledge.Providers.Model.Mdl10
 			_transformsBuffer = context.Device.ResourceFactory.CreateBuffer(
 				new BufferDescription((uint)Unsafe.SizeOf<Matrix4x4>() * 128, BufferUsage.UniformBuffer)
 			);
+			var _transformsLayout = context.Device.ResourceFactory.CreateResourceLayout(new ResourceLayoutDescription(
+					new ResourceLayoutElementDescription("uTransforms", ResourceKind.UniformBuffer, ShaderStages.Vertex)
+				)
+			);
 
 			_transformsResourceSet = context.Device.ResourceFactory.CreateResourceSet(
-				new ResourceSetDescription(context.ResourceLoader.ProjectionLayout, _transformsBuffer)
+				new ResourceSetDescription(_transformsLayout, _transformsBuffer)
 			);
 
 			_frozenTransformsBuffer = context.Device.ResourceFactory.CreateBuffer(
@@ -128,13 +132,13 @@ namespace Sledge.Providers.Model.Mdl10
 			);
 
 			_frozenTransformsResourceSet = context.Device.ResourceFactory.CreateResourceSet(
-				new ResourceSetDescription(context.ResourceLoader.ProjectionLayout, _frozenTransformsBuffer)
+				new ResourceSetDescription(_transformsLayout, _frozenTransformsBuffer)
 			);
 			_layerTransformBuffer = context.Device.ResourceFactory.CreateBuffer(
 				new BufferDescription((uint)Unsafe.SizeOf<uint>() * 64, BufferUsage.UniformBuffer)
 			);
 			_layerTransformResourceSet = context.Device.ResourceFactory.CreateResourceSet(
-				new ResourceSetDescription(context.ResourceLoader.ProjectionLayout, _layerTransformBuffer)
+				new ResourceSetDescription(_transformsLayout, _layerTransformBuffer)
 			);
 		}
 

@@ -108,7 +108,7 @@ namespace Sledge.Providers.Texture.Spr
 			};
 
 			cl.UpdateBuffer(_uvBuffer, 0, uv);
-			cl.SetGraphicsResourceSet(1, _uvProjectionSet);
+			cl.SetGraphicsResourceSet(2, _uvProjectionSet);
 
 			_buffer.Update(
 				new[]
@@ -124,7 +124,7 @@ namespace Sledge.Providers.Texture.Spr
 			_buffer.Bind(cl, 0);
 
 
-			_texture.BindTo(cl, 2);
+			_texture.BindTo(cl, 1);
 
 			cl.DrawIndexed((uint)_buffer.IndexCount, 1, 0, 0, 0);
 		}

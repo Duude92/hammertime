@@ -32,7 +32,6 @@ namespace Sledge.BspEditor.Rendering.Converters
 		public CenterHandlesConverter([Import] Lazy<EngineInterface> engine)
 		{
 			_engine = engine.Value;
-			_engine.UploadTexture(CenterHandleTextureDataSource.Name, HandleDataSource.Width, HandleDataSource.Height, HandleDataSource.Data, HandleDataSource.SampleType);
 		}
 
 		// Settings
@@ -53,6 +52,7 @@ namespace Sledge.BspEditor.Rendering.Converters
 		{
 			store.LoadInstance(this);
 			ValuesLoaded = true;
+			_engine.UploadTexture(CenterHandleTextureDataSource.Name, HandleDataSource.Width, HandleDataSource.Height, HandleDataSource.Data, HandleDataSource.SampleType);
 		}
 
 		void ISettingsContainer.StoreValues(ISettingsStore store)

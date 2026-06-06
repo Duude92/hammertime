@@ -21,6 +21,7 @@ namespace Sledge.Rendering.Viewports
 		public Resources.Texture ViewportRenderTexture { get; }
 		void InitFramebuffer(TextureSampleCount sampleCount);
         void ResolveRenderTexture(CommandList commandList);
+        void InitSwapchain();
 
 		void Update(long frame);
         event EventHandler<long> OnUpdate;

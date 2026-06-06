@@ -10,7 +10,7 @@ namespace Sledge.Rendering.Resources
     /// </summary>
     public class IndirectIndirectBuffer : IDisposable
     {
-        public static bool UseFallback => !Features.IndirectBuffers;
+        public static bool UseFallback => !Features.GraphicFeatures.DrawIndirect;
         private static readonly int ArgSize = Unsafe.SizeOf<IndirectDrawIndexedArguments>();
 
         private readonly GraphicsDevice _device;

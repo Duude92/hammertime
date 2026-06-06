@@ -78,7 +78,7 @@ namespace Sledge.Rendering.Resources
 			}
 			var device = context.Device;
 			_texture = device.ResourceFactory.CreateTexture(TextureDescription.Texture2D(
-				w, h, numMips, layers,
+				w, h, numMips, layers>1?layers:2,
 				PixelFormat.B8_G8_R8_A8_UNorm,
 				TextureUsage.Sampled | TextureUsage.GenerateMipmaps
 			));
