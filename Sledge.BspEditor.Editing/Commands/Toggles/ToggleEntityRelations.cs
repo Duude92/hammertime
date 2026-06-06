@@ -17,7 +17,7 @@ namespace Sledge.BspEditor.Editing.Commands.Toggles
     [AutoTranslate]
     [MenuItem("View", "", "Rendering", "X")]
     //TODO: add new icon
-    [MenuImage(typeof(Resources), nameof(Resources.Menu_TextureLock))]
+    [MenuImage(typeof(Resources), nameof(Resources.Menu_Relations))]
 
     [Export(typeof(ICommand))]
     [CommandID("BspEditor:View:ToggleEntityRelations")]

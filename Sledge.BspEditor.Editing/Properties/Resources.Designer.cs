@@ -448,6 +448,12 @@ namespace Sledge.BspEditor.Editing.Properties {
                 object obj = ResourceManager.GetObject("Menu_UVLock", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
+        }        
+        internal static System.Drawing.Bitmap Menu_Relations {
+            get {
+                object obj = ResourceManager.GetObject("Menu_Relations", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
         }
         
         /// <summary>
