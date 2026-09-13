@@ -105,5 +105,9 @@ namespace Sledge.Rendering.Pipelines
 		public void SetupFrame(RenderContext context, Engine.Engine.ViewProjectionBuffer viewProjectionBuffer)
 		{
 		}
+
+		public void SetupFrame(RenderContext context, CommandList cl, Engine.Engine.ViewProjectionBuffer viewProjectionBuffer)
+		{
+		}
 	}
 }

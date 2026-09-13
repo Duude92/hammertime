@@ -1,11 +1,5 @@
-TextureCube Texture;
-/*
-samplerCUBE Sampler = sampler_state
-{
-    texture = <Texture>;
-};
-*/
-SamplerState Sampler;
+TextureCube Texture : register(t0, space1);
+SamplerState Sampler : register(s1, space1);
 
 struct PS_INPUT
 {

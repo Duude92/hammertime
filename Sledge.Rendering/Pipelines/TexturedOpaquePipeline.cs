@@ -29,7 +29,7 @@ namespace Sledge.Rendering.Pipelines
             {
                 BlendState = BlendStateDescription.SingleDisabled,
                 DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
-                RasterizerState = RasterizerStateDescription.Default,
+                RasterizerState = context.GraphicBackend.RasterizerStateDescription,
                 PrimitiveTopology = PrimitiveTopology.TriangleList,
                 ResourceLayouts = new[] { context.ResourceLoader.ProjectionLayout, context.ResourceLoader.TextureLayout },
                 ShaderSet = new ShaderSetDescription(new[] { context.ResourceLoader.VertexStandardLayoutDescription }, new[] { _vertex, _fragment }),
@@ -51,8 +51,18 @@ namespace Sledge.Rendering.Pipelines
                 new ResourceSetDescription(context.ResourceLoader.ProjectionLayout, _projectionBuffer)
             );
         }
+		public void SetupFrame(RenderContext context, CommandList cl, Engine.Engine.ViewProjectionBuffer viewProjectionBuffer)
+        {
+			cl.UpdateBuffer(_projectionBuffer, 0, new UniformProjection
+			{
+				Selective = context.SelectiveTransform,
+				Model = Matrix4x4.Identity,
+				View = viewProjectionBuffer.View,
+				Projection = viewProjectionBuffer.Projection,
+			});
+		}
 
-        public void SetupFrame(RenderContext context, Engine.Engine.ViewProjectionBuffer viewProjectionBuffer)
+		public void SetupFrame(RenderContext context, Engine.Engine.ViewProjectionBuffer viewProjectionBuffer)
         {
             context.Device.UpdateBuffer(_projectionBuffer, 0, new UniformProjection
             {

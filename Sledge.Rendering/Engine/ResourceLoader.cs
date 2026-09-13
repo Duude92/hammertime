@@ -1,39 +1,42 @@
-﻿using System;
+﻿using SixLabors.ImageSharp.PixelFormats;
+using Sledge.Common.Logging;
+using Sledge.Rendering.Engine.Backends;
+using Sledge.Rendering.Resources;
+using Sledge.Rendering.Shaders;
+using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using SixLabors.ImageSharp.PixelFormats;
-using Sledge.Common.Logging;
-using Sledge.Rendering.Resources;
-using Sledge.Rendering.Shaders;
+using System.Text;
+using System.Text.RegularExpressions;
 using Veldrid;
+using Veldrid.SPIRV;
+using Vortice.Dxc;
 using Texture = Sledge.Rendering.Resources.Texture;
-using System.Collections.Generic;
-
 namespace Sledge.Rendering.Engine
 {
 	public class ResourceLoader
 	{
 		private readonly RenderContext _context;
-#if DEBUG
-		private const bool DebugMode = true;
-#else
-		private const bool DebugMode = false;
-#endif
 		public ResourceLayout ProjectionLayout { get; }
 		public ResourceLayout TextureLayout { get; }
 		public Sampler TextureSampler { get; }
 		public Sampler OverlaySampler { get; }
 
-		public VertexLayoutDescription VertexStandardLayoutDescription { get; }
-		public VertexLayoutDescription VertexModel3LayoutDescription { get; }
+		public VertexLayoutDescription VertexStandardLayoutDescription { get => _backend.VertexStandardLayoutDescription; }
+		public VertexLayoutDescription VertexModel3LayoutDescription { get => _backend.VertexModel3LayoutDescription; }
+		public VertexLayoutDescription ImGUILayoutDescription { get => _backend.ImGUILayoutDescription; }
+
 
 		private Lazy<Texture> MissingTexture { get; }
+		private IGraphicBackend _backend;
 
 		public ResourceLoader(RenderContext context)
 		{
 			_context = context;
+			_backend = context.GraphicBackend;
 
 			ProjectionLayout = context.Device.ResourceFactory.CreateResourceLayout(
 				new ResourceLayoutDescription(
@@ -45,24 +48,6 @@ namespace Sledge.Rendering.Engine
 					new ResourceLayoutElementDescription("Texture", ResourceKind.TextureReadOnly, ShaderStages.Fragment),
 					new ResourceLayoutElementDescription("Sampler", ResourceKind.Sampler, ShaderStages.Fragment)
 				)
-			);
-
-			VertexStandardLayoutDescription = new VertexLayoutDescription(
-				new VertexElementDescription("Position", VertexElementSemantic.Position, VertexElementFormat.Float3),
-				new VertexElementDescription("Normal", VertexElementSemantic.Normal, VertexElementFormat.Float3),
-				new VertexElementDescription("Colour", VertexElementSemantic.Color, VertexElementFormat.Float4),
-				new VertexElementDescription("Texture", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2),
-				new VertexElementDescription("Tint", VertexElementSemantic.Color, VertexElementFormat.Float4),
-				new VertexElementDescription("Flags", VertexElementSemantic.Position, VertexElementFormat.UInt1)
-			);
-
-            VertexModel3LayoutDescription = new VertexLayoutDescription(
-                new VertexElementDescription("Position", VertexElementSemantic.Position, VertexElementFormat.Float3),
-                new VertexElementDescription("Normal", VertexElementSemantic.Normal, VertexElementFormat.Float3),
-                new VertexElementDescription("Texture", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2),
-                new VertexElementDescription("Bone", VertexElementSemantic.Color, VertexElementFormat.UInt1),
-				new VertexElementDescription("Flags", VertexElementSemantic.TextureCoordinate, VertexElementFormat.UInt1),
-                new VertexElementDescription("TextureLayer", VertexElementSemantic.Color, VertexElementFormat.UInt1)
 			);
 
 			TextureSampler = context.Device.Aniso4xSampler;
@@ -106,47 +91,10 @@ namespace Sledge.Rendering.Engine
 		{
 			return _textures.TryGetValue(name, out var tex) ? tex : MissingTexture.Value;
 		}
-
 		// Shaders
-		public (Shader, Shader) LoadShaders(string name)
-		{
-			return (
-				_context.Device.ResourceFactory.CreateShader(new ShaderDescription(ShaderStages.Vertex, GetEmbeddedShader(name + ".vert.hlsl"), "main", DebugMode)),
-				_context.Device.ResourceFactory.CreateShader(new ShaderDescription(ShaderStages.Fragment, GetEmbeddedShader(name + ".frag.hlsl"), "main", DebugMode))
-			);
-		}
+		public (Shader, Shader) LoadShaders(string name) => _backend.LoadShaders(name);
 
-		public (Shader, Shader, Shader) LoadShadersGeometry(string name)
-		{
-			return (
-				_context.Device.ResourceFactory.CreateShader(new ShaderDescription(ShaderStages.Vertex, GetEmbeddedShader(name + ".vert.hlsl"), "main")),
-				_context.Device.ResourceFactory.CreateShader(new ShaderDescription(ShaderStages.Geometry, GetEmbeddedShader(name + ".geom.hlsl"), "main")),
-				_context.Device.ResourceFactory.CreateShader(new ShaderDescription(ShaderStages.Fragment, GetEmbeddedShader(name + ".frag.hlsl"), "main"))
-			);
-		}
+		public (Shader, Shader, Shader) LoadShadersGeometry(string name) => _backend.LoadShadersGeometry(name);
 
-		private static readonly Assembly ResourceAssembly = Assembly.GetExecutingAssembly();
-		internal static byte[] GetEmbeddedShader(string name)
-		{
-			var names = new[] { name + ".bytes", name };
-#if DEBUG
-			// Compiling shaders manually is a pain!
-			if (!Features.DirectX11OrHigher) Log.Debug("ResourceLoader", "If you're debugging on DX10 you'll need to manually compile shaders.");
-			else names = new[] { name };
-#endif
-			foreach (var n in names)
-			{
-				using (var s = ResourceAssembly.GetManifestResourceStream(typeof(Scope), n))
-				{
-					if (s == null) continue;
-					using (var ms = new MemoryStream())
-					{
-						s.CopyTo(ms);
-						return ms.ToArray();
-					}
-				}
-			}
-			throw new FileNotFoundException($"The `{name}` shader could not be found.", name);
-		}
 	}
 }

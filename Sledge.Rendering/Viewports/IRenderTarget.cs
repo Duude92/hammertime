@@ -5,7 +5,7 @@ namespace Sledge.Rendering.Viewports
 {
     public interface IRenderTarget : IDisposable
     {
-        Swapchain Swapchain { get; }
         bool ShouldRender(long frame);
-    }
+        Veldrid.Viewport GetViewport();
+	}
 }

@@ -11,8 +11,8 @@ struct FragmentIn
     uint1 fFlags : POSITION1;
     float4 sPosition : TEXCOORD1;
 };
-Texture2D ShadowTexture;
-SamplerState ShadowSampler;
+Texture2D ShadowTexture : register(t0, space1);
+SamplerState ShadowSampler : register(s1, space1);
 
 cbuffer LightData
 {
