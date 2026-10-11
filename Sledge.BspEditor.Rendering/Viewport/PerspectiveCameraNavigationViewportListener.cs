@@ -190,6 +190,15 @@ namespace Sledge.BspEditor.Rendering.Viewport
         public void KeyDown(ViewportEvent e)
         {
             if (!Focus || !Viewport.IsUnlocked(this)) return;
+            // Backup exit for toggled free look: Escape always releases it, so the cursor can't get stuck
+            if (e.KeyCode == Keys.Escape && FreeLookToggle && !e.Alt && !e.Control && !e.Shift)
+            {
+                FreeLookToggle = false;
+                SetFreeLook();
+                PositionKnown = false;
+                e.Handled = true;
+                return;
+            }
             if (e.KeyCode == _freeLookKey && !e.Alt && !e.Control && !e.Shift)
             {
                 ToggleFreeLook();
@@ -250,12 +259,10 @@ namespace Sledge.BspEditor.Rendering.Viewport
                 // Also engage free look on this first press, exactly as a normal Z press
                 // in the viewport would - so "press Z, switch window, move camera" is one
                 // action.
-                // Save the existing clip so it can be restored on release, then lock the
-                // cursor to the viewport's bounds (this keeps the cursor from getting
-                // trapped in the dialog when free look is released again).
-                CursorClip = Cursor.Clip;
-                Cursor.Clip = Viewport.Control.RectangleToScreen(new Rectangle(0, 0, Viewport.Width, Viewport.Height));
-
+                // SetFreeLook saves the original cursor clip and confines the cursor to the
+                // viewport when free look turns on, and restores that original clip when it
+                // turns off. Do not save or clip here: doing so overwrote the saved clip with
+                // the viewport rectangle, so the cursor stayed trapped in the 3D view after exit.
                 ToggleFreeLook();
             });
         }
