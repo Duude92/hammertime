@@ -16,6 +16,7 @@ namespace Sledge.BspEditor.Modification.Operations.Mutation
 	{
 		private readonly List<long> _idsToTransform;
 		private readonly Matrix4x4 _matrix;
+		private readonly ExactTextureLock _lock = new ExactTextureLock();
 
 		public bool Trivial => false;
 
@@ -35,15 +36,11 @@ namespace Sledge.BspEditor.Modification.Operations.Mutation
 		{
 			var ch = new Change(document);
 
-			var objects = _idsToTransform.Select(x => document.Map.Root.FindByID(x)).Where(x => x != null).ToList();
+			var objects = _idsToTransform.Distinct().Select(x => document.Map.Root.FindByID(x)).Where(x => x != null).ToList();
 
 			foreach (var o in objects)
 			{
-				foreach (var it in o.Data.OfType<ITextured>())
-				{
-					it.Texture.TransformSkew(_matrix);
-					ch.Update(o);
-				}
+				if (_lock.Apply(o, _matrix, t => t.TransformSkew(_matrix))) ch.Update(o);
 			}
 
 			return Task.FromResult(ch);
@@ -54,15 +51,11 @@ namespace Sledge.BspEditor.Modification.Operations.Mutation
 			if (!Matrix4x4.Invert(_matrix, out var inv)) throw new Exception("Unable to reverse this operation.");
 			var ch = new Change(document);
 
-			var objects = _idsToTransform.Select(x => document.Map.Root.FindByID(x)).Where(x => x != null).ToList();
+			var objects = _idsToTransform.Distinct().Select(x => document.Map.Root.FindByID(x)).Where(x => x != null).ToList();
 
 			foreach (var o in objects)
 			{
-				foreach (var it in o.Data.OfType<ITextured>())
-				{
-					it.Texture.TransformSkew(inv);
-					ch.Update(o);
-				}
+				if (_lock.Undo(o, t => t.TransformSkew(inv))) ch.Update(o);
 			}
 
 			return Task.FromResult(ch);

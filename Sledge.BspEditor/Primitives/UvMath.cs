@@ -160,11 +160,47 @@ namespace Sledge.BspEditor.Primitives
 
             tex.UAxis = gs * (signS / ls);
             tex.VAxis = gt * (signT / lt);
-            tex.XScale = signS / ls;
-            tex.YScale = signT / lt;
-            tex.XShift = xShift;
-            tex.YShift = yShift;
+            tex.XScale = Denoise(signS / ls);
+            tex.YScale = Denoise(signT / lt);
+            tex.XShift = Denoise(xShift);
+            tex.YShift = Denoise(yShift);
             return true;
+        }
+
+        /// <summary>
+        /// For a face whose vertices have already been moved by <paramref name="applied"/>, re-fits the texture so the
+        /// face keeps the mapping it had before the move (exact texture lock for any transform).
+        /// </summary>
+        public static bool TryLockAfterTransform(Texture tex, IReadOnlyList<Vector3> currentVertices, Matrix4x4 applied)
+        {
+            if (currentVertices == null) return false;
+            if (!Matrix4x4.Invert(applied, out var inverse)) return false;
+            var before = currentVertices.Select(x => Vector3.Transform(x, inverse)).ToList();
+            return TryPreserveMapping(tex, before, currentVertices);
+        }
+
+        /// <summary>
+        /// True if the matrix only moves, rotates or mirrors (no scaling or skewing), so a texture can follow it
+        /// by just carrying its axes and shifts along.
+        /// </summary>
+        public static bool IsRigid(Matrix4x4 m)
+        {
+            var x = Vector3.TransformNormal(Vector3.UnitX, m);
+            var y = Vector3.TransformNormal(Vector3.UnitY, m);
+            var z = Vector3.TransformNormal(Vector3.UnitZ, m);
+            const float eps = 1e-4f;
+            return Math.Abs(x.Length() - 1) < eps && Math.Abs(y.Length() - 1) < eps && Math.Abs(z.Length() - 1) < eps
+                   && Math.Abs(x.Dot(y)) < eps && Math.Abs(y.Dot(z)) < eps && Math.Abs(x.Dot(z)) < eps;
+        }
+
+        /// <summary>
+        /// Removes float noise: a value within 1e-5 (relative) of a 4-decimal number becomes that number,
+        /// so clean values (shift 0, scale 1, scale 0.5) stay clean after being solved for.
+        /// </summary>
+        private static float Denoise(float v)
+        {
+            var r = MathF.Round(v, 4);
+            return Math.Abs(v - r) <= 1e-5f * Math.Max(1f, Math.Abs(v)) ? r : v;
         }
 
         /// <summary>

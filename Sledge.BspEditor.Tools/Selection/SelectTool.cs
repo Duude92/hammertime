@@ -991,14 +991,16 @@ namespace Sledge.BspEditor.Tools.Selection
 						{
 							foreach (var t in mo.FindAll().SelectMany(x => x.Data.OfType<ITextured>()))
 							{
-								t.Texture.TransformScale(transform);
+								if (t is Face texFace) UvMath.TryLockAfterTransform(texFace.Texture, texFace.Vertices.ToList(), transform);
+								else t.Texture.TransformScale(transform);
 							}
 						}
 						else if (textureTransformationType == TextureTransformationType.Skew)
 						{
 							foreach (var t in mo.FindAll().SelectMany(x => x.Data.OfType<ITextured>()))
 							{
-								t.Texture.TransformSkew(transform);
+								if (t is Face texFace) UvMath.TryLockAfterTransform(texFace.Texture, texFace.Vertices.ToList(), transform);
+								else t.Texture.TransformSkew(transform);
 							}
 						}
 
