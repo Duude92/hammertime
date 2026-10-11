@@ -250,6 +250,12 @@ namespace Sledge.BspEditor.Rendering.Viewport
                 // Also engage free look on this first press, exactly as a normal Z press
                 // in the viewport would - so "press Z, switch window, move camera" is one
                 // action.
+                // Save the existing clip so it can be restored on release, then lock the
+                // cursor to the viewport's bounds (this keeps the cursor from getting
+                // trapped in the dialog when free look is released again).
+                CursorClip = Cursor.Clip;
+                Cursor.Clip = Viewport.Control.RectangleToScreen(new Rectangle(0, 0, Viewport.Width, Viewport.Height));
+
                 ToggleFreeLook();
             });
         }
