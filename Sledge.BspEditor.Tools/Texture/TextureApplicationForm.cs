@@ -465,10 +465,11 @@ namespace Sledge.BspEditor.Tools.Texture
             // A change still inside the debounce window is committed first, so undo/redo sees it in the history
             if (IsUndoRedoKey(keyData)) CommitPendingChanges();
 
-            // This dialog takes keyboard focus away from the 3D view, so forward the free
-            // look key (default: Z) to the viewports. Free look can then be toggled while
-            // working in the texture application, without the cursor having to be in the
-            // 3D view. Keys being typed into text boxes are not forwarded.
+            // This dialog takes keyboard focus away from the 3D view, so hand the free
+            // look key (default: Z) over to the viewports: focus switches from this
+            // dialog to the 3D view and free look is toggled, so the user can explore
+            // without first having to click back into the 3D view. Keys being typed
+            // into text boxes are not forwarded.
             var source = FromHandle(msg.HWnd);
             if (!(source is TextBox || source is RichTextBox) && IsFreeLookKey(keyData))
             {
