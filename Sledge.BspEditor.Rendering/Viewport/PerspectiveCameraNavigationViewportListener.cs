@@ -246,6 +246,11 @@ namespace Sledge.BspEditor.Rendering.Viewport
                 {
                     Cursor.Position = Viewport.Control.PointToScreen(new Point(LastKnownX, LastKnownY));
                 }
+
+                // Also engage free look on this first press, exactly as a normal Z press
+                // in the viewport would - so "press Z, switch window, move camera" is one
+                // action.
+                ToggleFreeLook();
             });
         }
 

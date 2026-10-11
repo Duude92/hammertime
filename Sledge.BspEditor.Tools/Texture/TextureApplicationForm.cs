@@ -466,10 +466,11 @@ namespace Sledge.BspEditor.Tools.Texture
             if (IsUndoRedoKey(keyData)) CommitPendingChanges();
 
             // This dialog takes keyboard focus away from the 3D view, so hand the free
-            // look key (default: Z) over to the viewports: focus switches from this
-            // dialog to the 3D view (the cursor is moved into the view if needed), and
-            // the key is then handled by the regular viewport key handling. Keys being
-            // typed into text boxes are not forwarded.
+            // look key (default: Z) over to the viewports: the focus switches from this
+            // dialog to the 3D view (cursor moved into the view if needed), free look
+            // is toggled here as a normal Z press would, and the key is then handled by
+            // the regular viewport key handling afterwards. Keys being typed into text
+            // boxes are not forwarded.
             var source = FromHandle(msg.HWnd);
             if (!(source is TextBox || source is RichTextBox) && IsFreeLookKey(keyData))
             {
