@@ -59,6 +59,10 @@ namespace Sledge.BspEditor.Tools.Selection
 		private IMapObject ChosenItemFor3DSelection { get; set; }
 		private List<IMapObject> IntersectingObjectsFor3DSelection { get; set; }
 
+		// A history of previous selection states used by "select less" (Ctrl+-) to step back
+		// through the levels reached by repeated "select more" (Ctrl++).
+		private readonly List<HashSet<IMapObject>> _selectMoreHistory = new List<HashSet<IMapObject>>();
+
 		// Settings
 
 		[Setting] public int SelectionBoxBackgroundOpacity { get; set; } = 64;
@@ -742,6 +746,16 @@ namespace Sledge.BspEditor.Tools.Selection
 			if (e.KeyCode == Keys.Enter) Confirm(document);
 			else if (e.KeyCode == Keys.Escape) Cancel(document);
 
+			// Ctrl + "+" grows the selection to the connected neighbours of the current selection,
+			// Ctrl + "-" shrinks it back by peeling off the outermost connected layer.
+			// The keys are read here (rather than through the shell hotkey system) so they can't
+			// collide with the viewport's numeric zoom keys or its Ctrl+wheel zoom.
+			if (KeyboardState.Ctrl && !document.Selection.IsEmpty && _selectionBox.State.Action == BoxAction.Idle && _emptyBox.State.Action == BoxAction.Idle)
+			{
+				if (e.KeyCode == Keys.Oemplus || e.KeyCode == Keys.Add) { SelectMore(document); e.Handled = true; }
+				else if (e.KeyCode == Keys.OemMinus || e.KeyCode == Keys.Subtract) { SelectLess(document); e.Handled = true; }
+			}
+
 			var altMovement = KeyboardState.Alt && CameraNavigationViewportSettings.EnableAltArrowKeyMovement;
 			var nudge = (CameraNavigationViewportSettings.EnableArrowKeyMovement || altMovement) ? GetNudgeValue(e.KeyCode) : null;
 			if (nudge != null && (_selectionBox.State.Action == BoxAction.Drawn) && !document.Selection.IsEmpty)
@@ -762,6 +776,13 @@ namespace Sledge.BspEditor.Tools.Selection
 		{
 			if (e.KeyCode == Keys.Enter) Confirm(document);
 			else if (e.KeyCode == Keys.Escape) Cancel(document);
+
+			// Ctrl + "+"/"-" grow/shrink the selection to objects sharing a vertex (see the 2D KeyDown above).
+			if (KeyboardState.Ctrl && !document.Selection.IsEmpty && _selectionBox.State.Action == BoxAction.Idle && _emptyBox.State.Action == BoxAction.Idle)
+			{
+				if (e.KeyCode == Keys.Oemplus || e.KeyCode == Keys.Add) { SelectMore(document); e.Handled = true; }
+				else if (e.KeyCode == Keys.OemMinus || e.KeyCode == Keys.Subtract) { SelectLess(document); e.Handled = true; }
+			}
 
 			base.KeyDown(document, viewport, camera, e);
 		}
@@ -811,6 +832,117 @@ namespace Sledge.BspEditor.Tools.Selection
 				SetSelected(document, null, null, true, IgnoreGrouping());
 			}
 			_selectionBox.State.Action = _emptyBox.State.Action = BoxAction.Idle;
+			SelectionChanged(document);
+		}
+
+		#endregion
+
+		#region Select more / less (Ctrl++ / Ctrl+-)
+
+		// The unique vertex positions of a solid (or entity's solids), rounded so that vertices which
+		// only differ by floating point noise still count as the same point.
+		private static HashSet<Vector3> GetSharedVertices(IMapObject obj)
+		{
+			var set = new HashSet<Vector3>();
+			foreach (var v in obj.FindAll().OfType<Solid>().SelectMany(s => s.Faces).SelectMany(f => f.Vertices))
+			{
+				set.Add(v.Round(2));
+			}
+			return set;
+		}
+
+		// Two objects are "connected" when they share at least one vertex position.
+		private static bool AreObjectsConnected(IMapObject a, IMapObject b)
+		{
+			var verts = GetSharedVertices(a);
+			if (verts.Count == 0) return false;
+			foreach (var v in GetSharedVertices(b))
+			{
+				if (verts.Contains(v)) return true;
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// Grows the selection to include every object that shares a vertex with the current selection
+		/// ("select more", Ctrl+"+"). Pushes the previous state so Ctrl+"-" can step back to it.
+		/// </summary>
+		internal void SelectMore(MapDocument document)
+		{
+			var current = document.Selection.ToList();
+			if (current.Count == 0) return;
+
+			// Only leaf objects (solids / entity geometry) can be grown; ignore groups & entities.
+			var candidates = document.Map.Root.FindAll().Where(x => x.Hierarchy.Parent != null && !x.Hierarchy.HasChildren).ToList();
+			if (candidates.Count == 0) return;
+
+			var grown = new HashSet<IMapObject>(current);
+			foreach (var c in candidates)
+			{
+				if (grown.Contains(c)) continue;
+				if (current.Any(sel => AreObjectsConnected(sel, c))) grown.Add(c);
+			}
+
+			if (grown.Count == current.Count) return; // Nothing more to select
+
+			_selectMoreHistory.Add(new HashSet<IMapObject>(current));
+			SetSelected(document, null, grown, false, IgnoreGrouping());
+			SelectionChanged(document);
+		}
+
+		/// <summary>
+		/// Shrinks the selection ("select less", Ctrl+"-"): if a previous "select more" state exists it
+		/// steps back to it, otherwise it peels off the outermost connected layer of the selection.
+		/// </summary>
+		internal void SelectLess(MapDocument document)
+		{
+			if (document.Selection.IsEmpty) return;
+
+			// Prefer stepping back through the exact history produced by repeated "select more".
+			if (_selectMoreHistory.Count > 0)
+			{
+				var previous = _selectMoreHistory[_selectMoreHistory.Count - 1];
+				_selectMoreHistory.RemoveAt(_selectMoreHistory.Count - 1);
+				SetSelected(document, null, previous, true, IgnoreGrouping());
+				SelectionChanged(document);
+				return;
+			}
+
+			var current = document.Selection.ToList();
+			if (current.Count <= 1)
+			{
+				SetSelected(document, null, null, true, IgnoreGrouping());
+				SelectionChanged(document);
+				return;
+			}
+
+			// Build the connectivity graph of the selected objects.
+			var neighbours = current.ToDictionary(x => x, x => new List<IMapObject>());
+			for (var i = 0; i < current.Count; i++)
+			{
+				for (var j = i + 1; j < current.Count; j++)
+				{
+					if (AreObjectsConnected(current[i], current[j]))
+					{
+						neighbours[current[i]].Add(current[j]);
+						neighbours[current[j]].Add(current[i]);
+					}
+				}
+			}
+
+			// A connected object stays selected only if all of its (selected) neighbours stay too, i.e. it
+			// has at most one connection to the rest of the selection. Peeling those off drops the
+			// outermost connected layer, mirroring how "select more" grew the selection.
+			var toDeselect = current.Where(x => neighbours[x].Count <= 1).ToList();
+			if (toDeselect.Count == 0) toDeselect = current.ToList();
+			if (toDeselect.Count >= current.Count)
+			{
+				SetSelected(document, null, null, true, IgnoreGrouping());
+			}
+			else
+			{
+				SetSelected(document, toDeselect, null, false, IgnoreGrouping());
+			}
 			SelectionChanged(document);
 		}
 

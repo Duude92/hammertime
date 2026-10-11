@@ -226,9 +226,18 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
 				Cancel();
 				e.Handled = true;
 			}
-
-
-
+			else if (KeyboardState.Ctrl && (e.KeyCode == Keys.Oemplus || e.KeyCode == Keys.Add))
+			{
+				// Ctrl + "+" selects every vertex handle that shares a position with the current selection.
+				SelectMore();
+				e.Handled = true;
+			}
+			else if (KeyboardState.Ctrl && (e.KeyCode == Keys.OemMinus || e.KeyCode == Keys.Subtract))
+			{
+				// Ctrl + "-" deselects the handles that only sit at a single shared position.
+				SelectLess();
+				e.Handled = true;
+			}
 		}
 
 		protected override void KeyDown(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
@@ -270,6 +279,57 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
 		{
 			HandleKeyDown(e);
 			base.KeyDown(document, viewport, camera, e);
+		}
+
+		private void SelectMore()
+		{
+			// "Select more" (Ctrl+"+"): every vertex handle that sits at one of the currently selected
+			// vertex positions becomes selected too. Handles are already grouped by position within a
+			// solid, so this picks up the same position wherever it appears across the selected solids.
+			var selectedPositions = GetVisiblePoints()
+				.Where(x => x.IsSelected && !x.IsMidpoint)
+				.Select(x => x.Position.Round(2))
+				.ToHashSet();
+			if (selectedPositions.Count == 0) return;
+
+			foreach (var point in GetVisiblePoints().Where(x => !x.IsMidpoint))
+			{
+				if (selectedPositions.Contains(point.Position.Round(2)))
+				{
+					point.IsSelected = true;
+				}
+			}
+
+			UpdateSplitEnabled();
+			Invalidate();
+		}
+
+		private void SelectLess()
+		{
+			// "Select less" (Ctrl+"-"): drop the handles that sit at a position shared by only a single
+			// currently-selected handle. Repeated presses peel off one shared layer at a time, which is
+			// the exact inverse of "select more" (which groups handles by shared position).
+			var selectedPoints = GetVisiblePoints().Where(x => x.IsSelected && !x.IsMidpoint).ToList();
+			if (selectedPoints.Count == 0) return;
+
+			// Count how many selected handles share each position. Positions are rounded the same way
+			// the handle lists are built so equivalent vertices fall into the same bucket.
+			var positionCounts = new Dictionary<Vector3, int>();
+			foreach (var p in selectedPoints)
+			{
+				var key = p.Position.Round(2);
+				positionCounts.TryGetValue(key, out var count);
+				positionCounts[key] = count + 1;
+			}
+
+			// A position occupied by a single handle is the outermost layer - deselect it.
+			foreach (var p in selectedPoints)
+			{
+				if (positionCounts[p.Position.Round(2)] <= 1) p.IsSelected = false;
+			}
+
+			UpdateSplitEnabled();
+			Invalidate();
 		}
 
 		private void Confirm()
