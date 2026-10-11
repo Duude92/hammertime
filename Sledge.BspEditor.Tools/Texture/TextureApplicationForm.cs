@@ -472,7 +472,9 @@ namespace Sledge.BspEditor.Tools.Texture
             // the regular viewport key handling afterwards. Keys being typed into text
             // boxes are not forwarded.
             var source = FromHandle(msg.HWnd);
-            if (!(source is TextBox || source is RichTextBox) && IsFreeLookKey(keyData))
+            // Key auto-repeat (bit 30 of lParam) must not toggle free look on and off again while the key is held
+            var isRepeat = (msg.LParam.ToInt64() & 0x40000000) != 0;
+            if (!isRepeat && !(source is TextBox || source is RichTextBox) && IsFreeLookKey(keyData))
             {
                 Oy.Publish("BspEditor:Viewport:Focus3DView");
             }
