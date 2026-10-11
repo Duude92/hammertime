@@ -83,6 +83,7 @@
             UvVX = new System.Windows.Forms.TextBox();
             UvVY = new System.Windows.Forms.TextBox();
             UvVZ = new System.Windows.Forms.TextBox();
+            UvMappingButton = new System.Windows.Forms.Button();
             AlignGroup.SuspendLayout();
             JustifyGroup.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)RotationValue).BeginInit();
@@ -722,12 +723,24 @@
             UvVZ.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             HoverTip.SetToolTip(UvVZ, "V axis, Z");
             // 
+            // UvMappingButton
+            // 
+            UvMappingButton.Location = new System.Drawing.Point(299, 264);
+            UvMappingButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            UvMappingButton.Name = "UvMappingButton";
+            UvMappingButton.Size = new System.Drawing.Size(173, 27);
+            UvMappingButton.TabIndex = 57;
+            UvMappingButton.Text = "UV Mapping...";
+            UvMappingButton.UseVisualStyleBackColor = true;
+            UvMappingButton.Click += UvMappingButtonClicked;
+            // 
             // TextureApplicationForm
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(486, 632);
             Controls.Add(UvVectorsLabel);
+            Controls.Add(UvMappingButton);
             Controls.Add(UvUX);
             Controls.Add(UvUY);
             Controls.Add(UvUZ);
@@ -792,6 +805,7 @@
         private System.Windows.Forms.TextBox UvVX;
         private System.Windows.Forms.TextBox UvVY;
         private System.Windows.Forms.TextBox UvVZ;
+        private System.Windows.Forms.Button UvMappingButton;
         private System.Windows.Forms.Button SmoothingGroupsButton;
         private System.Windows.Forms.GroupBox AlignGroup;
         private System.Windows.Forms.GroupBox JustifyGroup;

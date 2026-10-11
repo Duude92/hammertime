@@ -205,6 +205,7 @@
             "Shift": "Shift",
             "Browse": "Browse...",
             "Replace": "Replace...",
+            "UvMapping": "UV Mapping...",
             "Apply": "Apply",
             "Rotation": "Rotation",
             "Lightmap": "Lightmap",
@@ -273,6 +274,23 @@
             "FitToMultipleTiles": "Fit to multiple tiles",
             "TimesToTile": "Times to tile on face:",
             "Fit": "Fit"
+        },
+        "UvMappingForm": {
+            "Title": "UV Mapping",
+            "Values": "UV values",
+            "Axes": "UV vectors",
+            "Shift": "Shift:",
+            "Scale": "Scale:",
+            "Rotation": "Rotation:",
+            "UAxis": "U",
+            "VAxis": "V",
+            "AlignFace": "Align to face",
+            "AlignWorld": "Align to world",
+            "Fit": "Fit",
+            "FitView": "Fit view",
+            "Hint": "Drag in the view to move the UV layout over the texture.\r\nUse the mouse wheel to zoom.",
+            "NoSelection": "No faces selected",
+            "Status": "{0} ({1} x {2}) - {3} faces"
         }
     },
     "Vertex": {

@@ -121,6 +121,7 @@ namespace Sledge.BspEditor.Tools.Texture
 
                 BrowseButton.Text = strings.GetString(prefix, "Browse");
                 ReplaceButton.Text = strings.GetString(prefix, "Replace");
+                UvMappingButton.Text = strings.GetString(prefix, "UvMapping");
                 ApplyButton.Text = strings.GetString(prefix, "Apply");
 
                 RotationLabel.Text = strings.GetString(prefix, "Rotation");
@@ -935,6 +936,12 @@ namespace Sledge.BspEditor.Tools.Texture
         private void ReplaceButtonClicked(object sender, EventArgs e)
         {
             Oy.Publish("Command:Run", new CommandMessage("BspEditor:ReplaceTextures"));
+        }
+
+        private void UvMappingButtonClicked(object sender, EventArgs e)
+        {
+            // Open the UV mapping sub window (shown while the texture tool is active)
+            Oy.Publish("Context:Add", new ContextInfo("BspEditor:UvMapping"));
         }
 
         private void SmoothingGroupsButtonClicked(object sender, EventArgs e)
