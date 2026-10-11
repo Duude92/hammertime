@@ -40,15 +40,15 @@ namespace Sledge.BspEditor.Rendering.Viewport
         private readonly List<Keys> _downKeys;
         private readonly IContext _context;
 
-        // Free look engaged from a dialog (texture application): the viewport may not hold keyboard focus or
-        // be hovered, so it is kept alive and exited by a UI-thread poll of Escape / the free look key
+        // Free look toggled from a dialog (texture application) that keeps the keyboard focus: the viewport is
+        // neither focused nor hovered then, so these keep it alive and let the same key (or Escape) turn it off
         private bool _dialogEngaged;
-        private bool _exitKeyWasDown;
-        private int _suppressToggleUntil;
+        private Point _dialogCursorPos;
         private System.Windows.Forms.Timer _pollTimer;
         private Subscription _focusSubscription;
 
-        // Every 3D viewport listener hears the dialog's event; only one (the last hovered visible one) may act on it
+        // Every 3D viewport listener hears the dialog's event; only one may act on it
+        private static PerspectiveCameraNavigationViewportListener _dialogOwner;
         private static readonly List<WeakReference<PerspectiveCameraNavigationViewportListener>> Instances = new List<WeakReference<PerspectiveCameraNavigationViewportListener>>();
         private static WeakReference<PerspectiveCameraNavigationViewportListener> _lastHovered;
 
@@ -101,7 +101,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
             if (FreeLook || FreeLookToggle)
             {
                 FreeLook = FreeLookToggle = false;
-                _dialogEngaged = false;
+                ClearDialogEngaged();
                 SetFreeLook();
             }
             return Task.CompletedTask;
@@ -113,14 +113,14 @@ namespace Sledge.BspEditor.Rendering.Viewport
             _lastMillis = frame;
 
             if (currMillis == 0) return;
-            // Engaged from a dialog the cursor is not hovering the viewport yet, so hover must not cancel free look
+            // Toggled from a dialog, the cursor is not hovering the viewport, so hover must not cancel free look
             var engaged = _dialogEngaged && FreeLookToggle;
             if (!Viewport.IsUnlocked(this) || (!engaged && (!Focus || !Viewport.Viewport.IsFocused)))
             {
                 if (FreeLook || FreeLookToggle)
                 {
                     FreeLook = FreeLookToggle = false;
-                    _dialogEngaged = false;
+                    ClearDialogEngaged();
                     SetFreeLook();
                 }
                 return;
@@ -129,7 +129,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
             var seconds = (frame - currMillis) / 1000f;
             var units = CameraNavigationViewportSettings.ForwardSpeed * seconds;
 
-            var down = KeyboardState.IsAnyKeyDown(Keys.W, Keys.A, Keys.S, Keys.D);
+            var down = AnyKeyDownNow(Keys.W, Keys.A, Keys.S, Keys.D);
             if (!down) _downMillis = 0;
             else if (_downMillis == 0) _downMillis = currMillis;
 
@@ -141,8 +141,8 @@ namespace Sledge.BspEditor.Rendering.Viewport
 
             if (FreeLook)
             {
-                if (KeyboardState.Shift) units *= 2;
-                if (KeyboardState.Ctrl) units /= 2;
+                if (KeyDownNow(Keys.ShiftKey)) units *= 2;
+                if (KeyDownNow(Keys.ControlKey)) units /= 2;
             }
 
             if (float.IsNaN(units) || float.IsInfinity(units) || units < 0.001f) units = 0;
@@ -151,12 +151,12 @@ namespace Sledge.BspEditor.Rendering.Viewport
             var tilt = 2f;
 
             // These keys are used for hotkeys, don't want the 3D view to move about when trying to use hotkeys.
-            var ignore = !FreeLook && KeyboardState.IsAnyKeyDown(Keys.ShiftKey, Keys.ControlKey, Keys.Alt);
+            var ignore = !FreeLook && AnyKeyDownNow(Keys.ShiftKey, Keys.ControlKey, Keys.Alt);
 
             // Movement keys (WASD/QE) work while Z-toggle is active,
             // while Space is held, or while the Camera tool is the active tool.
             var cameraToolActive = _context.Get<ITool>("ActiveTool")?.GetType().Name == "CameraTool";
-            if (FreeLookToggle || cameraToolActive || KeyboardState.IsKeyDown(Keys.Space))
+            if (FreeLookToggle || cameraToolActive || KeyDownNow(Keys.Space))
             {
                 IfKey(_forwardKey, () => Camera.Advance(move), ignore);
                 IfKey(_backwardKey, () => Camera.Advance(-move), ignore);
@@ -176,8 +176,8 @@ namespace Sledge.BspEditor.Rendering.Viewport
             }
 
             // Arrow keys are not really used for hotkeys all that much, so we allow shift+arrows to match Hammer's keys
-            var shiftDown = KeyboardState.IsKeyDown(Keys.ShiftKey);
-            var otherDown = KeyboardState.IsAnyKeyDown(Keys.ControlKey, Keys.Alt);
+            var shiftDown = KeyDownNow(Keys.ShiftKey);
+            var otherDown = AnyKeyDownNow(Keys.ControlKey, Keys.Alt);
 
             IfKey(_panRightKey, () => { if (shiftDown) Camera.Strafe(move); else Camera.Pan(-tilt); }, otherDown);
             IfKey(_panLeftKey, () => { if (shiftDown) Camera.Strafe(-move); else Camera.Pan(tilt); }, otherDown);
@@ -187,7 +187,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
 
         private void IfKey(Keys key, Action action, bool ignoreKeyboard)
         {
-            if (!KeyboardState.IsKeyDown(key))
+            if (!KeyDownNow(key))
             {
                 _downKeys.Remove(key);
             }
@@ -222,16 +222,10 @@ namespace Sledge.BspEditor.Rendering.Viewport
                 e.Handled = true;
                 return;
             }
-            // The dialog poll just handled this very key press: don't toggle free look back on
-            if (e.KeyCode == _freeLookKey && unchecked(Environment.TickCount - _suppressToggleUntil) < 0)
-            {
-                e.Handled = true;
-                return;
-            }
             if (e.KeyCode == _freeLookKey && !e.Alt && !e.Control && !e.Shift)
             {
                 ToggleFreeLook();
-                if (!FreeLookToggle) _dialogEngaged = false;
+                if (!FreeLookToggle) ClearDialogEngaged();
             }
             else
             {
@@ -254,16 +248,35 @@ namespace Sledge.BspEditor.Rendering.Viewport
             PositionKnown = false;
         }
 
+        // While a dialog holds the keyboard focus the thread's keyboard state is not the viewport's, so read the physical key state
+        private bool KeyDownNow(Keys key)
+        {
+            return _dialogEngaged ? (GetAsyncKeyState((int) key) & 0x8000) != 0 : KeyboardState.IsKeyDown(key);
+        }
+
+        private bool AnyKeyDownNow(params Keys[] keys)
+        {
+            return keys.Any(KeyDownNow);
+        }
+
+        private void ClearDialogEngaged()
+        {
+            _dialogEngaged = false;
+            if (ReferenceEquals(_dialogOwner, this)) _dialogOwner = null;
+        }
+
         /// <summary>
-        /// Turns toggled free look off, restoring the cursor, and stops the dialog poll.
+        /// Turns toggled free look off and restores the cursor (to where it was, if free look was started from a dialog).
         /// </summary>
         private void ExitToggledFreeLook()
         {
+            var wasEngaged = _dialogEngaged;
             FreeLookToggle = false;
-            _dialogEngaged = false;
-            _suppressToggleUntil = Environment.TickCount + 250;
+            ClearDialogEngaged();
+            StopPoll();
             SetFreeLook();
             PositionKnown = false;
+            if (wasEngaged) Cursor.Position = _dialogCursorPos;
         }
 
         private bool IsUsable()
@@ -272,6 +285,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
             return c != null && !c.IsDisposed && c.IsHandleCreated && c.Visible && Camera != null;
         }
 
+        // The last hovered visible 3D viewport, else the first visible one
         private bool IsDialogTarget()
         {
             if (!IsUsable()) return false;
@@ -308,90 +322,62 @@ namespace Sledge.BspEditor.Rendering.Viewport
             _pollTimer?.Stop();
         }
 
-        // Runs on the UI thread while free look was engaged from a dialog. Escape, or a fresh press of the
-        // free look key, exits free look even if the viewport never received keyboard focus.
+        // UI thread, only while free look was toggled from a dialog: Escape exits even though the viewport has no keyboard focus
         private void PollDialogEngaged(object sender, EventArgs e)
         {
-            if (!FreeLookToggle || !_dialogEngaged || !IsUsable())
+            if (!FreeLookToggle || !_dialogEngaged)
             {
-                if (FreeLookToggle && !IsUsable()) ExitToggledFreeLook();
-                _dialogEngaged = false;
                 StopPoll();
                 return;
             }
+            if (!IsUsable())
+            {
+                ExitToggledFreeLook();
+                return;
+            }
+            if (Form.ActiveForm == null) return; // only while this application is in the foreground
 
-            // Only react while this application is in the foreground
-            var active = Form.ActiveForm != null;
             var mods = (GetAsyncKeyState((int) Keys.ControlKey) & 0x8000) != 0
                        || (GetAsyncKeyState((int) Keys.ShiftKey) & 0x8000) != 0
                        || (GetAsyncKeyState((int) Keys.Menu) & 0x8000) != 0;
-            var zDown = (GetAsyncKeyState((int) _freeLookKey) & 0x8000) != 0 && !mods;
-            var escDown = (GetAsyncKeyState((int) Keys.Escape) & 0x8000) != 0 && !mods;
-
-            var exit = active && (escDown || (zDown && !_exitKeyWasDown));
-            _exitKeyWasDown = zDown;
-            if (exit)
-            {
-                ExitToggledFreeLook();
-                StopPoll();
-            }
+            if (!mods && (GetAsyncKeyState((int) Keys.Escape) & 0x8000) != 0) ExitToggledFreeLook();
         }
 
         /// <summary>
-        /// Handles the free look key pressed while a dialog (such as the texture
-        /// application) has keyboard focus: switches focus from the dialog to the
-        /// 3D viewport, so the free look key (and the rest of the viewport input)
-        /// works normally from there on. Free look itself is not engaged here -
-        /// it is toggled by the regular key handling once the viewport is focused.
+        /// Handles the free look key pressed while a dialog (the texture application) has the keyboard focus:
+        /// toggles 3D free look right there, without moving the cursor or the focus to the 3D view first.
+        /// The same key pressed in the dialog again (or Escape) turns it off.
         /// </summary>
         private void Focus3DViewFromDialog()
         {
-            // Only one viewport (the last hovered visible one) acts; hidden / other 3D views must not hide the cursor too
+            // A viewport already toggled from the dialog owns the event: it exits, every other one ignores it
+            var owner = _dialogOwner;
+            if (owner != null && owner._dialogEngaged && owner.FreeLookToggle)
+            {
+                if (ReferenceEquals(owner, this)) Viewport.Control.InvokeSync(ExitToggledFreeLook);
+                return;
+            }
+
+            // Hidden or other 3D views must not react as well (each would hide the cursor)
             if (!IsDialogTarget()) return;
 
             Viewport.Control.InvokeSync(() =>
             {
-                // Bring the window hosting the viewport to the foreground and give the
-                // viewport control the keyboard focus, replacing the dialog's focus
-                var form = Viewport.Control.FindForm();
-                form?.Activate();
-                Viewport.Control.Focus();
-
-                // Mark the viewport as hovered so the key handling accepts input right
-                // away, and seed the last known mouse position to the centre
+                _dialogCursorPos = Cursor.Position;
                 LastKnownX = Viewport.Width / 2;
                 LastKnownY = Viewport.Height / 2;
                 PositionKnown = false;
                 Focus = true;
 
-                // Make sure the cursor is inside the viewport (unless it already is),
-                // so moving the mouse hovers the 3D view and the free look key works
-                var bounds = Viewport.Control.RectangleToScreen(new Rectangle(0, 0, Viewport.Width, Viewport.Height));
-                if (!bounds.Contains(Cursor.Position))
-                {
-                    Cursor.Position = Viewport.Control.PointToScreen(new Point(LastKnownX, LastKnownY));
-                }
-
-                // Also engage free look on this first press, exactly as a normal Z press
-                // in the viewport would - so "press Z, switch window, move camera" is one
-                // action.
-                // SetFreeLook saves the original cursor clip and confines the cursor to the
-                // viewport when free look turns on, and restores that original clip when it
-                // turns off. Do not save or clip here: doing so overwrote the saved clip with
-                // the viewport rectangle, so the cursor stayed trapped in the 3D view after exit.
+                // Set before toggling so the per-frame hover check can't cancel free look straight away.
+                // SetFreeLook itself saves the cursor clip, confines the cursor to the viewport and hides it,
+                // and restores all of that when free look is turned off.
+                _dialogEngaged = true;
+                _dialogOwner = this;
                 ToggleFreeLook();
 
-                _dialogEngaged = FreeLookToggle;
-                if (_dialogEngaged)
-                {
-                    // The key that engaged free look is still down: only a new press exits
-                    _exitKeyWasDown = (GetAsyncKeyState((int) _freeLookKey) & 0x8000) != 0;
-                    StartPoll();
-                }
-                else
-                {
-                    StopPoll();
-                }
+                if (FreeLookToggle) StartPoll();
+                else ClearDialogEngaged();
             });
         }
 
@@ -621,7 +607,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
         {
             try { if (_focusSubscription != null) Oy.Unsubscribe(_focusSubscription); } catch { }
             _focusSubscription = null;
-            _dialogEngaged = false;
+            ClearDialogEngaged();
             _pollTimer?.Dispose();
             _pollTimer = null;
             lock (Instances) Instances.RemoveAll(x => !x.TryGetTarget(out var l) || ReferenceEquals(l, this));
