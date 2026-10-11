@@ -69,9 +69,9 @@ namespace Sledge.BspEditor.Rendering.Viewport
 
             _context = Container.Get<IContext>();
             Oy.Subscribe<ITool>("Tool:Activated", ToolSelected);
-            // Allow dialogs (e.g. the texture application) to hand the free look key over
-            // to the 3D viewport when they have keyboard focus instead of the viewport
-            Oy.Subscribe("BspEditor:Viewport:ToggleFreeLook", ToggleFreeLookFromDialog);
+            // Allow dialogs (e.g. the texture application) to hand keyboard focus over
+            // to the 3D viewport when they have it instead of the viewport
+            Oy.Subscribe("BspEditor:Viewport:Focus3DView", Focus3DViewFromDialog);
 			_settingsContainer = Common.Container.GetMany<ISettingsContainer>().OfType<ViewportSettingContainer>().FirstOrDefault();
         }
 
@@ -205,9 +205,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
         }
 
         /// <summary>
-        /// Toggles the free look state. This is also reachable via the Oy message
-        /// "BspEditor:Viewport:ToggleFreeLook", which dialogs (such as the texture
-        /// application) publish when they have keyboard focus instead of the viewport.
+        /// Toggles the free look state.
         /// </summary>
         public void ToggleFreeLook()
         {
@@ -219,29 +217,35 @@ namespace Sledge.BspEditor.Rendering.Viewport
 
         /// <summary>
         /// Handles the free look key pressed while a dialog (such as the texture
-        /// application) has keyboard focus: switches focus to the 3D viewport and
-        /// then toggles free look, so it engages under the same conditions as
-        /// pressing the key while the viewport itself is focused.
+        /// application) has keyboard focus: switches focus from the dialog to the
+        /// 3D viewport, so the free look key (and the rest of the viewport input)
+        /// works normally from there on. Free look itself is not engaged here -
+        /// it is toggled by the regular key handling once the viewport is focused.
         /// </summary>
-        private void ToggleFreeLookFromDialog()
+        private void Focus3DViewFromDialog()
         {
-            if (!Viewport.IsUnlocked(this)) return;
-
             Viewport.Control.InvokeSync(() =>
             {
-                // Hand keyboard focus to the 3D viewport so it accepts the movement keys
-                // immediately and receives all subsequent input
+                // Bring the window hosting the viewport to the foreground and give the
+                // viewport control the keyboard focus, replacing the dialog's focus
+                var form = Viewport.Control.FindForm();
+                form?.Activate();
                 Viewport.Control.Focus();
 
-                // The cursor can be anywhere at this point (e.g. over the dialog that just
-                // had focus) - snap it to the centre of the viewport so mouselook starts
-                // from a known position instead of producing a huge first delta
+                // Mark the viewport as hovered so the key handling accepts input right
+                // away, and seed the last known mouse position to the centre
                 LastKnownX = Viewport.Width / 2;
                 LastKnownY = Viewport.Height / 2;
                 PositionKnown = false;
-                Cursor.Position = Viewport.Control.PointToScreen(new Point(LastKnownX, LastKnownY));
+                Focus = true;
 
-                ToggleFreeLook();
+                // Make sure the cursor is inside the viewport (unless it already is),
+                // so moving the mouse hovers the 3D view and the free look key works
+                var bounds = Viewport.Control.RectangleToScreen(new Rectangle(0, 0, Viewport.Width, Viewport.Height));
+                if (!bounds.Contains(Cursor.Position))
+                {
+                    Cursor.Position = Viewport.Control.PointToScreen(new Point(LastKnownX, LastKnownY));
+                }
             });
         }
 
