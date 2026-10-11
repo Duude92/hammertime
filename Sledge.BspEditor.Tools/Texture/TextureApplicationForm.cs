@@ -15,10 +15,12 @@ using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
+using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Documents;
+using Sledge.Common.Shell.Settings;
 using Sledge.Common.Translations;
 using Sledge.DataStructures.Geometric;
 using Sledge.Shell;
@@ -45,6 +47,9 @@ namespace Sledge.BspEditor.Tools.Texture
         private readonly CurrentTextureProperties _currentTextureProperties;
 
         private WeakReference<MapDocument> _document = new WeakReference<MapDocument>(null);
+
+        // The 3D viewport free look key from the viewport settings (default: Z)
+        private readonly Keys _freeLookKey;
 
         private event EventHandler DebouncedPropertiesChanged;
         // 1 while a property change is waiting for its debounced (undoable) commit
@@ -95,6 +100,9 @@ namespace Sledge.BspEditor.Tools.Texture
             _saveChanges = Observable.FromEventPattern(x => DebouncedPropertiesChanged += x, x => DebouncedPropertiesChanged -= x)
                 .Throttle(TimeSpan.FromMilliseconds(500))
                 .Subscribe(x => CommitPendingChanges());
+
+            var settingsContainer = Sledge.Common.Container.GetMany<ISettingsContainer>().OfType<ViewportSettingContainer>().FirstOrDefault();
+            _freeLookKey = settingsContainer?.FreeLookKey ?? Keys.Z;
         }
 
         public string LeftClick { get; set; }
@@ -456,7 +464,24 @@ namespace Sledge.BspEditor.Tools.Texture
         {
             // A change still inside the debounce window is committed first, so undo/redo sees it in the history
             if (IsUndoRedoKey(keyData)) CommitPendingChanges();
+
+            // This dialog takes keyboard focus away from the 3D view, so forward the free
+            // look key (default: Z) to the viewports. Free look can then be toggled while
+            // working in the texture application, without the cursor having to be in the
+            // 3D view. Keys being typed into text boxes are not forwarded.
+            var source = FromHandle(msg.HWnd);
+            if (!(source is TextBox || source is RichTextBox) && IsFreeLookKey(keyData))
+            {
+                Oy.Publish("BspEditor:Viewport:ToggleFreeLook");
+            }
+
             return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+        private bool IsFreeLookKey(Keys keyData)
+        {
+            if (keyData.HasFlag(Keys.Control) || keyData.HasFlag(Keys.Shift) || keyData.HasFlag(Keys.Alt)) return false;
+            return (keyData & Keys.KeyCode) == _freeLookKey;
         }
 
         protected override bool CheckIgnoreHotkey(Control source, Keys keyData)

@@ -69,6 +69,9 @@ namespace Sledge.BspEditor.Rendering.Viewport
 
             _context = Container.Get<IContext>();
             Oy.Subscribe<ITool>("Tool:Activated", ToolSelected);
+            // Allow dialogs (e.g. the texture application) to forward the free look key
+            // when they have keyboard focus instead of the 3D viewport
+            Oy.Subscribe("BspEditor:Viewport:ToggleFreeLook", ToggleFreeLook);
 			_settingsContainer = Common.Container.GetMany<ISettingsContainer>().OfType<ViewportSettingContainer>().FirstOrDefault();
         }
 
@@ -189,9 +192,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
             if (!Focus || !Viewport.IsUnlocked(this)) return;
             if (e.KeyCode == _freeLookKey && !e.Alt && !e.Control && !e.Shift)
             {
-                FreeLookToggle = !FreeLookToggle;
-                SetFreeLook();
-                PositionKnown = false;
+                ToggleFreeLook();
             }
             else
             {
@@ -201,6 +202,20 @@ namespace Sledge.BspEditor.Rendering.Viewport
             {
                 e.Handled = true;
             }
+        }
+
+        /// <summary>
+        /// Toggles the free look state. This is also reachable via the Oy message
+        /// "BspEditor:Viewport:ToggleFreeLook", which dialogs (such as the texture
+        /// application) publish when they have keyboard focus instead of the viewport,
+        /// so the free look key works no matter where the cursor is.
+        /// </summary>
+        public void ToggleFreeLook()
+        {
+            if (!Viewport.IsUnlocked(this)) return;
+            FreeLookToggle = !FreeLookToggle;
+            SetFreeLook();
+            PositionKnown = false;
         }
 
         private void SetFreeLook()

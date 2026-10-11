@@ -6,7 +6,7 @@ using System.Windows.Forms;
 namespace Sledge.BspEditor.Rendering.Viewport
 {
 	[Export(typeof(ISettingsContainer))]
-	internal class ViewportSettingContainer : ISettingsContainer
+	public class ViewportSettingContainer : ISettingsContainer
 	{
 		public string Name => "Sledge.BspEditor.Rendering.Viewport.ViewportSettingContainer";
 
