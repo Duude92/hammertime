@@ -851,18 +851,6 @@ namespace Sledge.BspEditor.Tools.Selection
 			return set;
 		}
 
-		// Two objects are "connected" when they share at least one vertex position.
-		private static bool AreObjectsConnected(IMapObject a, IMapObject b)
-		{
-			var verts = GetSharedVertices(a);
-			if (verts.Count == 0) return false;
-			foreach (var v in GetSharedVertices(b))
-			{
-				if (verts.Contains(v)) return true;
-			}
-			return false;
-		}
-
 		/// <summary>
 		/// Grows the selection to include every object that shares a vertex with the current selection
 		/// ("select more", Ctrl+"+"). Pushes the previous state so Ctrl+"-" can step back to it.
@@ -872,15 +860,32 @@ namespace Sledge.BspEditor.Tools.Selection
 			var current = document.Selection.ToList();
 			if (current.Count == 0) return;
 
-			// Only leaf objects (solids / entity geometry) can be grown; ignore groups & entities.
-			var candidates = document.Map.Root.FindAll().Where(x => x.Hierarchy.Parent != null && !x.Hierarchy.HasChildren).ToList();
-			if (candidates.Count == 0) return;
-
-			var grown = new HashSet<IMapObject>(current);
-			foreach (var c in candidates)
+			// Union of the vertex positions of everything currently selected, built exactly once.
+			// Checking each candidate against this set (instead of re-walking every selected object
+			// per candidate) is what keeps this fast on large maps.
+			var selectedPositions = new HashSet<Vector3>();
+			foreach (var sel in current)
 			{
+				foreach (var v in GetSharedVertices(sel)) selectedPositions.Add(v);
+			}
+			if (selectedPositions.Count == 0) return;
+
+			// Only leaf objects (solids / entity geometry) can be grown; ignore groups & entities.
+			var grown = new HashSet<IMapObject>(current);
+			foreach (var c in document.Map.Root.FindAll())
+			{
+				if (c.Hierarchy.Parent == null || c.Hierarchy.HasChildren) continue;
 				if (grown.Contains(c)) continue;
-				if (current.Any(sel => AreObjectsConnected(sel, c))) grown.Add(c);
+
+				// Walk this candidate's vertices once and stop at the first shared position.
+				foreach (var v in GetSharedVertices(c))
+				{
+					if (selectedPositions.Contains(v))
+					{
+						grown.Add(c);
+						break;
+					}
+				}
 			}
 
 			if (grown.Count == current.Count) return; // Nothing more to select
@@ -916,13 +921,17 @@ namespace Sledge.BspEditor.Tools.Selection
 				return;
 			}
 
-			// Build the connectivity graph of the selected objects.
+			// Build the connectivity graph of the selected objects. Each selected object's vertex
+			// set is walked once and cached, so the pairwise test below doesn't re-walk it per
+			// comparison (which is what made a large selection feel sluggish).
+			var vertexSets = current.ToDictionary(x => x, GetSharedVertices);
 			var neighbours = current.ToDictionary(x => x, x => new List<IMapObject>());
 			for (var i = 0; i < current.Count; i++)
 			{
+				var setA = vertexSets[current[i]];
 				for (var j = i + 1; j < current.Count; j++)
 				{
-					if (AreObjectsConnected(current[i], current[j]))
+					if (setA.Overlaps(vertexSets[current[j]]))
 					{
 						neighbours[current[i]].Add(current[j]);
 						neighbours[current[j]].Add(current[i]);
