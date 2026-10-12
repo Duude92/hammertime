@@ -223,6 +223,16 @@ namespace Sledge.BspEditor.Tools.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Tool_Spin {
+            get {
+                object obj = ResourceManager.GetObject("Tool_Spin", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Tool_Test {
             get {
                 object obj = ResourceManager.GetObject("Tool_Test", resourceCulture);

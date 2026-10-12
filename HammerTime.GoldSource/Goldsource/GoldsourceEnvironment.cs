@@ -24,6 +24,7 @@ using Sledge.BspEditor.Tools.Entity;
 using Sledge.BspEditor.Tools.PathTool;
 using Sledge.BspEditor.Tools.Prefab;
 using Sledge.BspEditor.Tools.Selection;
+using Sledge.BspEditor.Tools.Spin;
 using Sledge.BspEditor.Tools.Texture;
 using Sledge.BspEditor.Tools.Vertex;
 using Sledge.BspEditor.Tools.WrapTexture;
@@ -177,6 +178,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
 				TextureTool.TextureToolCapability,
 				BrushTool.BrushToolCapability,
 				ClipTool.ClipToolCapability,
+				SpinTool.SpinToolCapability,
 				CordonTool.CordonToolCapability,
 				DecalTool.DecalToolCapability,
 				EntityTool.EntityToolCapability,
