@@ -254,7 +254,9 @@ namespace HammerTime.Source.Converters
 				if (t != null) resourceCollector.RequireTexture(t.Name);
 			}
 
-			groups.Add(new BufferGroup(PipelineType.Wireframe, obj.IsSelected ? CameraType.Both : CameraType.Orthographic, numSolidIndices, numWireframeIndices));
+			// Selected objects: 3D uses the normal (depth tested) wireframe, 2D uses the on-top selection pipeline
+			groups.Add(new BufferGroup(PipelineType.Wireframe, obj.IsSelected ? CameraType.Perspective : CameraType.Orthographic, numSolidIndices, numWireframeIndices));
+			if (obj.IsSelected) groups.Add(new BufferGroup(PipelineType.WireframeSelected, CameraType.Orthographic, numSolidIndices, numWireframeIndices));
 
 			builder.Append(points, indices, groups);
 			builder.Append(shadowPoints, indices, shadowGroups);
@@ -271,7 +273,8 @@ namespace HammerTime.Source.Converters
 				var untransformedIndices = indices.Skip((int)numSolidIndices);
 				builder.Append(points, untransformedIndices, new[]
 				{
-					new BufferGroup(PipelineType.Wireframe, CameraType.Both, 0, numWireframeIndices)
+					new BufferGroup(PipelineType.Wireframe, CameraType.Perspective, 0, numWireframeIndices),
+					new BufferGroup(PipelineType.WireframeSelected, CameraType.Orthographic, 0, numWireframeIndices)
 				});
 			}
 		}

@@ -102,6 +102,8 @@ namespace Sledge.Rendering.Engine
 
 			AddPipeline(new SkyboxPipeline());
 			AddPipeline(new WireframePipeline());
+			// Selected objects in the 2D views: drawn after everything else, ignoring depth, so the selection is never hidden
+			AddPipeline(new WireframePipeline(PipelineType.WireframeSelected, 11, DepthStencilStateDescription.Disabled));
 			AddPipeline(new TexturedOpaquePipeline());
 			AddPipeline(new BillboardOpaquePipeline());
 			AddPipeline(new WireframeModelPipeline());

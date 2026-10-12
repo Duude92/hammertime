@@ -32,6 +32,8 @@ namespace Sledge.BspEditor.Tools.Draggable
 
         public bool RenderBoxText { get; set; } = true;
         public bool RenderBox { get; set; } = true;
+        /// <summary>Set to false to stop the resize/rotate/skew handles and the move highlight from being drawn (they stay interactive).</summary>
+        public bool RenderHandles { get; set; } = true;
 
         protected IDraggable[] BoxHandles { get; set; }
 

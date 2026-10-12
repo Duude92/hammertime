@@ -4,6 +4,7 @@
     {
         Skybox,
         Wireframe,
+        WireframeSelected,
 
         TexturedOpaque,
         BillboardOpaque,
