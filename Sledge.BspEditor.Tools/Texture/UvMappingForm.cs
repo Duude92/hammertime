@@ -142,6 +142,7 @@ namespace Sledge.BspEditor.Tools.Texture
             AlignFaceButton.Click += AlignToFaceClicked;
             AlignWorldButton.Click += AlignToWorldClicked;
             FitTextureButton.Click += FitTextureClicked;
+            UnfoldButton.Click += UnfoldClicked;
             FitViewButton.Click += (s, e) => FitView(GetSelectedFaces().Select(x => x.Value).ToList());
 
             PreviewPanel.Paint += DrawPreview;
@@ -222,6 +223,7 @@ namespace Sledge.BspEditor.Tools.Texture
                 FitTextureButton.Text = strings.GetString(prefix, "Fit");
                 FitViewButton.Text = strings.GetString(prefix, "FitView");
                 TreatAsOneCheckBox.Text = strings.GetString(prefix, "TreatAsOne") ?? TreatAsOneCheckBox.Text;
+                UnfoldButton.Text = strings.GetString(prefix, "Unfold") ?? UnfoldButton.Text;
                 HintLabel.Text = strings.GetString(prefix, "Hint");
                 _statusNoSelection = strings.GetString(prefix, "NoSelection") ?? _statusNoSelection;
                 _statusFormat = strings.GetString(prefix, "Status") ?? _statusFormat;
@@ -632,6 +634,42 @@ namespace Sledge.BspEditor.Tools.Texture
                 f.Texture.AlignToNormal(f.Plane.GetClosestAxisToNormal());
                 return Task.FromResult(true);
             });
+        }
+
+        private async void UnfoldClicked(object sender, EventArgs e)
+        {
+            var faces = GetSelectedFaces().Select(x => x.Value).ToList();
+            if (faces.Count < 2) return;
+
+            var unfolded = UvMath.Unfold(faces);
+            var limits = UvLimits.GoldSrc;
+            var overLimit = 0;
+
+            await ApplyChanges((mo, f) =>
+            {
+                if (!unfolded.TryGetValue(f.ID, out var texture)) return Task.FromResult(false);
+
+                var before = UvMath.GetExtents(f.Texture, f.Vertices, limits);
+                var after = UvMath.GetExtents(texture, f.Vertices, limits);
+                if (after.Exceeds(limits) && !before.Exceeds(limits)) overLimit++;
+
+                f.Texture.Unclone(texture);
+                return Task.FromResult(true);
+            });
+
+            var notConnected = faces.Count - unfolded.Count;
+            if (overLimit == 0 && notConnected == 0) return;
+
+            var message = "";
+            if (notConnected > 0)
+            {
+                message += notConnected + " face(s) are not connected to the others by a shared edge (or use a different texture) and were left as they were.\n\n";
+            }
+            if (overLimit > 0)
+            {
+                message += overLimit + " face(s) now span more than " + limits.MaxLuxelSpan + " lightmap luxels, which the compiler rejects (\"Bad surface extents\"). Use a larger scale or split those faces.";
+            }
+            MessageBox.Show(this, message.Trim(), Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private async void FitTextureClicked(object sender, EventArgs e)

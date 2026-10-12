@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.DataStructures.Geometric;
 
 namespace Sledge.BspEditor.Primitives
@@ -211,6 +212,177 @@ namespace Sledge.BspEditor.Primitives
             if (oldVertices == null) return false;
             var moved = oldVertices.Select(x => Vector3.Transform(x, transform)).ToList();
             return TryPreserveMapping(tex, oldVertices, moved);
+        }
+
+        /// <summary>
+        /// Unfolds a group of connected faces into one continuous, undistorted layout.
+        /// The least distorted face keeps its mapping; the others are reached across shared edges, each one rotated about
+        /// the edge into the plane of the face it was reached from, so the shared edge gets identical (s, t) on both sides
+        /// and the scale stays the same. Only faces with the same texture are joined. Returns the new texture for every face
+        /// that was reached, by face ID (faces that aren't connected to the reference are left out).
+        /// </summary>
+        public static Dictionary<long, Texture> Unfold(IReadOnlyList<Face> faces)
+        {
+            var result = new Dictionary<long, Texture>();
+            if (faces == null || faces.Count == 0) return result;
+
+            // The reference is the face that is currently the least distorted (biggest one wins a tie)
+            Face reference = null;
+            var bestDistortion = float.MaxValue;
+            var bestArea = 0f;
+            foreach (var face in faces)
+            {
+                var distortion = Distortion(face);
+                var area = Area(face.Vertices);
+                if (reference == null || distortion < bestDistortion - 1e-3f || (Math.Abs(distortion - bestDistortion) <= 1e-3f && area > bestArea))
+                {
+                    reference = face;
+                    bestDistortion = distortion;
+                    bestArea = area;
+                }
+            }
+
+            result[reference.ID] = reference.Texture.Clone();
+            var queue = new Queue<Face>();
+            queue.Enqueue(reference);
+
+            while (queue.Count > 0)
+            {
+                var parent = queue.Dequeue();
+                var parentTexture = result[parent.ID];
+
+                foreach (var next in faces)
+                {
+                    if (result.ContainsKey(next.ID)) continue;
+                    if (!string.Equals(next.Texture.Name, parent.Texture.Name, StringComparison.InvariantCultureIgnoreCase)) continue;
+                    if (!TryGetSharedEdge(parent, next, out var a, out var b)) continue;
+
+                    // Where the next face's vertices would be if it were folded flat into the parent's plane
+                    var flat = UnfoldInto(parent, next, a, b);
+                    if (flat == null) continue;
+
+                    // The parent's mapping, read at those flattened positions, becomes the next face's mapping
+                    var solved = parentTexture.Clone();
+                    if (!TryPreserveMapping(solved, flat, next.Vertices.ToList())) continue;
+
+                    var texture = next.Texture.Clone();
+                    texture.UAxis = solved.UAxis;
+                    texture.VAxis = solved.VAxis;
+                    texture.ULength = solved.ULength;
+                    texture.VLength = solved.VLength;
+                    texture.XScale = solved.XScale;
+                    texture.YScale = solved.YScale;
+                    texture.XShift = solved.XShift;
+                    texture.YShift = solved.YShift;
+                    texture.Rotation = solved.Rotation;
+
+                    result[next.ID] = texture;
+                    queue.Enqueue(next);
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// How stretched or sheared a face's mapping is: 1 means the texture keeps its shape on the face
+        /// (equal scale, right angle between the axes as seen on the face), larger is worse.
+        /// </summary>
+        public static float Distortion(Face face)
+        {
+            var t = face.Texture;
+            if (Math.Abs(t.XScale) < 1e-6f || Math.Abs(t.YScale) < 1e-6f) return float.MaxValue;
+
+            var n = face.Plane.Normal;
+            var gs = t.UAxis / t.XScale;
+            var gt = t.VAxis / t.YScale;
+            gs -= n * gs.Dot(n);
+            gt -= n * gt.Dot(n);
+
+            var a = gs.Dot(gs);
+            var b = gs.Dot(gt);
+            var c = gt.Dot(gt);
+            var mean = (a + c) / 2f;
+            var diff = MathF.Sqrt(((a - c) / 2f) * ((a - c) / 2f) + b * b);
+            var min = mean - diff;
+            var max = mean + diff;
+            return min <= 1e-12f ? float.MaxValue : MathF.Sqrt(max / min);
+        }
+
+        private static float Area(IList<Vector3> v)
+        {
+            var area = 0f;
+            for (var i = 1; i < v.Count - 1; i++)
+            {
+                area += (v[i] - v[0]).Cross(v[i + 1] - v[0]).Length() / 2f;
+            }
+            return area;
+        }
+
+        /// <summary>
+        /// The edge two faces share, as the stretch of it that both have (the faces may be cut differently along it).
+        /// </summary>
+        private static bool TryGetSharedEdge(Face fa, Face fb, out Vector3 a, out Vector3 b)
+        {
+            a = b = default;
+            var va = fa.Vertices;
+            var vb = fb.Vertices;
+            const float tolerance = 0.05f;
+            var bestLength = tolerance;
+            var found = false;
+
+            for (var i = 0; i < va.Count; i++)
+            {
+                var p0 = va[i];
+                var p1 = va[(i + 1) % va.Count];
+                var length = (p1 - p0).Length();
+                if (length < 1e-4f) continue;
+                var dir = (p1 - p0) / length;
+
+                for (var j = 0; j < vb.Count; j++)
+                {
+                    var q0 = vb[j];
+                    var q1 = vb[(j + 1) % vb.Count];
+                    if (DistanceToLine(q0, p0, dir) > tolerance || DistanceToLine(q1, p0, dir) > tolerance) continue;
+
+                    var t0 = (q0 - p0).Dot(dir);
+                    var t1 = (q1 - p0).Dot(dir);
+                    var start = Math.Max(0f, Math.Min(t0, t1));
+                    var end = Math.Min(length, Math.Max(t0, t1));
+                    if (end - start > bestLength)
+                    {
+                        bestLength = end - start;
+                        a = p0 + dir * start;
+                        b = p0 + dir * end;
+                        found = true;
+                    }
+                }
+            }
+
+            return found;
+        }
+
+        private static float DistanceToLine(Vector3 p, Vector3 origin, Vector3 direction)
+        {
+            var v = p - origin;
+            return (v - direction * v.Dot(direction)).Length();
+        }
+
+        /// <summary>
+        /// Rotates the next face's vertices about the shared edge a-b into the parent's plane, on the far side of the edge.
+        /// </summary>
+        private static List<Vector3> UnfoldInto(Face parent, Face next, Vector3 a, Vector3 b)
+        {
+            var edge = b - a;
+            if (edge.LengthSquared() < 1e-8f) return null;
+            var axis = Vector3.Normalize(edge);
+
+            var parentNormal = parent.Plane.Normal;
+            var nextNormal = next.Plane.Normal;
+            var angle = MathF.Atan2(axis.Dot(nextNormal.Cross(parentNormal)), nextNormal.Dot(parentNormal));
+            var rotation = Matrix4x4.CreateFromAxisAngle(axis, angle);
+
+            return next.Vertices.Select(v => a + Vector3.Transform(v - a, rotation)).ToList();
         }
 
         /// <summary>

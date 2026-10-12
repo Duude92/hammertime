@@ -56,6 +56,7 @@ namespace Sledge.BspEditor.Tools.Texture
             FitTextureButton = new System.Windows.Forms.Button();
             FitViewButton = new System.Windows.Forms.Button();
             TreatAsOneCheckBox = new System.Windows.Forms.CheckBox();
+            UnfoldButton = new System.Windows.Forms.Button();
             HintLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)ShiftXValue).BeginInit();
             ((System.ComponentModel.ISupportInitialize)ShiftYValue).BeginInit();
@@ -330,6 +331,15 @@ namespace Sledge.BspEditor.Tools.Texture
             TreatAsOneCheckBox.Text = "Treat as one";
             TreatAsOneCheckBox.UseVisualStyleBackColor = true;
             // 
+            // UnfoldButton
+            // 
+            UnfoldButton.Location = new System.Drawing.Point(130, 542);
+            UnfoldButton.Name = "UnfoldButton";
+            UnfoldButton.Size = new System.Drawing.Size(100, 25);
+            UnfoldButton.TabIndex = 10;
+            UnfoldButton.Text = "Unfold";
+            UnfoldButton.UseVisualStyleBackColor = true;
+            // 
             // HintLabel
             // 
             HintLabel.Location = new System.Drawing.Point(12, 572);
@@ -352,6 +362,7 @@ namespace Sledge.BspEditor.Tools.Texture
             Controls.Add(FitTextureButton);
             Controls.Add(FitViewButton);
             Controls.Add(TreatAsOneCheckBox);
+            Controls.Add(UnfoldButton);
             Controls.Add(HintLabel);
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             Name = "UvMappingForm";
@@ -399,6 +410,7 @@ namespace Sledge.BspEditor.Tools.Texture
         private System.Windows.Forms.Button FitTextureButton;
         private System.Windows.Forms.Button FitViewButton;
         private System.Windows.Forms.CheckBox TreatAsOneCheckBox;
+        private System.Windows.Forms.Button UnfoldButton;
         private System.Windows.Forms.Label HintLabel;
     }
 }
