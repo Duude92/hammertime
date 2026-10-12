@@ -646,12 +646,25 @@ namespace Sledge.BspEditor.Tools.Texture
                 ? new Cloud(GetSelectedFaces().SelectMany(x => x.Value.Vertices))
                 : null;
 
+            // Large shifts are reduced by whole tiles, but by the same amount for every face using a texture:
+            // reducing each face on its own can wrap neighbouring faces to different tiles, which pulls their UV layout apart
+            var tileOffsets = new Dictionary<string, (int X, int Y)>(StringComparer.InvariantCultureIgnoreCase);
+
             await ApplyChanges(async (mo, f) =>
             {
                 var ti = await tc.GetTextureItem(f.Texture.Name);
                 if (ti == null) return false;
                 f.Texture.FitToPointCloud(ti.Width, ti.Height, shared ?? new Cloud(f.Vertices), 1, 1);
-                f.Texture.MinimiseTextureShiftValues(ti.Width, ti.Height);
+
+                var key = f.Texture.Name ?? "";
+                if (!tileOffsets.TryGetValue(key, out var offset))
+                {
+                    offset = ((int)Math.Round(f.Texture.XShift / ti.Width), (int)Math.Round(f.Texture.YShift / ti.Height));
+                    tileOffsets[key] = offset;
+                }
+
+                f.Texture.XShift -= offset.X * ti.Width;
+                f.Texture.YShift -= offset.Y * ti.Height;
                 return true;
             });
         }
@@ -1016,10 +1029,6 @@ namespace Sledge.BspEditor.Tools.Texture
             {
                 f.Texture.XShift += dx;
                 f.Texture.YShift += dy;
-                if (string.Equals(f.Texture.Name, _textureName, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    f.Texture.MinimiseTextureShiftValues(_textureWidth, _textureHeight);
-                }
                 return Task.FromResult(true);
             });
         }
