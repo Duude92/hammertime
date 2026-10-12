@@ -50,6 +50,8 @@ namespace Sledge.BspEditor.Tools.Texture
         private TextureCollection _collection;
         private ITextureStreamSource _streamSource;
         private Image _textureImage;
+        private TextureBrush _textureBrush;
+        private Image _brushImage;
         private string _textureName;
         private int _textureWidth;
         private int _textureHeight;
@@ -355,6 +357,9 @@ namespace Sledge.BspEditor.Tools.Texture
 
         private void ClearTexture()
         {
+            _textureBrush?.Dispose();
+            _textureBrush = null;
+            _brushImage = null;
             _textureName = null;
             _textureImage = null;
             _textureWidth = _textureHeight = 0;
@@ -640,6 +645,7 @@ namespace Sledge.BspEditor.Tools.Texture
                 var ti = await tc.GetTextureItem(f.Texture.Name);
                 if (ti == null) return false;
                 f.Texture.FitToPointCloud(ti.Width, ti.Height, shared ?? new Cloud(f.Vertices), 1, 1);
+                f.Texture.MinimiseTextureShiftValues(ti.Width, ti.Height);
                 return true;
             });
         }
@@ -841,14 +847,18 @@ namespace Sledge.BspEditor.Tools.Texture
 
             if (_textureImage != null)
             {
-                for (var ty = minTy; ty <= rawMaxTy; ty++)
+                // One tiled fill instead of a DrawImage per tile, so zooming far out stays fast
+                if (!ReferenceEquals(_brushImage, _textureImage))
                 {
-                    for (var tx = minTx; tx <= rawMaxTx; tx++)
-                    {
-                        var rect = new RectangleF(_viewOffset.X + tx * scale, _viewOffset.Y + ty * scale, scale, scale);
-                        g.DrawImage(_textureImage, rect);
-                    }
+                    _textureBrush?.Dispose();
+                    _textureBrush = new TextureBrush(_textureImage, WrapMode.Tile);
+                    _brushImage = _textureImage;
                 }
+
+                _textureBrush.ResetTransform();
+                _textureBrush.TranslateTransform(_viewOffset.X, _viewOffset.Y);
+                _textureBrush.ScaleTransform(scale / _textureImage.Width, scale / _textureImage.Height);
+                g.FillRectangle(_textureBrush, 0, 0, width, height);
             }
 
             // Tile grid
@@ -1000,6 +1010,10 @@ namespace Sledge.BspEditor.Tools.Texture
             {
                 f.Texture.XShift += dx;
                 f.Texture.YShift += dy;
+                if (string.Equals(f.Texture.Name, _textureName, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    f.Texture.MinimiseTextureShiftValues(_textureWidth, _textureHeight);
+                }
                 return Task.FromResult(true);
             });
         }
