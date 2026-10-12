@@ -82,6 +82,11 @@ namespace Sledge.BspEditor.Tools.Texture
         private PointF _viewOffset = PointF.Empty;
         private string _fitSignature;
 
+        // The view shows the layout shifted by whole tiles (the texture repeats, so it looks the same),
+        // which keeps the yellow origin lines next to the layout instead of thousands of texels away
+        private int _anchorU;
+        private int _anchorV;
+
         // Drag state: shift deltas (in texture units) applied while dragging
         private bool _dragging;
         private Point _dragStart;
@@ -312,6 +317,7 @@ namespace Sledge.BspEditor.Tools.Texture
 
                 if (!pending) UpdateFields(faces.Select(x => x.Value).ToList());
                 UpdateStatus(faces);
+                UpdateAnchor(faces.Select(x => x.Value).ToList(), false);
 
                 var signature = String.Join(",", faces.Select(x => x.Value.ID)) + "|" + (_textureName ?? "");
                 if (signature != _fitSignature)
@@ -816,8 +822,8 @@ namespace Sledge.BspEditor.Tools.Texture
             for (var i = 0; i < face.Vertices.Count; i++)
             {
                 var v = face.Vertices[i];
-                var u = Vector3.Dot(v, t.UAxis) / (_textureWidth * t.XScale) + t.XShift / _textureWidth;
-                var w = Vector3.Dot(v, t.VAxis) / (_textureHeight * t.YScale) + t.YShift / _textureHeight;
+                var u = Vector3.Dot(v, t.UAxis) / (_textureWidth * t.XScale) + t.XShift / _textureWidth - _anchorU;
+                var w = Vector3.Dot(v, t.VAxis) / (_textureHeight * t.YScale) + t.YShift / _textureHeight - _anchorV;
                 if (!float.IsFinite(u) || !float.IsFinite(w)) return false;
                 points[i] = new PointF(_viewOffset.X + u * _viewScale, _viewOffset.Y + w * _viewScale);
             }
@@ -1037,11 +1043,47 @@ namespace Sledge.BspEditor.Tools.Texture
         /// Frames the UV layout of the given faces in the preview (or centres a single tile
         /// when nothing is selected).
         /// </summary>
+        /// <summary>
+        /// Picks the whole-tile offset the view draws the layout with. With <paramref name="force"/> the layout's
+        /// first tile is put at the origin; otherwise the offset only changes when the layout has drifted
+        /// more than a tile away from the origin (e.g. after Fit changed the shift by whole tiles).
+        /// </summary>
+        private void UpdateAnchor(List<Face> faces, bool force)
+        {
+            if (_textureWidth <= 0 || _textureHeight <= 0 || faces.Count == 0)
+            {
+                _anchorU = _anchorV = 0;
+                return;
+            }
+
+            var minU = float.MaxValue;
+            var minV = float.MaxValue;
+            foreach (var face in faces)
+            {
+                foreach (var v in face.Vertices)
+                {
+                    var st = UvMath.GetST(face.Texture, v);
+                    if (!float.IsFinite(st.X) || !float.IsFinite(st.Y)) continue;
+                    minU = Math.Min(minU, st.X / _textureWidth);
+                    minV = Math.Min(minV, st.Y / _textureHeight);
+                }
+            }
+
+            if (minU == float.MaxValue || minV == float.MaxValue) return;
+
+            var apparentU = minU - _anchorU;
+            var apparentV = minV - _anchorV;
+            if (force || apparentU < -1f || apparentU >= 2f) _anchorU = (int)Math.Floor(minU);
+            if (force || apparentV < -1f || apparentV >= 2f) _anchorV = (int)Math.Floor(minV);
+        }
+
         private void FitView(List<Face> faces)
         {
             var width = PreviewPanel.ClientSize.Width;
             var height = PreviewPanel.ClientSize.Height;
             if (width <= 0 || height <= 0) return;
+
+            UpdateAnchor(faces, true);
 
             float minU = float.MaxValue, minV = float.MaxValue, maxU = float.MinValue, maxV = float.MinValue;
             var any = false;
@@ -1055,8 +1097,8 @@ namespace Sledge.BspEditor.Tools.Texture
 
                     foreach (var v in face.Vertices)
                     {
-                        var u = Vector3.Dot(v, t.UAxis) / (_textureWidth * t.XScale) + t.XShift / _textureWidth;
-                        var w = Vector3.Dot(v, t.VAxis) / (_textureHeight * t.YScale) + t.YShift / _textureHeight;
+                        var u = Vector3.Dot(v, t.UAxis) / (_textureWidth * t.XScale) + t.XShift / _textureWidth - _anchorU;
+                        var w = Vector3.Dot(v, t.VAxis) / (_textureHeight * t.YScale) + t.YShift / _textureHeight - _anchorV;
                         if (!float.IsFinite(u) || !float.IsFinite(w)) continue;
                         minU = Math.Min(minU, u);
                         maxU = Math.Max(maxU, u);
