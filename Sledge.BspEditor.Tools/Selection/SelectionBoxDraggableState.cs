@@ -59,9 +59,19 @@ namespace Sledge.BspEditor.Tools.Selection
 
 		/// <summary>
 		/// Shows or hides the selection's bounding box (outline, fill and size text in the 2D views,
-		/// wireframe in the 3D view). The transform handles and the model origin markers are not affected.
+		/// wireframe in the 3D view) together with the transform handles and move highlight.
+		/// The handles stay interactive, and the model origin markers are not affected.
 		/// </summary>
-		public bool ShowBoundingBox { get; set; } = true;
+		public bool ShowBoundingBox
+		{
+			get => _showBoundingBox;
+			set
+			{
+				_showBoundingBox = value;
+				RenderHandles = value; // handles and the move highlight follow the box
+			}
+		}
+		private bool _showBoundingBox = true;
 
 		/// <summary>Draws the rotation arc for selected rotating entities in the 3D view.</summary>
 		public EntityMotionWidget MotionWidget { get; private set; }

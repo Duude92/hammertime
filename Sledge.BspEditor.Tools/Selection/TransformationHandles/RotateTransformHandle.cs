@@ -66,6 +66,8 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
 
 		public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, I2DRenderer im)
 		{
+			if (!State.RenderHandles) return;
+
 			var (wpos, soff) = GetWorldPositionAndScreenOffset(camera);
 			var spos = camera.WorldToScreen(wpos) + soff;
 
