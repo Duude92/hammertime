@@ -86,6 +86,12 @@ namespace Sledge.BspEditor.Tools.Texture
         private float _dragShiftX;
         private float _dragShiftY;
 
+        // Panning the view (middle or right mouse drag)
+        private bool _panning;
+        private MouseButtons _panButton;
+        private Point _panStart;
+        private PointF _panStartOffset;
+
         private bool _dark;
 
         // Translated status strings (with fallbacks)
@@ -208,6 +214,7 @@ namespace Sledge.BspEditor.Tools.Texture
                 AlignWorldButton.Text = strings.GetString(prefix, "AlignWorld");
                 FitTextureButton.Text = strings.GetString(prefix, "Fit");
                 FitViewButton.Text = strings.GetString(prefix, "FitView");
+                TreatAsOneCheckBox.Text = strings.GetString(prefix, "TreatAsOne") ?? TreatAsOneCheckBox.Text;
                 HintLabel.Text = strings.GetString(prefix, "Hint");
                 _statusNoSelection = strings.GetString(prefix, "NoSelection") ?? _statusNoSelection;
                 _statusFormat = strings.GetString(prefix, "Status") ?? _statusFormat;
@@ -447,7 +454,7 @@ namespace Sledge.BspEditor.Tools.Texture
         /// Fields the user didn't touch are skipped (their "different" flag is still set), so
         /// every face keeps its own value for those.
         /// </summary>
-        private Action<Primitives.Texture> BuildValueEdits()
+        private Action<Face> BuildValueEdits()
         {
             var shiftX = _shiftX;
             var shiftY = _shiftY;
@@ -460,14 +467,44 @@ namespace Sledge.BspEditor.Tools.Texture
             var diffScaleY = _diffScaleY;
             var diffRotation = _diffRotation;
 
-            return t =>
+            return face =>
             {
+                var t = face.Texture;
+
+                var shiftXBefore = t.XShift;
+                var shiftYBefore = t.YShift;
                 if (!diffShiftX) t.XShift = shiftX;
                 if (!diffShiftY) t.YShift = shiftY;
-                if (!diffScaleX) t.XScale = scaleX / SafeLength(t.ULength);
-                if (!diffScaleY) t.YScale = scaleY / SafeLength(t.VLength);
                 if (!diffRotation) t.SetRotation(rotation);
+
+                // Scale around the centre of the face's UV layout instead of the UV origin,
+                // so the layout stays where it is in the view while the scale changes.
+                // An axis whose shift was typed in at the same time keeps the typed shift.
+                var newScaleX = diffScaleX ? t.XScale : scaleX / SafeLength(t.ULength);
+                var newScaleY = diffScaleY ? t.YScale : scaleY / SafeLength(t.VLength);
+                var scaledX = Math.Abs(newScaleX - t.XScale) > 1e-6f;
+                var scaledY = Math.Abs(newScaleY - t.YScale) > 1e-6f;
+                var centreBefore = scaledX || scaledY ? UvLayoutCentre(face) : Vector2.Zero;
+
+                t.XScale = newScaleX;
+                t.YScale = newScaleY;
+
+                if (scaledX || scaledY)
+                {
+                    var centreAfter = UvLayoutCentre(face);
+                    var shiftXTyped = !diffShiftX && Math.Abs(shiftX - shiftXBefore) > 0.0001f;
+                    var shiftYTyped = !diffShiftY && Math.Abs(shiftY - shiftYBefore) > 0.0001f;
+                    if (scaledX && !shiftXTyped) t.XShift += centreBefore.X - centreAfter.X;
+                    if (scaledY && !shiftYTyped) t.YShift += centreBefore.Y - centreAfter.Y;
+                }
             };
+        }
+
+        /// <summary>The centre of the face's UV layout in texels (s, t).</summary>
+        private static Vector2 UvLayoutCentre(Face face)
+        {
+            var ext = UvMath.GetExtents(face.Texture, face.Vertices);
+            return new Vector2((ext.MinS + ext.MaxS) / 2f, (ext.MinT + ext.MaxT) / 2f);
         }
 
         private void UvValueChanged(object sender, EventArgs e)
@@ -521,7 +558,7 @@ namespace Sledge.BspEditor.Tools.Texture
                 {
                     _commitTimer.Stop();
                     var edits = BuildValueEdits();
-                    await ApplyCore(doc, (mo, f) => { edits(f.Texture); return Task.FromResult(true); });
+                    await ApplyCore(doc, (mo, f) => { edits(f); return Task.FromResult(true); });
                 }
 
                 await ApplyCore(doc, apply);
@@ -592,11 +629,17 @@ namespace Sledge.BspEditor.Tools.Texture
             if (doc == null) return;
 
             var tc = await doc.Environment.GetTextureCollection();
+
+            // Treat as one: fit the whole selection as a single piece instead of fitting every face on its own
+            var shared = TreatAsOneCheckBox.Checked
+                ? new Cloud(GetSelectedFaces().SelectMany(x => x.Value.Vertices))
+                : null;
+
             await ApplyChanges(async (mo, f) =>
             {
                 var ti = await tc.GetTextureItem(f.Texture.Name);
                 if (ti == null) return false;
-                f.Texture.FitToPointCloud(ti.Width, ti.Height, new Cloud(f.Vertices), 1, 1);
+                f.Texture.FitToPointCloud(ti.Width, ti.Height, shared ?? new Cloud(f.Vertices), 1, 1);
                 return true;
             });
         }
@@ -753,8 +796,9 @@ namespace Sledge.BspEditor.Tools.Texture
             uvs = null;
             if (_textureWidth <= 0 || _textureHeight <= 0 || face.Vertices.Count == 0) return false;
 
-            var t = face.Texture.Clone();
-            BuildValueEdits()(t);
+            var edited = (Face)face.Clone();
+            BuildValueEdits()(edited);
+            var t = edited.Texture;
             if (_dragging)
             {
                 t.XShift += _dragShiftX;
@@ -858,6 +902,18 @@ namespace Sledge.BspEditor.Tools.Texture
 
         private async void PreviewMouseDown(object sender, MouseEventArgs e)
         {
+            // Middle or right drag pans the view
+            if (e.Button == MouseButtons.Middle || e.Button == MouseButtons.Right)
+            {
+                if (_dragging || _panning) return;
+                _panning = true;
+                _panButton = e.Button;
+                _panStart = e.Location;
+                _panStartOffset = _viewOffset;
+                PreviewPanel.Capture = true;
+                return;
+            }
+
             if (e.Button != MouseButtons.Left) return;
             if (GetSelectedFaces().Count == 0) return;
 
@@ -878,6 +934,13 @@ namespace Sledge.BspEditor.Tools.Texture
 
         private void PreviewMouseMove(object sender, MouseEventArgs e)
         {
+            if (_panning)
+            {
+                _viewOffset = new PointF(_panStartOffset.X + (e.X - _panStart.X), _panStartOffset.Y + (e.Y - _panStart.Y));
+                PreviewPanel.Invalidate();
+                return;
+            }
+
             if (!_dragging) return;
 
             // Dragging moves the UV layout: one screen pixel is 1 / viewScale of a tile,
@@ -908,6 +971,16 @@ namespace Sledge.BspEditor.Tools.Texture
 
         private async void PreviewMouseUp(object sender, MouseEventArgs e)
         {
+            if (_panning)
+            {
+                if (e.Button == _panButton)
+                {
+                    _panning = false;
+                    PreviewPanel.Capture = false;
+                }
+                return;
+            }
+
             if (!_dragging) return;
             _dragging = false;
             PreviewPanel.Capture = false;

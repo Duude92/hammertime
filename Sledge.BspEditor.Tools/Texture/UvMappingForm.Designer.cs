@@ -55,6 +55,7 @@ namespace Sledge.BspEditor.Tools.Texture
             AlignWorldButton = new System.Windows.Forms.Button();
             FitTextureButton = new System.Windows.Forms.Button();
             FitViewButton = new System.Windows.Forms.Button();
+            TreatAsOneCheckBox = new System.Windows.Forms.CheckBox();
             HintLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)ShiftXValue).BeginInit();
             ((System.ComponentModel.ISupportInitialize)ShiftYValue).BeginInit();
@@ -139,6 +140,7 @@ namespace Sledge.BspEditor.Tools.Texture
             // ScaleXValue
             // 
             ScaleXValue.DecimalPlaces = 4;
+            ScaleXValue.Increment = new decimal(new int[] { 1, 0, 0, 65536 });
             ScaleXValue.Location = new System.Drawing.Point(72, 52);
             ScaleXValue.Maximum = new decimal(new int[] { 4096, 0, 0, 0 });
             ScaleXValue.Minimum = new decimal(new int[] { 4096, 0, 0, int.MinValue });
@@ -149,6 +151,7 @@ namespace Sledge.BspEditor.Tools.Texture
             // ScaleYValue
             // 
             ScaleYValue.DecimalPlaces = 4;
+            ScaleYValue.Increment = new decimal(new int[] { 1, 0, 0, 65536 });
             ScaleYValue.Location = new System.Drawing.Point(168, 52);
             ScaleYValue.Maximum = new decimal(new int[] { 4096, 0, 0, 0 });
             ScaleYValue.Minimum = new decimal(new int[] { 4096, 0, 0, int.MinValue });
@@ -317,11 +320,21 @@ namespace Sledge.BspEditor.Tools.Texture
             FitViewButton.Text = "Fit view";
             FitViewButton.UseVisualStyleBackColor = true;
             // 
+            // TreatAsOneCheckBox
+            // 
+            TreatAsOneCheckBox.AutoSize = true;
+            TreatAsOneCheckBox.Location = new System.Drawing.Point(14, 546);
+            TreatAsOneCheckBox.Name = "TreatAsOneCheckBox";
+            TreatAsOneCheckBox.Size = new System.Drawing.Size(100, 19);
+            TreatAsOneCheckBox.TabIndex = 9;
+            TreatAsOneCheckBox.Text = "Treat as one";
+            TreatAsOneCheckBox.UseVisualStyleBackColor = true;
+            // 
             // HintLabel
             // 
-            HintLabel.Location = new System.Drawing.Point(12, 546);
+            HintLabel.Location = new System.Drawing.Point(12, 572);
             HintLabel.Name = "HintLabel";
-            HintLabel.Size = new System.Drawing.Size(446, 36);
+            HintLabel.Size = new System.Drawing.Size(446, 54);
             HintLabel.TabIndex = 8;
             HintLabel.Text = "Drag in the view to move the UV layout over the texture.\r\nUse the mouse wheel to zoom.";
             // 
@@ -329,7 +342,7 @@ namespace Sledge.BspEditor.Tools.Texture
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(470, 590);
+            ClientSize = new System.Drawing.Size(470, 632);
             Controls.Add(PreviewPanel);
             Controls.Add(StatusLabel);
             Controls.Add(ValuesGroup);
@@ -338,6 +351,7 @@ namespace Sledge.BspEditor.Tools.Texture
             Controls.Add(AlignWorldButton);
             Controls.Add(FitTextureButton);
             Controls.Add(FitViewButton);
+            Controls.Add(TreatAsOneCheckBox);
             Controls.Add(HintLabel);
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             Name = "UvMappingForm";
@@ -384,6 +398,7 @@ namespace Sledge.BspEditor.Tools.Texture
         private System.Windows.Forms.Button AlignWorldButton;
         private System.Windows.Forms.Button FitTextureButton;
         private System.Windows.Forms.Button FitViewButton;
+        private System.Windows.Forms.CheckBox TreatAsOneCheckBox;
         private System.Windows.Forms.Label HintLabel;
     }
 }

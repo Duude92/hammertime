@@ -288,7 +288,8 @@
             "AlignWorld": "Align to world",
             "Fit": "Fit",
             "FitView": "Fit view",
-            "Hint": "Drag in the view to move the UV layout over the texture.\r\nUse the mouse wheel to zoom.",
+            "TreatAsOne": "Treat as one",
+            "Hint": "Drag in the view to move the UV layout over the texture.\r\nMiddle or right mouse drag pans the view.\r\nUse the mouse wheel to zoom.",
             "NoSelection": "No faces selected",
             "Status": "{0} ({1} x {2}) - {3} faces"
         }

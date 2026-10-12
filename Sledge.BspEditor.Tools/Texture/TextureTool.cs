@@ -46,6 +46,11 @@ namespace Sledge.BspEditor.Tools.Texture
 		private ClickAction _leftClickAction = ClickAction.Lift | ClickAction.Select;
         private ClickAction _rightClickAction = ClickAction.Apply | ClickAction.Values;
 
+        // Ctrl + left drag: keep adding (or removing) the faces under the cursor
+        private bool _paintSelecting;
+        private bool _paintAdds;
+        private Face _lastPaintedFace;
+
         public TextureTool()
         {
             Usage = ToolUsage.View3D;
@@ -162,10 +167,59 @@ namespace Sledge.BspEditor.Tools.Texture
                 .Select(x => x)
                 .FirstOrDefault();
 
+            _paintSelecting = false;
+            _lastPaintedFace = null;
+
             if (clickedFace == null) return;
+
+            if (e.Button == MouseButtons.Left && KeyboardState.Ctrl)
+            {
+                // The first click toggles this face; dragging then does the same to every face the cursor passes over
+                _paintSelecting = true;
+                _paintAdds = !GetSelection(document).IsSelected(clickedFace.Solid, clickedFace.Face);
+                _lastPaintedFace = clickedFace.Face;
+            }
 
             if (e.Button == MouseButtons.Left) SelectFace(document, camera, clickedFace.Face, clickedFace.Solid);
             else if (e.Button == MouseButtons.Right) ApplyFace(document, camera, clickedFace.Face, clickedFace.Solid);
+        }
+
+        protected override void MouseMove(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
+        {
+            if (!_paintSelecting) return;
+            if (!KeyboardState.Ctrl)
+            {
+                _paintSelecting = false;
+                return;
+            }
+
+            var (start, end) = camera.CastRayFromScreen(new Vector3(e.X, e.Y, 0));
+            var ray = new Line(start, end);
+
+            var hit = document.Map.Root.GetBoudingBoxIntersectionsForVisibleObjects(ray)
+                .OfType<Solid>()
+                .SelectMany(a => a.Faces.Select(f => new { Face = f, Solid = a }))
+                .Select(x => new { x.Face, x.Solid, Intersection = new Polygon(x.Face.Vertices).GetIntersectionPoint(ray) })
+                .Where(x => x.Intersection != null)
+                .OrderBy(x => (x.Intersection.Value - ray.Start).Length())
+                .FirstOrDefault();
+
+            if (hit == null || ReferenceEquals(hit.Face, _lastPaintedFace)) return;
+            _lastPaintedFace = hit.Face;
+
+            var sel = GetSelection(document);
+            if (sel.IsSelected(hit.Solid, hit.Face) == _paintAdds) return;
+
+            if (_paintAdds) sel.Add(hit.Solid, hit.Face);
+            else sel.Remove(hit.Solid, hit.Face);
+
+            Oy.Publish("TextureTool:SelectionChanged", sel);
+        }
+
+        protected override void MouseUp(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
+        {
+            _paintSelecting = false;
+            _lastPaintedFace = null;
         }
 
         private Task SelectFace(MapDocument document, PerspectiveCamera camera, Face face, IMapObject parent)

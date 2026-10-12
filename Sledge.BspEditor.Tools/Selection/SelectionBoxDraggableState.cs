@@ -132,7 +132,7 @@ namespace Sledge.BspEditor.Tools.Selection
 					{
 						transaction.Add(new TransformTexturesUniform(matrix, objects.SelectMany(x => x.FindAll())));
 					}
-					else if (tl.TextureScaleLock && sender.IsScaleTransformation)
+					else if ((tl.TextureScaleLock || tl.UVLock) && sender.IsScaleTransformation)
 					{
 						transaction.Add(new TransformTexturesScale(matrix, objects.SelectMany(x => x.FindAll())));
 					}

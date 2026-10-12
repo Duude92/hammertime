@@ -83,7 +83,7 @@ namespace Sledge.BspEditor.Editing.Commands.Modification
                         }
                         else if (dialog.Type == TransformDialog.TransformType.Scale)
                         {
-                            if (tl.TextureScaleLock) transaction.Add(new TransformTexturesScale(transform, objects.SelectMany(x => x.FindAll())));
+                            if (tl.TextureScaleLock || tl.UVLock) transaction.Add(new TransformTexturesScale(transform, objects.SelectMany(x => x.FindAll())));
                         }
 
                         await MapDocumentOperation.Perform(document, transaction);
