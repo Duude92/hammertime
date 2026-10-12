@@ -59,6 +59,11 @@ namespace Sledge.BspEditor.Tools.Selection
 		private IMapObject ChosenItemFor3DSelection { get; set; }
 		private List<IMapObject> IntersectingObjectsFor3DSelection { get; set; }
 
+		// Ctrl + left drag in the 3D view keeps adding (or removing) the objects the cursor passes over
+		private bool _paint3D;
+		private bool _paint3DAdds;
+		private IMapObject _paint3DLast;
+
 		// A history of previous selection states used by "select less" (Ctrl+-) to step back
 		// through the levels reached by repeated "select more" (Ctrl++).
 		private readonly List<HashSet<IMapObject>> _selectMoreHistory = new List<HashSet<IMapObject>>();
@@ -542,13 +547,57 @@ namespace Sledge.BspEditor.Tools.Selection
 
 			SetSelected(document, desel ? list : null, desel ? null : list, !KeyboardState.Ctrl, IgnoreGrouping());
 			_lastSelectedViewport = viewport;
+
+			// The first click toggles this object; dragging then does the same to every object the cursor passes over
+			_paint3D = KeyboardState.Ctrl && ChosenItemFor3DSelection != null;
+			_paint3DAdds = !desel;
+			_paint3DLast = ChosenItemFor3DSelection;
 		}
 
 		protected override void MouseUp(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
 		{
 			IntersectingObjectsFor3DSelection = null;
 			ChosenItemFor3DSelection = null;
+			_paint3D = false;
+			_paint3DLast = null;
 			viewport.ReleaseInputLock(this);
+		}
+
+		protected override void MouseMove(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
+		{
+			if (!_paint3D)
+			{
+				base.MouseMove(document, viewport, camera, e);
+				return;
+			}
+
+			if (!KeyboardState.Ctrl)
+			{
+				_paint3D = false;
+				base.MouseMove(document, viewport, camera, e);
+				return;
+			}
+
+			var tf = document.Map.Data.GetOne<DisplayFlags>() ?? new DisplayFlags();
+			IgnoreOptions iopt = (tf.HideClipTextures ? IgnoreOptions.IgnoreClip : IgnoreOptions.None) | (tf.HideNullTextures ? IgnoreOptions.IgnoreNull : IgnoreOptions.None);
+
+			var (rayStart, rayEnd) = camera.CastRayFromScreen(new Vector3(e.X, e.Y, 0));
+			var hit = document.Map.Root.GetIntersectionsForVisibleObjects(new Line(rayStart, rayEnd), iopt)
+				.Select(x => x.Object)
+				.FirstOrDefault();
+
+			if (hit == null || ReferenceEquals(hit, _paint3DLast)) return;
+			_paint3DLast = hit;
+
+			var list = new[] { hit };
+			if (_paint3DAdds)
+			{
+				if (!hit.IsSelected) SetSelected(document, null, list, false, IgnoreGrouping());
+			}
+			else if (hit.IsSelected)
+			{
+				SetSelected(document, list, null, false, IgnoreGrouping());
+			}
 		}
 
 		protected override void MouseWheel(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
