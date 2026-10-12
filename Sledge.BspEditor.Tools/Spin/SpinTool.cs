@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using System.Windows.Forms;
+using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations.Tree;
@@ -61,9 +62,13 @@ namespace Sledge.BspEditor.Tools.Spin
 
         // Drag state
         private bool _dragging;
+        private bool _movingPivot;
         private Vector3 _dragPivot;
         private float _dragStartAngle;
         private float _dragSweep;
+
+        /// <summary>Screen-space grab radius for the pivot (gizmo) handle.</summary>
+        private const int PivotDragSize = 8;
 
         // The 2D view the tool was last used in; the spin axis is derived from it
         private OrthographicCamera.OrthographicType _viewType = OrthographicCamera.OrthographicType.Top;
@@ -95,14 +100,26 @@ namespace Sledge.BspEditor.Tools.Spin
 
             if (!document.Selection.OfType<Solid>().Any()) return;
 
-            GetSpinFrame(camera.ViewType, out var u, out var v, out _);
             var pivot = GetPivot(document);
+
+            // Dragging the pivot marker moves the gizmo itself
+            var screenPivot = camera.WorldToScreen(pivot);
+            if (Math.Abs(screenPivot.X - e.X) <= PivotDragSize && Math.Abs(screenPivot.Y - e.Y) <= PivotDragSize)
+            {
+                _movingPivot = true;
+                _dragging = false;
+                _dragPivot = pivot;
+                return;
+            }
+
+            GetSpinFrame(camera.ViewType, out var u, out var v, out _);
 
             // Clicks too close to the pivot can't define a meaningful angle
             var point = camera.ScreenToWorld(e.X, e.Y);
             if ((point - pivot).Length() < 1f) return;
 
             _dragging = true;
+            _movingPivot = false;
             _dragPivot = pivot;
             _dragStartAngle = AngleAt(point, pivot, u, v);
             _dragSweep = 0f;
@@ -111,23 +128,48 @@ namespace Sledge.BspEditor.Tools.Spin
         protected override void MouseMove(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
         {
             _viewType = camera.ViewType;
+
+            if (_movingPivot)
+            {
+                // Move the gizmo pivot, keeping its depth (the axis the current
+                // view looks down) and snapping to the grid
+                var point = camera.GetUnusedCoordinate(GetPivot(document)) + SnapIfNeeded(camera.ScreenToWorld(e.X, e.Y));
+                document.Selection.RotationPivot = point;
+                _dragPivot = point;
+                return;
+            }
+
             if (!_dragging) return;
 
             GetSpinFrame(camera.ViewType, out var u, out var v, out _);
-            var point = camera.ScreenToWorld(e.X, e.Y);
-            var sweep = NormalizeDegrees(AngleAt(point, _dragPivot, u, v) - _dragStartAngle);
+            var p = camera.ScreenToWorld(e.X, e.Y);
+            var sweep = NormalizeDegrees(AngleAt(p, _dragPivot, u, v) - _dragStartAngle);
             if (KeyboardState.Shift) sweep = (float) Math.Round(sweep / 45f) * 45f;
             _dragSweep = sweep;
         }
 
         protected override void MouseUp(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
         {
+            if (_movingPivot)
+            {
+                // The pivot is already stored on the selection while dragging
+                _movingPivot = false;
+                return;
+            }
+
             if (!_dragging) return;
             _dragging = false;
             if (e.Button != MouseButtons.Left) return;
 
             // A real drag uses the dragged sweep angle; a plain click uses the panel's angle
-            var angle = Math.Abs(_dragSweep) < 1f ? AngleDegrees : _dragSweep;
+            var dragged = Math.Abs(_dragSweep) >= 1f;
+            var angle = dragged ? _dragSweep : AngleDegrees;
+            if (dragged)
+            {
+                // Keep the panel in sync with the angle that was actually used
+                AngleDegrees = _dragSweep;
+                Oy.Publish("SpinTool:SetAngle", _dragSweep.ToString("0.#", System.Globalization.CultureInfo.InvariantCulture));
+            }
             PerformSpin(document, angle);
         }
 
@@ -146,6 +188,7 @@ namespace Sledge.BspEditor.Tools.Spin
             if (e.KeyCode == Keys.Escape)
             {
                 _dragging = false;
+                _movingPivot = false;
             }
             else if (e.KeyCode == Keys.Enter)
             {
@@ -192,7 +235,13 @@ namespace Sledge.BspEditor.Tools.Spin
             foreach (var solid in solids)
             {
                 var parent = solid.Hierarchy.Parent.ID;
-                var startAngle = AngularStart(solid, pivot, u, v);
+
+                // Slots are anchored to the solid's own angular extent: positive
+                // sweeps align with the leading (minimum) edge, negative sweeps
+                // with the trailing (maximum) edge, so a slot always covers the
+                // rotated copy that belongs to it.
+                AngularExtent(solid, pivot, u, v, out var minAngle, out var maxAngle);
+                var startAngle = delta > 0 ? minAngle : maxAngle;
 
                 // Piece 0 is the original: trim it down to its own slot
                 if (bisect)
@@ -266,8 +315,9 @@ namespace Sledge.BspEditor.Tools.Spin
 
             // Front of the start plane = the swept side of the start boundary,
             // front of the end plane = the swept side of the end boundary.
-            var startPlane = new Plane(pivot, TangentAt(axis, u, v, startDegrees) * sign);
-            var endPlane = new Plane(pivot, TangentAt(axis, u, v, endDegrees) * -sign);
+            // Note: Plane's constructor is (normal, pointOnPlane).
+            var startPlane = new Plane(TangentAt(axis, u, v, startDegrees) * sign, pivot);
+            var endPlane = new Plane(TangentAt(axis, u, v, endDegrees) * -sign, pivot);
 
             Solid current = solid;
 
@@ -345,15 +395,16 @@ namespace Sledge.BspEditor.Tools.Spin
         }
 
         /// <summary>
-        /// The angular position of the solid's leading (minimum angle) vertex,
-        /// relative to the pivot in the spin plane. This is where the solid's own
-        /// slot starts. The circular mean is used as the reference so vertices
-        /// that wrap around the +/-180 degree boundary don't break the minimum.
+        /// The minimum and maximum angular positions of the solid's vertices in
+        /// the spin plane, relative to the pivot. The circular mean is used as
+        /// the reference so vertices that wrap around the +/-180 degree boundary
+        /// don't break the extremes.
         /// </summary>
-        private static float AngularStart(Solid solid, Vector3 pivot, Vector3 u, Vector3 v)
+        private static void AngularExtent(Solid solid, Vector3 pivot, Vector3 u, Vector3 v, out float min, out float max)
         {
+            min = max = 0f;
             var angles = solid.Faces.SelectMany(x => x.Vertices).Select(x => AngleAt(x, pivot, u, v)).ToList();
-            if (angles.Count == 0) return 0f;
+            if (angles.Count == 0) return;
 
             double sin = 0, cos = 0;
             foreach (var angle in angles)
@@ -364,8 +415,9 @@ namespace Sledge.BspEditor.Tools.Spin
             }
 
             var mean = (float) (Math.Atan2(sin, cos) * 180d / Math.PI);
-            var min = angles.Select(x => NormalizeDegrees(x - mean)).Min();
-            return NormalizeDegrees(mean + min);
+            var unwrapped = angles.Select(x => NormalizeDegrees(x - mean)).ToList();
+            min = NormalizeDegrees(mean + unwrapped.Min());
+            max = NormalizeDegrees(mean + unwrapped.Max());
         }
 
         /// <summary>
@@ -422,25 +474,24 @@ namespace Sledge.BspEditor.Tools.Spin
             im.AddLine(camera.WorldToScreen(pivot - u * cross).ToVector2(), camera.WorldToScreen(pivot + u * cross).ToVector2(), Color.Red);
             im.AddLine(camera.WorldToScreen(pivot - v * cross).ToVector2(), camera.WorldToScreen(pivot + v * cross).ToVector2(), Color.Red);
 
-            // The reference radius: the sweep start while dragging, otherwise the
-            // direction of the selection centre
-            var referenceAngle = _dragging
+            // The sector that a spin would create: the dragged sweep while
+            // dragging, otherwise the angle configured in the side panel
+            var sweep = _dragging ? _dragSweep : AngleDegrees;
+            var startAngle = _dragging
                 ? _dragStartAngle
                 : AngleAt(document.Selection.GetSelectionBoundingBox().Center, pivot, u, v);
-            DrawRadial(im, camera, pivot, u, v, referenceAngle, radius, Color.White);
 
-            if (!_dragging || Math.Abs(_dragSweep) < 0.01f) return;
+            DrawRadial(im, camera, pivot, u, v, startAngle, radius, Color.White);
+            if (Math.Abs(sweep) < 0.01f) return;
 
-            // The swept sector and its step boundaries
-            var steps = Math.Max(1, Math.Min(64, Steps));
-            var delta = _dragSweep / steps;
-            DrawRadial(im, camera, pivot, u, v, _dragStartAngle + _dragSweep, radius, Color.Turquoise);
+            DrawRadial(im, camera, pivot, u, v, startAngle + sweep, radius, Color.Turquoise);
 
-            const int arcSides = 32;
+            // The swept arc
+            var arcSides = Math.Max(2, (int) (Math.Abs(sweep) / 360f * 96));
             previous = default(Vector3);
             for (var i = 0; i <= arcSides; i++)
             {
-                var angle = _dragStartAngle + _dragSweep * i / arcSides;
+                var angle = startAngle + sweep * i / arcSides;
                 var radians = angle * MathF.PI / 180f;
                 var point = pivot + (u * MathF.Cos(radians) + v * MathF.Sin(radians)) * radius;
                 if (i > 0)
@@ -450,9 +501,12 @@ namespace Sledge.BspEditor.Tools.Spin
                 previous = point;
             }
 
+            // The step boundaries inside the sector
+            var steps = Math.Max(1, Math.Min(64, Steps));
+            var delta = sweep / steps;
             for (var k = 1; k < steps; k++)
             {
-                DrawRadial(im, camera, pivot, u, v, _dragStartAngle + delta * k, radius, Color.LightGray);
+                DrawRadial(im, camera, pivot, u, v, startAngle + delta * k, radius, Color.LightGray);
             }
         }
 

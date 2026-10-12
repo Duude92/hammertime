@@ -1,9 +1,12 @@
 using System;
 using System.ComponentModel.Composition;
 using System.Drawing;
+using System.Globalization;
 using System.Windows.Forms;
+using LogicAndTrick.Oy;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
+using Sledge.Shell;
 
 namespace Sledge.BspEditor.Tools.Spin
 {
@@ -84,6 +87,19 @@ namespace Sledge.BspEditor.Tools.Spin
             _bisect.CheckedChanged += (s, e) => { if (_tool != null) _tool.BisectPieces = _bisect.Checked; };
             _mirror.CheckedChanged += (s, e) => { if (_tool != null) _tool.MirrorUvs = _mirror.Checked; };
             _spin.Click += (s, e) => _tool?.ApplySpin();
+
+            // When a spin is performed by dragging in a viewport, the tool pushes
+            // the angle it used so the panel stays in sync
+            Oy.Subscribe<string>("SpinTool:SetAngle", v =>
+            {
+                if (!float.TryParse(v, NumberStyles.Float, CultureInfo.InvariantCulture, out var f)) return;
+                this.InvokeLater(() =>
+                {
+                    var value = (decimal) f;
+                    value = Math.Min(_angle.Maximum, Math.Max(_angle.Minimum, value));
+                    if (_angle.Value != value) _angle.Value = value;
+                });
+            });
         }
 
         public bool IsInContext(IContext context)
