@@ -43,6 +43,11 @@ namespace Sledge.BspEditor.Tools.Selection
 				Show3DWidgetsCheckbox.Checked = x == "1";
 			});
 
+			Oy.Subscribe<String>("SelectTool:SetShowBoundingBox", x =>
+			{
+				ShowBoundingBoxCheckbox.Checked = x == "1";
+			});
+
 			Oy.Subscribe<String>("SelectTool:SetAutoSelectBox", x =>
 			{
 				AutoSelectBoxCheckbox.Checked = x == "1";
@@ -118,6 +123,7 @@ namespace Sledge.BspEditor.Tools.Selection
 				var x1 = p + LogicalToDeviceUnits(2);
 				var x2 = x1 + indent;
 				Row(AutoSelectBoxCheckbox, x1);
+				Row(ShowBoundingBoxCheckbox, x1);
 				Row(Show3DWidgetsCheckbox, x1);
 				Row(MoveWidgetCheckbox, x2);
 				Row(RotateWidgetCheckbox, x2);
@@ -156,6 +162,7 @@ namespace Sledge.BspEditor.Tools.Selection
 				SkewModeCheckbox.Text = strings.GetString(prefix, "Skew");
 				Show3DWidgetsCheckbox.Text = strings.GetString(prefix, "Show3DWidgets");
 				AutoSelectBoxCheckbox.Text = strings.GetString(prefix, "AutoSelectBox") ?? AutoSelectBoxCheckbox.Text;
+				ShowBoundingBoxCheckbox.Text = strings.GetString(prefix, "ShowBoundingBox") ?? ShowBoundingBoxCheckbox.Text;
 				MoveWidgetCheckbox.Text = strings.GetString(prefix, "MoveWidget") ?? MoveWidgetCheckbox.Text;
 				RotateWidgetCheckbox.Text = strings.GetString(prefix, "RotateWidget") ?? RotateWidgetCheckbox.Text;
 				MoveArrowWidgetCheckbox.Text = strings.GetString(prefix, "MoveArrowWidget") ?? MoveArrowWidgetCheckbox.Text;
@@ -247,6 +254,11 @@ namespace Sledge.BspEditor.Tools.Selection
 			// (the camera widget is drawn in the 2D views, so it is independent of this checkbox)
 			MoveWidgetCheckbox.Enabled = RotateWidgetCheckbox.Enabled =
 				MoveArrowWidgetCheckbox.Enabled = RotationArcWidgetCheckbox.Enabled = Show3DWidgetsCheckbox.Checked;
+		}
+
+		private void ShowBoundingBoxChecked(object sender, EventArgs e)
+		{
+			Oy.Publish("SelectTool:ShowBoundingBoxChanged", ShowBoundingBoxCheckbox.Checked ? "1" : "0");
 		}
 
 		private void AutoSelectBoxChecked(object sender, EventArgs e)

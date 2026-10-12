@@ -72,6 +72,7 @@ namespace Sledge.BspEditor.Tools.Selection
 
 		[Setting] public int SelectionBoxBackgroundOpacity { get; set; } = 64;
 		[Setting] public bool AutoSelectBox { get; set; } = false;
+		[Setting] public bool ShowBoundingBox { get; set; } = true;
 		[Setting] public bool Show3DWidgets { get; set; } = false;
 		[Setting] public bool ShowMoveWidget { get; set; } = true;
 		[Setting] public bool ShowRotateWidget { get; set; } = true;
@@ -92,6 +93,7 @@ namespace Sledge.BspEditor.Tools.Selection
 		{
 			yield return new SettingKey("Tools/Selection", "SelectionBoxBackgroundOpacity", typeof(int));
 			yield return new SettingKey("Tools/Selection", "AutoSelectBox", typeof(bool));
+			yield return new SettingKey("Tools/Selection", "ShowBoundingBox", typeof(bool));
 			yield return new SettingKey("Tools/Selection", "Show3DWidgets", typeof(bool));
 			yield return new SettingKey("Tools/Selection", "ShowMoveWidget", typeof(bool));
 			yield return new SettingKey("Tools/Selection", "ShowRotateWidget", typeof(bool));
@@ -110,6 +112,8 @@ namespace Sledge.BspEditor.Tools.Selection
 			store.LoadInstance(this);
 			Oy.Publish("SelectTool:SetShow3DWidgets", Show3DWidgets ? "1" : "0");
 			Oy.Publish("SelectTool:SetAutoSelectBox", AutoSelectBox ? "1" : "0");
+			_selectionBox.ShowBoundingBox = ShowBoundingBox;
+			Oy.Publish("SelectTool:SetShowBoundingBox", ShowBoundingBox ? "1" : "0");
 			_selectionBox.SetWidgetToggles(ShowMoveWidget, ShowRotateWidget, ShowMoveArrowWidget, ShowRotationArcWidget);
 			Sledge.BspEditor.Rendering.Overlay.Camera2DOverlay.ShowCameraWidget = ShowCameraWidget;
 			Oy.Publish("SelectTool:SetWidgetToggles", WidgetTogglesToString());
@@ -168,6 +172,11 @@ namespace Sledge.BspEditor.Tools.Selection
 			Oy.Subscribe<string>("SelectTool:AutoSelectBoxChanged", x =>
 			{
 				AutoSelectBox = x == "1";
+			});
+			Oy.Subscribe<string>("SelectTool:ShowBoundingBoxChanged", x =>
+			{
+				ShowBoundingBox = x == "1";
+				_selectionBox.ShowBoundingBox = ShowBoundingBox;
 			});
 			Oy.Subscribe<string>("SelectTool:Show3DWidgetsChanged", x =>
 			{

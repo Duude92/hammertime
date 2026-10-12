@@ -21,6 +21,7 @@ using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Engine;
 using Sledge.Rendering.Overlay;
+using Sledge.Rendering.Resources;
 using Sledge.Rendering.Viewports;
 using Sledge.Shell.Input;
 
@@ -55,6 +56,12 @@ namespace Sledge.BspEditor.Tools.Selection
 		}
 		private readonly MoveWidget _scaleWidget;
 		private readonly RotationWidget _rotationWidget;
+
+		/// <summary>
+		/// Shows or hides the selection's bounding box (outline, fill and size text in the 2D views,
+		/// wireframe in the 3D view). The transform handles and the model origin markers are not affected.
+		/// </summary>
+		public bool ShowBoundingBox { get; set; } = true;
 
 		/// <summary>Draws the rotation arc for selected rotating entities in the 3D view.</summary>
 		public EntityMotionWidget MotionWidget { get; private set; }
@@ -320,10 +327,26 @@ namespace Sledge.BspEditor.Tools.Selection
 			Update();
 		}
 
+		public override void Render(MapDocument document, BufferBuilder builder)
+		{
+			// 3D view: the box is a wireframe built here
+			if (!ShowBoundingBox) return;
+			base.Render(document, builder);
+		}
+
+		protected override void DrawBoxText(IViewport viewport, OrthographicCamera camera, I2DRenderer im, Vector3 start, Vector3 end)
+		{
+			if (!ShowBoundingBox) return;
+			base.DrawBoxText(viewport, camera, im, start, end);
+		}
+
 		protected override void DrawBox(IViewport viewport, OrthographicCamera camera, I2DRenderer im, Vector3 start, Vector3 end)
 		{
-			im.AddRectFilled(start.ToVector2(), end.ToVector2(), GetRenderFillColour());
-			im.AddRect(start.ToVector2(), end.ToVector2(), GetRenderBoxColour());
+			if (ShowBoundingBox)
+			{
+				im.AddRectFilled(start.ToVector2(), end.ToVector2(), GetRenderFillColour());
+				im.AddRect(start.ToVector2(), end.ToVector2(), GetRenderBoxColour());
+			}
 
 			foreach (var val in ModelsOrigin)
 			{

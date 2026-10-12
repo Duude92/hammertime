@@ -47,6 +47,7 @@ namespace Sledge.BspEditor.Tools.Selection
             RotationArcWidgetCheckbox = new System.Windows.Forms.CheckBox();
             CameraWidgetCheckbox = new System.Windows.Forms.CheckBox();
             AutoSelectBoxCheckbox = new System.Windows.Forms.CheckBox();
+            ShowBoundingBoxCheckbox = new System.Windows.Forms.CheckBox();
             SuspendLayout();
             // 
             // Show3DWidgetsCheckbox
@@ -146,6 +147,20 @@ namespace Sledge.BspEditor.Tools.Selection
             AutoSelectBoxCheckbox.Text = "Auto-select box";
             AutoSelectBoxCheckbox.UseVisualStyleBackColor = true;
             AutoSelectBoxCheckbox.CheckedChanged += AutoSelectBoxChecked;
+            // 
+            // ShowBoundingBoxCheckbox
+            // 
+            ShowBoundingBoxCheckbox.AutoSize = true;
+            ShowBoundingBoxCheckbox.Checked = true;
+            ShowBoundingBoxCheckbox.CheckState = System.Windows.Forms.CheckState.Checked;
+            ShowBoundingBoxCheckbox.Location = new System.Drawing.Point(8, 74);
+            ShowBoundingBoxCheckbox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            ShowBoundingBoxCheckbox.Name = "ShowBoundingBoxCheckbox";
+            ShowBoundingBoxCheckbox.Size = new System.Drawing.Size(140, 19);
+            ShowBoundingBoxCheckbox.TabIndex = 19;
+            ShowBoundingBoxCheckbox.Text = "Show bounding box";
+            ShowBoundingBoxCheckbox.UseVisualStyleBackColor = true;
+            ShowBoundingBoxCheckbox.CheckedChanged += ShowBoundingBoxChecked;
             // 
             // lblMode
             // 
@@ -260,6 +275,7 @@ namespace Sledge.BspEditor.Tools.Selection
             Controls.Add(RotationArcWidgetCheckbox);
             Controls.Add(CameraWidgetCheckbox);
             Controls.Add(AutoSelectBoxCheckbox);
+            Controls.Add(ShowBoundingBoxCheckbox);
             Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
             Size = new System.Drawing.Size(271, 330);
@@ -278,6 +294,7 @@ namespace Sledge.BspEditor.Tools.Selection
         private System.Windows.Forms.CheckBox RotationArcWidgetCheckbox;
         private System.Windows.Forms.CheckBox CameraWidgetCheckbox;
         private System.Windows.Forms.CheckBox AutoSelectBoxCheckbox;
+        private System.Windows.Forms.CheckBox ShowBoundingBoxCheckbox;
         private System.Windows.Forms.Label lblMode;
         private System.Windows.Forms.CheckBox TranslateModeCheckbox;
         private System.Windows.Forms.CheckBox RotateModeCheckbox;
