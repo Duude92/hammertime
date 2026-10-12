@@ -234,69 +234,82 @@ namespace Sledge.BspEditor.Tools.Spin
 
             foreach (var solid in solids)
             {
-                var parent = solid.Hierarchy.Parent.ID;
-
-                // Slots are anchored to the solid's own angular extent: positive
-                // sweeps align with the leading (minimum) edge, negative sweeps
-                // with the trailing (maximum) edge, so a slot always covers the
-                // rotated copy that belongs to it.
-                AngularExtent(solid, pivot, u, v, out var minAngle, out var maxAngle);
-                var startAngle = delta > 0 ? minAngle : maxAngle;
-
-                // Piece 0 is the original: trim it down to its own slot
-                if (bisect)
+                try
                 {
-                    var piece = CutToSlot(document, solid, pivot, axis, u, v, startAngle, delta);
-                    if (piece != null)
-                    {
-                        transaction.Add(new Detatch(parent, solid));
-                        transaction.Add(new Attach(parent, piece));
-                        changed = true;
-                    }
+                    SpinSolid(document, transaction, solid, steps, pivot, axis, u, v, delta, bisect, generator, ref changed);
                 }
-
-                // One duplicate per step. The last copy sits on the final slot
-                // boundary and is not needed, so steps - 1 duplicates are made.
-                for (var j = 1; j < steps; j++)
+                catch
                 {
-                    var copy = (Solid) solid.Copy(generator);
-                    copy.IsSelected = true;
-
-                    var rotation = Matrix4x4.CreateTranslation(-pivot)
-                                   * Matrix4x4.CreateFromAxisAngle(axis, delta * j * MathF.PI / 180f)
-                                   * Matrix4x4.CreateTranslation(pivot);
-                    copy.Transform(rotation);
-                    foreach (var face in copy.Faces)
-                    {
-                        face.Texture.TransformUniform(rotation);
-                    }
-
-                    var current = copy;
-                    if (bisect)
-                    {
-                        current = CutToSlot(document, copy, pivot, axis, u, v, startAngle + delta * j, delta) ?? copy;
-                    }
-
-                    if (MirrorUvs && j % 2 == 1)
-                    {
-                        // Mirror the texture mapping about the mid-radial plane of
-                        // this piece's slot. Combined with the rotated axes this
-                        // makes the pattern continue seamlessly over each seam.
-                        var normal = TangentAt(axis, u, v, startAngle + delta * (j + 0.5f));
-                        var mirror = CreateReflection(normal, pivot);
-                        foreach (var face in current.Faces)
-                        {
-                            face.Texture.TransformUniform(mirror);
-                        }
-                    }
-
-                    transaction.Add(new Attach(parent, current));
-                    changed = true;
+                    // A degenerate solid must not abort the spin for the rest of the selection
+                    continue;
                 }
             }
 
             if (!changed || transaction.IsEmpty) return;
             MapDocumentOperation.Perform(document, transaction);
+        }
+
+        private void SpinSolid(MapDocument document, Transaction transaction, Solid solid, int steps, Vector3 pivot, Vector3 axis, Vector3 u, Vector3 v, float delta, bool bisect, UniqueNumberGenerator generator, ref bool changed)
+        {
+            var parent = solid.Hierarchy.Parent.ID;
+
+            // Slots are anchored to the solid's own angular extent: positive
+            // sweeps align with the leading (minimum) edge, negative sweeps
+            // with the trailing (maximum) edge, so a slot always covers the
+            // rotated copy that belongs to it.
+            AngularExtent(solid, pivot, u, v, out var minAngle, out var maxAngle);
+            var startAngle = delta > 0 ? minAngle : maxAngle;
+
+            // Piece 0 is the original: trim it down to its own slot
+            if (bisect)
+            {
+                var piece = CutToSlot(document, solid, pivot, axis, u, v, startAngle, delta);
+                if (piece != null)
+                {
+                    transaction.Add(new Detatch(parent, solid));
+                    transaction.Add(new Attach(parent, piece));
+                    changed = true;
+                }
+            }
+
+            // One duplicate per step. The last copy sits on the final slot
+            // boundary and is not needed, so steps - 1 duplicates are made.
+            for (var j = 1; j < steps; j++)
+            {
+                var copy = (Solid) solid.Copy(generator);
+                copy.IsSelected = true;
+
+                var rotation = Matrix4x4.CreateTranslation(-pivot)
+                               * Matrix4x4.CreateFromAxisAngle(axis, delta * j * MathF.PI / 180f)
+                               * Matrix4x4.CreateTranslation(pivot);
+                copy.Transform(rotation);
+                foreach (var face in copy.Faces)
+                {
+                    face.Texture.TransformUniform(rotation);
+                }
+
+                var current = copy;
+                if (bisect)
+                {
+                    current = CutToSlot(document, copy, pivot, axis, u, v, startAngle + delta * j, delta) ?? copy;
+                }
+
+                if (MirrorUvs && j % 2 == 1)
+                {
+                    // Mirror the texture mapping about the mid-radial plane of
+                    // this piece's slot. Combined with the rotated axes this
+                    // makes the pattern continue seamlessly over each seam.
+                    var normal = TangentAt(axis, u, v, startAngle + delta * (j + 0.5f));
+                    var mirror = CreateReflection(normal, pivot);
+                    foreach (var face in current.Faces)
+                    {
+                        face.Texture.TransformUniform(mirror);
+                    }
+                }
+
+                transaction.Add(new Attach(parent, current));
+                changed = true;
+            }
         }
 
         /// <summary>
@@ -310,6 +323,12 @@ namespace Sledge.BspEditor.Tools.Spin
         {
             if (Math.Abs(sweepDegrees) < 0.01f || Math.Abs(sweepDegrees) >= 179f) return null;
 
+            // Skip solids that can't be split: every face needs a usable plane
+            // (Polyhedron.Split reads face.Plane, which throws on faces with
+            // fewer than 3 vertices). Solid.Split only guards the result, not
+            // the input, so validate up front.
+            if (!solid.Faces.Any() || solid.Faces.Any(x => x.Vertices.Count < 3)) return null;
+
             var sign = sweepDegrees > 0 ? 1f : -1f;
             var endDegrees = startDegrees + sweepDegrees;
 
@@ -319,22 +338,31 @@ namespace Sledge.BspEditor.Tools.Spin
             var startPlane = new Plane(TangentAt(axis, u, v, startDegrees) * sign, pivot);
             var endPlane = new Plane(TangentAt(axis, u, v, endDegrees) * -sign, pivot);
 
-            Solid current = solid;
+            try
+            {
+                Solid current = solid;
 
-            current.Split(document.Map.NumberGenerator, startPlane, out _, out var front);
-            if (front == null) return null;
-            current = front;
+                current.Split(document.Map.NumberGenerator, startPlane, out _, out var front);
+                if (front == null) return null;
+                current = front;
 
-            current.Split(document.Map.NumberGenerator, endPlane, out _, out front);
-            if (front == null) return null;
-            current = front;
+                current.Split(document.Map.NumberGenerator, endPlane, out _, out front);
+                if (front == null) return null;
+                current = front;
 
-            // Nothing was cut away; keep the original object untouched
-            if (ReferenceEquals(current, solid)) return null;
+                // Nothing was cut away; keep the original object untouched
+                if (ReferenceEquals(current, solid)) return null;
 
-            if (!current.IsValid()) return null;
+                if (!current.IsValid()) return null;
 
-            return current;
+                return current;
+            }
+            catch
+            {
+                // The half-space intersection can still fail on degenerate input;
+                // the caller then keeps the uncut solid instead of losing it.
+                return null;
+            }
         }
 
         #endregion
