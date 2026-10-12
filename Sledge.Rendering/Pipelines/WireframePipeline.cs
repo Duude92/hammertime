@@ -11,9 +11,26 @@ namespace Sledge.Rendering.Pipelines
 {
     public class WireframePipeline : IPipeline
     {
-        public PipelineType Type => PipelineType.Wireframe;
+        public PipelineType Type { get; }
         public PipelineGroup Group => PipelineGroup.Opaque;
-        public float Order => 10;
+        public float Order { get; }
+
+        private readonly DepthStencilStateDescription _depthState;
+
+        public WireframePipeline() : this(PipelineType.Wireframe, 10, DepthStencilStateDescription.DepthOnlyLessEqualRead)
+        {
+        }
+
+        /// <summary>
+        /// Creates a wireframe pipeline variant that uses the standard wireframe shaders
+        /// but a different type, draw order and depth state.
+        /// </summary>
+        public WireframePipeline(PipelineType type, float order, DepthStencilStateDescription depthState)
+        {
+            Type = type;
+            Order = order;
+            _depthState = depthState;
+        }
 
         private Shader _vertex;
         private Shader _fragment;
@@ -23,12 +40,12 @@ namespace Sledge.Rendering.Pipelines
 
         public void Create(RenderContext context, TextureSampleCount sampleCount)
         {
-            (_vertex, _fragment) = context.ResourceLoader.LoadShaders(Type.ToString());
+            (_vertex, _fragment) = context.ResourceLoader.LoadShaders(nameof(PipelineType.Wireframe));
 
             var pDesc = new GraphicsPipelineDescription
             {
                 BlendState = BlendStateDescription.SingleAlphaBlend,
-                DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqualRead,
+                DepthStencilState = _depthState,
                 RasterizerState = RasterizerStateDescription.Default,
                 PrimitiveTopology = PrimitiveTopology.LineList,
                 ResourceLayouts = new[] { context.ResourceLoader.ProjectionLayout },
