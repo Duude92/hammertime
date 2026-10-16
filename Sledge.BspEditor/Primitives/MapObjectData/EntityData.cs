@@ -66,6 +66,7 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
 			try
 			{
 				var val = Properties[key];
+				if (string.IsNullOrEmpty(val) || string.IsNullOrWhiteSpace(val)) return defaultValue;
 				var conv = TypeDescriptor.GetConverter(typeof(T));
 				return (T)conv.ConvertFromString(null, CultureInfo.InvariantCulture, val);
 			}
