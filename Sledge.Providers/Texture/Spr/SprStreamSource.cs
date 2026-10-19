@@ -136,7 +136,7 @@ namespace Sledge.Providers.Texture.Spr
 					}
 					catch (Exception e)
 					{
-						return new List<Bitmap> { PlaceholderImage };
+						return new List<Bitmap> { (Bitmap)PlaceholderImage.Clone() };
 						// TODO: Send message to user that the SPR file failed to load, but don't crash the load process.
 						//throw new Exception($"Failed to load SPR file {file.FullPathName}\n"+ e.StackTrace);
 					}
