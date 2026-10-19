@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Sledge.Common.Extensions;
+using Sledge.FileSystem;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -6,8 +8,6 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using Sledge.Common.Extensions;
-using Sledge.FileSystem;
 
 namespace Sledge.Providers.Texture.Spr
 {
@@ -16,16 +16,25 @@ namespace Sledge.Providers.Texture.Spr
 		private readonly IFile _file;
 
 		private static Bitmap PlaceholderImage;
+		private const int size = 128;
+		private const int cell = 8;
 
 		public SprStreamSource(IFile file)
 		{
 			_file = file;
-			PlaceholderImage = new Bitmap(16, 16, PixelFormat.Format32bppArgb);
+			PlaceholderImage = new Bitmap(size, size, PixelFormat.Format32bppArgb);
 			using (var g = Graphics.FromImage(PlaceholderImage))
 			{
-				g.FillRectangle(Brushes.Black, 0, 0, 16, 16);
-				g.FillRectangle(Brushes.Magenta, 8, 0, 8, 8);
-				g.FillRectangle(Brushes.Magenta, 0, 8, 8, 8);
+				g.FillRectangle(Brushes.Black, 0, 0, size, size);
+
+				for (int y = 0; y < size / cell; y++)
+				{
+					for (int x = 0; x < size / cell; x++)
+					{
+						if ((x + y) % 2 == 1)
+							g.FillRectangle(Brushes.Magenta, x * cell, y * cell, cell, cell);
+					}
+				}
 			}
 		}
 
