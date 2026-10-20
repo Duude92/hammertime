@@ -23,7 +23,7 @@ cbuffer Projection
     matrix View;
     matrix Projection;
 }
-cbuffer UVBuffer
+cbuffer UVS : register(b0, space2)
 {
     float FrameCount;
     float CurrentFrame;

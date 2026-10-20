@@ -23,11 +23,11 @@ cbuffer Projection
     matrix Projection;
 };
 
-cbuffer BoneTransforms
+cbuffer BoneTransforms : register(b0, space2)
 {
     matrix uTransforms[128];
 };
-cbuffer TextureRemapTable
+cbuffer TextureRemapTable : register(b0, space3)
 {
     uint4 uLayers[16];
 };

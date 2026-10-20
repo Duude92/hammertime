@@ -5,13 +5,14 @@ struct FragmentIn
     float3 fTexture : TEXCOORD0;
 };
 
-Texture2DArray Texture;
-SamplerState Sampler;
+Texture2DArray Texture : register(t0, space1);
+SamplerState Sampler : register(s1, space1);
 
 float4 main(FragmentIn input) : SV_Target0
 {
     float4 tex = Texture.Sample(Sampler, input.fTexture);
-    if (tex.w < 0.5) discard;
+    if (tex.w < 0.5)
+        discard;
     tex.w = 1;
     return tex;
 }

@@ -26,11 +26,11 @@ cbuffer Projection
     matrix View;
     matrix Projection;
 };
-cbuffer LightData
+cbuffer LightData : register(b0, space2)
 {
     matrix LightView;
 };
-cbuffer LightData2
+cbuffer LightData2 : register(b0, space3)
 {
     matrix LightProjection;
 };

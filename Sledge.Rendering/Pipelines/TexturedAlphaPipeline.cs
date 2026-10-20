@@ -29,7 +29,7 @@ namespace Sledge.Rendering.Pipelines
             {
                 BlendState = BlendStateDescription.SingleAlphaBlend,
                 DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqualRead,
-                RasterizerState = RasterizerStateDescription.Default,
+                RasterizerState = context.GraphicBackend.RasterizerStateDescription,
                 PrimitiveTopology = PrimitiveTopology.TriangleList,
                 ResourceLayouts = new[] { context.ResourceLoader.ProjectionLayout, context.ResourceLoader.TextureLayout },
                 ShaderSet = new ShaderSetDescription(new[] { context.ResourceLoader.VertexStandardLayoutDescription }, new[] { _vertex, _fragment }),
@@ -62,8 +62,20 @@ namespace Sledge.Rendering.Pipelines
                 Projection = viewProjectionBuffer.Projection,
             });
         }
+		public void SetupFrame(RenderContext context, CommandList cl, Engine.Engine.ViewProjectionBuffer viewProjectionBuffer)
+		{
+			cl.UpdateBuffer(_projectionBuffer, 0, new UniformProjection
+			{
+				Selective = context.SelectiveTransform,
+				Model = Matrix4x4.Identity,
+				View = viewProjectionBuffer.View,
+				Projection = viewProjectionBuffer.Projection,
+			});
+			cl.SetPipeline(_pipeline);
+			cl.SetGraphicsResourceSet(0, _projectionResourceSet);
+		}
 
-        public void Render(RenderContext context, IViewport target, CommandList cl, IEnumerable<IRenderable> renderables)
+		public void Render(RenderContext context, IViewport target, CommandList cl, IEnumerable<IRenderable> renderables)
         {
             cl.SetPipeline(_pipeline);
             cl.SetGraphicsResourceSet(0, _projectionResourceSet);
@@ -76,8 +88,7 @@ namespace Sledge.Rendering.Pipelines
 
         public void Render(RenderContext context, IViewport target, CommandList cl, IRenderable renderable, ILocation locationObject)
         {
-            cl.SetPipeline(_pipeline);
-            cl.SetGraphicsResourceSet(0, _projectionResourceSet);
+
 
             renderable.Render(context, this, target, cl, locationObject);
         }

@@ -35,11 +35,12 @@ namespace Sledge.Rendering.Pipelines
 			{
 				BlendState = BlendStateDescription.SingleAlphaBlend,
 				DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
-				RasterizerState = RasterizerStateDescription.Default,
+				RasterizerState = context.GraphicBackend.RasterizerStateDescription,
 				PrimitiveTopology = PrimitiveTopology.PointList,
 				ResourceLayouts = new[] { context.ResourceLoader.ProjectionLayout,
+					context.ResourceLoader.TextureLayout,
 					_uvLayout,
-					context.ResourceLoader.TextureLayout },
+				},
 				ShaderSet = new ShaderSetDescription(new[] { context.ResourceLoader.VertexStandardLayoutDescription }, new[] { _vertex, _geometry, _fragment }),
 				Outputs = new OutputDescription
 				{
@@ -73,7 +74,22 @@ namespace Sledge.Rendering.Pipelines
 				Projection = viewProjectionBuffer.Projection,
 			});
 		}
+		public void SetupFrame(RenderContext context, CommandList cl, Engine.Engine.ViewProjectionBuffer viewProjectionBuffer)
+		{
+			var view = viewProjectionBuffer.View;
+			if (!Matrix4x4.Invert(view, out var invView)) invView = Matrix4x4.Identity;
 
+			cl.UpdateBuffer(_projectionBuffer, 0, new UniformProjection
+			{
+				Selective = context.SelectiveTransform,
+				Model = invView,
+				View = view,
+				Projection = viewProjectionBuffer.Projection,
+			});
+			cl.SetPipeline(_pipeline);
+			cl.SetGraphicsResourceSet(0, _projectionResourceSet);
+
+		}
 		public void Render(RenderContext context, IViewport target, CommandList cl, IEnumerable<IRenderable> renderables)
 		{
 			return;
@@ -89,15 +105,13 @@ namespace Sledge.Rendering.Pipelines
 		public void Render(RenderContext context, IViewport target, CommandList cl, IRenderable renderable, ILocation locationObject)
 		{
 			if (renderable is not IModelRenderable) return;
-			cl.SetPipeline(_pipeline);
-			cl.SetGraphicsResourceSet(0, _projectionResourceSet);
 
 			renderable.Render(context, this, target, cl, locationObject);
 		}
 		public void Bind(RenderContext context, CommandList cl, string binding)
 		{
 			var tex = context.ResourceLoader.GetTexture(binding);
-			tex?.BindTo(cl, 2);
+			tex?.BindTo(cl, 1);
 		}
 
 		public void Dispose()
